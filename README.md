@@ -15,6 +15,7 @@ on: pull_request
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   auto-merge-dependabot-prs:
@@ -31,12 +32,14 @@ jobs:
         uses: kachick/auto-merge-dependabot-prs-without-pat-after-workflows-passed@v1-beta
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" # Currently needed to pass same value separately with ~ github-token
 ```
 
 You can adjust status polling interval as below.
 
 ```yaml
-        env:
+        with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           min-interval-seconds: 300
 ```
