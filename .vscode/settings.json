@@ -1,0 +1,5 @@
+{
+  "[elm]": {
+    "editor.formatOnSave": true
+  }
+}

@@ -1,0 +1,39 @@
+name: Test & Lint
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '.github/dependabot.yml'
+      - 'LICENSE'
+      - '.editorconfig'
+      - '.prettierrc'
+      - '.eslintrc.js'
+      - 'README.md'
+      - '.vscode/**'
+  pull_request:
+    paths-ignore:
+      - '.github/dependabot.yml'
+      - 'LICENSE'
+      - '.editorconfig'
+      - '.prettierrc'
+      - '.eslintrc.js'
+      - 'README.md'
+      - '.vscode/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: install npm dependencies
+        run: npm ci
+      - name: formatting
+        run: npm run format-check
+      - name: Lint
+        run: npm run lint
+      - name: Build (Includes typecheck)
+        run: npm run build
+      - name: Test (Need to build before test)
+        run: npm test
+      - name: Ensure we can make package
+        run: npm run package
+

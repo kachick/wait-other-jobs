@@ -1,0 +1,14 @@
+name: 'Auto merge dependabot PRs without PAT after all workflows passed'
+description: 'Wait finishes for other GitHub Actions. When they have been succeeded, dependabot will merge own PR'
+author: 'Kenichi Kamiya <kachick1@gmail.com>'
+inputs:
+  github-token:
+    description: 'GitHub token (DO "NOT" USE PAT)'
+    required: true
+  min-interval-seconds:
+    description: 'Wait this interval or the multiplied value with jitter for workflows check'
+    required: false
+    default: '30'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
