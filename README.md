@@ -29,7 +29,7 @@ jobs:
       - name: Auto merge Dependabot PRs
         if: ${{steps.metadata.outputs.update-type == 'version-update:semver-patch'}}
         uses: kachick/auto-merge-dependabot-prs-without-pat-after-workflows-passed@v1.0.0
-        env:
+        with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 ```
 
@@ -43,7 +43,7 @@ You can adjust status polling interval as below.
 
 ## TODO
 
-* Configurable updating policy: Currently targetting only for patch verup. Below is the idea
+* Configurable updating policy: Below is the idea
   ```typescript
   // This is an examle to get updating info. However delegating to https://github.com/dependabot/fetch-metadata/f should be robust.
   //

@@ -36,4 +36,10 @@ jobs:
         run: npm test
       - name: Ensure we can make package
         run: npm run package
-
+  test: # make sure the action works on a clean machine without building
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
