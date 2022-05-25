@@ -20,6 +20,8 @@ const octokit = getOctokit(githubToken);
 
 async function checkAllBuildsPassed(params: CheckRunsParameters): Promise<boolean> {
   const resp: CheckRunsResponse = await octokit.request(checkRunsRoute, params);
+  // For debug
+  console.log(resp.data.check_runs);
   return resp.data.check_runs.every((checkRun) => checkRun.conclusion === 'success');
 }
 
@@ -50,7 +52,7 @@ async function run(): Promise<void> {
 
   // "Exponential backoff and jitter"
   let retries = 0;
-  while (!checkAllBuildsPassed(checkRunsParams)) {
+  while (!(await checkAllBuildsPassed(checkRunsParams))) {
     const jitterSeconds = getRandomInt(1, 7);
     // eslint-disable-next-line no-await-in-loop
     await wait((minIntervalSeconds ** retries + jitterSeconds) * 1000);
