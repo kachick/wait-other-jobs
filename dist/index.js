@@ -10180,7 +10180,7 @@ const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
 const exec_1 = __nccwpck_require__(1514);
 const wait_1 = __nccwpck_require__(5817);
-// REST: https://docs.github.com/en/rest/checks/runs#get-a-check-run
+// REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
 // At 2022-05-25, GitHub does not prive this feature in their v4(GraphQL). So using v3(REST).
 // Track the development status here https://github.community/t/graphql-check-runs/14449
 const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
@@ -10190,7 +10190,7 @@ const octokit = (0, github_1.getOctokit)(githubToken);
 async function checkAllBuildsPassed(params) {
     const resp = await octokit.request(checkRunsRoute, params);
     (0, core_1.debug)(JSON.stringify(resp.data.check_runs));
-    return resp.data.check_runs.every((checkRun) => checkRun.conclusion === 'success');
+    return resp.data.check_runs.every((checkRun) => checkRun.status === 'completed' && checkRun.conclusion === 'success');
 }
 // Taken from MDN
 // The maximum is exclusive and the minimum is inclusive
