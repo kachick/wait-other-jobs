@@ -10189,6 +10189,7 @@ const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds',
 const octokit = (0, github_1.getOctokit)(githubToken);
 async function checkAllBuildsPassed(params) {
     const resp = await octokit.request(checkRunsRoute, params);
+    (0, core_1.debug)(JSON.stringify(resp.data.check_runs));
     return resp.data.check_runs.every((checkRun) => checkRun.conclusion === 'success');
 }
 // Taken from MDN
@@ -10210,7 +10211,8 @@ async function run() {
     };
     // "Exponential backoff and jitter"
     let retries = 0;
-    while (!checkAllBuildsPassed(checkRunsParams)) {
+    // eslint-disable-next-line no-await-in-loop
+    while (!(await checkAllBuildsPassed(checkRunsParams))) {
         const jitterSeconds = getRandomInt(1, 7);
         // eslint-disable-next-line no-await-in-loop
         await (0, wait_1.wait)((minIntervalSeconds ** retries + jitterSeconds) * 1000);
