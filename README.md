@@ -28,7 +28,7 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Auto merge Dependabot PRs
         if: ${{steps.metadata.outputs.update-type == 'version-update:semver-patch'}}
-        uses: kachick/auto-merge-dependabot-prs-without-pat-after-workflows-passed@v1
+        uses: kachick/auto-merge-dependabot-prs-without-pat-after-workflows-passed@v1-beta
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 ```
