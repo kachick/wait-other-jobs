@@ -5,7 +5,7 @@ import { Endpoints } from '@octokit/types';
 import { exec as execExec } from '@actions/exec';
 import { wait } from './wait';
 
-// REST: https://docs.github.com/en/rest/checks/runs#get-a-check-run
+// REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
 // At 2022-05-25, GitHub does not prive this feature in their v4(GraphQL). So using v3(REST).
 // Track the development status here https://github.community/t/graphql-check-runs/14449
 const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs' as const;
@@ -21,7 +21,9 @@ const octokit = getOctokit(githubToken);
 async function checkAllBuildsPassed(params: CheckRunsParameters): Promise<boolean> {
   const resp: CheckRunsResponse = await octokit.request(checkRunsRoute, params);
   debug(JSON.stringify(resp.data.check_runs));
-  return resp.data.check_runs.every((checkRun) => checkRun.conclusion === 'success');
+  return resp.data.check_runs.every(
+    (checkRun) => checkRun.status === 'completed' && checkRun.conclusion === 'success'
+  );
 }
 
 // Taken from MDN
