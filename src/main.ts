@@ -15,10 +15,14 @@ type CheckRunsParameters = Endpoints[CheckRunsRoute]['parameters'];
 
 const githubToken = getInput('github-token', { required: true });
 const minIntervalSeconds = parseInt(getInput('min-interval-seconds', { required: true }), 10);
+const isDryRun = getInput('dry-run', { required: true }).toLowerCase() === 'true';
 
 const octokit = getOctokit(githubToken);
 
-async function checkAllBuildsPassed(params: CheckRunsParameters): Promise<boolean> {
+async function checkAllBuildsPassed(
+  params: CheckRunsParameters,
+  ignoreID: CheckRunsResponse['data']['check_runs'][number]['id']
+): Promise<boolean> {
   const resp: CheckRunsResponse = await octokit.request(checkRunsRoute, {
     ...params,
     filter: 'latest',
@@ -27,15 +31,12 @@ async function checkAllBuildsPassed(params: CheckRunsParameters): Promise<boolea
 
   // TODO: Remove before releasing v1
   info(JSON.stringify(resp.data.check_runs));
-  const respAll: CheckRunsResponse = await octokit.request(checkRunsRoute, {
-    ...params,
-    filter: 'all',
-  });
-  debug(JSON.stringify(respAll.data.check_runs));
-  info(JSON.stringify(respAll.data.check_runs));
 
   return resp.data.check_runs.every(
-    (checkRun) => checkRun.status === 'completed' && checkRun.conclusion === 'success'
+    (checkRun) =>
+      checkRun.id !== ignoreID &&
+      checkRun.status === 'completed' &&
+      checkRun.conclusion === 'success'
   );
 }
 
@@ -57,6 +58,7 @@ async function run(): Promise<void> {
   const {
     repo: { repo, owner },
     payload: { pull_request: pullRequest },
+    runId,
   } = context;
   if (pullRequest && 'head' in pullRequest) {
     const { head } = pullRequest;
@@ -77,10 +79,14 @@ async function run(): Promise<void> {
     ref: commitSha,
   };
 
+  if (isDryRun) {
+    return;
+  }
+
   // "Exponential backoff and jitter"
   let retries = 0;
   // eslint-disable-next-line no-await-in-loop
-  while (!(await checkAllBuildsPassed(checkRunsParams))) {
+  while (!(await checkAllBuildsPassed(checkRunsParams, runId))) {
     const jitterSeconds = getRandomInt(1, 7);
     // eslint-disable-next-line no-await-in-loop
     await wait((minIntervalSeconds ** retries + jitterSeconds) * 1000);

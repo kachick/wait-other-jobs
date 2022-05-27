@@ -10186,8 +10186,9 @@ const wait_1 = __nccwpck_require__(5817);
 const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
 const githubToken = (0, core_1.getInput)('github-token', { required: true });
 const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds', { required: true }), 10);
+const isDryRun = (0, core_1.getInput)('dry-run', { required: true }).toLowerCase() === 'true';
 const octokit = (0, github_1.getOctokit)(githubToken);
-async function checkAllBuildsPassed(params) {
+async function checkAllBuildsPassed(params, ignoreID) {
     const resp = await octokit.request(checkRunsRoute, {
         ...params,
         filter: 'latest',
@@ -10195,13 +10196,9 @@ async function checkAllBuildsPassed(params) {
     (0, core_1.debug)(JSON.stringify(resp.data.check_runs));
     // TODO: Remove before releasing v1
     (0, core_1.info)(JSON.stringify(resp.data.check_runs));
-    const respAll = await octokit.request(checkRunsRoute, {
-        ...params,
-        filter: 'all',
-    });
-    (0, core_1.debug)(JSON.stringify(respAll.data.check_runs));
-    (0, core_1.info)(JSON.stringify(respAll.data.check_runs));
-    return resp.data.check_runs.every((checkRun) => checkRun.status === 'completed' && checkRun.conclusion === 'success');
+    return resp.data.check_runs.every((checkRun) => checkRun.id !== ignoreID &&
+        checkRun.status === 'completed' &&
+        checkRun.conclusion === 'success');
 }
 // Taken from MDN
 // The maximum is exclusive and the minimum is inclusive
@@ -10215,7 +10212,7 @@ async function run() {
         throw Error('this action should be ran on PR only');
     }
     let commitSha = 'provisional';
-    const { repo: { repo, owner }, payload: { pull_request: pullRequest }, } = github_1.context;
+    const { repo: { repo, owner }, payload: { pull_request: pullRequest }, runId, } = github_1.context;
     if (pullRequest && 'head' in pullRequest) {
         const { head } = pullRequest;
         if (typeof head === 'object' && 'sha' in head) {
@@ -10232,10 +10229,13 @@ async function run() {
         // THis `ref` can't use context.ref and context.sha
         ref: commitSha,
     };
+    if (isDryRun) {
+        return;
+    }
     // "Exponential backoff and jitter"
     let retries = 0;
     // eslint-disable-next-line no-await-in-loop
-    while (!(await checkAllBuildsPassed(checkRunsParams))) {
+    while (!(await checkAllBuildsPassed(checkRunsParams, runId))) {
         const jitterSeconds = getRandomInt(1, 7);
         // eslint-disable-next-line no-await-in-loop
         await (0, wait_1.wait)((minIntervalSeconds ** retries + jitterSeconds) * 1000);
