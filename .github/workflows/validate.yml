@@ -11,10 +11,10 @@ on:
       - '.vscode/**'
 
 permissions:
-  contents: write
-  checks: read
+  # contents: write
+  # checks: read
   actions: read
-  pull-requests: read
+  # pull-requests: read
 
 jobs:
   validate: # make sure the action works on a clean machine without building
