@@ -19,10 +19,11 @@ const isDryRun = getInput('dry-run', { required: true }).toLowerCase() === 'true
 
 const octokit = getOctokit(githubToken);
 
-async function checkAllBuildsPassed(
+type OtherRunsStatus = 'in_progress' | 'succeeded' | 'failed';
+async function getOtherRunsStatus(
   params: CheckRunsParameters,
-  ignoreID: CheckRunsResponse['data']['check_runs'][number]['id']
-): Promise<boolean> {
+  ownRunID: CheckRunsResponse['data']['check_runs'][number]['id']
+): Promise<OtherRunsStatus> {
   const resp: CheckRunsResponse = await octokit.request(checkRunsRoute, {
     ...params,
     filter: 'latest',
@@ -31,13 +32,16 @@ async function checkAllBuildsPassed(
 
   // TODO: Remove before releasing v1
   info(JSON.stringify(resp.data.check_runs));
-
-  return resp.data.check_runs.every(
-    (checkRun) =>
-      checkRun.id !== ignoreID &&
-      checkRun.status === 'completed' &&
-      checkRun.conclusion === 'success'
+  const otherRelatedRuns = resp.data.check_runs.filter((checkRun) => checkRun.id !== ownRunID);
+  const otherRelatedCompletedRuns = otherRelatedRuns.filter(
+    (checkRun) => checkRun.status === 'completed'
   );
+  if (otherRelatedCompletedRuns.length === otherRelatedRuns.length) {
+    return otherRelatedCompletedRuns.every((checkRun) => checkRun.conclusion === 'success')
+      ? 'succeeded'
+      : 'failed';
+  }
+  return 'in_progress';
 }
 
 // Taken from MDN
@@ -85,8 +89,16 @@ async function run(): Promise<void> {
 
   // "Exponential backoff and jitter"
   let retries = 0;
-  // eslint-disable-next-line no-await-in-loop
-  while (!(await checkAllBuildsPassed(checkRunsParams, runId))) {
+  let otherBuildsProgress: OtherRunsStatus = 'in_progress';
+
+  for (;;) {
+    // eslint-disable-next-line no-await-in-loop
+    otherBuildsProgress = await getOtherRunsStatus(checkRunsParams, runId);
+    if (otherBuildsProgress === 'succeeded') {
+      break;
+    } else if (otherBuildsProgress === 'failed') {
+      throw Error('some runs failed');
+    }
     const jitterSeconds = getRandomInt(1, 7);
     // eslint-disable-next-line no-await-in-loop
     await wait((minIntervalSeconds ** retries + jitterSeconds) * 1000);
