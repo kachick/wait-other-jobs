@@ -10197,7 +10197,8 @@ async function getOtherRunsStatus(params, ownRunID) {
         repo: params.repo,
         // eslint-disable-next-line camelcase
         run_id: ownRunID,
-        page: 42,
+        // eslint-disable-next-line camelcase
+        per_page: 4200,
         filter: 'latest',
     });
     const ownJobIDs = listWorkflowRunsResp.data.jobs.map((job) => job.id);

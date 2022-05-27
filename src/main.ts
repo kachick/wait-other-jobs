@@ -28,7 +28,7 @@ const octokit = getOctokit(githubToken);
 type OtherRunsStatus = 'in_progress' | 'succeeded' | 'failed';
 async function getOtherRunsStatus(
   params: CheckRunsParameters,
-  ownRunID: CheckRunsResponse['data']['check_runs'][number]['id']
+  ownRunID: ListWorkflowRunsResponse['data']['jobs'][number]['id']
 ): Promise<OtherRunsStatus> {
   const listWorkflowRunsResp: ListWorkflowRunsResponse = await octokit.request(
     listWorkflowRunsRoute,
@@ -37,7 +37,8 @@ async function getOtherRunsStatus(
       repo: params.repo,
       // eslint-disable-next-line camelcase
       run_id: ownRunID,
-      page: 42, // Rough implementation to avoid pagination possibilities
+      // eslint-disable-next-line camelcase
+      per_page: 4200, // Rough implementation to avoid pagination possibilities
       filter: 'latest',
     }
   );
