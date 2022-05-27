@@ -10181,24 +10181,36 @@ const github_1 = __nccwpck_require__(5438);
 const exec_1 = __nccwpck_require__(1514);
 const wait_1 = __nccwpck_require__(5817);
 // REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
-// At 2022-05-25, GitHub does not private this feature in their v4(GraphQL). So using v3(REST).
+// At 2022-05-27, GitHub does not provide this feature in their v4(GraphQL). So using v3(REST).
 // Track the development status here https://github.community/t/graphql-check-runs/14449
 const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
+// REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
+// GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
+const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs';
 const githubToken = (0, core_1.getInput)('github-token', { required: true });
 const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds', { required: true }), 10);
 const isDryRun = (0, core_1.getInput)('dry-run', { required: true }).toLowerCase() === 'true';
 const octokit = (0, github_1.getOctokit)(githubToken);
 async function getOtherRunsStatus(params, ownRunID) {
-    const resp = await octokit.request(checkRunsRoute, {
+    const listWorkflowRunsResp = await octokit.request(listWorkflowRunsRoute, {
+        owner: params.owner,
+        repo: params.repo,
+        // eslint-disable-next-line camelcase
+        run_id: ownRunID,
+        page: 42,
+        filter: 'latest',
+    });
+    const ownJobIDs = listWorkflowRunsResp.data.jobs.map((job) => job.id);
+    const checkRunsResp = await octokit.request(checkRunsRoute, {
         ...params,
         filter: 'latest',
     });
-    (0, core_1.debug)(JSON.stringify(resp.data.check_runs));
-    const otherRelatedRuns = resp.data.check_runs.filter((checkRun) => checkRun.id !== ownRunID);
+    (0, core_1.debug)(JSON.stringify(listWorkflowRunsResp.data.jobs));
+    (0, core_1.debug)(JSON.stringify(checkRunsResp.data.check_runs));
+    const otherRelatedRuns = checkRunsResp.data.check_runs.filter((checkRun) => !ownJobIDs.includes(checkRun.id));
     const otherRelatedCompletedRuns = otherRelatedRuns.filter((checkRun) => checkRun.status === 'completed');
-    // TODO: Remove before releasing v1
     const runsSummary = otherRelatedRuns.map((checkRun) => (({ id, status, conclusion }) => ({ id, status, conclusion }))(checkRun));
-    (0, core_1.info)(JSON.stringify({ ...runsSummary, ownRunID }));
+    (0, core_1.info)(JSON.stringify({ ownRunID, ownJobIDs, ...runsSummary }));
     if (otherRelatedCompletedRuns.length === otherRelatedRuns.length) {
         return otherRelatedCompletedRuns.every((checkRun) => checkRun.conclusion === 'success')
             ? 'succeeded'
