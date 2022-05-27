@@ -10181,27 +10181,43 @@ const github_1 = __nccwpck_require__(5438);
 const exec_1 = __nccwpck_require__(1514);
 const wait_1 = __nccwpck_require__(5817);
 // REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
-// At 2022-05-25, GitHub does not private this feature in their v4(GraphQL). So using v3(REST).
+// At 2022-05-27, GitHub does not provide this feature in their v4(GraphQL). So using v3(REST).
 // Track the development status here https://github.community/t/graphql-check-runs/14449
 const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
+// REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
+// GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
+const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs';
 const githubToken = (0, core_1.getInput)('github-token', { required: true });
 const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds', { required: true }), 10);
+const isDryRun = (0, core_1.getInput)('dry-run', { required: true }).toLowerCase() === 'true';
 const octokit = (0, github_1.getOctokit)(githubToken);
-async function checkAllBuildsPassed(params) {
-    const resp = await octokit.request(checkRunsRoute, {
+async function getOtherRunsStatus(params, ownRunID) {
+    const listWorkflowRunsResp = await octokit.request(listWorkflowRunsRoute, {
+        owner: params.owner,
+        repo: params.repo,
+        // eslint-disable-next-line camelcase
+        run_id: ownRunID,
+        // eslint-disable-next-line camelcase
+        per_page: 4200,
+        filter: 'latest',
+    });
+    const ownJobIDs = listWorkflowRunsResp.data.jobs.map((job) => job.id);
+    const checkRunsResp = await octokit.request(checkRunsRoute, {
         ...params,
         filter: 'latest',
     });
-    (0, core_1.debug)(JSON.stringify(resp.data.check_runs));
-    // TODO: Remove before releasing v1
-    (0, core_1.info)(JSON.stringify(resp.data.check_runs));
-    const respAll = await octokit.request(checkRunsRoute, {
-        ...params,
-        filter: 'all',
-    });
-    (0, core_1.debug)(JSON.stringify(respAll.data.check_runs));
-    (0, core_1.info)(JSON.stringify(respAll.data.check_runs));
-    return resp.data.check_runs.every((checkRun) => checkRun.status === 'completed' && checkRun.conclusion === 'success');
+    (0, core_1.debug)(JSON.stringify(listWorkflowRunsResp.data.jobs));
+    (0, core_1.debug)(JSON.stringify(checkRunsResp.data.check_runs));
+    const otherRelatedRuns = checkRunsResp.data.check_runs.filter((checkRun) => !ownJobIDs.includes(checkRun.id));
+    const otherRelatedCompletedRuns = otherRelatedRuns.filter((checkRun) => checkRun.status === 'completed');
+    const runsSummary = otherRelatedRuns.map((checkRun) => (({ id, status, conclusion }) => ({ id, status, conclusion }))(checkRun));
+    (0, core_1.info)(JSON.stringify({ ownRunID, ownJobIDs, ...runsSummary }));
+    if (otherRelatedCompletedRuns.length === otherRelatedRuns.length) {
+        return otherRelatedCompletedRuns.every((checkRun) => checkRun.conclusion === 'success')
+            ? 'succeeded'
+            : 'failed';
+    }
+    return 'in_progress';
 }
 // Taken from MDN
 // The maximum is exclusive and the minimum is inclusive
@@ -10212,29 +10228,48 @@ function getRandomInt(min, max) {
 async function run() {
     const pr = github_1.context.payload.pull_request;
     if (!pr) {
+        if (isDryRun) {
+            return;
+        }
         throw Error('this action should be ran on PR only');
     }
-    const { ref, repo: { repo, owner }, sha, } = github_1.context;
-    // TODO: Remove before releasing v1
-    (0, core_1.info)('context.ref');
-    (0, core_1.info)(ref);
-    (0, core_1.info)('context.sha');
-    (0, core_1.info)(sha);
-    (0, core_1.info)('context');
-    (0, core_1.info)(JSON.stringify(github_1.context));
+    let commitSha = 'provisional';
+    const { repo: { repo, owner }, payload: { pull_request: pullRequest }, runId, } = github_1.context;
+    if (pullRequest && 'head' in pullRequest) {
+        const { head } = pullRequest;
+        if (typeof head === 'object' && 'sha' in head) {
+            commitSha = head.sha;
+        }
+        else {
+            (0, core_1.info)(JSON.stringify(pullRequest));
+            throw Error('github context has unexpected format: missing context.payload.pull_request.head.sha');
+        }
+    }
     const checkRunsParams = {
         owner,
         repo,
-        ref: sha,
+        // THis `ref` can't use context.ref and context.sha
+        ref: commitSha,
     };
+    if (isDryRun) {
+        return;
+    }
     // "Exponential backoff and jitter"
-    let retries = 0;
-    // eslint-disable-next-line no-await-in-loop
-    while (!(await checkAllBuildsPassed(checkRunsParams))) {
+    let attempts = 0;
+    let otherBuildsProgress = 'in_progress';
+    for (;;) {
+        attempts += 1;
         const jitterSeconds = getRandomInt(1, 7);
         // eslint-disable-next-line no-await-in-loop
-        await (0, wait_1.wait)((minIntervalSeconds ** retries + jitterSeconds) * 1000);
-        retries += 1;
+        await (0, wait_1.wait)((minIntervalSeconds * (2 ** attempts - 1) + jitterSeconds) * 1000);
+        // eslint-disable-next-line no-await-in-loop
+        otherBuildsProgress = await getOtherRunsStatus(checkRunsParams, runId);
+        if (otherBuildsProgress === 'succeeded') {
+            break;
+        }
+        else if (otherBuildsProgress === 'failed') {
+            throw Error('some runs failed');
+        }
     }
     await (0, exec_1.exec)(`gh pr review --approve "${pr.html_url}"`);
     await (0, exec_1.exec)(`gh pr merge --auto --merge "${pr.html_url}"`);

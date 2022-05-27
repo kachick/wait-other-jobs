@@ -21,12 +21,11 @@ test('wait 500 ms', async () => {
 test('test runs', () => {
   process.env['INPUT_GITHUB-TOKEN'] = 'dummy';
   process.env['INPUT_MIN-INTERVAL-SECONDS'] = '30';
+  process.env['INPUT_DRY-RUN'] = 'true';
   const np = process.execPath;
   const ip = path.join(__dirname, '..', 'lib', 'main.js');
   const options: cp.ExecFileSyncOptions = {
     env: process.env,
   };
-  expect(() => cp.execFileSync(np, [ip], options)).toThrowError(
-    /this action should be ran on PR only/
-  );
+  console.log(cp.execFileSync(np, [ip], options).toString());
 });
