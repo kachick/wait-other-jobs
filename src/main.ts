@@ -56,12 +56,20 @@ async function run(): Promise<void> {
   const {
     ref,
     repo: { repo, owner },
+    sha,
   } = context;
+  // TODO: Remove before releasing v1
+  info('context.ref');
+  info(ref);
+  info('context.sha');
+  info(sha);
+  info('context');
+  info(JSON.stringify(context));
 
   const checkRunsParams: CheckRunsParameters = {
     owner,
     repo,
-    ref,
+    ref: sha,
   };
 
   // "Exponential backoff and jitter"
