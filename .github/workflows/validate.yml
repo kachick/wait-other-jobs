@@ -1,0 +1,27 @@
+name: Validate with running on my own
+on:
+  pull_request:
+    paths-ignore:
+      - '.github/dependabot.yml'
+      - 'LICENSE'
+      - '.editorconfig'
+      - '.prettierrc'
+      - '.eslintrc.js'
+      - 'README.md'
+      - '.vscode/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  test: # make sure the action works on a clean machine without building
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

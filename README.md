@@ -10,7 +10,7 @@ So this action provides another way. It checks other builds and merging the depe
 ## Usage
 
 ```yaml
-name: Auto merge depedndabot PRs
+name: Auto merge dependabot PRs
 on: pull_request
 
 permissions:
@@ -21,6 +21,7 @@ jobs:
   auto-merge-dependabot-prs:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' }}
+     timeout-minutes: 30
     steps:
       - name: Dependabot metadata
         id: metadata
@@ -48,7 +49,7 @@ You can adjust status polling interval as below.
 
 * Configurable updating policy: Below is the idea
   ```typescript
-  // This is an examle to get updating info. However delegating to https://github.com/dependabot/fetch-metadata/f should be robust.
+  // This is an example to get updating info. However delegating to https://github.com/dependabot/fetch-metadata/f should be robust.
   //
   const title = pr.title as string;
   const match = title.match(/from (\S+) (?<before>\S+) to (?<after>\S+)$/);

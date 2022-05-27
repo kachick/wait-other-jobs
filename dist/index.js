@@ -10181,15 +10181,26 @@ const github_1 = __nccwpck_require__(5438);
 const exec_1 = __nccwpck_require__(1514);
 const wait_1 = __nccwpck_require__(5817);
 // REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
-// At 2022-05-25, GitHub does not prive this feature in their v4(GraphQL). So using v3(REST).
+// At 2022-05-25, GitHub does not private this feature in their v4(GraphQL). So using v3(REST).
 // Track the development status here https://github.community/t/graphql-check-runs/14449
 const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
 const githubToken = (0, core_1.getInput)('github-token', { required: true });
 const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds', { required: true }), 10);
 const octokit = (0, github_1.getOctokit)(githubToken);
 async function checkAllBuildsPassed(params) {
-    const resp = await octokit.request(checkRunsRoute, params);
+    const resp = await octokit.request(checkRunsRoute, {
+        ...params,
+        filter: 'latest',
+    });
     (0, core_1.debug)(JSON.stringify(resp.data.check_runs));
+    // TODO: Remove before releasing v1
+    (0, core_1.info)(JSON.stringify(resp.data.check_runs));
+    const respAll = await octokit.request(checkRunsRoute, {
+        ...params,
+        filter: 'all',
+    });
+    (0, core_1.debug)(JSON.stringify(respAll.data.check_runs));
+    (0, core_1.info)(JSON.stringify(respAll.data.check_runs));
     return resp.data.check_runs.every((checkRun) => checkRun.status === 'completed' && checkRun.conclusion === 'success');
 }
 // Taken from MDN
