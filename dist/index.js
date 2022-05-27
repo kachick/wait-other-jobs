@@ -10194,10 +10194,11 @@ async function getOtherRunsStatus(params, ownRunID) {
         filter: 'latest',
     });
     (0, core_1.debug)(JSON.stringify(resp.data.check_runs));
-    // TODO: Remove before releasing v1
-    (0, core_1.info)(JSON.stringify(resp.data.check_runs));
     const otherRelatedRuns = resp.data.check_runs.filter((checkRun) => checkRun.id !== ownRunID);
     const otherRelatedCompletedRuns = otherRelatedRuns.filter((checkRun) => checkRun.status === 'completed');
+    // TODO: Remove before releasing v1
+    const runsSummary = otherRelatedRuns.map((checkRun) => (({ id, status, conclusion }) => ({ id, status, conclusion }))(checkRun));
+    (0, core_1.info)(JSON.stringify({ ...runsSummary, ownRunID }));
     if (otherRelatedCompletedRuns.length === otherRelatedRuns.length) {
         return otherRelatedCompletedRuns.every((checkRun) => checkRun.conclusion === 'success')
             ? 'succeeded'
