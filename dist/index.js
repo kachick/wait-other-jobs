@@ -10214,17 +10214,23 @@ async function run() {
     if (!pr) {
         throw Error('this action should be ran on PR only');
     }
-    const { repo: { repo, owner }, payload: { head: sha }, } = github_1.context;
-    if (!(typeof sha === 'string')) {
-        (0, core_1.info)(JSON.stringify(github_1.context.payload.head));
-        (0, core_1.info)(typeof sha);
-        throw Error('github context has unexpected format: missing context.payload.head.sha');
+    let commitSha = 'provisional';
+    const { repo: { repo, owner }, payload: { pull_request: pullRequest }, } = github_1.context;
+    if (pullRequest && 'head' in pullRequest) {
+        const { head } = pullRequest;
+        if (typeof head === 'object' && 'sha' in head) {
+            commitSha = head.sha;
+        }
+        else {
+            (0, core_1.info)(JSON.stringify(pullRequest));
+            throw Error('github context has unexpected format: missing context.payload.pull_request.head.sha');
+        }
     }
     const checkRunsParams = {
         owner,
         repo,
         // THis `ref` can't use context.ref and context.sha
-        ref: sha,
+        ref: commitSha,
     };
     // "Exponential backoff and jitter"
     let retries = 0;
