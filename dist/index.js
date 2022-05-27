@@ -10214,11 +10214,7 @@ async function run() {
     if (!pr) {
         throw Error('this action should be ran on PR only');
     }
-    const { repo: { repo, owner }, payload: { head }, } = github_1.context;
-    if (!(typeof head === 'object')) {
-        throw Error('github context has unexpected format: missing context.payload.head');
-    }
-    const { sha } = head;
+    const { repo: { repo, owner }, payload: { head: sha }, } = github_1.context;
     if (!(typeof sha === 'string')) {
         throw Error('github context has unexpected format: missing context.payload.head.sha');
     }

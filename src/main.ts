@@ -55,12 +55,8 @@ async function run(): Promise<void> {
 
   const {
     repo: { repo, owner },
-    payload: { head },
+    payload: { head: sha },
   } = context;
-  if (!(typeof head === 'object')) {
-    throw Error('github context has unexpected format: missing context.payload.head');
-  }
-  const { sha } = head;
   if (!(typeof sha === 'string')) {
     throw Error('github context has unexpected format: missing context.payload.head.sha');
   }
