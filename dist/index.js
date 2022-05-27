@@ -10214,17 +10214,18 @@ async function run() {
     if (!pr) {
         throw Error('this action should be ran on PR only');
     }
-    const { ref, repo: { repo, owner }, sha, } = github_1.context;
-    // TODO: Remove before releasing v1
-    (0, core_1.info)('context.ref');
-    (0, core_1.info)(ref);
-    (0, core_1.info)('context.sha');
-    (0, core_1.info)(sha);
-    (0, core_1.info)('context');
-    (0, core_1.info)(JSON.stringify(github_1.context));
+    const { repo: { repo, owner }, payload: { head }, } = github_1.context;
+    if (!(typeof head === 'object')) {
+        throw Error('github context has unexpected format: missing context.payload.head');
+    }
+    const { sha } = head;
+    if (!(typeof sha === 'string')) {
+        throw Error('github context has unexpected format: missing context.payload.head.sha');
+    }
     const checkRunsParams = {
         owner,
         repo,
+        // THis `ref` can't use context.ref and context.sha
         ref: sha,
     };
     // "Exponential backoff and jitter"
