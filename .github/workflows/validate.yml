@@ -11,7 +11,7 @@ on:
       - '.vscode/**'
 
 permissions:
-  # contents: write
+  contents: write
   # checks: read
   actions: read
   # pull-requests: read
