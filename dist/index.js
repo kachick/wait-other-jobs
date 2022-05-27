@@ -10187,9 +10187,17 @@ const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
 // REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
 // GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
 const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs';
-const githubToken = (0, core_1.getInput)('github-token', { required: true });
-const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds', { required: true }), 10);
-const isDryRun = (0, core_1.getInput)('dry-run', { required: true }).toLowerCase() === 'true';
+// type mergingStrategy = 'merge' | 'squash';
+const githubToken = (0, core_1.getInput)('github-token', { required: true, trimWhitespace: false });
+const mergingStrategy = (0, core_1.getInput)('merging-strategy', {
+    required: false,
+    trimWhitespace: true,
+}).toLowerCase();
+if (!(mergingStrategy === 'merge' || mergingStrategy === 'squash')) {
+    throw Error(`given unknown merging-strategy: ${mergingStrategy}`);
+}
+const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds', { required: true, trimWhitespace: true }), 10);
+const isDryRun = (0, core_1.getInput)('dry-run', { required: true, trimWhitespace: true }).toLowerCase() === 'true';
 const octokit = (0, github_1.getOctokit)(githubToken);
 async function getOtherRunsStatus(params, ownRunID) {
     const listWorkflowRunsResp = await octokit.request(listWorkflowRunsRoute, {
@@ -10272,7 +10280,7 @@ async function run() {
         }
     }
     await (0, exec_1.exec)(`gh pr review --approve "${pr.html_url}"`);
-    await (0, exec_1.exec)(`gh pr merge --auto --merge "${pr.html_url}"`);
+    await (0, exec_1.exec)(`gh pr merge --auto --${mergingStrategy} "${pr.html_url}"`);
 }
 run();
 

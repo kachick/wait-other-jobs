@@ -22,6 +22,7 @@ test('test runs', () => {
   process.env['INPUT_GITHUB-TOKEN'] = 'dummy';
   process.env['INPUT_MIN-INTERVAL-SECONDS'] = '30';
   process.env['INPUT_DRY-RUN'] = 'true';
+  process.env['INPUT_MERGING-STRATEGY'] = 'squash';
   const np = process.execPath;
   const ip = path.join(__dirname, '..', 'lib', 'main.js');
   const options: cp.ExecFileSyncOptions = {

@@ -19,9 +19,24 @@ const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/j
 type ListWorkflowRunsRoute = typeof listWorkflowRunsRoute;
 type ListWorkflowRunsResponse = Endpoints[ListWorkflowRunsRoute]['response'];
 
-const githubToken = getInput('github-token', { required: true });
-const minIntervalSeconds = parseInt(getInput('min-interval-seconds', { required: true }), 10);
-const isDryRun = getInput('dry-run', { required: true }).toLowerCase() === 'true';
+// type mergingStrategy = 'merge' | 'squash';
+
+const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
+const mergingStrategy = getInput('merging-strategy', {
+  required: true,
+  trimWhitespace: true,
+}).toLowerCase();
+
+if (!(mergingStrategy === 'merge' || mergingStrategy === 'squash')) {
+  throw Error(`given unknown merging-strategy: ${mergingStrategy}`);
+}
+
+const minIntervalSeconds = parseInt(
+  getInput('min-interval-seconds', { required: true, trimWhitespace: true }),
+  10
+);
+const isDryRun =
+  getInput('dry-run', { required: true, trimWhitespace: true }).toLowerCase() === 'true';
 
 const octokit = getOctokit(githubToken);
 
@@ -133,7 +148,7 @@ async function run(): Promise<void> {
   }
 
   await execExec(`gh pr review --approve "${pr.html_url}"`);
-  await execExec(`gh pr merge --auto --merge "${pr.html_url}"`);
+  await execExec(`gh pr merge --auto --${mergingStrategy} "${pr.html_url}"`);
 }
 
 run();

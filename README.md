@@ -37,12 +37,13 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" # Currently needed to pass same value separately with ~ github-token
 ```
 
-You can adjust status polling interval as below.
+You can adjust status polling interval and merging strategy as below.
 
 ```yaml
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-          min-interval-seconds: 300
+          min-interval-seconds: 300 # default 30
+          merging-strategy: "merge" # default "squash"
 ```
 
 ## TODO

@@ -5,6 +5,10 @@ inputs:
   github-token:
     description: 'GitHub token (DO "NOT" USE PAT)'
     required: true
+  merging-strategy:
+    description: 'merge or squash'
+    required: false
+    default: 'squash'
   min-interval-seconds:
     description: 'Wait this interval or the multiplied value with jitter for workflows check'
     required: false
