@@ -55,6 +55,9 @@ async function run(): Promise<void> {
   const pr = context.payload.pull_request;
 
   if (!pr) {
+    if (isDryRun) {
+      return;
+    }
     throw Error('this action should be ran on PR only');
   }
 
@@ -88,10 +91,14 @@ async function run(): Promise<void> {
   }
 
   // "Exponential backoff and jitter"
-  let retries = 0;
+  let attempts = 0;
   let otherBuildsProgress: OtherRunsStatus = 'in_progress';
 
   for (;;) {
+    attempts += 1;
+    const jitterSeconds = getRandomInt(1, 7);
+    // eslint-disable-next-line no-await-in-loop
+    await wait((minIntervalSeconds * (2 ** attempts - 1) + jitterSeconds) * 1000);
     // eslint-disable-next-line no-await-in-loop
     otherBuildsProgress = await getOtherRunsStatus(checkRunsParams, runId);
     if (otherBuildsProgress === 'succeeded') {
@@ -99,10 +106,6 @@ async function run(): Promise<void> {
     } else if (otherBuildsProgress === 'failed') {
       throw Error('some runs failed');
     }
-    const jitterSeconds = getRandomInt(1, 7);
-    // eslint-disable-next-line no-await-in-loop
-    await wait((minIntervalSeconds ** retries + jitterSeconds) * 1000);
-    retries += 1;
   }
 
   await execExec(`gh pr review --approve "${pr.html_url}"`);

@@ -10214,6 +10214,9 @@ function getRandomInt(min, max) {
 async function run() {
     const pr = github_1.context.payload.pull_request;
     if (!pr) {
+        if (isDryRun) {
+            return;
+        }
         throw Error('this action should be ran on PR only');
     }
     let commitSha = 'provisional';
@@ -10238,9 +10241,13 @@ async function run() {
         return;
     }
     // "Exponential backoff and jitter"
-    let retries = 0;
+    let attempts = 0;
     let otherBuildsProgress = 'in_progress';
     for (;;) {
+        attempts += 1;
+        const jitterSeconds = getRandomInt(1, 7);
+        // eslint-disable-next-line no-await-in-loop
+        await (0, wait_1.wait)((minIntervalSeconds * (2 ** attempts - 1) + jitterSeconds) * 1000);
         // eslint-disable-next-line no-await-in-loop
         otherBuildsProgress = await getOtherRunsStatus(checkRunsParams, runId);
         if (otherBuildsProgress === 'succeeded') {
@@ -10249,10 +10256,6 @@ async function run() {
         else if (otherBuildsProgress === 'failed') {
             throw Error('some runs failed');
         }
-        const jitterSeconds = getRandomInt(1, 7);
-        // eslint-disable-next-line no-await-in-loop
-        await (0, wait_1.wait)((minIntervalSeconds ** retries + jitterSeconds) * 1000);
-        retries += 1;
     }
     await (0, exec_1.exec)(`gh pr review --approve "${pr.html_url}"`);
     await (0, exec_1.exec)(`gh pr merge --auto --merge "${pr.html_url}"`);

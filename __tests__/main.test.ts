@@ -27,7 +27,5 @@ test('test runs', () => {
   const options: cp.ExecFileSyncOptions = {
     env: process.env,
   };
-  expect(() => cp.execFileSync(np, [ip], options)).toThrowError(
-    /this action should be ran on PR only/
-  );
+  console.log(cp.execFileSync(np, [ip], options).toString());
 });
