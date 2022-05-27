@@ -1,11 +1,18 @@
 # Wait other jobs
 
-:construction:
-
 ## Why?
 
 I mainly use this for auto merge dependabot PRs without PAT(Personal Access Token).
 See [kachick/auto-merge-dependabot-pr-after-ensuring-builds](https://github.com/kachick/auto-merge-dependabot-prs-without-pat-after-workflows-passed) for further detail.
+
+This action requires following GITHUB_TOKEN permissions.
+
+```yaml
+permissions:
+  contents: write
+  checks: read
+  actions: read
+```
 
 ## Usage
 
@@ -18,6 +25,8 @@ on: pull_request
 permissions:
   contents: write
   pull-requests: write
+  checks: read # For private repositories
+  actions: read # For private repositories
 
 jobs:
   auto-merge-dependabot-prs:
