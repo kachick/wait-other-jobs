@@ -10216,6 +10216,8 @@ async function run() {
     }
     const { repo: { repo, owner }, payload: { head: sha }, } = github_1.context;
     if (!(typeof sha === 'string')) {
+        (0, core_1.info)(JSON.stringify(github_1.context.payload.head));
+        (0, core_1.info)(typeof sha);
         throw Error('github context has unexpected format: missing context.payload.head.sha');
     }
     const checkRunsParams = {

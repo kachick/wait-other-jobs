@@ -58,6 +58,8 @@ async function run(): Promise<void> {
     payload: { head: sha },
   } = context;
   if (!(typeof sha === 'string')) {
+    info(JSON.stringify(context.payload.head));
+    info(typeof sha);
     throw Error('github context has unexpected format: missing context.payload.head.sha');
   }
 
