@@ -3,7 +3,6 @@
 ## Why?
 
 I mainly use this for auto merge dependabot PRs without PAT(Personal Access Token).
-See [kachick/auto-merge-dependabot-pr-after-ensuring-builds](https://github.com/kachick/auto-merge-dependabot-prs-without-pat-after-workflows-passed) for further detail.
 
 This action requires following GITHUB_TOKEN permissions.
 
@@ -16,7 +15,7 @@ permissions:
 
 ## Usage
 
-Below is an typical usecase.
+Below is a typical usecase.
 
 ```yaml
 name: Auto merge dependabot PRs if passed other jobs
@@ -25,8 +24,8 @@ on: pull_request
 permissions:
   contents: write
   pull-requests: write
-  checks: read # For private repositories
-  actions: read # For private repositories
+  # checks: read # For private repositories
+  # actions: read # For private repositories
 
 jobs:
   auto-merge-dependabot-prs:
@@ -60,3 +59,8 @@ You can adjust status polling interval as below.
           min-interval-seconds: 300 # default 30
 ```
 
+[An actual example is here](https://github.com/kachick/rspec-matchers-power_assert_matchers/blob/650a0ef0c290d42cd0a70ef7c011de2c3777c966/.github/workflows/auto-merge-dependabot-prs.yml)
+
+# Why using for dependabot auto-merge?
+
+I used a way to comment `@dependabot merge`. This is simple to ensure CI passed. However it requires PAT(Personal Access Token). [Current PAT can't be reduced the permission scope to repository.](https://github.community/t/limiting-scope-of-a-pat-to-a-single-repository/3129) It is all. So this action provides another way. It checks other jobs statuses.
