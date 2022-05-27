@@ -1,6 +1,9 @@
 name: 'wait-other-jobs'
 description: 'Wait finishes for other jobs in GitHub Actions. When they have been finished, this step exit 0 or 1.'
 author: 'Kenichi Kamiya <kachick1@gmail.com>'
+branding:
+  icon: 'check-circle'
+  color: 'green'
 inputs:
   github-token:
     description: 'GitHub token (Basically PAT is needless. Passing GITHUB_TOKEN is enough.)'
