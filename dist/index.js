@@ -10214,11 +10214,18 @@ async function run() {
     if (!pr) {
         throw Error('this action should be ran on PR only');
     }
-    const { ref, repo: { repo, owner }, } = github_1.context;
+    const { ref, repo: { repo, owner }, sha, } = github_1.context;
+    // TODO: Remove before releasing v1
+    (0, core_1.info)('context.ref');
+    (0, core_1.info)(ref);
+    (0, core_1.info)('context.sha');
+    (0, core_1.info)(sha);
+    (0, core_1.info)('context');
+    (0, core_1.info)(JSON.stringify(github_1.context));
     const checkRunsParams = {
         owner,
         repo,
-        ref,
+        ref: sha,
     };
     // "Exponential backoff and jitter"
     let retries = 0;
