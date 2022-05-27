@@ -1,14 +1,10 @@
-name: 'Auto merge dependabot PRs without PAT after all workflows passed'
-description: 'Wait finishes for other GitHub Actions. When they have been succeeded, dependabot will merge own PR'
+name: 'wait-other-jobs'
+description: 'Wait finishes for other jobs in GitHub Actions. When they have been finished, this step exit 0 or 1.'
 author: 'Kenichi Kamiya <kachick1@gmail.com>'
 inputs:
   github-token:
-    description: 'GitHub token (DO "NOT" USE PAT)'
+    description: 'GitHub token (Basically PAT is needless. Passing GITHUB_TOKEN is enough.)'
     required: true
-  merging-strategy:
-    description: 'merge or squash'
-    required: false
-    default: 'squash'
   min-interval-seconds:
     description: 'Wait this interval or the multiplied value with jitter for workflows check'
     required: false
