@@ -54,21 +54,21 @@ async function run(): Promise<void> {
   }
 
   const {
-    ref,
     repo: { repo, owner },
-    sha,
+    payload: { head },
   } = context;
-  // TODO: Remove before releasing v1
-  info('context.ref');
-  info(ref);
-  info('context.sha');
-  info(sha);
-  info('context');
-  info(JSON.stringify(context));
+  if (!(typeof head === 'object')) {
+    throw Error('github context has unexpected format: missing context.payload.head');
+  }
+  const { sha } = head;
+  if (!(typeof sha === 'string')) {
+    throw Error('github context has unexpected format: missing context.payload.head.sha');
+  }
 
   const checkRunsParams: CheckRunsParameters = {
     owner,
     repo,
+    // THis `ref` can't use context.ref and context.sha
     ref: sha,
   };
 
