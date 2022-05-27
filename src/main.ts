@@ -119,6 +119,8 @@ async function run(): Promise<void> {
     } else if (otherBuildsProgress === 'failed') {
       info('some jobs failed');
       process.exit(1);
+    } else {
+      info(`some jobs still in progress: ${attempts} times checked`);
     }
   }
 }

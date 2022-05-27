@@ -12,9 +12,9 @@ on:
 
 permissions:
   contents: write
-  # checks: read
+  checks: read
   actions: read
-  pull-requests: read
+  # pull-requests: read
 
 jobs:
   validate: # make sure the action works on a clean machine without building
