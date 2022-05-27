@@ -8978,6 +8978,9 @@ async function run() {
             (0, core_1.info)('some jobs failed');
             process.exit(1);
         }
+        else {
+            (0, core_1.info)(`some jobs still in progress: ${attempts} times checked`);
+        }
     }
 }
 run();

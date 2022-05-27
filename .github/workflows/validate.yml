@@ -12,7 +12,8 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
+  checks: read
+  actions: read
 
 jobs:
   validate: # make sure the action works on a clean machine without building
@@ -23,5 +24,3 @@ jobs:
       - uses: ./
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
