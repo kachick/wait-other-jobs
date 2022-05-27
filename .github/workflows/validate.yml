@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  checks: read
 
 jobs:
   validate: # make sure the action works on a clean machine without building
