@@ -8939,7 +8939,6 @@ async function getOtherRunsStatus(params, ownRunID) {
     return 'in_progress';
 }
 async function run() {
-    // if
     const { repo: { repo, owner }, payload, runId, sha, } = github_1.context;
     const pr = payload.pull_request;
     let commitSha = sha;

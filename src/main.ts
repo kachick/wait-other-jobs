@@ -72,7 +72,6 @@ async function getOtherRunsStatus(
 }
 
 async function run(): Promise<void> {
-  // if
   const {
     repo: { repo, owner },
     payload,
