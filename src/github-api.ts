@@ -29,7 +29,7 @@ type CheckRunsSummary = Pick<
   'id' | 'status' | 'conclusion' | 'started_at' | 'completed_at' | 'html_url' | 'name'
 >;
 
-function isOkay(conclusion: CheckRunsSummary['conclusion']): boolean {
+function isAcceptable(conclusion: CheckRunsSummary['conclusion']): boolean {
   return conclusion === 'success' || conclusion === 'skipped';
 }
 
@@ -51,7 +51,7 @@ export async function fetchJobIDs(
   );
 }
 
-export async function fetchRunSummaries(
+async function fetchRunSummaries(
   octokit: Octokit,
   params: Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>
 ): Promise<CheckRunsSummary[]> {
@@ -107,7 +107,7 @@ export async function fetchOtherRunStatus(
   }
   // Intentional use `>=` instead of `===` to prevent infinite loop
   if (otherRelatedCompletedRuns.length >= otherRelatedRuns.length) {
-    return otherRelatedCompletedRuns.every((summary) => isOkay(summary.conclusion))
+    return otherRelatedCompletedRuns.every((summary) => isAcceptable(summary.conclusion))
       ? 'succeeded'
       : 'failed';
   }

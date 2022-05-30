@@ -7,7 +7,7 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.fetchOtherRunStatus = exports.fetchRunSummaries = exports.fetchJobIDs = void 0;
+exports.fetchOtherRunStatus = exports.fetchJobIDs = void 0;
 const core_1 = __nccwpck_require__(2186);
 const console_1 = __nccwpck_require__(6206);
 // REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
@@ -17,7 +17,7 @@ const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/j
 // At 2022-05-27, GitHub does not provide this feature in their v4(GraphQL). So using v3(REST).
 // Track the development status here https://github.community/t/graphql-check-runs/14449
 const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
-function isOkay(conclusion) {
+function isAcceptable(conclusion) {
     return conclusion === 'success' || conclusion === 'skipped';
 }
 async function fetchJobIDs(octokit, params) {
@@ -50,7 +50,6 @@ async function fetchRunSummaries(octokit, params) {
         name,
     }))(checkRun)));
 }
-exports.fetchRunSummaries = fetchRunSummaries;
 async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
     const checkRunSummaries = await fetchRunSummaries(octokit, params);
     if ((0, core_1.isDebug)()) {
@@ -66,7 +65,7 @@ async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
     }
     // Intentional use `>=` instead of `===` to prevent infinite loop
     if (otherRelatedCompletedRuns.length >= otherRelatedRuns.length) {
-        return otherRelatedCompletedRuns.every((summary) => isOkay(summary.conclusion))
+        return otherRelatedCompletedRuns.every((summary) => isAcceptable(summary.conclusion))
             ? 'succeeded'
             : 'failed';
     }
