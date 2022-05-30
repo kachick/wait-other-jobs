@@ -17,6 +17,7 @@ jobs:
         uses: dependabot/fetch-metadata@v1.3.1
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
+      - uses: actions/checkout@v3
       - name: Wait other jobs are passed or failed
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         uses: ./
