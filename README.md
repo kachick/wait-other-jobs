@@ -1,5 +1,7 @@
 # Wait other jobs
 
+[![Test & Lint](https://github.com/kachick/wait-other-jobs/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/test.yml)
+
 This action waits all GitHub Action jobs even if they are running in other workflows.  
 When some jobs failed, this action exit with NON 0 value. Otherwise exit with 0.
 
