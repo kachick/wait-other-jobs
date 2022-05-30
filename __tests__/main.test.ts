@@ -59,7 +59,7 @@ test('interval will be like a cheap exponential backoff', async () => {
 
 // shows how the runner will run a javascript action with env / stdout protocol
 test('runs', () => {
-  env['INPUT_GITHUB-TOKEN'] = 'dummy';
+  env['INPUT_GITHUB-TOKEN'] = 'DUMMY_GITHUB_TOKEN-32191280-2027-45a4-b1c1-1050e0054bfc';
   env['INPUT_MIN-INTERVAL-SECONDS'] = '30';
   env['INPUT_DRY-RUN'] = 'true';
   env['GITHUB_REPOSITORY'] = 'kachick/wait-other-jobs';
@@ -70,7 +70,6 @@ test('runs', () => {
     env,
   };
   const output = execFileSync(np, [ip], options).toString();
-  expect(JSON.parse(output)).toMatchObject({
-    ownRunId: 2408217435,
-  });
+  expect(output).toMatch(/\b2408217435\b/);
+  expect(output).toMatch(/::add-mask::DUMMY_GITHUB_TOKEN-32191280-2027-45a4-b1c1-1050e0054bfc/);
 });

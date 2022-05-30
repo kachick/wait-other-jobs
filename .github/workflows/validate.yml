@@ -29,7 +29,7 @@ jobs:
   validate: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' }}
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v3
       - uses: ./

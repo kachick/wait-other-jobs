@@ -1,9 +1,10 @@
-import { info } from '@actions/core';
+import { info, isDebug } from '@actions/core';
 import type { getOctokit } from '@actions/github';
 import type { Endpoints } from '@octokit/types';
+import { debug } from 'console';
 
 // No need to keep as same as GitHub responses so We can change the definition.
-export type OtherRunsStatus = 'in_progress' | 'succeeded' | 'failed';
+type OtherRunsStatus = 'in_progress' | 'succeeded' | 'failed';
 
 type Octokit = ReturnType<typeof getOctokit>;
 
@@ -27,6 +28,10 @@ type CheckRunsSummary = Pick<
   CheckRunsResponse['data']['check_runs'][number],
   'id' | 'status' | 'conclusion' | 'started_at' | 'completed_at' | 'html_url' | 'name'
 >;
+
+function isOkay(conclusion: CheckRunsSummary['conclusion']): boolean {
+  return conclusion === 'success' || conclusion === 'skipped';
+}
 
 export async function getJobIDs(
   octokit: Octokit,
@@ -76,7 +81,9 @@ export async function getOtherRunsStatus(
         }))(checkRun)
       )
   );
-  info(JSON.stringify(checkRunSummaries, null, 2));
+  if (isDebug()) {
+    debug(JSON.stringify(checkRunSummaries, null, 2));
+  }
 
   const otherRelatedRuns = checkRunSummaries.flatMap<CheckRunsSummary>((summary) =>
     ownJobIDs.has(summary.id) ? [] : [summary]
@@ -85,17 +92,15 @@ export async function getOtherRunsStatus(
   for (const summary of otherRelatedRuns) {
     if (summary.status === 'completed') {
       otherRelatedCompletedRuns.push(summary);
-    } else {
-      info(
-        `${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`
-      );
     }
+
+    info(
+      `${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`
+    );
   }
   // Intentional use `>=` instead of `===` to prevent infinite loop
   if (otherRelatedCompletedRuns.length >= otherRelatedRuns.length) {
-    return otherRelatedCompletedRuns.every(
-      (summary) => summary.conclusion === 'success' || summary.conclusion === 'skipped'
-    )
+    return otherRelatedCompletedRuns.every((summary) => isOkay(summary.conclusion))
       ? 'succeeded'
       : 'failed';
   }
