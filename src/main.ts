@@ -10,14 +10,13 @@ import { calculateIntervalMilliseconds, wait } from './wait';
 // Track the development status here https://github.community/t/graphql-check-runs/14449
 const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs' as const;
 type CheckRunsRoute = typeof checkRunsRoute;
-type CheckRunsResponse = Endpoints[CheckRunsRoute]['response'];
 type CheckRunsParameters = Endpoints[CheckRunsRoute]['parameters'];
 
 // REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
 // GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
 const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs' as const;
 type ListWorkflowRunsRoute = typeof listWorkflowRunsRoute;
-type ListWorkflowRunsResponse = Endpoints[ListWorkflowRunsRoute]['response'];
+type ListWorkflowRunsParams = Endpoints[ListWorkflowRunsRoute]['parameters'];
 
 const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
 
@@ -33,36 +32,54 @@ const octokit = getOctokit(githubToken);
 type OtherRunsStatus = 'in_progress' | 'succeeded' | 'failed';
 async function getOtherRunsStatus(
   params: CheckRunsParameters,
-  ownRunID: ListWorkflowRunsResponse['data']['jobs'][number]['id']
+  ownRunID: ListWorkflowRunsParams['run_id']
 ): Promise<OtherRunsStatus> {
-  const listWorkflowRunsResp: ListWorkflowRunsResponse = await octokit.request(
-    listWorkflowRunsRoute,
+  const ownJobIDs = new Set(
+    await octokit.paginate(
+      octokit.rest.actions.listJobsForWorkflowRun,
+      {
+        owner: params.owner,
+        repo: params.repo,
+        // eslint-disable-next-line camelcase
+        run_id: ownRunID,
+        // eslint-disable-next-line camelcase
+        per_page: 100,
+        filter: 'latest',
+      },
+      (resp) => resp.data.jobs.map((job) => job.id)
+    )
+  );
+  const checkRunSummaries = await octokit.paginate(
+    octokit.rest.checks.listForRef,
     {
-      owner: params.owner,
-      repo: params.repo,
+      ...params,
       // eslint-disable-next-line camelcase
-      run_id: ownRunID,
-      // eslint-disable-next-line camelcase
-      per_page: 4200, // Rough implementation to avoid pagination possibilities
+      per_page: 100,
       filter: 'latest',
-    }
+    },
+    (resp) =>
+      resp.data.check_runs.map((checkRun) =>
+        // eslint-disable-next-line camelcase
+        (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
+          id,
+          status,
+          conclusion,
+          // eslint-disable-next-line camelcase
+          started_at,
+          // eslint-disable-next-line camelcase
+          completed_at,
+          // eslint-disable-next-line camelcase
+          html_url,
+          name,
+        }))(checkRun)
+      )
   );
-  const ownJobIDs = listWorkflowRunsResp.data.jobs.map((job) => job.id);
-  const checkRunsResp: CheckRunsResponse = await octokit.request(checkRunsRoute, {
-    ...params,
-    filter: 'latest',
-  });
 
-  const otherRelatedRuns = checkRunsResp.data.check_runs.filter(
-    (checkRun) => !ownJobIDs.includes(checkRun.id)
-  );
+  const otherRelatedRuns = checkRunSummaries.filter((checkRun) => !ownJobIDs.has(checkRun.id));
   const otherRelatedCompletedRuns = otherRelatedRuns.filter(
     (checkRun) => checkRun.status === 'completed'
   );
-  const runsSummary = otherRelatedRuns.map((checkRun) =>
-    (({ id, status, conclusion }) => ({ id, status, conclusion }))(checkRun)
-  );
-  info(JSON.stringify({ ownRunID, ownJobIDs, ...runsSummary }));
+  info(JSON.stringify({ ownRunID, ownJobIDs, checkRunSummaries }));
   if (otherRelatedCompletedRuns.length === otherRelatedRuns.length) {
     return otherRelatedCompletedRuns.every(
       (checkRun) => checkRun.conclusion === 'success' || checkRun.conclusion === 'skipped'

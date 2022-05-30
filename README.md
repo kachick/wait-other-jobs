@@ -1,5 +1,7 @@
 # Wait other jobs
 
+This action waits all GitHub Action jobs even if they are in other workflows
+
 ## Why?
 
 I mainly use this for auto merge dependabot PRs without PAT(Personal Access Token).

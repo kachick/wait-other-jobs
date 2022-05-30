@@ -8913,24 +8913,37 @@ const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds',
 const isDryRun = (0, core_1.getInput)('dry-run', { required: true, trimWhitespace: true }).toLowerCase() === 'true';
 const octokit = (0, github_1.getOctokit)(githubToken);
 async function getOtherRunsStatus(params, ownRunID) {
-    const listWorkflowRunsResp = await octokit.request(listWorkflowRunsRoute, {
+    const ownJobIDs = new Set(await octokit.paginate(octokit.rest.actions.listJobsForWorkflowRun, {
         owner: params.owner,
         repo: params.repo,
         // eslint-disable-next-line camelcase
         run_id: ownRunID,
         // eslint-disable-next-line camelcase
-        per_page: 4200,
+        per_page: 100,
         filter: 'latest',
-    });
-    const ownJobIDs = listWorkflowRunsResp.data.jobs.map((job) => job.id);
-    const checkRunsResp = await octokit.request(checkRunsRoute, {
+    }, (resp) => resp.data.jobs.map((job) => job.id)));
+    const checkRunSummaries = await octokit.paginate(octokit.rest.checks.listForRef, {
         ...params,
+        // eslint-disable-next-line camelcase
+        per_page: 100,
         filter: 'latest',
-    });
-    const otherRelatedRuns = checkRunsResp.data.check_runs.filter((checkRun) => !ownJobIDs.includes(checkRun.id));
+    }, (resp) => resp.data.check_runs.map((checkRun) => 
+    // eslint-disable-next-line camelcase
+    (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
+        id,
+        status,
+        conclusion,
+        // eslint-disable-next-line camelcase
+        started_at,
+        // eslint-disable-next-line camelcase
+        completed_at,
+        // eslint-disable-next-line camelcase
+        html_url,
+        name,
+    }))(checkRun)));
+    const otherRelatedRuns = checkRunSummaries.filter((checkRun) => !ownJobIDs.has(checkRun.id));
     const otherRelatedCompletedRuns = otherRelatedRuns.filter((checkRun) => checkRun.status === 'completed');
-    const runsSummary = otherRelatedRuns.map((checkRun) => (({ id, status, conclusion }) => ({ id, status, conclusion }))(checkRun));
-    (0, core_1.info)(JSON.stringify({ ownRunID, ownJobIDs, ...runsSummary }));
+    (0, core_1.info)(JSON.stringify({ ownRunID, ownJobIDs, checkRunSummaries }));
     if (otherRelatedCompletedRuns.length === otherRelatedRuns.length) {
         return otherRelatedCompletedRuns.every((checkRun) => checkRun.conclusion === 'success' || checkRun.conclusion === 'skipped')
             ? 'succeeded'
