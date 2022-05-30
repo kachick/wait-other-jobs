@@ -9052,8 +9052,6 @@ async function run() {
             }
         }
         (0, core_1.endGroup)();
-        shouldStop = true;
-        (0, core_1.setFailed)('Failed to ensure the behavior by kachick.');
         if (shouldStop) {
             break;
         }

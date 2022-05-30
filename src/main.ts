@@ -108,9 +108,6 @@ async function run(): Promise<void> {
     }
     endGroup();
 
-    shouldStop = true;
-    setFailed('Failed to ensure the behavior by kachick.');
-
     if (shouldStop) {
       break;
     }
