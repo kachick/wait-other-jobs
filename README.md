@@ -66,3 +66,8 @@ You can adjust status polling interval as below.
 # Why using for dependabot auto-merge?
 
 I used a way to comment `@dependabot merge`. This is simple to ensure CI passed. However it requires PAT(Personal Access Token). [Current PAT can't be reduced the permission scope to repository.](https://github.community/t/limiting-scope-of-a-pat-to-a-single-repository/3129) It is all. So this action provides another way. It checks other jobs statuses.
+
+# Development
+
+Using typescript@next for native ESM on Node.js
+So recommend to enable https://github.com/microsoft/vscode-typescript-next/tree/487aee08c23a8f7364825a821fa95baf17c184d4#enabling on your vscode

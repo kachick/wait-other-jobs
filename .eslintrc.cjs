@@ -11,9 +11,16 @@ module.exports = {
     'prettier',
     'plugin:github/recommended',
   ],
+  overrides: [
+    {
+      files: ['__tests__/**/*.ts'],
+      plugins: ['jest'],
+      extends: ['plugin:jest/recommended'],
+      rules: { 'filenames/match-regex': 'off' },
+    },
+  ],
   parser: '@typescript-eslint/parser',
-  plugins: ['jest', '@typescript-eslint', 'import', 'prettier', 'github'],
-  // rules: {},
+  plugins: ['@typescript-eslint', 'import', 'prettier', 'github'],
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module',
