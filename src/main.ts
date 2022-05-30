@@ -75,14 +75,23 @@ async function getOtherRunsStatus(
       )
   );
 
-  const otherRelatedRuns = checkRunSummaries.filter((checkRun) => !ownJobIDs.has(checkRun.id));
-  const otherRelatedCompletedRuns = otherRelatedRuns.filter(
-    (checkRun) => checkRun.status === 'completed'
-  );
-  info(JSON.stringify({ ownRunID, ownJobIDs: [...ownJobIDs], checkRunSummaries }));
+  const otherRelatedRuns = checkRunSummaries.filter((summary) => !ownJobIDs.has(summary.id));
+  const otherRelatedCompletedRuns: typeof otherRelatedRuns = [];
+  // const otherRelatedCompletedRuns = otherRelatedRuns.filter(
+  //   (summary) => summary.status === 'completed'
+  // );
+  info(JSON.stringify({ ownRunID, ownJobIDs: [...ownJobIDs], checkRunSummaries }, null, 2));
+  // eslint-disable-next-line no-restricted-syntax
+  for (const summary of otherRelatedRuns) {
+    if (summary.status === 'completed') {
+      otherRelatedCompletedRuns.push(summary);
+    } else {
+      info(`${summary.name} - ${summary.id}: ${summary.html_url}`);
+    }
+  }
   if (otherRelatedCompletedRuns.length === otherRelatedRuns.length) {
     return otherRelatedCompletedRuns.every(
-      (checkRun) => checkRun.conclusion === 'success' || checkRun.conclusion === 'skipped'
+      (summary) => summary.conclusion === 'success' || summary.conclusion === 'skipped'
     )
       ? 'succeeded'
       : 'failed';
@@ -104,7 +113,7 @@ async function run(): Promise<void> {
     if (typeof head === 'object' && 'sha' in head) {
       commitSha = head.sha;
     } else {
-      debug(JSON.stringify(pr));
+      debug(JSON.stringify(pr, null, 2));
       throw Error(
         'github context has unexpected format: missing context.payload.pull_request.head.sha'
       );
