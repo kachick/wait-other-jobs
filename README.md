@@ -78,5 +78,5 @@ So this action provides another way. It checks other jobs statuses.
 
 # Development
 
-Using typescript@next for native ESM on Node.js
+Using typescript@next for native ESM on Node.js.  
 So recommend to enable [microsoft/vscode-typescript-next](https://github.com/microsoft/vscode-typescript-next/tree/487aee08c23a8f7364825a821fa95baf17c184d4#enabling) on your vscode.
