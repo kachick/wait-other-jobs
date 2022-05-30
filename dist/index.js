@@ -8902,27 +8902,26 @@ const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
 // eslint-disable-next-line import/no-unresolved
 const wait_js_1 = __nccwpck_require__(5817);
+// REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
+// GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
+const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs';
 // REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
 // At 2022-05-27, GitHub does not provide this feature in their v4(GraphQL). So using v3(REST).
 // Track the development status here https://github.community/t/graphql-check-runs/14449
 const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
-// REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
-// GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
-const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs';
 const githubToken = (0, core_1.getInput)('github-token', { required: true, trimWhitespace: false });
 const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds', { required: true, trimWhitespace: true }), 10);
 const isDryRun = (0, core_1.getInput)('dry-run', { required: true, trimWhitespace: true }).toLowerCase() === 'true';
 const octokit = (0, github_1.getOctokit)(githubToken);
-async function getOtherRunsStatus(params, ownRunID) {
-    const ownJobIDs = new Set(await octokit.paginate(octokit.rest.actions.listJobsForWorkflowRun, {
-        owner: params.owner,
-        repo: params.repo,
-        // eslint-disable-next-line camelcase
-        run_id: ownRunID,
+async function getJobIDs(params) {
+    return new Set(await octokit.paginate(octokit.rest.actions.listJobsForWorkflowRun, {
+        ...params,
         // eslint-disable-next-line camelcase
         per_page: 100,
         filter: 'latest',
     }, (resp) => resp.data.map((job) => job.id)));
+}
+async function getOtherRunsStatus(params, ownJobIDs) {
     const checkRunSummaries = await octokit.paginate(octokit.rest.checks.listForRef, {
         ...params,
         // eslint-disable-next-line camelcase
@@ -8942,7 +8941,7 @@ async function getOtherRunsStatus(params, ownRunID) {
         html_url,
         name,
     }))(checkRun)));
-    (0, core_1.info)(JSON.stringify({ ownRunID, ownJobIDs: [...ownJobIDs], checkRunSummaries }, null, 2));
+    (0, core_1.info)(JSON.stringify(checkRunSummaries, null, 2));
     const otherRelatedRuns = checkRunSummaries.flatMap((summary) => ownJobIDs.has(summary.id) ? [] : [summary]);
     const otherRelatedCompletedRuns = [];
     for (const summary of otherRelatedRuns) {
@@ -8975,10 +8974,9 @@ async function run() {
             throw Error('github context has unexpected format: missing context.payload.pull_request.head.sha');
         }
     }
-    const checkRunsParams = {
+    const repositoryInfo = {
         owner,
         repo,
-        ref: commitSha,
     };
     if (isDryRun) {
         return;
@@ -8986,10 +8984,13 @@ async function run() {
     // "Exponential backoff and jitter"
     let attempts = 0;
     let otherBuildsProgress = 'in_progress';
+    // eslint-disable-next-line camelcase
+    const ownJobIDs = await getJobIDs({ ...repositoryInfo, run_id: runId });
+    (0, core_1.info)(JSON.stringify({ ownRunId: runId, ownJobIDs: [...ownJobIDs] }, null, 2));
     for (;;) {
         attempts += 1;
         await (0, wait_js_1.wait)((0, wait_js_1.calculateIntervalMilliseconds)(minIntervalSeconds, attempts));
-        otherBuildsProgress = await getOtherRunsStatus(checkRunsParams, runId);
+        otherBuildsProgress = await getOtherRunsStatus({ ...repositoryInfo, ref: commitSha }, ownJobIDs);
         if (otherBuildsProgress === 'succeeded') {
             (0, core_1.info)('all jobs passed');
             break;
