@@ -9,6 +9,7 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getOtherRunsStatus = exports.getJobIDs = void 0;
 const core_1 = __nccwpck_require__(2186);
+const console_1 = __nccwpck_require__(6206);
 // REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
 // GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
 const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs';
@@ -45,7 +46,9 @@ async function getOtherRunsStatus(octokit, params, ownJobIDs) {
         html_url,
         name,
     }))(checkRun)));
-    (0, core_1.info)(JSON.stringify(checkRunSummaries, null, 2));
+    if ((0, core_1.isDebug)()) {
+        (0, console_1.debug)(JSON.stringify(checkRunSummaries, null, 2));
+    }
     const otherRelatedRuns = checkRunSummaries.flatMap((summary) => ownJobIDs.has(summary.id) ? [] : [summary]);
     const otherRelatedCompletedRuns = [];
     for (const summary of otherRelatedRuns) {
@@ -8809,6 +8812,14 @@ module.exports = require("assert");
 
 /***/ }),
 
+/***/ 6206:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("console");
+
+/***/ }),
+
 /***/ 2361:
 /***/ ((module) => {
 
@@ -8973,6 +8984,7 @@ const github_api_js_1 = __nccwpck_require__(2565);
 // eslint-disable-next-line import/no-unresolved
 const wait_js_1 = __nccwpck_require__(5817);
 async function run() {
+    (0, core_1.startGroup)('Setup variables');
     const { repo: { repo, owner }, payload, runId, sha, } = github_1.context;
     const pr = payload.pull_request;
     let commitSha = sha;
@@ -8982,8 +8994,12 @@ async function run() {
             commitSha = head.sha;
         }
         else {
-            (0, core_1.debug)(JSON.stringify(pr, null, 2));
-            throw Error('github context has unexpected format: missing context.payload.pull_request.head.sha');
+            if ((0, core_1.isDebug)()) {
+                (0, core_1.debug)(JSON.stringify(pr, null, 2));
+            }
+            (0, core_1.error)('github context has unexpected format: missing context.payload.pull_request.head.sha');
+            (0, core_1.setFailed)('unexpected failure occurred');
+            return;
         }
     }
     (0, core_1.info)(JSON.stringify({ triggeredCommitSha: commitSha, ownRunId: runId }, null, 2));
@@ -8992,20 +9008,24 @@ async function run() {
         repo,
     };
     const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds', { required: true, trimWhitespace: true }), 10);
-    const isDryRun = (0, core_1.getInput)('dry-run', { required: true, trimWhitespace: true }).toLowerCase() === 'true';
+    const isDryRun = (0, core_1.getBooleanInput)('dry-run', { required: true, trimWhitespace: true });
     const githubToken = (0, core_1.getInput)('github-token', { required: true, trimWhitespace: false });
+    (0, core_1.setSecret)(githubToken);
     const octokit = (0, github_1.getOctokit)(githubToken);
     let attempts = 0;
     let shouldStop = false;
     let otherRunsStatus = 'in_progress';
-    let existFailures = false;
+    (0, core_1.endGroup)();
     if (isDryRun) {
         return;
     }
+    (0, core_1.startGroup)('Get own job_id');
     // eslint-disable-next-line camelcase
     const ownJobIDs = await (0, github_api_js_1.getJobIDs)(octokit, { ...repositoryInfo, run_id: runId });
     (0, core_1.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
+    (0, core_1.endGroup)();
     for (;;) {
+        (0, core_1.startGroup)(`Polling statuses: ${attempts} times`);
         attempts += 1;
         // "Exponential backoff and jitter"
         await (0, wait_js_1.wait)((0, wait_js_1.calculateIntervalMilliseconds)(minIntervalSeconds, attempts));
@@ -9018,12 +9038,11 @@ async function run() {
             }
             case 'failed': {
                 shouldStop = true;
-                existFailures = true;
-                (0, core_1.info)('some jobs failed');
+                (0, core_1.setFailed)('some jobs failed');
                 break;
             }
             case 'in_progress': {
-                (0, core_1.info)(`some jobs still in progress: ${attempts} times checked`);
+                (0, core_1.info)('some jobs still in progress');
                 break;
             }
             default: {
@@ -9032,13 +9051,10 @@ async function run() {
                 (0, core_1.info)(`got unexpected status: ${unexpectedStatus}`);
             }
         }
+        (0, core_1.endGroup)();
         if (shouldStop) {
             break;
         }
-    }
-    if (existFailures) {
-        // https://github.com/openbsd/src/blob/2bcc3feb777e607cc7bedb460a2f5e5ff5cb1c50/include/sysexits.h#L99
-        process.exit(64);
     }
 }
 run();

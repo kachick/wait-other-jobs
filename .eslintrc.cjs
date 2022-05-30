@@ -19,6 +19,9 @@ module.exports = {
       rules: { 'filenames/match-regex': 'off' },
     },
   ],
+  rules: {
+    'i18n-text/no-en': 'off',
+  },
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'import', 'prettier', 'github'],
   parserOptions: {
