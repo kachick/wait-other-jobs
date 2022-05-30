@@ -4,5 +4,6 @@
     "esbenp.prettier-vscode",
     "redhat.vscode-yaml",
     "editorconfig.editorconfig",
+    "ms-vscode.vscode-typescript-next"
   ]
 }

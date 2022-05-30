@@ -8900,7 +8900,8 @@ var exports = __webpack_exports__;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
-const wait_1 = __nccwpck_require__(5817);
+// eslint-disable-next-line import/no-unresolved
+const wait_js_1 = __nccwpck_require__(5817);
 // REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
 // At 2022-05-27, GitHub does not provide this feature in their v4(GraphQL). So using v3(REST).
 // Track the development status here https://github.community/t/graphql-check-runs/14449
@@ -8941,22 +8942,19 @@ async function getOtherRunsStatus(params, ownRunID) {
         html_url,
         name,
     }))(checkRun)));
-    const otherRelatedRuns = checkRunSummaries.filter((summary) => !ownJobIDs.has(summary.id));
-    const otherRelatedCompletedRuns = [];
-    // const otherRelatedCompletedRuns = otherRelatedRuns.filter(
-    //   (summary) => summary.status === 'completed'
-    // );
     (0, core_1.info)(JSON.stringify({ ownRunID, ownJobIDs: [...ownJobIDs], checkRunSummaries }, null, 2));
-    // eslint-disable-next-line no-restricted-syntax
+    const otherRelatedRuns = checkRunSummaries.flatMap((summary) => ownJobIDs.has(summary.id) ? [] : [summary]);
+    const otherRelatedCompletedRuns = [];
     for (const summary of otherRelatedRuns) {
         if (summary.status === 'completed') {
             otherRelatedCompletedRuns.push(summary);
         }
         else {
-            (0, core_1.info)(`${summary.name} - ${summary.id}: ${summary.html_url}`);
+            (0, core_1.info)(`${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`);
         }
     }
-    if (otherRelatedCompletedRuns.length === otherRelatedRuns.length) {
+    // Intentional use `>=` instead of `===` to prevent infinite loop
+    if (otherRelatedCompletedRuns.length >= otherRelatedRuns.length) {
         return otherRelatedCompletedRuns.every((summary) => summary.conclusion === 'success' || summary.conclusion === 'skipped')
             ? 'succeeded'
             : 'failed';
@@ -8990,9 +8988,7 @@ async function run() {
     let otherBuildsProgress = 'in_progress';
     for (;;) {
         attempts += 1;
-        // eslint-disable-next-line no-await-in-loop
-        await (0, wait_1.wait)((0, wait_1.calculateIntervalMilliseconds)(minIntervalSeconds, attempts));
-        // eslint-disable-next-line no-await-in-loop
+        await (0, wait_js_1.wait)((0, wait_js_1.calculateIntervalMilliseconds)(minIntervalSeconds, attempts));
         otherBuildsProgress = await getOtherRunsStatus(checkRunsParams, runId);
         if (otherBuildsProgress === 'succeeded') {
             (0, core_1.info)('all jobs passed');

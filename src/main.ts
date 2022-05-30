@@ -1,9 +1,10 @@
 import { debug, info, getInput } from '@actions/core';
 import { getOctokit, context } from '@actions/github';
 
-import { Endpoints } from '@octokit/types';
+import type { Endpoints } from '@octokit/types';
 
-import { calculateIntervalMilliseconds, wait } from './wait';
+// eslint-disable-next-line import/no-unresolved
+import { calculateIntervalMilliseconds, wait } from './wait.js';
 
 // REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
 // At 2022-05-27, GitHub does not provide this feature in their v4(GraphQL). So using v3(REST).
@@ -11,6 +12,11 @@ import { calculateIntervalMilliseconds, wait } from './wait';
 const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs' as const;
 type CheckRunsRoute = typeof checkRunsRoute;
 type CheckRunsParameters = Endpoints[CheckRunsRoute]['parameters'];
+type CheckRunsResponse = Endpoints[CheckRunsRoute]['response'];
+type CheckRunsSummary = Pick<
+  CheckRunsResponse['data']['check_runs'][number],
+  'id' | 'status' | 'conclusion' | 'started_at' | 'completed_at' | 'html_url' | 'name'
+>;
 
 // REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
 // GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
@@ -49,7 +55,7 @@ async function getOtherRunsStatus(
       (resp) => resp.data.map((job) => job.id)
     )
   );
-  const checkRunSummaries = await octokit.paginate(
+  const checkRunSummaries: CheckRunsSummary[] = await octokit.paginate(
     octokit.rest.checks.listForRef,
     {
       ...params,
@@ -74,22 +80,23 @@ async function getOtherRunsStatus(
         }))(checkRun)
       )
   );
-
-  const otherRelatedRuns = checkRunSummaries.filter((summary) => !ownJobIDs.has(summary.id));
-  const otherRelatedCompletedRuns: typeof otherRelatedRuns = [];
-  // const otherRelatedCompletedRuns = otherRelatedRuns.filter(
-  //   (summary) => summary.status === 'completed'
-  // );
   info(JSON.stringify({ ownRunID, ownJobIDs: [...ownJobIDs], checkRunSummaries }, null, 2));
-  // eslint-disable-next-line no-restricted-syntax
+
+  const otherRelatedRuns = checkRunSummaries.flatMap<CheckRunsSummary>((summary) =>
+    ownJobIDs.has(summary.id) ? [] : [summary]
+  );
+  const otherRelatedCompletedRuns: typeof otherRelatedRuns = [];
   for (const summary of otherRelatedRuns) {
     if (summary.status === 'completed') {
       otherRelatedCompletedRuns.push(summary);
     } else {
-      info(`${summary.name} - ${summary.id}: ${summary.html_url}`);
+      info(
+        `${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`
+      );
     }
   }
-  if (otherRelatedCompletedRuns.length === otherRelatedRuns.length) {
+  // Intentional use `>=` instead of `===` to prevent infinite loop
+  if (otherRelatedCompletedRuns.length >= otherRelatedRuns.length) {
     return otherRelatedCompletedRuns.every(
       (summary) => summary.conclusion === 'success' || summary.conclusion === 'skipped'
     )
@@ -136,9 +143,7 @@ async function run(): Promise<void> {
 
   for (;;) {
     attempts += 1;
-    // eslint-disable-next-line no-await-in-loop
     await wait(calculateIntervalMilliseconds(minIntervalSeconds, attempts));
-    // eslint-disable-next-line no-await-in-loop
     otherBuildsProgress = await getOtherRunsStatus(checkRunsParams, runId);
     if (otherBuildsProgress === 'succeeded') {
       info('all jobs passed');
