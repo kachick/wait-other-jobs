@@ -36,3 +36,5 @@ jobs:
         run: npm test
       - name: Ensure we can make package
         run: npm run package
+      - name: Prevent missing commits after compile
+        run: git add --intent-to-add . && git diff --exit-code
