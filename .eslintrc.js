@@ -1,21 +1,21 @@
 module.exports = {
   env: {
+    node: true,
     es2021: true,
+    'jest/globals': true,
   },
-  extends: ['airbnb-base', 'airbnb-typescript/base', 'prettier', 'plugin:github/recommended'],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'prettier',
+    'plugin:github/recommended',
+  ],
   parser: '@typescript-eslint/parser',
+  plugins: ['jest', '@typescript-eslint', 'import', 'prettier', 'github'],
+  // rules: {},
   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-  },
-  plugins: ['jest', '@typescript-eslint', 'prettier', 'github'],
-  rules: {
-    'prettier/prettier': ['error'],
-    'import/extensions': 0,
-    'import/prefer-default-export': 0,
-  },
-  parserOptions: {
-    ecmaVersion: 9,
+    ecmaVersion: 12,
     sourceType: 'module',
     project: './tsconfig.json',
   },

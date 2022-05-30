@@ -1,6 +1,7 @@
 import { debug, info, getInput } from '@actions/core';
 import { getOctokit, context } from '@actions/github';
 
+// eslint-disable-next-line import/named
 import { Endpoints } from '@octokit/types';
 
 import { calculateIntervalMilliseconds, wait } from './wait';
@@ -136,9 +137,7 @@ async function run(): Promise<void> {
 
   for (;;) {
     attempts += 1;
-    // eslint-disable-next-line no-await-in-loop
     await wait(calculateIntervalMilliseconds(minIntervalSeconds, attempts));
-    // eslint-disable-next-line no-await-in-loop
     otherBuildsProgress = await getOtherRunsStatus(checkRunsParams, runId);
     if (otherBuildsProgress === 'succeeded') {
       info('all jobs passed');
