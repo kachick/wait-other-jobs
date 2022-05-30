@@ -1,6 +1,74 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 2565:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getOtherRunsStatus = exports.getJobIDs = void 0;
+const core_1 = __nccwpck_require__(2186);
+// REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
+// GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
+const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs';
+// REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
+// At 2022-05-27, GitHub does not provide this feature in their v4(GraphQL). So using v3(REST).
+// Track the development status here https://github.community/t/graphql-check-runs/14449
+const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
+async function getJobIDs(octokit, params) {
+    return new Set(await octokit.paginate(octokit.rest.actions.listJobsForWorkflowRun, {
+        ...params,
+        // eslint-disable-next-line camelcase
+        per_page: 100,
+        filter: 'latest',
+    }, (resp) => resp.data.map((job) => job.id)));
+}
+exports.getJobIDs = getJobIDs;
+async function getOtherRunsStatus(octokit, params, ownJobIDs) {
+    const checkRunSummaries = await octokit.paginate(octokit.rest.checks.listForRef, {
+        ...params,
+        // eslint-disable-next-line camelcase
+        per_page: 100,
+        filter: 'latest',
+    }, (resp) => resp.data.map((checkRun) => 
+    // eslint-disable-next-line camelcase
+    (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
+        id,
+        status,
+        conclusion,
+        // eslint-disable-next-line camelcase
+        started_at,
+        // eslint-disable-next-line camelcase
+        completed_at,
+        // eslint-disable-next-line camelcase
+        html_url,
+        name,
+    }))(checkRun)));
+    (0, core_1.info)(JSON.stringify(checkRunSummaries, null, 2));
+    const otherRelatedRuns = checkRunSummaries.flatMap((summary) => ownJobIDs.has(summary.id) ? [] : [summary]);
+    const otherRelatedCompletedRuns = [];
+    for (const summary of otherRelatedRuns) {
+        if (summary.status === 'completed') {
+            otherRelatedCompletedRuns.push(summary);
+        }
+        else {
+            (0, core_1.info)(`${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`);
+        }
+    }
+    // Intentional use `>=` instead of `===` to prevent infinite loop
+    if (otherRelatedCompletedRuns.length >= otherRelatedRuns.length) {
+        return otherRelatedCompletedRuns.every((summary) => summary.conclusion === 'success' || summary.conclusion === 'skipped')
+            ? 'succeeded'
+            : 'failed';
+    }
+    return 'in_progress';
+}
+exports.getOtherRunsStatus = getOtherRunsStatus;
+
+
+/***/ }),
+
 /***/ 5817:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -8901,65 +8969,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
 // eslint-disable-next-line import/no-unresolved
+const github_api_js_1 = __nccwpck_require__(2565);
+// eslint-disable-next-line import/no-unresolved
 const wait_js_1 = __nccwpck_require__(5817);
-// REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
-// GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
-const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs';
-// REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
-// At 2022-05-27, GitHub does not provide this feature in their v4(GraphQL). So using v3(REST).
-// Track the development status here https://github.community/t/graphql-check-runs/14449
-const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
-const githubToken = (0, core_1.getInput)('github-token', { required: true, trimWhitespace: false });
-const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds', { required: true, trimWhitespace: true }), 10);
-const isDryRun = (0, core_1.getInput)('dry-run', { required: true, trimWhitespace: true }).toLowerCase() === 'true';
-const octokit = (0, github_1.getOctokit)(githubToken);
-async function getJobIDs(params) {
-    return new Set(await octokit.paginate(octokit.rest.actions.listJobsForWorkflowRun, {
-        ...params,
-        // eslint-disable-next-line camelcase
-        per_page: 100,
-        filter: 'latest',
-    }, (resp) => resp.data.map((job) => job.id)));
-}
-async function getOtherRunsStatus(params, ownJobIDs) {
-    const checkRunSummaries = await octokit.paginate(octokit.rest.checks.listForRef, {
-        ...params,
-        // eslint-disable-next-line camelcase
-        per_page: 100,
-        filter: 'latest',
-    }, (resp) => resp.data.map((checkRun) => 
-    // eslint-disable-next-line camelcase
-    (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
-        id,
-        status,
-        conclusion,
-        // eslint-disable-next-line camelcase
-        started_at,
-        // eslint-disable-next-line camelcase
-        completed_at,
-        // eslint-disable-next-line camelcase
-        html_url,
-        name,
-    }))(checkRun)));
-    (0, core_1.info)(JSON.stringify(checkRunSummaries, null, 2));
-    const otherRelatedRuns = checkRunSummaries.flatMap((summary) => ownJobIDs.has(summary.id) ? [] : [summary]);
-    const otherRelatedCompletedRuns = [];
-    for (const summary of otherRelatedRuns) {
-        if (summary.status === 'completed') {
-            otherRelatedCompletedRuns.push(summary);
-        }
-        else {
-            (0, core_1.info)(`${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`);
-        }
-    }
-    // Intentional use `>=` instead of `===` to prevent infinite loop
-    if (otherRelatedCompletedRuns.length >= otherRelatedRuns.length) {
-        return otherRelatedCompletedRuns.every((summary) => summary.conclusion === 'success' || summary.conclusion === 'skipped')
-            ? 'succeeded'
-            : 'failed';
-    }
-    return 'in_progress';
-}
 async function run() {
     const { repo: { repo, owner }, payload, runId, sha, } = github_1.context;
     const pr = payload.pull_request;
@@ -8979,6 +8991,10 @@ async function run() {
         owner,
         repo,
     };
+    const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds', { required: true, trimWhitespace: true }), 10);
+    const isDryRun = (0, core_1.getInput)('dry-run', { required: true, trimWhitespace: true }).toLowerCase() === 'true';
+    const githubToken = (0, core_1.getInput)('github-token', { required: true, trimWhitespace: false });
+    const octokit = (0, github_1.getOctokit)(githubToken);
     let attempts = 0;
     let shouldStop = false;
     let otherRunsStatus = 'in_progress';
@@ -8987,13 +9003,13 @@ async function run() {
         return;
     }
     // eslint-disable-next-line camelcase
-    const ownJobIDs = await getJobIDs({ ...repositoryInfo, run_id: runId });
+    const ownJobIDs = await (0, github_api_js_1.getJobIDs)(octokit, { ...repositoryInfo, run_id: runId });
     (0, core_1.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
     for (;;) {
         attempts += 1;
         // "Exponential backoff and jitter"
         await (0, wait_js_1.wait)((0, wait_js_1.calculateIntervalMilliseconds)(minIntervalSeconds, attempts));
-        otherRunsStatus = await getOtherRunsStatus({ ...repositoryInfo, ref: commitSha }, ownJobIDs);
+        otherRunsStatus = await (0, github_api_js_1.getOtherRunsStatus)(octokit, { ...repositoryInfo, ref: commitSha }, ownJobIDs);
         switch (otherRunsStatus) {
             case 'succeeded': {
                 shouldStop = true;
