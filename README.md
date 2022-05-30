@@ -1,6 +1,7 @@
 # Wait other jobs
 
-This action waits all GitHub Action jobs even if they are in other workflows
+This action waits all GitHub Action jobs even if they are in other workflows.
+When some jobs failed, this action exit with NON 0 value. Otherwise exit with 0.
 
 ## Why?
 

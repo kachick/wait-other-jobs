@@ -63,11 +63,14 @@ test('runs', () => {
   env['INPUT_MIN-INTERVAL-SECONDS'] = '30';
   env['INPUT_DRY-RUN'] = 'true';
   env['GITHUB_REPOSITORY'] = 'kachick/wait-other-jobs';
+  env['GITHUB_RUN_ID'] = '2408217435';
   const np = execPath;
   const ip = join(__dirname, '..', 'lib', 'main.js');
   const options: ExecFileSyncOptions = {
     env,
   };
   const output = execFileSync(np, [ip], options).toString();
-  expect(output).toBe('');
+  expect(JSON.parse(output)).toMatchObject({
+    ownRunId: 2408217435,
+  });
 });

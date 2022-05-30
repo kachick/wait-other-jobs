@@ -134,40 +134,62 @@ async function run(): Promise<void> {
     }
   }
 
+  info(JSON.stringify({ triggeredCommitSha: commitSha, ownRunId: runId }, null, 2));
+
   const repositoryInfo = {
     owner,
     repo,
   };
 
+  let attempts = 0;
+  let shouldStop = false;
+  let otherRunsStatus: OtherRunsStatus = 'in_progress';
+  let existFailures = false;
+
   if (isDryRun) {
     return;
   }
 
-  // "Exponential backoff and jitter"
-  let attempts = 0;
-  let otherBuildsProgress: OtherRunsStatus = 'in_progress';
-
   // eslint-disable-next-line camelcase
   const ownJobIDs = await getJobIDs({ ...repositoryInfo, run_id: runId });
-
-  info(JSON.stringify({ ownRunId: runId, ownJobIDs: [...ownJobIDs] }, null, 2));
+  info(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
 
   for (;;) {
     attempts += 1;
+    // "Exponential backoff and jitter"
     await wait(calculateIntervalMilliseconds(minIntervalSeconds, attempts));
-    otherBuildsProgress = await getOtherRunsStatus(
-      { ...repositoryInfo, ref: commitSha },
-      ownJobIDs
-    );
-    if (otherBuildsProgress === 'succeeded') {
-      info('all jobs passed');
-      break;
-    } else if (otherBuildsProgress === 'failed') {
-      info('some jobs failed');
-      process.exit(1);
-    } else {
-      info(`some jobs still in progress: ${attempts} times checked`);
+    otherRunsStatus = await getOtherRunsStatus({ ...repositoryInfo, ref: commitSha }, ownJobIDs);
+    switch (otherRunsStatus) {
+      case 'succeeded': {
+        shouldStop = true;
+        info('all jobs passed');
+        break;
+      }
+      case 'failed': {
+        shouldStop = true;
+        existFailures = true;
+        info('some jobs failed');
+        break;
+      }
+      case 'in_progress': {
+        info(`some jobs still in progress: ${attempts} times checked`);
+        break;
+      }
+      default: {
+        shouldStop = true;
+        const unexpectedStatus: never = otherRunsStatus;
+        info(`got unexpected status: ${unexpectedStatus}`);
+      }
     }
+
+    if (shouldStop) {
+      break;
+    }
+  }
+
+  if (existFailures) {
+    // https://github.com/openbsd/src/blob/2bcc3feb777e607cc7bedb460a2f5e5ff5cb1c50/include/sysexits.h#L99
+    process.exit(64);
   }
 }
 
