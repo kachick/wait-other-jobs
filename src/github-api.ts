@@ -29,6 +29,10 @@ type CheckRunsSummary = Pick<
   'id' | 'status' | 'conclusion' | 'started_at' | 'completed_at' | 'html_url' | 'name'
 >;
 
+function isOkay(conclusion: CheckRunsSummary['conclusion']): boolean {
+  return conclusion === 'success' || conclusion === 'skipped';
+}
+
 export async function getJobIDs(
   octokit: Octokit,
   params: Pick<ListWorkflowRunsParams, 'owner' | 'repo' | 'run_id'>
@@ -88,17 +92,15 @@ export async function getOtherRunsStatus(
   for (const summary of otherRelatedRuns) {
     if (summary.status === 'completed') {
       otherRelatedCompletedRuns.push(summary);
-    } else {
-      info(
-        `${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`
-      );
     }
+
+    info(
+      `${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`
+    );
   }
   // Intentional use `>=` instead of `===` to prevent infinite loop
   if (otherRelatedCompletedRuns.length >= otherRelatedRuns.length) {
-    return otherRelatedCompletedRuns.every(
-      (summary) => summary.conclusion === 'success' || summary.conclusion === 'skipped'
-    )
+    return otherRelatedCompletedRuns.every((summary) => isOkay(summary.conclusion))
       ? 'succeeded'
       : 'failed';
   }

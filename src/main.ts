@@ -60,7 +60,6 @@ async function run(): Promise<void> {
 
   let attempts = 0;
   let shouldStop = false;
-  // let otherRunsStatus: OtherRunsStatus = 'in_progress';
 
   endGroup();
 

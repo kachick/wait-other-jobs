@@ -17,6 +17,9 @@ const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/j
 // At 2022-05-27, GitHub does not provide this feature in their v4(GraphQL). So using v3(REST).
 // Track the development status here https://github.community/t/graphql-check-runs/14449
 const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
+function isOkay(conclusion) {
+    return conclusion === 'success' || conclusion === 'skipped';
+}
 async function getJobIDs(octokit, params) {
     return new Set(await octokit.paginate(octokit.rest.actions.listJobsForWorkflowRun, {
         ...params,
@@ -55,13 +58,11 @@ async function getOtherRunsStatus(octokit, params, ownJobIDs) {
         if (summary.status === 'completed') {
             otherRelatedCompletedRuns.push(summary);
         }
-        else {
-            (0, core_1.info)(`${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`);
-        }
+        (0, core_1.info)(`${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`);
     }
     // Intentional use `>=` instead of `===` to prevent infinite loop
     if (otherRelatedCompletedRuns.length >= otherRelatedRuns.length) {
-        return otherRelatedCompletedRuns.every((summary) => summary.conclusion === 'success' || summary.conclusion === 'skipped')
+        return otherRelatedCompletedRuns.every((summary) => isOkay(summary.conclusion))
             ? 'succeeded'
             : 'failed';
     }
@@ -9014,7 +9015,6 @@ async function run() {
     const octokit = (0, github_1.getOctokit)(githubToken);
     let attempts = 0;
     let shouldStop = false;
-    let otherRunsStatus = 'in_progress';
     (0, core_1.endGroup)();
     if (isDryRun) {
         return;
@@ -9025,11 +9025,11 @@ async function run() {
     (0, core_1.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
     (0, core_1.endGroup)();
     for (;;) {
-        (0, core_1.startGroup)(`Polling statuses: ${attempts} times`);
         attempts += 1;
+        (0, core_1.startGroup)(`Polling times: ${attempts}`);
         // "Exponential backoff and jitter"
         await (0, wait_js_1.wait)((0, wait_js_1.calculateIntervalMilliseconds)(minIntervalSeconds, attempts));
-        otherRunsStatus = await (0, github_api_js_1.getOtherRunsStatus)(octokit, { ...repositoryInfo, ref: commitSha }, ownJobIDs);
+        const otherRunsStatus = await (0, github_api_js_1.getOtherRunsStatus)(octokit, { ...repositoryInfo, ref: commitSha }, ownJobIDs);
         switch (otherRunsStatus) {
             case 'succeeded': {
                 shouldStop = true;
@@ -9052,6 +9052,8 @@ async function run() {
             }
         }
         (0, core_1.endGroup)();
+        shouldStop = true;
+        (0, core_1.setFailed)('Failed to ensure the behavior by kachick.');
         if (shouldStop) {
             break;
         }
