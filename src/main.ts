@@ -46,7 +46,10 @@ async function getOtherRunsStatus(
         per_page: 100,
         filter: 'latest',
       },
-      (resp) => resp.data.jobs.map((job) => job.id)
+      (resp) => {
+        info(JSON.stringify(resp.data));
+        return resp.data.jobs.map((job) => job.id);
+      }
     )
   );
   const checkRunSummaries = await octokit.paginate(

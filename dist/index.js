@@ -8921,7 +8921,10 @@ async function getOtherRunsStatus(params, ownRunID) {
         // eslint-disable-next-line camelcase
         per_page: 100,
         filter: 'latest',
-    }, (resp) => resp.data.jobs.map((job) => job.id)));
+    }, (resp) => {
+        (0, core_1.info)(JSON.stringify(resp.data));
+        return resp.data.jobs.map((job) => job.id);
+    }));
     const checkRunSummaries = await octokit.paginate(octokit.rest.checks.listForRef, {
         ...params,
         // eslint-disable-next-line camelcase
