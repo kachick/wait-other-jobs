@@ -44,7 +44,7 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Wait other jobs are passed or failed
         if: ${{contains(steps.metadata.outputs.dependency-names, 'my-dependency') && steps.metadata.outputs.update-type == 'version-update:semver-patch'}}
-        uses: kachick/wait-other-jobs@v1-beta
+        uses: kachick/wait-other-jobs@v1
         timeout-minutes: 30
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
