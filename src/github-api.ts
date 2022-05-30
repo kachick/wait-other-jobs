@@ -4,7 +4,7 @@ import type { Endpoints } from '@octokit/types';
 import { debug } from 'console';
 
 // No need to keep as same as GitHub responses so We can change the definition.
-export type OtherRunsStatus = 'in_progress' | 'succeeded' | 'failed';
+type OtherRunsStatus = 'in_progress' | 'succeeded' | 'failed';
 
 type Octokit = ReturnType<typeof getOctokit>;
 

@@ -13,7 +13,7 @@ import {
 import { getOctokit, context } from '@actions/github';
 
 // eslint-disable-next-line import/no-unresolved
-import { getJobIDs, getOtherRunsStatus, OtherRunsStatus } from './github-api.js';
+import { getJobIDs, getOtherRunsStatus } from './github-api.js';
 // eslint-disable-next-line import/no-unresolved
 import { calculateIntervalMilliseconds, wait } from './wait.js';
 
@@ -60,7 +60,7 @@ async function run(): Promise<void> {
 
   let attempts = 0;
   let shouldStop = false;
-  let otherRunsStatus: OtherRunsStatus = 'in_progress';
+  // let otherRunsStatus: OtherRunsStatus = 'in_progress';
 
   endGroup();
 
@@ -81,7 +81,7 @@ async function run(): Promise<void> {
     startGroup(`Polling times: ${attempts}`);
     // "Exponential backoff and jitter"
     await wait(calculateIntervalMilliseconds(minIntervalSeconds, attempts));
-    otherRunsStatus = await getOtherRunsStatus(
+    const otherRunsStatus = await getOtherRunsStatus(
       octokit,
       { ...repositoryInfo, ref: commitSha },
       ownJobIDs
