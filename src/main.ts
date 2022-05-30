@@ -13,7 +13,7 @@ import {
 import { getOctokit, context } from '@actions/github';
 
 // eslint-disable-next-line import/no-unresolved
-import { getJobIDs, getOtherRunsStatus } from './github-api.js';
+import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
 // eslint-disable-next-line import/no-unresolved
 import { calculateIntervalMilliseconds, wait } from './wait.js';
 
@@ -70,7 +70,7 @@ async function run(): Promise<void> {
   startGroup('Get own job_id');
 
   // eslint-disable-next-line camelcase
-  const ownJobIDs = await getJobIDs(octokit, { ...repositoryInfo, run_id: runId });
+  const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
   info(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
 
   endGroup();
@@ -80,7 +80,7 @@ async function run(): Promise<void> {
     startGroup(`Polling times: ${attempts}`);
     // "Exponential backoff and jitter"
     await wait(calculateIntervalMilliseconds(minIntervalSeconds, attempts));
-    const otherRunsStatus = await getOtherRunsStatus(
+    const otherRunsStatus = await fetchOtherRunStatus(
       octokit,
       { ...repositoryInfo, ref: commitSha },
       ownJobIDs

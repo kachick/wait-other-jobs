@@ -33,7 +33,7 @@ function isOkay(conclusion: CheckRunsSummary['conclusion']): boolean {
   return conclusion === 'success' || conclusion === 'skipped';
 }
 
-export async function getJobIDs(
+export async function fetchJobIDs(
   octokit: Octokit,
   params: Pick<ListWorkflowRunsParams, 'owner' | 'repo' | 'run_id'>
 ): Promise<Set<JobID>> {
@@ -51,12 +51,11 @@ export async function getJobIDs(
   );
 }
 
-export async function getOtherRunsStatus(
+export async function fetchRunSummaries(
   octokit: Octokit,
-  params: Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>,
-  ownJobIDs: Set<JobID>
-): Promise<OtherRunsStatus> {
-  const checkRunSummaries: CheckRunsSummary[] = await octokit.paginate(
+  params: Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>
+): Promise<CheckRunsSummary[]> {
+  return await octokit.paginate(
     octokit.rest.checks.listForRef,
     {
       ...params,
@@ -81,6 +80,14 @@ export async function getOtherRunsStatus(
         }))(checkRun)
       )
   );
+}
+
+export async function fetchOtherRunStatus(
+  octokit: Parameters<typeof fetchRunSummaries>[0],
+  params: Parameters<typeof fetchRunSummaries>[1],
+  ownJobIDs: Set<JobID>
+): Promise<OtherRunsStatus> {
+  const checkRunSummaries = await fetchRunSummaries(octokit, params);
   if (isDebug()) {
     debug(JSON.stringify(checkRunSummaries, null, 2));
   }
