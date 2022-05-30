@@ -7,7 +7,7 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getOtherRunsStatus = exports.getJobIDs = void 0;
+exports.fetchOtherRunStatus = exports.fetchRunSummaries = exports.fetchJobIDs = void 0;
 const core_1 = __nccwpck_require__(2186);
 const console_1 = __nccwpck_require__(6206);
 // REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
@@ -20,7 +20,7 @@ const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
 function isOkay(conclusion) {
     return conclusion === 'success' || conclusion === 'skipped';
 }
-async function getJobIDs(octokit, params) {
+async function fetchJobIDs(octokit, params) {
     return new Set(await octokit.paginate(octokit.rest.actions.listJobsForWorkflowRun, {
         ...params,
         // eslint-disable-next-line camelcase
@@ -28,9 +28,9 @@ async function getJobIDs(octokit, params) {
         filter: 'latest',
     }, (resp) => resp.data.map((job) => job.id)));
 }
-exports.getJobIDs = getJobIDs;
-async function getOtherRunsStatus(octokit, params, ownJobIDs) {
-    const checkRunSummaries = await octokit.paginate(octokit.rest.checks.listForRef, {
+exports.fetchJobIDs = fetchJobIDs;
+async function fetchRunSummaries(octokit, params) {
+    return await octokit.paginate(octokit.rest.checks.listForRef, {
         ...params,
         // eslint-disable-next-line camelcase
         per_page: 100,
@@ -49,6 +49,10 @@ async function getOtherRunsStatus(octokit, params, ownJobIDs) {
         html_url,
         name,
     }))(checkRun)));
+}
+exports.fetchRunSummaries = fetchRunSummaries;
+async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
+    const checkRunSummaries = await fetchRunSummaries(octokit, params);
     if ((0, core_1.isDebug)()) {
         (0, console_1.debug)(JSON.stringify(checkRunSummaries, null, 2));
     }
@@ -68,7 +72,7 @@ async function getOtherRunsStatus(octokit, params, ownJobIDs) {
     }
     return 'in_progress';
 }
-exports.getOtherRunsStatus = getOtherRunsStatus;
+exports.fetchOtherRunStatus = fetchOtherRunStatus;
 
 
 /***/ }),
@@ -9021,7 +9025,7 @@ async function run() {
     }
     (0, core_1.startGroup)('Get own job_id');
     // eslint-disable-next-line camelcase
-    const ownJobIDs = await (0, github_api_js_1.getJobIDs)(octokit, { ...repositoryInfo, run_id: runId });
+    const ownJobIDs = await (0, github_api_js_1.fetchJobIDs)(octokit, { ...repositoryInfo, run_id: runId });
     (0, core_1.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
     (0, core_1.endGroup)();
     for (;;) {
@@ -9029,7 +9033,7 @@ async function run() {
         (0, core_1.startGroup)(`Polling times: ${attempts}`);
         // "Exponential backoff and jitter"
         await (0, wait_js_1.wait)((0, wait_js_1.calculateIntervalMilliseconds)(minIntervalSeconds, attempts));
-        const otherRunsStatus = await (0, github_api_js_1.getOtherRunsStatus)(octokit, { ...repositoryInfo, ref: commitSha }, ownJobIDs);
+        const otherRunsStatus = await (0, github_api_js_1.fetchOtherRunStatus)(octokit, { ...repositoryInfo, ref: commitSha }, ownJobIDs);
         switch (otherRunsStatus) {
             case 'succeeded': {
                 shouldStop = true;
