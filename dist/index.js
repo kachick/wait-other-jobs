@@ -8932,7 +8932,7 @@ async function getOtherRunsStatus(params, ownRunID) {
     const runsSummary = otherRelatedRuns.map((checkRun) => (({ id, status, conclusion }) => ({ id, status, conclusion }))(checkRun));
     (0, core_1.info)(JSON.stringify({ ownRunID, ownJobIDs, ...runsSummary }));
     if (otherRelatedCompletedRuns.length === otherRelatedRuns.length) {
-        return otherRelatedCompletedRuns.every((checkRun) => checkRun.conclusion === 'success')
+        return otherRelatedCompletedRuns.every((checkRun) => checkRun.conclusion === 'success' || checkRun.conclusion === 'skipped')
             ? 'succeeded'
             : 'failed';
     }
