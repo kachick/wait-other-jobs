@@ -8921,10 +8921,7 @@ async function getOtherRunsStatus(params, ownRunID) {
         // eslint-disable-next-line camelcase
         per_page: 100,
         filter: 'latest',
-    }, (resp) => {
-        (0, core_1.info)(JSON.stringify(resp.data));
-        return resp.data.map((job) => job.id);
-    }));
+    }, (resp) => resp.data.map((job) => job.id)));
     const checkRunSummaries = await octokit.paginate(octokit.rest.checks.listForRef, {
         ...params,
         // eslint-disable-next-line camelcase
@@ -8946,7 +8943,7 @@ async function getOtherRunsStatus(params, ownRunID) {
     }))(checkRun)));
     const otherRelatedRuns = checkRunSummaries.filter((checkRun) => !ownJobIDs.has(checkRun.id));
     const otherRelatedCompletedRuns = otherRelatedRuns.filter((checkRun) => checkRun.status === 'completed');
-    (0, core_1.info)(JSON.stringify({ ownRunID, ownJobIDs, checkRunSummaries }));
+    (0, core_1.info)(JSON.stringify({ ownRunID, ownJobIDs: [...ownJobIDs], checkRunSummaries }));
     if (otherRelatedCompletedRuns.length === otherRelatedRuns.length) {
         return otherRelatedCompletedRuns.every((checkRun) => checkRun.conclusion === 'success' || checkRun.conclusion === 'skipped')
             ? 'succeeded'

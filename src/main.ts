@@ -46,10 +46,7 @@ async function getOtherRunsStatus(
         per_page: 100,
         filter: 'latest',
       },
-      (resp) => {
-        info(JSON.stringify(resp.data));
-        return resp.data.map((job) => job.id);
-      }
+      (resp) => resp.data.map((job) => job.id)
     )
   );
   const checkRunSummaries = await octokit.paginate(
@@ -82,7 +79,7 @@ async function getOtherRunsStatus(
   const otherRelatedCompletedRuns = otherRelatedRuns.filter(
     (checkRun) => checkRun.status === 'completed'
   );
-  info(JSON.stringify({ ownRunID, ownJobIDs, checkRunSummaries }));
+  info(JSON.stringify({ ownRunID, ownJobIDs: [...ownJobIDs], checkRunSummaries }));
   if (otherRelatedCompletedRuns.length === otherRelatedRuns.length) {
     return otherRelatedCompletedRuns.every(
       (checkRun) => checkRun.conclusion === 'success' || checkRun.conclusion === 'skipped'
