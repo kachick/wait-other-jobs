@@ -48,7 +48,7 @@ async function getOtherRunsStatus(
       },
       (resp) => {
         info(JSON.stringify(resp.data));
-        return resp.data.jobs.map((job) => job.id);
+        return resp.data.map((job) => job.id);
       }
     )
   );
@@ -61,7 +61,7 @@ async function getOtherRunsStatus(
       filter: 'latest',
     },
     (resp) =>
-      resp.data.check_runs.map((checkRun) =>
+      resp.data.map((checkRun) =>
         // eslint-disable-next-line camelcase
         (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
           id,

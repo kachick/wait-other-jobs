@@ -8923,14 +8923,14 @@ async function getOtherRunsStatus(params, ownRunID) {
         filter: 'latest',
     }, (resp) => {
         (0, core_1.info)(JSON.stringify(resp.data));
-        return resp.data.jobs.map((job) => job.id);
+        return resp.data.map((job) => job.id);
     }));
     const checkRunSummaries = await octokit.paginate(octokit.rest.checks.listForRef, {
         ...params,
         // eslint-disable-next-line camelcase
         per_page: 100,
         filter: 'latest',
-    }, (resp) => resp.data.check_runs.map((checkRun) => 
+    }, (resp) => resp.data.map((checkRun) => 
     // eslint-disable-next-line camelcase
     (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
         id,
