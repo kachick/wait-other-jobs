@@ -22,7 +22,31 @@ permissions:
 
 ## Usage
 
-Below is a typical usecase.
+Just requires `github-token` for minimum configuration.  
+I recommend to use `timeout-minutes` together with.
+
+```yaml
+jobs:
+  with-waiting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait other jobs are passed or failed
+        uses: kachick/wait-other-jobs@v1
+        timeout-minutes: 30
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+```
+
+You can adjust status polling interval and turns early-exit as below.
+
+```yaml
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          min-interval-seconds: '300' # default '30'
+          early-exit: 'false' # default 'true'
+```
+
+Below is a typical usecase.  Assume test jobs defined in another workflow.
 
 ```yaml
 name: Auto merge dependabot PRs if passed other jobs
@@ -58,14 +82,6 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 ```
 
-You can adjust status polling interval as below.
-
-```yaml
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          min-interval-seconds: 300 # default 30
-```
-
 [An actual example is here](https://github.com/kachick/rspec-matchers-power_assert_matchers/blob/650a0ef0c290d42cd0a70ef7c011de2c3777c966/.github/workflows/auto-merge-dependabot-prs.yml)
 
 # Why using for dependabot auto-merge?
@@ -78,5 +94,5 @@ So this action provides another way. It checks other jobs statuses.
 
 # Development
 
-Using typescript@next for native ESM on Node.js
+Using typescript@next for native ESM on Node.js.  
 So recommend to enable [microsoft/vscode-typescript-next](https://github.com/microsoft/vscode-typescript-next/tree/487aee08c23a8f7364825a821fa95baf17c184d4#enabling) on your vscode.

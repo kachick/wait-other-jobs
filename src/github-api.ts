@@ -3,9 +3,6 @@ import type { getOctokit } from '@actions/github';
 import type { Endpoints } from '@octokit/types';
 import { debug } from 'console';
 
-// No need to keep as same as GitHub responses so We can change the definition.
-type OtherRunsStatus = 'in_progress' | 'succeeded' | 'failed';
-
 type Octokit = ReturnType<typeof getOctokit>;
 
 // REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
@@ -28,6 +25,13 @@ type CheckRunsSummary = Pick<
   CheckRunsResponse['data']['check_runs'][number],
   'id' | 'status' | 'conclusion' | 'started_at' | 'completed_at' | 'html_url' | 'name'
 >;
+
+// No need to keep as same as GitHub responses so We can change the definition.
+type Report = {
+  progress: 'in_progress' | 'done';
+  conclusion: 'acceptable' | 'bad';
+  summaries: CheckRunsSummary[];
+};
 
 function isAcceptable(conclusion: CheckRunsSummary['conclusion']): boolean {
   return conclusion === 'success' || conclusion === 'skipped';
@@ -86,7 +90,7 @@ export async function fetchOtherRunStatus(
   octokit: Parameters<typeof fetchRunSummaries>[0],
   params: Parameters<typeof fetchRunSummaries>[1],
   ownJobIDs: Set<JobID>
-): Promise<OtherRunsStatus> {
+): Promise<Report> {
   const checkRunSummaries = await fetchRunSummaries(octokit, params);
   if (isDebug()) {
     debug(JSON.stringify(checkRunSummaries, null, 2));
@@ -105,11 +109,14 @@ export async function fetchOtherRunStatus(
       `${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`
     );
   }
-  // Intentional use `>=` instead of `===` to prevent infinite loop
-  if (otherRelatedCompletedRuns.length >= otherRelatedRuns.length) {
-    return otherRelatedCompletedRuns.every((summary) => isAcceptable(summary.conclusion))
-      ? 'succeeded'
-      : 'failed';
-  }
-  return 'in_progress';
+
+  const progress: Report['progress'] =
+    otherRelatedCompletedRuns.length === otherRelatedRuns.length ? 'done' : 'in_progress';
+  const conclusion: Report['conclusion'] = otherRelatedCompletedRuns.every((summary) =>
+    isAcceptable(summary.conclusion)
+  )
+    ? 'acceptable'
+    : 'bad';
+
+  return { progress, conclusion, summaries: otherRelatedRuns };
 }

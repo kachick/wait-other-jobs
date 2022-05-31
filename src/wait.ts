@@ -19,7 +19,7 @@ function getRandomInt(min: number, max: number) {
 export const MIN_JITTER_MILLISECONDS = 1000;
 export const MAX_JITTER_MILLISECONDS = 7000;
 
-export function calculateIntervalMilliseconds(
+export function calculateIntervalMillisecondsAsExponentialBackoffAndJitter(
   minIntervalSeconds: number,
   attempts: number
 ): number {
