@@ -5,7 +5,7 @@
 This action waits all GitHub Action jobs even if they are running in other workflows.  
 When some jobs failed, this action exit with NON 0 value. Otherwise exit with 0.
 
-<img src="./assets/actual-log.png?raw=true" alt="Example of actual log" width=700>
+<img src="./assets/actual-log-v1.1.1-passed.png?raw=true" alt="Example of actual log" width=700>
 
 ## Why?
 
