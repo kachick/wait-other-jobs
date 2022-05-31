@@ -80,7 +80,7 @@ exports.fetchOtherRunStatus = fetchOtherRunStatus;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.calculateIntervalMillisecondsAsExponentialBackoffAndJitter = exports.MAX_JITTER_MILLISECONDS = exports.MIN_JITTER_MILLISECONDS = exports.wait = void 0;
+exports.calculateIntervalMillisecondsAsExponentialBackoffAndJitter = exports.MAX_JITTER_MILLISECONDS = exports.MIN_JITTER_MILLISECONDS = exports.readableDuration = exports.wait = void 0;
 // Taken from https://github.com/actions/typescript-action/blob/0cfebb2981ce6c1515b16445379303805459ea46/src/wait.ts Thank you!
 async function wait(milliseconds) {
     return new Promise((resolve) => {
@@ -97,6 +97,16 @@ function getRandomInt(min, max) {
     const flooredMin = Math.ceil(min);
     return Math.floor(Math.random() * (Math.floor(max) - flooredMin) + flooredMin);
 }
+// 454356 millseconds => 7.5725999999999996 minutes => approximately 7.57 minutes
+function readableDuration(milliseconds) {
+    const msecToSec = 1000;
+    const secToMin = 60;
+    const wantPrecision = 2;
+    const adjustor = 10 ** wantPrecision;
+    const minutes = milliseconds / (msecToSec * secToMin);
+    return `approximately ${(Math.round(minutes * adjustor) / adjustor).toFixed(wantPrecision)} minutes`;
+}
+exports.readableDuration = readableDuration;
 exports.MIN_JITTER_MILLISECONDS = 1000;
 exports.MAX_JITTER_MILLISECONDS = 7000;
 function calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, attempts) {
@@ -8983,7 +8993,6 @@ const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
 // eslint-disable-next-line import/no-unresolved
 const github_api_js_1 = __nccwpck_require__(2565);
-// eslint-disable-next-line import/no-unresolved
 const wait_js_1 = __nccwpck_require__(5817);
 async function run() {
     (0, core_1.startGroup)('Setup variables');
@@ -9029,7 +9038,9 @@ async function run() {
     for (;;) {
         attempts += 1;
         (0, core_1.startGroup)(`Polling times: ${attempts}`);
-        await (0, wait_js_1.wait)((0, wait_js_1.calculateIntervalMillisecondsAsExponentialBackoffAndJitter)(minIntervalSeconds, attempts));
+        const idleMilliseconds = (0, wait_js_1.calculateIntervalMillisecondsAsExponentialBackoffAndJitter)(minIntervalSeconds, attempts);
+        (0, core_1.info)(`[estimation] It will wait ${(0, wait_js_1.readableDuration)(idleMilliseconds)} to reduce api calling.`);
+        await (0, wait_js_1.wait)(idleMilliseconds);
         const report = await (0, github_api_js_1.fetchOtherRunStatus)(octokit, { ...repositoryInfo, ref: commitSha }, ownJobIDs);
         if ((0, core_1.isDebug)()) {
             (0, core_1.debug)(JSON.stringify(report, null, 2));

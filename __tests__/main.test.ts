@@ -1,6 +1,7 @@
 import {
   wait,
   calculateIntervalMillisecondsAsExponentialBackoffAndJitter,
+  readableDuration,
   MIN_JITTER_MILLISECONDS,
   MAX_JITTER_MILLISECONDS,
 } from '../src/wait';
@@ -55,6 +56,10 @@ test('interval will be like a cheap exponential backoff', async () => {
   expect(
     calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 5)
   ).toBeLessThan(1600000 + MAX_JITTER_MILLISECONDS);
+});
+
+test('readableDuration', () => {
+  expect(readableDuration(454356)).toBe('approximately 7.57 minutes');
 });
 
 // shows how the runner will run a javascript action with env / stdout protocol

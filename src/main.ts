@@ -14,8 +14,12 @@ import { getOctokit, context } from '@actions/github';
 
 // eslint-disable-next-line import/no-unresolved
 import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
-// eslint-disable-next-line import/no-unresolved
-import { calculateIntervalMillisecondsAsExponentialBackoffAndJitter, wait } from './wait.js';
+import {
+  calculateIntervalMillisecondsAsExponentialBackoffAndJitter,
+  readableDuration,
+  wait,
+  // eslint-disable-next-line import/no-unresolved
+} from './wait.js';
 
 async function run(): Promise<void> {
   startGroup('Setup variables');
@@ -80,9 +84,12 @@ async function run(): Promise<void> {
     attempts += 1;
     startGroup(`Polling times: ${attempts}`);
 
-    await wait(
-      calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, attempts)
+    const idleMilliseconds = calculateIntervalMillisecondsAsExponentialBackoffAndJitter(
+      minIntervalSeconds,
+      attempts
     );
+    info(`[estimation] It will wait ${readableDuration(idleMilliseconds)} to reduce api calling.`);
+    await wait(idleMilliseconds);
 
     const report = await fetchOtherRunStatus(
       octokit,
