@@ -15,7 +15,7 @@ import { getOctokit, context } from '@actions/github';
 // eslint-disable-next-line import/no-unresolved
 import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
 // eslint-disable-next-line import/no-unresolved
-import { calculateIntervalMilliseconds, wait } from './wait.js';
+import { calculateIntervalMillisecondsAsExponentialBackoffAndJitter, wait } from './wait.js';
 
 async function run(): Promise<void> {
   startGroup('Setup variables');
@@ -52,6 +52,7 @@ async function run(): Promise<void> {
     getInput('min-interval-seconds', { required: true, trimWhitespace: true }),
     10
   );
+  const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
 
   const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
@@ -78,34 +79,61 @@ async function run(): Promise<void> {
   for (;;) {
     attempts += 1;
     startGroup(`Polling times: ${attempts}`);
-    // "Exponential backoff and jitter"
-    await wait(calculateIntervalMilliseconds(minIntervalSeconds, attempts));
-    const otherRunsStatus = await fetchOtherRunStatus(
+
+    await wait(
+      calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, attempts)
+    );
+
+    const report = await fetchOtherRunStatus(
       octokit,
       { ...repositoryInfo, ref: commitSha },
       ownJobIDs
     );
-    switch (otherRunsStatus) {
-      case 'succeeded': {
-        shouldStop = true;
-        info('all jobs passed');
-        break;
-      }
-      case 'failed': {
-        shouldStop = true;
-        setFailed('some jobs failed');
-        break;
-      }
+
+    if (isDebug()) {
+      debug(JSON.stringify(report, null, 2));
+    }
+
+    const { progress, conclusion } = report;
+
+    switch (progress) {
       case 'in_progress': {
+        if (conclusion === 'bad' && isEarlyExit) {
+          shouldStop = true;
+          setFailed('some jobs failed');
+        }
+
         info('some jobs still in progress');
+        break;
+      }
+      case 'done': {
+        shouldStop = true;
+
+        switch (conclusion) {
+          case 'acceptable': {
+            info('all jobs passed');
+            break;
+          }
+          case 'bad': {
+            setFailed('some jobs failed');
+            break;
+          }
+          default: {
+            const unexpectedConclusion: never = conclusion;
+            setFailed(`got unexpected conclusion: ${unexpectedConclusion}`);
+            break;
+          }
+        }
         break;
       }
       default: {
         shouldStop = true;
-        const unexpectedStatus: never = otherRunsStatus;
-        info(`got unexpected status: ${unexpectedStatus}`);
+        const unexpectedProgress: never = progress;
+        setFailed(`got unexpected progress: ${unexpectedProgress}`);
+        break;
       }
     }
+
     endGroup();
 
     if (shouldStop) {

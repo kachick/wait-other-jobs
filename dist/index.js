@@ -63,13 +63,11 @@ async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
         }
         (0, core_1.info)(`${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`);
     }
-    // Intentional use `>=` instead of `===` to prevent infinite loop
-    if (otherRelatedCompletedRuns.length >= otherRelatedRuns.length) {
-        return otherRelatedCompletedRuns.every((summary) => isAcceptable(summary.conclusion))
-            ? 'succeeded'
-            : 'failed';
-    }
-    return 'in_progress';
+    const progress = otherRelatedCompletedRuns.length === otherRelatedRuns.length ? 'done' : 'in_progress';
+    const conclusion = otherRelatedCompletedRuns.every((summary) => isAcceptable(summary.conclusion))
+        ? 'acceptable'
+        : 'bad';
+    return { progress, conclusion, summaries: otherRelatedRuns };
 }
 exports.fetchOtherRunStatus = fetchOtherRunStatus;
 
@@ -82,7 +80,7 @@ exports.fetchOtherRunStatus = fetchOtherRunStatus;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.calculateIntervalMilliseconds = exports.MAX_JITTER_MILLISECONDS = exports.MIN_JITTER_MILLISECONDS = exports.wait = void 0;
+exports.calculateIntervalMillisecondsAsExponentialBackoffAndJitter = exports.MAX_JITTER_MILLISECONDS = exports.MIN_JITTER_MILLISECONDS = exports.wait = void 0;
 // Taken from https://github.com/actions/typescript-action/blob/0cfebb2981ce6c1515b16445379303805459ea46/src/wait.ts Thank you!
 async function wait(milliseconds) {
     return new Promise((resolve) => {
@@ -101,11 +99,11 @@ function getRandomInt(min, max) {
 }
 exports.MIN_JITTER_MILLISECONDS = 1000;
 exports.MAX_JITTER_MILLISECONDS = 7000;
-function calculateIntervalMilliseconds(minIntervalSeconds, attempts) {
+function calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, attempts) {
     const jitterMilliseconds = getRandomInt(exports.MIN_JITTER_MILLISECONDS, exports.MAX_JITTER_MILLISECONDS);
     return minIntervalSeconds * 2 ** (attempts - 1) * 1000 + jitterMilliseconds;
 }
-exports.calculateIntervalMilliseconds = calculateIntervalMilliseconds;
+exports.calculateIntervalMillisecondsAsExponentialBackoffAndJitter = calculateIntervalMillisecondsAsExponentialBackoffAndJitter;
 
 
 /***/ }),
@@ -9012,6 +9010,7 @@ async function run() {
         repo,
     };
     const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds', { required: true, trimWhitespace: true }), 10);
+    const isEarlyExit = (0, core_1.getBooleanInput)('early-exit', { required: true, trimWhitespace: true });
     const isDryRun = (0, core_1.getBooleanInput)('dry-run', { required: true, trimWhitespace: true });
     const githubToken = (0, core_1.getInput)('github-token', { required: true, trimWhitespace: false });
     (0, core_1.setSecret)(githubToken);
@@ -9030,28 +9029,45 @@ async function run() {
     for (;;) {
         attempts += 1;
         (0, core_1.startGroup)(`Polling times: ${attempts}`);
-        // "Exponential backoff and jitter"
-        await (0, wait_js_1.wait)((0, wait_js_1.calculateIntervalMilliseconds)(minIntervalSeconds, attempts));
-        const otherRunsStatus = await (0, github_api_js_1.fetchOtherRunStatus)(octokit, { ...repositoryInfo, ref: commitSha }, ownJobIDs);
-        switch (otherRunsStatus) {
-            case 'succeeded': {
-                shouldStop = true;
-                (0, core_1.info)('all jobs passed');
-                break;
-            }
-            case 'failed': {
-                shouldStop = true;
-                (0, core_1.setFailed)('some jobs failed');
-                break;
-            }
+        await (0, wait_js_1.wait)((0, wait_js_1.calculateIntervalMillisecondsAsExponentialBackoffAndJitter)(minIntervalSeconds, attempts));
+        const report = await (0, github_api_js_1.fetchOtherRunStatus)(octokit, { ...repositoryInfo, ref: commitSha }, ownJobIDs);
+        if ((0, core_1.isDebug)()) {
+            (0, core_1.debug)(JSON.stringify(report, null, 2));
+        }
+        const { progress, conclusion } = report;
+        switch (progress) {
             case 'in_progress': {
+                if (conclusion === 'bad' && isEarlyExit) {
+                    shouldStop = true;
+                    (0, core_1.setFailed)('some jobs failed');
+                }
                 (0, core_1.info)('some jobs still in progress');
+                break;
+            }
+            case 'done': {
+                shouldStop = true;
+                switch (conclusion) {
+                    case 'acceptable': {
+                        (0, core_1.info)('all jobs passed');
+                        break;
+                    }
+                    case 'bad': {
+                        (0, core_1.setFailed)('some jobs failed');
+                        break;
+                    }
+                    default: {
+                        const unexpectedConclusion = conclusion;
+                        (0, core_1.setFailed)(`got unexpected conclusion: ${unexpectedConclusion}`);
+                        break;
+                    }
+                }
                 break;
             }
             default: {
                 shouldStop = true;
-                const unexpectedStatus = otherRunsStatus;
-                (0, core_1.info)(`got unexpected status: ${unexpectedStatus}`);
+                const unexpectedProgress = progress;
+                (0, core_1.setFailed)(`got unexpected progress: ${unexpectedProgress}`);
+                break;
             }
         }
         (0, core_1.endGroup)();

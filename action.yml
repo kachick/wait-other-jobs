@@ -12,6 +12,10 @@ inputs:
     description: 'Wait this interval or the multiplied value with jitter for workflows check'
     required: false
     default: '30'
+  early-exit:
+    description: 'Stop to rest pollings if faced at least 1 bad condition'
+    required: false
+    default: 'true'
   dry-run:
     description: 'Avoid http requests for tests'
     required: false
