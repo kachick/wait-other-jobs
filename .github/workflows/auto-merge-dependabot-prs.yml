@@ -24,7 +24,7 @@ jobs:
         timeout-minutes: 30
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Enable auto approve and merge for Dependabot PRs
+      - name: Auto approve and merge
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
         env:
