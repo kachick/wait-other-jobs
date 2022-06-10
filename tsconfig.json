@@ -6,5 +6,5 @@
     "module": "node16",
     "outDir": "./lib",                        /* Redirect output structure to the directory. */                         /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
   },
-  "include": ["src", "**.config.ts"],
+  "include": ["src", "**.config.ts", "__tests__"],
 }
