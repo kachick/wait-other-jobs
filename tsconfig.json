@@ -4,7 +4,7 @@
   "compilerOptions": {
     // https://www.typescriptlang.org/docs/handbook/esm-node.html
     "module": "node16",
-    "outDir": "./lib",                        /* Redirect output structure to the directory. */                         /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+    "outDir": "./lib",
   },
   "include": ["src", "**.config.ts", "__tests__"],
 }
