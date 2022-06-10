@@ -96,9 +96,3 @@ So this action provides another way. It checks other jobs statuses.
 
 * [Above merging way is written in official docs](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/content/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions.md#enable-auto-merge-on-a-pull-request). However [GITHUB_TOKEN merged commit does not trigger new workflows even if defined as "push"](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/data/reusables/actions/actions-do-not-trigger-workflows.md?plain=1#L1). So the badges will not be shown in the GitHub history :<
   * ref: https://github.community/t/githhub-acitons-push-event-not-triggered-if-githubactions-bot-enabled-auto-merge/238439
-
-
-## Development
-
-Using typescript@next for native ESM on Node.js.  
-So recommend to enable [microsoft/vscode-typescript-next](https://github.com/microsoft/vscode-typescript-next/tree/487aee08c23a8f7364825a821fa95baf17c184d4#enabling) on your vscode.
