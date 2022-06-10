@@ -21,6 +21,13 @@ module.exports = {
   ],
   rules: {
     'i18n-text/no-en': 'off',
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'TSEnumDeclaration',
+        message: "Don't declare enums.",
+      },
+    ],
   },
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'import', 'prettier', 'github'],
