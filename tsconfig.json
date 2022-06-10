@@ -5,10 +5,8 @@
     // https://www.typescriptlang.org/docs/handbook/esm-node.html
     // Node12 / Node16 / NodeNext are only in nightly builds for now
     "module": "node16",
-    "rootDir": "./src",
     "outDir": "./lib",                        /* Redirect output structure to the directory. */                         /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
     "noImplicitAny": true,                    /* Raise error on expressions and declarations with an implied 'any' type. */
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "lib", "__tests__"]
+  "include": ["src", "**.config.ts"],
 }
