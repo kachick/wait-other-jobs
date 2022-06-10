@@ -7,10 +7,12 @@
     "node": "16.x"
   },
   "scripts": {
-    "build": "tsc",
+    "prebuild": "rimraf lib",
+    "build": "tsc --project tsconfig.build.json",
     "format": "prettier --write '**/*.ts'",
     "format-check": "prettier --check '**/*.ts'",
     "lint": "eslint src/**/*.ts",
+    "prepackage": "rimraf dist",
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest",
     "all": "npm run build && npm run format-check && npm run lint && npm run package && npm test"
@@ -41,8 +43,9 @@
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^28.1.1",
     "prettier": "^2.6.2",
+    "rimraf": "^3.0.2",
     "ts-jest": "^28.0.4",
     "ts-node": "^10.8.1",
-    "typescript": "^4.8.0-dev.20220608"
+    "typescript": "^4.7.3"
   }
 }
