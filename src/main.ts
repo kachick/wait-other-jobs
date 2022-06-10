@@ -50,7 +50,7 @@ async function run(): Promise<void> {
   const repositoryInfo = {
     owner,
     repo,
-  };
+  } as const;
 
   const minIntervalSeconds = parseInt(
     getInput('min-interval-seconds', { required: true, trimWhitespace: true }),
