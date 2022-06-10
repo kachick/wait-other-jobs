@@ -7,7 +7,7 @@ When some jobs failed, this action exit with NON 0 value. Otherwise exit with 0.
 
 <img src="./assets/actual-log-v1.1.1-passed.png?raw=true" alt="Example of actual log" width=700>
 
-## GITHUB_TOKEN vs PAT
+# GITHUB_TOKEN vs PAT
 
 I mainly use this for auto merge dependabot PRs without PAT(Personal Access Token).
 
@@ -20,7 +20,7 @@ permissions:
   actions: read
 ```
 
-## Usage
+# Usage
 
 Just requires `github-token` for minimum configuration.  
 I recommend to use `timeout-minutes` together with.
@@ -84,7 +84,7 @@ jobs:
 
 [An actual example is here](https://github.com/kachick/rspec-matchers-power_assert_matchers/blob/650a0ef0c290d42cd0a70ef7c011de2c3777c966/.github/workflows/auto-merge-dependabot-prs.yml)
 
-## Why using for dependabot auto-merge?
+# Why using for dependabot auto-merge?
 
 I used a way to comment `@dependabot merge`. This is simple to ensure CI passed.  
 However it requires PAT(Personal Access Token).  
@@ -92,7 +92,11 @@ However it requires PAT(Personal Access Token).
 It is all.  
 So this action provides another way. It checks other jobs statuses.
 
-### Cons
+## Cons
 
-* [Above merging way is written in official docs](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/content/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions.md#enable-auto-merge-on-a-pull-request). However [GITHUB_TOKEN merged commit does not trigger new workflows even if defined as "push"](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/data/reusables/actions/actions-do-not-trigger-workflows.md?plain=1#L1). So the badges will not be shown in the GitHub history :<
+* [Above merging logics are written in GitHub official docs](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/content/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions.md#enable-auto-merge-on-a-pull-request). However [GITHUB_TOKEN merged commit does not trigger new workflows even if defined as "push"](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/data/reusables/actions/actions-do-not-trigger-workflows.md?plain=1#L1). So the badges will not be shown in the GitHub history :<
   * ref: https://github.community/t/githhub-acitons-push-event-not-triggered-if-githubactions-bot-enabled-auto-merge/238439
+
+# License
+
+The scripts and documentation in this project are released under the [MIT License](LICENSE)

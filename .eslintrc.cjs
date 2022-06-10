@@ -21,9 +21,17 @@ module.exports = {
   ],
   rules: {
     'i18n-text/no-en': 'off',
+    'deprecation/deprecation': 'error',
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'TSEnumDeclaration',
+        message: "Don't declare enums.",
+      },
+    ],
   },
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'import', 'prettier', 'github'],
+  plugins: ['deprecation', '@typescript-eslint', 'import', 'prettier', 'github'],
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module',
