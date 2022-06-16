@@ -29,6 +29,7 @@ module.exports = {
       },
     ],
     'prettier/prettier': 'off',
+    'no-mixed-operators': 'error',
   },
   parser: '@typescript-eslint/parser',
   plugins: ['deprecation', '@typescript-eslint', 'import', 'github'],
