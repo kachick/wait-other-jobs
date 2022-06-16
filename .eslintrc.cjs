@@ -28,6 +28,7 @@ module.exports = {
         message: "Don't declare enums.",
       },
     ],
+    'prettier/prettier': 'off',
   },
   parser: '@typescript-eslint/parser',
   plugins: ['deprecation', '@typescript-eslint', 'import', 'github'],
