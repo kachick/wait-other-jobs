@@ -2,7 +2,7 @@
 
 [![Test & Lint](https://github.com/kachick/wait-other-jobs/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/test.yml)
 
-This action waits all GitHub Action jobs even if they are running in other workflows.  
+This action waits all GitHub Action jobs even if they are running in other workflows.\
 When some jobs failed, this action exit with NON 0 value. Otherwise exit with 0.
 
 <img src="./assets/actual-log-v1.1.1-passed.png?raw=true" alt="Example of actual log" width=700>
@@ -22,7 +22,7 @@ permissions:
 
 # Usage
 
-Just requires `github-token` for minimum configuration.  
+Just requires `github-token` for minimum configuration.\
 I recommend to use `timeout-minutes` together with.
 
 ```yaml
@@ -40,13 +40,13 @@ jobs:
 You can adjust status polling interval and turns early-exit as below.
 
 ```yaml
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          min-interval-seconds: '300' # default '30'
-          early-exit: 'false' # default 'true'
+with:
+  github-token: "${{ secrets.GITHUB_TOKEN }}"
+  min-interval-seconds: '300' # default '30'
+  early-exit: 'false' # default 'true'
 ```
 
-Below is a typical usecase.  Assume test jobs defined in another workflow.
+Below is a typical usecase. Assume test jobs defined in another workflow.
 
 ```yaml
 name: Auto merge dependabot PRs if passed other jobs
@@ -86,16 +86,16 @@ jobs:
 
 # Why using for dependabot auto-merge?
 
-I used a way to comment `@dependabot merge`. This is simple to ensure CI passed.  
-However it requires PAT(Personal Access Token).  
+I used a way to comment `@dependabot merge`. This is simple to ensure CI passed.\
+However it requires PAT(Personal Access Token).\
 [Current PAT can't be reduced the permission scope to repository.](https://github.community/t/limiting-scope-of-a-pat-to-a-single-repository/3129)
-It is all.  
+It is all.\
 So this action provides another way. It checks other jobs statuses.
 
 ## Cons
 
-* [Above merging logics are written in GitHub official docs](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/content/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions.md#enable-auto-merge-on-a-pull-request). However [GITHUB_TOKEN merged commit does not trigger new workflows even if defined as "push"](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/data/reusables/actions/actions-do-not-trigger-workflows.md?plain=1#L1). So the badges will not be shown in the GitHub history :<
-  * ref: https://github.community/t/githhub-acitons-push-event-not-triggered-if-githubactions-bot-enabled-auto-merge/238439
+- [Above merging logics are written in GitHub official docs](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/content/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions.md#enable-auto-merge-on-a-pull-request). However [GITHUB_TOKEN merged commit does not trigger new workflows even if defined as "push"](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/data/reusables/actions/actions-do-not-trigger-workflows.md?plain=1#L1). So the badges will not be shown in the GitHub history :<
+  - ref: https://github.community/t/githhub-acitons-push-event-not-triggered-if-githubactions-bot-enabled-auto-merge/238439
 
 # License
 

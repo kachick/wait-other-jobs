@@ -39,7 +39,7 @@ function isAcceptable(conclusion: CheckRunsSummary['conclusion']): boolean {
 
 export async function fetchJobIDs(
   octokit: Octokit,
-  params: Pick<ListWorkflowRunsParams, 'owner' | 'repo' | 'run_id'>
+  params: Pick<ListWorkflowRunsParams, 'owner' | 'repo' | 'run_id'>,
 ): Promise<Set<JobID>> {
   return new Set(
     await octokit.paginate(
@@ -50,14 +50,14 @@ export async function fetchJobIDs(
         per_page: 100,
         filter: 'latest',
       },
-      (resp) => resp.data.map((job) => job.id)
-    )
+      (resp) => resp.data.map((job) => job.id),
+    ),
   );
 }
 
 async function fetchRunSummaries(
   octokit: Octokit,
-  params: Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>
+  params: Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>,
 ): Promise<CheckRunsSummary[]> {
   return await octokit.paginate(
     octokit.rest.checks.listForRef,
@@ -82,14 +82,14 @@ async function fetchRunSummaries(
           html_url,
           name,
         }))(checkRun)
-      )
+      ),
   );
 }
 
 export async function fetchOtherRunStatus(
   octokit: Parameters<typeof fetchRunSummaries>[0],
   params: Parameters<typeof fetchRunSummaries>[1],
-  ownJobIDs: Set<JobID>
+  ownJobIDs: Set<JobID>,
 ): Promise<Report> {
   const checkRunSummaries = await fetchRunSummaries(octokit, params);
   if (isDebug()) {
@@ -106,17 +106,17 @@ export async function fetchOtherRunStatus(
     }
 
     info(
-      `${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`
+      `${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`,
     );
   }
 
-  const progress: Report['progress'] =
-    otherRelatedCompletedRuns.length === otherRelatedRuns.length ? 'done' : 'in_progress';
-  const conclusion: Report['conclusion'] = otherRelatedCompletedRuns.every((summary) =>
-    isAcceptable(summary.conclusion)
-  )
-    ? 'acceptable'
-    : 'bad';
+  const progress: Report['progress'] = otherRelatedCompletedRuns.length === otherRelatedRuns.length
+    ? 'done'
+    : 'in_progress';
+  const conclusion: Report['conclusion'] =
+    otherRelatedCompletedRuns.every((summary) => isAcceptable(summary.conclusion))
+      ? 'acceptable'
+      : 'bad';
 
   return { progress, conclusion, summaries: otherRelatedRuns };
 }

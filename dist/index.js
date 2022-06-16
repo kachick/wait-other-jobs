@@ -63,7 +63,9 @@ async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
         }
         (0, core_1.info)(`${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`);
     }
-    const progress = otherRelatedCompletedRuns.length === otherRelatedRuns.length ? 'done' : 'in_progress';
+    const progress = otherRelatedCompletedRuns.length === otherRelatedRuns.length
+        ? 'done'
+        : 'in_progress';
     const conclusion = otherRelatedCompletedRuns.every((summary) => isAcceptable(summary.conclusion))
         ? 'acceptable'
         : 'bad';
@@ -95,7 +97,7 @@ exports.wait = wait;
 // The maximum is exclusive and the minimum is inclusive
 function getRandomInt(min, max) {
     const flooredMin = Math.ceil(min);
-    return Math.floor(Math.random() * (Math.floor(max) - flooredMin) + flooredMin);
+    return Math.floor((Math.random() * (Math.floor(max) - flooredMin)) + flooredMin);
 }
 // 454356 millseconds => 7.5725999999999996 minutes => approximately 7.57 minutes
 function readableDuration(milliseconds) {
@@ -111,7 +113,7 @@ exports.MIN_JITTER_MILLISECONDS = 1000;
 exports.MAX_JITTER_MILLISECONDS = 7000;
 function calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, attempts) {
     const jitterMilliseconds = getRandomInt(exports.MIN_JITTER_MILLISECONDS, exports.MAX_JITTER_MILLISECONDS);
-    return minIntervalSeconds * 2 ** (attempts - 1) * 1000 + jitterMilliseconds;
+    return ((minIntervalSeconds * (2 ** (attempts - 1))) * 1000) + jitterMilliseconds;
 }
 exports.calculateIntervalMillisecondsAsExponentialBackoffAndJitter = calculateIntervalMillisecondsAsExponentialBackoffAndJitter;
 
