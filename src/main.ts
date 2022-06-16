@@ -54,7 +54,7 @@ async function run(): Promise<void> {
 
   const minIntervalSeconds = parseInt(
     getInput('min-interval-seconds', { required: true, trimWhitespace: true }),
-    10
+    10,
   );
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
@@ -86,7 +86,7 @@ async function run(): Promise<void> {
 
     const idleMilliseconds = calculateIntervalMillisecondsAsExponentialBackoffAndJitter(
       minIntervalSeconds,
-      attempts
+      attempts,
     );
     info(`[estimation] It will wait ${readableDuration(idleMilliseconds)} to reduce api calling.`);
     await wait(idleMilliseconds);
@@ -94,7 +94,7 @@ async function run(): Promise<void> {
     const report = await fetchOtherRunStatus(
       octokit,
       { ...repositoryInfo, ref: commitSha },
-      ownJobIDs
+      ownJobIDs,
     );
 
     if (isDebug()) {

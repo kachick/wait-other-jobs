@@ -4,7 +4,7 @@
   "compilerOptions": {
     // https://www.typescriptlang.org/docs/handbook/esm-node.html
     "module": "node16",
-    "outDir": "./lib",
+    "outDir": "./lib"
   },
-  "include": ["src", "**.config.ts", "__tests__"],
+  "include": ["src", "**.config.ts", "__tests__"]
 }

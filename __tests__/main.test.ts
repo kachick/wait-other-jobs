@@ -27,34 +27,34 @@ test('interval will be like a cheap exponential backoff', async () => {
   const minIntervalSeconds = 100;
 
   expect(
-    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 1)
+    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 1),
   ).toBeGreaterThanOrEqual(100000 + MIN_JITTER_MILLISECONDS);
   expect(
-    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 1)
+    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 1),
   ).toBeLessThan(100000 + MAX_JITTER_MILLISECONDS);
   expect(
-    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 2)
+    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 2),
   ).toBeGreaterThanOrEqual(200000 + MIN_JITTER_MILLISECONDS);
   expect(
-    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 2)
+    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 2),
   ).toBeLessThan(200000 + MAX_JITTER_MILLISECONDS);
   expect(
-    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 3)
+    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 3),
   ).toBeGreaterThanOrEqual(400000 + MIN_JITTER_MILLISECONDS);
   expect(
-    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 3)
+    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 3),
   ).toBeLessThan(400000 + MAX_JITTER_MILLISECONDS);
   expect(
-    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 4)
+    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 4),
   ).toBeGreaterThanOrEqual(800000 + MIN_JITTER_MILLISECONDS);
   expect(
-    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 4)
+    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 4),
   ).toBeLessThan(800000 + MAX_JITTER_MILLISECONDS);
   expect(
-    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 5)
+    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 5),
   ).toBeGreaterThanOrEqual(1600000 + MIN_JITTER_MILLISECONDS);
   expect(
-    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 5)
+    calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, 5),
   ).toBeLessThan(1600000 + MAX_JITTER_MILLISECONDS);
 });
 
