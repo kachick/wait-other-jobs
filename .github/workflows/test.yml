@@ -6,7 +6,6 @@ on:
       - '.github/dependabot.yml'
       - 'LICENSE'
       - '.editorconfig'
-      - '.prettierrc'
       - '.eslintrc.js'
       - 'README.md'
       - '.vscode/**'
@@ -15,7 +14,6 @@ on:
       - '.github/dependabot.yml'
       - 'LICENSE'
       - '.editorconfig'
-      - '.prettierrc'
       - '.eslintrc.js'
       - 'README.md'
       - '.vscode/**'
@@ -24,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: dprint/check@v2.0
       - name: Get npm cache directory
         id: npm-cache-dir
         run: |
@@ -41,8 +40,6 @@ jobs:
         run: npm list
       - name: install dependencies
         run: npm install
-      - name: formatting
-        run: npm run format-check
       - name: Lint
         run: npm run lint
       - name: Build (Includes typecheck)

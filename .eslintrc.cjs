@@ -8,7 +8,6 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/eslint-recommended',
-    'prettier',
     'plugin:github/recommended',
   ],
   overrides: [
@@ -31,7 +30,7 @@ module.exports = {
     ],
   },
   parser: '@typescript-eslint/parser',
-  plugins: ['deprecation', '@typescript-eslint', 'import', 'prettier', 'github'],
+  plugins: ['deprecation', '@typescript-eslint', 'import', 'github'],
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module',
