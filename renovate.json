@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    ":timezone(Asia/Tokyo)",
+    "github>kachick/renovate-config-dprint"
+  ],
+  "labels": ["dependencies", "renovate"],
+  "schedule": [
+    "after 9am and before 10am"
+  ],
+  "automerge": true
+}
