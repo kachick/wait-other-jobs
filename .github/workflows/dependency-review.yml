@@ -18,4 +18,5 @@ jobs:
       - name: 'Dependency Review'
         uses: actions/dependency-review-action@v2
         with:
-          allow-licenses: MIT, BSD-3-Clause, Unlicense, ISC, Apache-2.0
+          # https://spdx.org/licenses/
+          allow-licenses: MIT, BSD-3-Clause, BSD-2-Clause, 0BSD, Unlicense, ISC, Apache-2.0
