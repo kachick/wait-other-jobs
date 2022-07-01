@@ -5,11 +5,5 @@
   ],
   "labels": ["dependencies", "renovate"],
   "automerge": true,
-  "packageRules": [
-    {
-      "groupName": "node",
-      "matchPackageNames": ["node"],
-      "enabled": false
-    }
-  ]
+  "enabledManagers": []
 }
