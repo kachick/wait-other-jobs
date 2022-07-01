@@ -9,7 +9,11 @@
   },
   "json": {},
   "markdown": {},
-  "includes": ["**/*.{ts,tsx,js,jsx,cjs,mjs,json,md}"],
+  "prettier": {
+    "printWidth": 120,
+    "singleQuote": true
+  },
+  "includes": ["**/*.{ts,tsx,js,jsx,cjs,mjs,json,md,yml}"],
   "excludes": ["**/node_modules", "**/*-lock.json", "lib/**", "dist/**"],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.69.5.wasm",
