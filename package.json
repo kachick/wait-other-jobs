@@ -9,13 +9,13 @@
   "scripts": {
     "prebuild": "rimraf lib",
     "build": "tsc --project tsconfig.build.json",
-    "format": "dprint fmt",
-    "format-check": "dprint check",
+    "format:fix": "dprint fmt",
+    "format:check": "dprint check",
     "lint": "eslint src/**/*.ts",
     "prepackage": "rimraf dist",
     "package": "ncc build",
     "test": "jest",
-    "all": "npm run format-check && npm run lint && npm run build && npm run package && npm test"
+    "all": "npm run format:check && npm run lint && npm run build && npm run package && npm test"
   },
   "repository": {
     "type": "git",
