@@ -5,5 +5,5 @@
   ],
   "labels": ["dependencies", "renovate"],
   "automerge": true,
-  "enabledManagers": []
+  "enabledManagers": ["regex"]
 }
