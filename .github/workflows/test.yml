@@ -22,6 +22,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
+      - name: install dependencies
+        run: npm ci --ignore-scripts
+      - name: Build (Includes typecheck)
+        run: npm run build
+      - name: Test (Need to build before test)
+        run: npm test
+      - name: Ensure we can make package
+        run: npm run package
+      - name: Prevent missing commits after compile
+        run: git add --intent-to-add . && git diff --exit-code
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
       - uses: dprint/check@v2.0
       - uses: actions/setup-node@v3
         with:
@@ -31,11 +50,3 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Lint
         run: npm run lint
-      - name: Build (Includes typecheck)
-        run: npm run build
-      - name: Test (Need to build before test)
-        run: npm test
-      - name: Ensure we can make package
-        run: npm run package
-      - name: Prevent missing commits after compile
-        run: git add --intent-to-add . && git diff --exit-code
