@@ -23,6 +23,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dprint/check@v2.0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
       - name: Get npm cache directory
         id: npm-cache-dir
         run: |
