@@ -12,7 +12,7 @@
     "format:fix": "dprint fmt",
     "format:check": "dprint check",
     "lint": "eslint src/**/*.ts",
-    "prepackage": "rimraf dist",
+    "prepackage": "rimraf dist && npm run build",
     "package": "ncc build",
     "postpackage": "rimraf lib",
     "pretest:js": "rimraf lib && npm run build",
