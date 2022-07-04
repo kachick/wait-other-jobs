@@ -4,6 +4,10 @@ on:
     branches: [main]
     paths-ignore:
       - '.github/dependabot.yml'
+      - '.github/workflows/test.yml'
+      - '.github/workflows/dependency-review.yml'
+      - '.github/workflows/auto-merge-dependabot-prs.yml'
+      - '.github/workflows/codeql-analysis.yml'
       - 'LICENSE'
       - '.editorconfig'
       - 'dprint.json'
@@ -13,6 +17,10 @@ on:
   pull_request:
     paths-ignore:
       - '.github/dependabot.yml'
+      - '.github/workflows/test.yml'
+      - '.github/workflows/dependency-review.yml'
+      - '.github/workflows/auto-merge-dependabot-prs.yml'
+      - '.github/workflows/codeql-analysis.yml'
       - 'LICENSE'
       - '.editorconfig'
       - 'dprint.json'
