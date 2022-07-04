@@ -14,9 +14,33 @@ name: 'CodeQL'
 on:
   push:
     branches: ['main']
+    paths-ignore:
+      - '.github/dependabot.yml'
+      - '.github/workflows/test.yml'
+      - '.github/workflows/dependency-review.yml'
+      - '.github/workflows/auto-merge-dependabot-prs.yml'
+      - '.github/workflows/codeql-analysis.yml'
+      - 'LICENSE'
+      - '.editorconfig'
+      - 'dprint.json'
+      - '.eslintrc.js'
+      - 'README.md'
+      - '.vscode/**'
   pull_request:
     # The branches below must be a subset of the branches above
     branches: ['main']
+    paths-ignore:
+      - '.github/dependabot.yml'
+      - '.github/workflows/test.yml'
+      - '.github/workflows/dependency-review.yml'
+      - '.github/workflows/auto-merge-dependabot-prs.yml'
+      - '.github/workflows/codeql-analysis.yml'
+      - 'LICENSE'
+      - '.editorconfig'
+      - 'dprint.json'
+      - '.eslintrc.js'
+      - 'README.md'
+      - '.vscode/**'
   schedule:
     - cron: '19 13 * * 3'
 
