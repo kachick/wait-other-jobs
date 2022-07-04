@@ -37,7 +37,7 @@ jobs:
           path: ${{ steps.npm-cache-dir.outputs.dir }}
           key: cache-version-2-${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            cache-version-2-${{ runner.os }}-node-
       - if: ${{ steps.npm-cache.outputs.cache-hit != 'true' }}
         name: List the state of node modules
         continue-on-error: true
