@@ -1,0 +1,15 @@
+name: Format
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'package-lock.json'
+  pull_request:
+    paths-ignore:
+      - 'package-lock.json'
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dprint/check@v2.0
