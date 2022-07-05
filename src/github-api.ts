@@ -106,7 +106,9 @@ export async function fetchOtherRunStatus(
     }
 
     info(
-      `${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`,
+      `${summary.id} - ${summary.status} - ${summary.conclusion ?? 'null'}: ${summary.name} - ${
+        summary.html_url ?? 'null'
+      }`,
     );
   }
 
