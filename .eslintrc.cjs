@@ -4,11 +4,11 @@ module.exports = {
     es2021: true,
     'jest/globals': true,
   },
+  plugins: ['deprecation', '@typescript-eslint', 'import'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:github/recommended',
   ],
   overrides: [
     {
@@ -32,7 +32,6 @@ module.exports = {
     'no-mixed-operators': 'error',
   },
   parser: '@typescript-eslint/parser',
-  plugins: ['deprecation', '@typescript-eslint', 'import', 'github'],
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module',

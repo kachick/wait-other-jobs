@@ -12,10 +12,16 @@
     "format:fix": "dprint fmt",
     "format:check": "dprint check",
     "lint": "eslint src/**/*.ts",
-    "prepackage": "rimraf dist",
+    "prepackage": "rimraf dist && npm run build",
     "package": "ncc build",
-    "test": "jest",
-    "all": "npm run format:check && npm run lint && npm run build && npm run package && npm test"
+    "test:ts": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.pre.config.ts",
+    "pretest:js": "npm run build",
+    "test:js": "npm run test:js-with-current-built",
+    "test:js-with-current-built": "jest --config jest.post.config.ts",
+    "test": "npm run test:ts && npm run test:js",
+    "almost": "npm run format:check && npm run lint && npm run test:ts",
+    "after-lint": "npm run test:ts && npm run build && npm run test:js-with-current-built && npm run package",
+    "all": "npm run format:check && npm run lint && npm run after-lint"
   },
   "repository": {
     "type": "git",
@@ -30,6 +36,8 @@
   },
   "devDependencies": {
     "@octokit/types": "^6.39.0",
+    "@swc/core": "^1.2.208",
+    "@swc/jest": "^0.2.21",
     "@tsconfig/node16-strictest-esm": "^1.0.3",
     "@types/node": "^16.11.43",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
@@ -38,13 +46,10 @@
     "dprint": "^0.30.2",
     "eslint": "^8.19.0",
     "eslint-plugin-deprecation": "^1.3.2",
-    "eslint-plugin-github": "^4.3.6",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^26.5.3",
     "jest": "^28.1.2",
     "rimraf": "^3.0.2",
-    "ts-jest": "^28.0.5",
-    "ts-node": "^10.8.2",
     "typescript": "^4.7.4"
   }
 }
