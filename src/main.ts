@@ -31,10 +31,10 @@ async function run(): Promise<void> {
   } = context;
   const pr = payload.pull_request;
   let commitSha = sha;
-  if (pr && 'head' in pr) {
-    const { head } = pr;
-    if (typeof head === 'object' && 'sha' in head) {
-      commitSha = head.sha;
+  if (pr) {
+    const { head: { sha: prSha = sha } } = pr;
+    if (typeof prSha === 'string') {
+      commitSha = prSha;
     } else {
       if (isDebug()) {
         debug(JSON.stringify(pr, null, 2));
@@ -127,6 +127,7 @@ async function run(): Promise<void> {
           }
           default: {
             const unexpectedConclusion: never = conclusion;
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             setFailed(`got unexpected conclusion: ${unexpectedConclusion}`);
             break;
           }
@@ -136,6 +137,7 @@ async function run(): Promise<void> {
       default: {
         shouldStop = true;
         const unexpectedProgress: never = progress;
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         setFailed(`got unexpected progress: ${unexpectedProgress}`);
         break;
       }
@@ -149,4 +151,4 @@ async function run(): Promise<void> {
   }
 }
 
-run();
+void run();

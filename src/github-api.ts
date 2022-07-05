@@ -27,11 +27,11 @@ type CheckRunsSummary = Pick<
 >;
 
 // No need to keep as same as GitHub responses so We can change the definition.
-type Report = {
+interface Report {
   progress: 'in_progress' | 'done';
   conclusion: 'acceptable' | 'bad';
   summaries: CheckRunsSummary[];
-};
+}
 
 function isAcceptable(conclusion: CheckRunsSummary['conclusion']): boolean {
   return conclusion === 'success' || conclusion === 'skipped';
@@ -106,7 +106,9 @@ export async function fetchOtherRunStatus(
     }
 
     info(
-      `${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`,
+      `${summary.id} - ${summary.status} - ${summary.conclusion ?? 'null'}: ${summary.name} - ${
+        summary.html_url ?? 'null'
+      }`,
     );
   }
 

@@ -61,7 +61,7 @@ async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
         if (summary.status === 'completed') {
             otherRelatedCompletedRuns.push(summary);
         }
-        (0, core_1.info)(`${summary.id} - ${summary.status} - ${summary.conclusion}: ${summary.name} - ${summary.html_url}`);
+        (0, core_1.info)(`${summary.id} - ${summary.status} - ${summary.conclusion ?? 'null'}: ${summary.name} - ${summary.html_url ?? 'null'}`);
     }
     const progress = otherRelatedCompletedRuns.length === otherRelatedRuns.length
         ? 'done'
@@ -9073,10 +9073,10 @@ async function run() {
     const { repo: { repo, owner }, payload, runId, sha, } = github_1.context;
     const pr = payload.pull_request;
     let commitSha = sha;
-    if (pr && 'head' in pr) {
-        const { head } = pr;
-        if (typeof head === 'object' && 'sha' in head) {
-            commitSha = head.sha;
+    if (pr) {
+        const { head: { sha: prSha = sha } } = pr;
+        if (typeof prSha === 'string') {
+            commitSha = prSha;
         }
         else {
             if ((0, core_1.isDebug)()) {
@@ -9142,6 +9142,7 @@ async function run() {
                     }
                     default: {
                         const unexpectedConclusion = conclusion;
+                        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                         (0, core_1.setFailed)(`got unexpected conclusion: ${unexpectedConclusion}`);
                         break;
                     }
@@ -9151,6 +9152,7 @@ async function run() {
             default: {
                 shouldStop = true;
                 const unexpectedProgress = progress;
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                 (0, core_1.setFailed)(`got unexpected progress: ${unexpectedProgress}`);
                 break;
             }
@@ -9161,7 +9163,7 @@ async function run() {
         }
     }
 }
-run();
+void run();
 
 })();
 

@@ -1,4 +1,4 @@
-# Wait other jobs
+# wait-other-jobs
 
 [![CI](https://github.com/kachick/wait-other-jobs/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/test.yml?query=event%3Apush++)
 [![Itself](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml?query=event%3Apush++)
@@ -66,7 +66,7 @@ jobs:
     steps:
       - name: Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v1.3.1
+        uses: dependabot/fetch-metadata@v1.3.3
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Wait other jobs are passed or failed
