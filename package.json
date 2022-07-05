@@ -36,14 +36,14 @@
     "@actions/github": "^5.0.3"
   },
   "devDependencies": {
-    "@octokit/types": "^6.38.2",
+    "@octokit/types": "^6.39.0",
     "@swc-node/register": "^1.5.1",
     "@swc/core": "^1.2.208",
     "@swc/jest": "^0.2.21",
     "@tsconfig/node16-strictest-esm": "^1.0.3",
     "@types/node": "^16.11.43",
-    "@typescript-eslint/eslint-plugin": "^5.30.4",
-    "@typescript-eslint/parser": "^5.30.4",
+    "@typescript-eslint/eslint-plugin": "^5.30.5",
+    "@typescript-eslint/parser": "^5.30.5",
     "@vercel/ncc": "^0.34.0",
     "dprint": "^0.30.2",
     "eslint": "^8.19.0",
