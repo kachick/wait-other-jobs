@@ -12,7 +12,7 @@
     "format:fix": "dprint fmt",
     "format:check": "dprint check",
     "lint": "eslint src/**/*.ts",
-    "prepackage": "npm run build",
+    "prepackage": "rimraf dist && npm run build",
     "package": "ncc build",
     "test:ts": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.pre.config.ts",
     "pretest:js": "npm run build",
