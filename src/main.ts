@@ -31,7 +31,7 @@ async function run(): Promise<void> {
   } = context;
   const pr = payload.pull_request;
   let commitSha = sha;
-  if (pr && 'head' in pr) {
+  if (pr) {
     const { head: { sha: prSha = sha } } = pr;
     if (typeof prSha === 'string') {
       commitSha = prSha;

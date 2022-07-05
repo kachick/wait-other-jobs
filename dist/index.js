@@ -9073,7 +9073,7 @@ async function run() {
     const { repo: { repo, owner }, payload, runId, sha, } = github_1.context;
     const pr = payload.pull_request;
     let commitSha = sha;
-    if (pr && 'head' in pr) {
+    if (pr) {
         const { head: { sha: prSha = sha } } = pr;
         if (typeof prSha === 'string') {
             commitSha = prSha;
