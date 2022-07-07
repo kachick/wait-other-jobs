@@ -20,7 +20,9 @@ const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
 function isAcceptable(conclusion) {
     return conclusion === 'success' || conclusion === 'skipped';
 }
-async function fetchJobIDs(octokit, params) {
+async function fetchJobIDs(
+// eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
+octokit, params) {
     return new Set(await octokit.paginate(octokit.rest.actions.listJobsForWorkflowRun, {
         ...params,
         // eslint-disable-next-line camelcase
@@ -29,7 +31,9 @@ async function fetchJobIDs(octokit, params) {
     }, (resp) => resp.data.map((job) => job.id)));
 }
 exports.fetchJobIDs = fetchJobIDs;
-async function fetchRunSummaries(octokit, params) {
+async function fetchRunSummaries(
+// eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
+octokit, params) {
     return await octokit.paginate(octokit.rest.checks.listForRef, {
         ...params,
         // eslint-disable-next-line camelcase
@@ -50,7 +54,9 @@ async function fetchRunSummaries(octokit, params) {
         name,
     }))(checkRun)));
 }
-async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
+async function fetchOtherRunStatus(
+// eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
+octokit, params, ownJobIDs) {
     const checkRunSummaries = await fetchRunSummaries(octokit, params);
     if ((0, core_1.isDebug)()) {
         (0, console_1.debug)(JSON.stringify(checkRunSummaries, null, 2));
