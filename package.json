@@ -11,7 +11,8 @@
     "build": "tsc --project tsconfig.build.json",
     "format:fix": "dprint fmt",
     "format:check": "dprint check",
-    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint --fix src/**/*.ts",
+    "lint:check": "eslint src/**/*.ts",
     "prepackage": "rimraf dist && npm run build",
     "package": "ncc build",
     "test:ts": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.pre.config.ts",
@@ -19,9 +20,9 @@
     "test:js": "npm run test:js-with-current-built",
     "test:js-with-current-built": "jest --config jest.post.config.ts",
     "test": "npm run test:ts && npm run test:js",
-    "almost": "npm run format:check && npm run lint && npm run test:ts",
+    "almost": "npm run format:check && npm run lint:check && npm run test:ts",
     "after-lint": "npm run test:ts && npm run build && npm run test:js-with-current-built && npm run package",
-    "all": "npm run format:check && npm run lint && npm run after-lint"
+    "all": "npm run format:check && npm run lint:check && npm run after-lint"
   },
   "repository": {
     "type": "git",
