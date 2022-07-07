@@ -38,8 +38,9 @@ function isAcceptable(conclusion: CheckRunsSummary['conclusion']): boolean {
 }
 
 export async function fetchJobIDs(
+  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   octokit: Octokit,
-  params: Pick<ListWorkflowRunsParams, 'owner' | 'repo' | 'run_id'>,
+  params: Readonly<Pick<ListWorkflowRunsParams, 'owner' | 'repo' | 'run_id'>>,
 ): Promise<Set<JobID>> {
   return new Set(
     await octokit.paginate(
@@ -56,8 +57,9 @@ export async function fetchJobIDs(
 }
 
 async function fetchRunSummaries(
+  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   octokit: Octokit,
-  params: Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>,
+  params: Readonly<Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>>,
 ): Promise<CheckRunsSummary[]> {
   return await octokit.paginate(
     octokit.rest.checks.listForRef,
@@ -87,9 +89,10 @@ async function fetchRunSummaries(
 }
 
 export async function fetchOtherRunStatus(
+  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   octokit: Parameters<typeof fetchRunSummaries>[0],
   params: Parameters<typeof fetchRunSummaries>[1],
-  ownJobIDs: Set<JobID>,
+  ownJobIDs: Readonly<Set<JobID>>,
 ): Promise<Report> {
   const checkRunSummaries = await fetchRunSummaries(octokit, params);
   if (isDebug()) {
