@@ -30,6 +30,8 @@ module.exports = {
     ],
     'prettier/prettier': 'off',
     'no-mixed-operators': 'error',
+    '@typescript-eslint/prefer-readonly': 'error',
+    '@typescript-eslint/prefer-readonly-parameter-types': ['error', { 'ignoreInferredTypes': true }],
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
