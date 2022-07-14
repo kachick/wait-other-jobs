@@ -83,7 +83,7 @@ async function fetchRunSummaries(
           html_url,
           name,
         }))(checkRun)
-      ).sort((summary) => summary.id),
+      ).sort((a, b) => a.id - b.id),
   );
 }
 
