@@ -20,7 +20,7 @@ test('wait 500 ms', async () => {
   expect(delta).toBeGreaterThan(450);
 });
 
-test('interval will be like a cheap exponential backoff', async () => {
+test('interval will be like a cheap exponential backoff', () => {
   const minIntervalSeconds = 100;
 
   expect(
