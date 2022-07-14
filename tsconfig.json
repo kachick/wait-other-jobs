@@ -6,6 +6,5 @@
     "module": "node16",
     "outDir": "./lib"
   },
-  "skipLibCheck": false,
   "include": ["src", "**/*.config.ts", "__tests__"]
 }
