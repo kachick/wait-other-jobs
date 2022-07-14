@@ -51,7 +51,7 @@ octokit, params) {
         // eslint-disable-next-line camelcase
         html_url,
         name,
-    }))(checkRun)).sort((summary) => summary.id));
+    }))(checkRun)).sort((a, b) => a.id - b.id));
 }
 async function fetchOtherRunStatus(
 // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
