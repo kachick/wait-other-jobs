@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@octokit/types": "^6.39.0",
-    "@swc/core": "^1.2.213",
+    "@swc/core": "^1.2.215",
     "@swc/jest": "^0.2.21",
     "@tsconfig/node16-strictest-esm": "^1.0.3",
     "@types/node": "^16.11.44",
