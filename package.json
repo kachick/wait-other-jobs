@@ -11,7 +11,7 @@
     "build": "tsc --project tsconfig.build.json",
     "format:fix": "dprint fmt",
     "format:check": "dprint check",
-    "lint:fix": "eslint --fix src/**/*.ts",
+    "lint:fix": "eslint --fix {src,__tests__}/**/*.ts *.ts",
     "lint:check": "eslint {src,__tests__}/**/*.ts *.ts",
     "prepackage": "rimraf dist && npm run build",
     "package": "ncc build",
