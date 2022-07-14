@@ -9,7 +9,6 @@
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.fetchOtherRunStatus = exports.fetchJobIDs = void 0;
 const core_1 = __nccwpck_require__(2186);
-const console_1 = __nccwpck_require__(6206);
 // REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
 // GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
 const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs';
@@ -52,14 +51,14 @@ octokit, params) {
         // eslint-disable-next-line camelcase
         html_url,
         name,
-    }))(checkRun)));
+    }))(checkRun)).sort((summary) => summary.id));
 }
 async function fetchOtherRunStatus(
 // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
 octokit, params, ownJobIDs) {
     const checkRunSummaries = await fetchRunSummaries(octokit, params);
     if ((0, core_1.isDebug)()) {
-        (0, console_1.debug)(JSON.stringify(checkRunSummaries, null, 2));
+        (0, core_1.debug)(JSON.stringify(checkRunSummaries, null, 2));
     }
     const otherRelatedRuns = checkRunSummaries.flatMap((summary) => ownJobIDs.has(summary.id) ? [] : [summary]);
     const otherRelatedCompletedRuns = [];
@@ -8901,14 +8900,6 @@ module.exports = eval("require")("encoding");
 
 "use strict";
 module.exports = require("assert");
-
-/***/ }),
-
-/***/ 6206:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("console");
 
 /***/ }),
 
