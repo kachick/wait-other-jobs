@@ -1,7 +1,6 @@
-import { info, isDebug } from '@actions/core';
+import { info, isDebug, debug } from '@actions/core';
 import type { getOctokit } from '@actions/github';
 import type { Endpoints } from '@octokit/types';
-import { debug } from 'console';
 
 type Octokit = ReturnType<typeof getOctokit>;
 
