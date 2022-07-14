@@ -19,4 +19,4 @@ jobs:
         uses: kachick/dependency-review-action@v2
         with:
           # https://spdx.org/licenses/
-          allow-licenses: MIT, BSD-3-Clause, BSD-2-Clause, 0BSD, Unlicense, ISC, Apache-2.0
+          allow-licenses: MIT, BSD-3-Clause, BSD-2-Clause, 0BSD, Unlicense, ISC, Apache-2.0, CC-BY-4.0
