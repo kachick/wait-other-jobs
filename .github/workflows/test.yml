@@ -24,7 +24,7 @@ jobs:
       - uses: kachick/action-parse-asdf-tool-versions
         id: parse
     outputs:
-      tool-versions: ${{ steps.parse.outputs.json }}
+      tool-versions: '${{ steps.parse.outputs.json }}'
 
   build:
     needs: [asdf-parser]
