@@ -3,14 +3,12 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - '.github/dependabot.yml'
       - 'LICENSE'
       - '.editorconfig'
       - 'README.md'
       - '.vscode/**'
   pull_request:
     paths-ignore:
-      - '.github/dependabot.yml'
       - 'LICENSE'
       - '.editorconfig'
       - 'README.md'
