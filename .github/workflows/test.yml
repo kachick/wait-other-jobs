@@ -6,7 +6,6 @@ on:
       - '.github/dependabot.yml'
       - 'LICENSE'
       - '.editorconfig'
-      - '.eslintrc.js'
       - 'README.md'
       - '.vscode/**'
   pull_request:
@@ -14,7 +13,6 @@ on:
       - '.github/dependabot.yml'
       - 'LICENSE'
       - '.editorconfig'
-      - '.eslintrc.js'
       - 'README.md'
       - '.vscode/**'
 jobs:
