@@ -8,11 +8,14 @@ When some jobs failed, this action exit with NON 0 value. Otherwise exit with 0.
 
 <img src="./assets/actual-log-v1.1.1-passed.png?raw=true" alt="Example of actual log" width=700>
 
+I mainly use this action for below ways
+
+- Pend deploying to Firebase/Vercel/Netlify until CI workflows finished
+- Auto merge dependabot PRs without PAT(Personal Access Token)
+
 # GITHUB_TOKEN vs PAT
 
-I mainly use this for auto merge dependabot PRs without PAT(Personal Access Token).
-
-This action just requires following GITHUB_TOKEN permissions.
+This action just requires following GITHUB_TOKEN permissions. Needless annoying setup and needless unsecure around PAT.
 
 ```yaml
 permissions:
@@ -83,15 +86,19 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 ```
 
-[An actual example is here](https://github.com/kachick/rspec-matchers-power_assert_matchers/blob/650a0ef0c290d42cd0a70ef7c011de2c3777c966/.github/workflows/auto-merge-dependabot-prs.yml)
+# Actual examples
+
+- [Wait CI before deploy to firebase](https://github.com/kachick/convert-color-json-between-windows-terminal-and-vscode/blob/1a8eac43be819204ff21eec1198fd2dfad3fcaa3/.github/workflows/firebase-hosting-pull-request.yml#L39-L43)
+- [Wait CI before automerge dependabot PRs](https://github.com/kachick/rspec-matchers-power_assert_matchers/blob/1efe1d8f4117b921ca50a0e7ff48114015106365/.github/workflows/auto-merge-dependabot-prs.yml#L22-L25)
 
 # Why using for dependabot auto-merge?
 
 I used a way to comment `@dependabot merge`. This is simple to ensure CI passed.\
 However it requires PAT(Personal Access Token).\
-[Current PAT can't be reduced the permission scope to repository.](https://github.community/t/limiting-scope-of-a-pat-to-a-single-repository/3129)
-It is all.\
-So this action provides another way. It checks other jobs statuses.
+[PAT could't be reduced the permission scope to repository.](https://github.community/t/limiting-scope-of-a-pat-to-a-single-repository/3129)\
+And it requires annoy steps to generate, sets and maintains tokens [even if refined with beta version](https://github.blog/changelog/2022-10-18-introducing-fine-grained-personal-access-tokens/).
+
+So this action provides another way. It checks other workflows/jobs statuses in actions.
 
 ## Cons
 
