@@ -41,7 +41,7 @@
     "@swc/jest": "^0.2.23",
     "@tsconfig/node16-strictest-esm": "^1.0.3",
     "@types/node": "^16.18.4",
-    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.1",
     "@typescript-eslint/parser": "^5.45.0",
     "@vercel/ncc": "^0.34.0",
     "dprint": "^0.33.0",
