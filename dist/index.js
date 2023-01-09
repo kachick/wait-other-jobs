@@ -9740,7 +9740,6 @@ var exports = __webpack_exports__;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
-// eslint-disable-next-line import/no-unresolved
 const github_api_js_1 = __nccwpck_require__(2565);
 const wait_js_1 = __nccwpck_require__(5817);
 async function run() {
