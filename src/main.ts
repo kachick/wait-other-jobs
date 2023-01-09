@@ -12,14 +12,8 @@ import {
 } from '@actions/core';
 import { getOctokit, context } from '@actions/github';
 
-// eslint-disable-next-line import/no-unresolved
 import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
-import {
-  calculateIntervalMillisecondsAsExponentialBackoffAndJitter,
-  readableDuration,
-  wait,
-  // eslint-disable-next-line import/no-unresolved
-} from './wait.js';
+import { calculateIntervalMillisecondsAsExponentialBackoffAndJitter, readableDuration, wait } from './wait.js';
 
 async function run(): Promise<void> {
   startGroup('Setup variables');
