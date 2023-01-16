@@ -9602,6 +9602,46 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__nccwpck_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__nccwpck_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
@@ -9611,14 +9651,17 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
-
-
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(2186);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(5438);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
 // src/main.ts
-var import_core2 = __nccwpck_require__(2186);
-var import_github = __nccwpck_require__(5438);
+
+
 
 // src/github-api.ts
-var import_core = __nccwpck_require__(2186);
+
 function isAcceptable(conclusion) {
   return conclusion === "success" || conclusion === "skipped";
 }
@@ -9666,8 +9709,8 @@ async function fetchRunSummaries(octokit, params) {
 }
 async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
   const checkRunSummaries = await fetchRunSummaries(octokit, params);
-  if ((0, import_core.isDebug)()) {
-    (0, import_core.debug)(JSON.stringify(checkRunSummaries, null, 2));
+  if ((0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.isDebug)()) {
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)(JSON.stringify(checkRunSummaries, null, 2));
   }
   const otherRelatedRuns = checkRunSummaries.flatMap(
     (summary) => ownJobIDs.has(summary.id) ? [] : [summary]
@@ -9677,7 +9720,7 @@ async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
     if (summary.status === "completed") {
       otherRelatedCompletedRuns.push(summary);
     }
-    (0, import_core.info)(
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.info)(
       `${summary.id} - ${summary.status} - ${summary.conclusion ?? "null"}: ${summary.name} - ${summary.html_url ?? "null"}`
     );
   }
@@ -9718,13 +9761,13 @@ function calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalS
 
 // src/main.ts
 async function run() {
-  (0, import_core2.startGroup)("Setup variables");
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup)("Setup variables");
   const {
     repo: { repo, owner },
     payload,
     runId,
     sha
-  } = import_github.context;
+  } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context;
   const pr = payload.pull_request;
   let commitSha = sha;
   if (pr) {
@@ -9732,79 +9775,79 @@ async function run() {
     if (typeof prSha === "string") {
       commitSha = prSha;
     } else {
-      if ((0, import_core2.isDebug)()) {
-        (0, import_core2.debug)(JSON.stringify(pr, null, 2));
+      if ((0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.isDebug)()) {
+        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)(JSON.stringify(pr, null, 2));
       }
-      (0, import_core2.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
-      (0, import_core2.setFailed)("unexpected failure occurred");
+      (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
+      (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed)("unexpected failure occurred");
       return;
     }
   }
-  (0, import_core2.info)(JSON.stringify({ triggeredCommitSha: commitSha, ownRunId: runId }, null, 2));
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.info)(JSON.stringify({ triggeredCommitSha: commitSha, ownRunId: runId }, null, 2));
   const repositoryInfo = {
     owner,
     repo
   };
   const minIntervalSeconds = parseInt(
-    (0, import_core2.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
     10
   );
-  const isEarlyExit = (0, import_core2.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
-  const isDryRun = (0, import_core2.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
-  const githubToken = (0, import_core2.getInput)("github-token", { required: true, trimWhitespace: false });
-  (0, import_core2.setSecret)(githubToken);
-  const octokit = (0, import_github.getOctokit)(githubToken);
+  const isEarlyExit = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
+  const isDryRun = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
+  const githubToken = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("github-token", { required: true, trimWhitespace: false });
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.setSecret)(githubToken);
+  const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit)(githubToken);
   let attempts = 0;
   let shouldStop = false;
-  (0, import_core2.endGroup)();
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup)();
   if (isDryRun) {
     return;
   }
-  (0, import_core2.startGroup)("Get own job_id");
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup)("Get own job_id");
   const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
-  (0, import_core2.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
-  (0, import_core2.endGroup)();
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup)();
   for (; ; ) {
     attempts += 1;
-    (0, import_core2.startGroup)(`Polling times: ${attempts}`);
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup)(`Polling times: ${attempts}`);
     const idleMilliseconds = calculateIntervalMillisecondsAsExponentialBackoffAndJitter(
       minIntervalSeconds,
       attempts
     );
-    (0, import_core2.info)(`[estimation] It will wait ${readableDuration(idleMilliseconds)} to reduce api calling.`);
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.info)(`[estimation] It will wait ${readableDuration(idleMilliseconds)} to reduce api calling.`);
     await wait(idleMilliseconds);
     const report = await fetchOtherRunStatus(
       octokit,
       { ...repositoryInfo, ref: commitSha },
       ownJobIDs
     );
-    if ((0, import_core2.isDebug)()) {
-      (0, import_core2.debug)(JSON.stringify(report, null, 2));
+    if ((0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.isDebug)()) {
+      (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)(JSON.stringify(report, null, 2));
     }
     const { progress, conclusion } = report;
     switch (progress) {
       case "in_progress": {
         if (conclusion === "bad" && isEarlyExit) {
           shouldStop = true;
-          (0, import_core2.setFailed)("some jobs failed");
+          (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed)("some jobs failed");
         }
-        (0, import_core2.info)("some jobs still in progress");
+        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.info)("some jobs still in progress");
         break;
       }
       case "done": {
         shouldStop = true;
         switch (conclusion) {
           case "acceptable": {
-            (0, import_core2.info)("all jobs passed");
+            (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.info)("all jobs passed");
             break;
           }
           case "bad": {
-            (0, import_core2.setFailed)("some jobs failed");
+            (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed)("some jobs failed");
             break;
           }
           default: {
             const unexpectedConclusion = conclusion;
-            (0, import_core2.setFailed)(`got unexpected conclusion: ${unexpectedConclusion}`);
+            (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed)(`got unexpected conclusion: ${unexpectedConclusion}`);
             break;
           }
         }
@@ -9813,11 +9856,11 @@ async function run() {
       default: {
         shouldStop = true;
         const unexpectedProgress = progress;
-        (0, import_core2.setFailed)(`got unexpected progress: ${unexpectedProgress}`);
+        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed)(`got unexpected progress: ${unexpectedProgress}`);
         break;
       }
     }
-    (0, import_core2.endGroup)();
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup)();
     if (shouldStop) {
       break;
     }

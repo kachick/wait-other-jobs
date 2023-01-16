@@ -8,7 +8,7 @@
   },
   "scripts": {
     "prebuild": "rimraf lib && tsc",
-    "build": "npx esbuild src/main.ts --bundle --platform=node --target=node16  --packages=external --outfile=lib/main.js",
+    "build": "npx esbuild src/main.ts --bundle --platform=node --target=node16 --format=esm --packages=external --outfile=lib/main.js",
     "format:fix": "dprint fmt",
     "format:check": "dprint check",
     "lint:fix": "eslint --fix {src,__tests__}/**/*.ts *.ts",
