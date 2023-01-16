@@ -6,7 +6,7 @@ const config: Config.InitialOptions = {
   clearMocks: true,
   moduleFileExtensions: ['js', 'ts'],
   transform: {
-    '^.+\\.(t|j)sx?$': 'ts-jest',
+    '^.+\\.(t|j)sx?$': 'esbuild-jest',
   },
   extensionsToTreatAsEsm: ['.ts'],
   testMatch: ['**/__tests__/prebuild/**/*.test.ts'],
