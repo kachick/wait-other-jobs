@@ -1,130 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 2565:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.fetchOtherRunStatus = exports.fetchJobIDs = void 0;
-const core_1 = __nccwpck_require__(2186);
-// REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
-// GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
-const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs';
-// REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
-// At 2022-05-27, GitHub does not provide this feature in their v4(GraphQL). So using v3(REST).
-// Track the development status here https://github.community/t/graphql-check-runs/14449
-const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs';
-function isAcceptable(conclusion) {
-    return conclusion === 'success' || conclusion === 'skipped';
-}
-async function fetchJobIDs(
-// eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-octokit, params) {
-    return new Set(await octokit.paginate(octokit.rest.actions.listJobsForWorkflowRun, {
-        ...params,
-        // eslint-disable-next-line camelcase
-        per_page: 100,
-        filter: 'latest',
-    }, (resp) => resp.data.map((job) => job.id)));
-}
-exports.fetchJobIDs = fetchJobIDs;
-async function fetchRunSummaries(
-// eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-octokit, params) {
-    return await octokit.paginate(octokit.rest.checks.listForRef, {
-        ...params,
-        // eslint-disable-next-line camelcase
-        per_page: 100,
-        filter: 'latest',
-    }, (resp) => resp.data.map((checkRun) => 
-    // eslint-disable-next-line camelcase
-    (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
-        id,
-        status,
-        conclusion,
-        // eslint-disable-next-line camelcase
-        started_at,
-        // eslint-disable-next-line camelcase
-        completed_at,
-        // eslint-disable-next-line camelcase
-        html_url,
-        name,
-    }))(checkRun)).sort((a, b) => a.id - b.id));
-}
-async function fetchOtherRunStatus(
-// eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-octokit, params, ownJobIDs) {
-    const checkRunSummaries = await fetchRunSummaries(octokit, params);
-    if ((0, core_1.isDebug)()) {
-        (0, core_1.debug)(JSON.stringify(checkRunSummaries, null, 2));
-    }
-    const otherRelatedRuns = checkRunSummaries.flatMap((summary) => ownJobIDs.has(summary.id) ? [] : [summary]);
-    const otherRelatedCompletedRuns = [];
-    for (const summary of otherRelatedRuns) {
-        if (summary.status === 'completed') {
-            otherRelatedCompletedRuns.push(summary);
-        }
-        (0, core_1.info)(`${summary.id} - ${summary.status} - ${summary.conclusion ?? 'null'}: ${summary.name} - ${summary.html_url ?? 'null'}`);
-    }
-    const progress = otherRelatedCompletedRuns.length === otherRelatedRuns.length
-        ? 'done'
-        : 'in_progress';
-    const conclusion = otherRelatedCompletedRuns.every((summary) => isAcceptable(summary.conclusion))
-        ? 'acceptable'
-        : 'bad';
-    return { progress, conclusion, summaries: otherRelatedRuns };
-}
-exports.fetchOtherRunStatus = fetchOtherRunStatus;
-
-
-/***/ }),
-
-/***/ 5817:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.calculateIntervalMillisecondsAsExponentialBackoffAndJitter = exports.MAX_JITTER_MILLISECONDS = exports.MIN_JITTER_MILLISECONDS = exports.readableDuration = exports.wait = void 0;
-// Taken from https://github.com/actions/typescript-action/blob/0cfebb2981ce6c1515b16445379303805459ea46/src/wait.ts Thank you!
-async function wait(milliseconds) {
-    return new Promise((resolve) => {
-        if (Number.isNaN(milliseconds)) {
-            throw new Error('milliseconds not a number');
-        }
-        setTimeout(() => resolve('done!'), milliseconds);
-    });
-}
-exports.wait = wait;
-// Taken from MDN
-// The maximum is exclusive and the minimum is inclusive
-function getRandomInt(min, max) {
-    const flooredMin = Math.ceil(min);
-    return Math.floor((Math.random() * (Math.floor(max) - flooredMin)) + flooredMin);
-}
-// 454356 millseconds => 7.5725999999999996 minutes => approximately 7.57 minutes
-function readableDuration(milliseconds) {
-    const msecToSec = 1000;
-    const secToMin = 60;
-    const wantPrecision = 2;
-    const adjustor = 10 ** wantPrecision;
-    const minutes = milliseconds / (msecToSec * secToMin);
-    return `approximately ${(Math.round(minutes * adjustor) / adjustor).toFixed(wantPrecision)} minutes`;
-}
-exports.readableDuration = readableDuration;
-exports.MIN_JITTER_MILLISECONDS = 1000;
-exports.MAX_JITTER_MILLISECONDS = 7000;
-function calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, attempts) {
-    const jitterMilliseconds = getRandomInt(exports.MIN_JITTER_MILLISECONDS, exports.MAX_JITTER_MILLISECONDS);
-    return ((minIntervalSeconds * (2 ** (attempts - 1))) * 1000) + jitterMilliseconds;
-}
-exports.calculateIntervalMillisecondsAsExponentialBackoffAndJitter = calculateIntervalMillisecondsAsExponentialBackoffAndJitter;
-
-
-/***/ }),
-
 /***/ 7351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -9557,6 +9433,22 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 9394:
+/***/ ((module) => {
+
+module.exports = eval("require")("./github-api.js");
+
+
+/***/ }),
+
+/***/ 8678:
+/***/ ((module) => {
+
+module.exports = eval("require")("./wait.js");
+
+
+/***/ }),
+
 /***/ 2877:
 /***/ ((module) => {
 
@@ -9726,6 +9618,46 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__nccwpck_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__nccwpck_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
@@ -9735,107 +9667,125 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
-var exports = __webpack_exports__;
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(2186);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(5438);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _github_api_js__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(9394);
+/* harmony import */ var _github_api_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(_github_api_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wait_js__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(8678);
+/* harmony import */ var _wait_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(_wait_js__WEBPACK_IMPORTED_MODULE_3__);
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core_1 = __nccwpck_require__(2186);
-const github_1 = __nccwpck_require__(5438);
-const github_api_js_1 = __nccwpck_require__(2565);
-const wait_js_1 = __nccwpck_require__(5817);
+
+
+
+
 async function run() {
-    (0, core_1.startGroup)('Setup variables');
-    const { repo: { repo, owner }, payload, runId, sha, } = github_1.context;
-    const pr = payload.pull_request;
-    let commitSha = sha;
-    if (pr) {
-        const { head: { sha: prSha = sha } } = pr;
-        if (typeof prSha === 'string') {
-            commitSha = prSha;
-        }
-        else {
-            if ((0, core_1.isDebug)()) {
-                (0, core_1.debug)(JSON.stringify(pr, null, 2));
-            }
-            (0, core_1.error)('github context has unexpected format: missing context.payload.pull_request.head.sha');
-            (0, core_1.setFailed)('unexpected failure occurred');
-            return;
-        }
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup)("Setup variables");
+  const {
+    repo: { repo, owner },
+    payload,
+    runId,
+    sha
+  } = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context;
+  const pr = payload.pull_request;
+  let commitSha = sha;
+  if (pr) {
+    const { head: { sha: prSha = sha } } = pr;
+    if (typeof prSha === "string") {
+      commitSha = prSha;
+    } else {
+      if ((0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.isDebug)()) {
+        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)(JSON.stringify(pr, null, 2));
+      }
+      (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
+      (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed)("unexpected failure occurred");
+      return;
     }
-    (0, core_1.info)(JSON.stringify({ triggeredCommitSha: commitSha, ownRunId: runId }, null, 2));
-    const repositoryInfo = {
-        owner,
-        repo,
-    };
-    const minIntervalSeconds = parseInt((0, core_1.getInput)('min-interval-seconds', { required: true, trimWhitespace: true }), 10);
-    const isEarlyExit = (0, core_1.getBooleanInput)('early-exit', { required: true, trimWhitespace: true });
-    const isDryRun = (0, core_1.getBooleanInput)('dry-run', { required: true, trimWhitespace: true });
-    const githubToken = (0, core_1.getInput)('github-token', { required: true, trimWhitespace: false });
-    (0, core_1.setSecret)(githubToken);
-    const octokit = (0, github_1.getOctokit)(githubToken);
-    let attempts = 0;
-    let shouldStop = false;
-    (0, core_1.endGroup)();
-    if (isDryRun) {
-        return;
+  }
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.info)(JSON.stringify({ triggeredCommitSha: commitSha, ownRunId: runId }, null, 2));
+  const repositoryInfo = {
+    owner,
+    repo
+  };
+  const minIntervalSeconds = parseInt(
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
+    10
+  );
+  const isEarlyExit = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
+  const isDryRun = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
+  const githubToken = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)("github-token", { required: true, trimWhitespace: false });
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.setSecret)(githubToken);
+  const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit)(githubToken);
+  let attempts = 0;
+  let shouldStop = false;
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup)();
+  if (isDryRun) {
+    return;
+  }
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup)("Get own job_id");
+  const ownJobIDs = await (0,_github_api_js__WEBPACK_IMPORTED_MODULE_2__.fetchJobIDs)(octokit, { ...repositoryInfo, run_id: runId });
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
+  (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup)();
+  for (; ; ) {
+    attempts += 1;
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.startGroup)(`Polling times: ${attempts}`);
+    const idleMilliseconds = (0,_wait_js__WEBPACK_IMPORTED_MODULE_3__.calculateIntervalMillisecondsAsExponentialBackoffAndJitter)(
+      minIntervalSeconds,
+      attempts
+    );
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.info)(`[estimation] It will wait ${(0,_wait_js__WEBPACK_IMPORTED_MODULE_3__.readableDuration)(idleMilliseconds)} to reduce api calling.`);
+    await (0,_wait_js__WEBPACK_IMPORTED_MODULE_3__.wait)(idleMilliseconds);
+    const report = await (0,_github_api_js__WEBPACK_IMPORTED_MODULE_2__.fetchOtherRunStatus)(
+      octokit,
+      { ...repositoryInfo, ref: commitSha },
+      ownJobIDs
+    );
+    if ((0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.isDebug)()) {
+      (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.debug)(JSON.stringify(report, null, 2));
     }
-    (0, core_1.startGroup)('Get own job_id');
-    // eslint-disable-next-line camelcase
-    const ownJobIDs = await (0, github_api_js_1.fetchJobIDs)(octokit, { ...repositoryInfo, run_id: runId });
-    (0, core_1.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
-    (0, core_1.endGroup)();
-    for (;;) {
-        attempts += 1;
-        (0, core_1.startGroup)(`Polling times: ${attempts}`);
-        const idleMilliseconds = (0, wait_js_1.calculateIntervalMillisecondsAsExponentialBackoffAndJitter)(minIntervalSeconds, attempts);
-        (0, core_1.info)(`[estimation] It will wait ${(0, wait_js_1.readableDuration)(idleMilliseconds)} to reduce api calling.`);
-        await (0, wait_js_1.wait)(idleMilliseconds);
-        const report = await (0, github_api_js_1.fetchOtherRunStatus)(octokit, { ...repositoryInfo, ref: commitSha }, ownJobIDs);
-        if ((0, core_1.isDebug)()) {
-            (0, core_1.debug)(JSON.stringify(report, null, 2));
+    const { progress, conclusion } = report;
+    switch (progress) {
+      case "in_progress": {
+        if (conclusion === "bad" && isEarlyExit) {
+          shouldStop = true;
+          (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed)("some jobs failed");
         }
-        const { progress, conclusion } = report;
-        switch (progress) {
-            case 'in_progress': {
-                if (conclusion === 'bad' && isEarlyExit) {
-                    shouldStop = true;
-                    (0, core_1.setFailed)('some jobs failed');
-                }
-                (0, core_1.info)('some jobs still in progress');
-                break;
-            }
-            case 'done': {
-                shouldStop = true;
-                switch (conclusion) {
-                    case 'acceptable': {
-                        (0, core_1.info)('all jobs passed');
-                        break;
-                    }
-                    case 'bad': {
-                        (0, core_1.setFailed)('some jobs failed');
-                        break;
-                    }
-                    default: {
-                        const unexpectedConclusion = conclusion;
-                        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                        (0, core_1.setFailed)(`got unexpected conclusion: ${unexpectedConclusion}`);
-                        break;
-                    }
-                }
-                break;
-            }
-            default: {
-                shouldStop = true;
-                const unexpectedProgress = progress;
-                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                (0, core_1.setFailed)(`got unexpected progress: ${unexpectedProgress}`);
-                break;
-            }
-        }
-        (0, core_1.endGroup)();
-        if (shouldStop) {
+        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.info)("some jobs still in progress");
+        break;
+      }
+      case "done": {
+        shouldStop = true;
+        switch (conclusion) {
+          case "acceptable": {
+            (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.info)("all jobs passed");
             break;
+          }
+          case "bad": {
+            (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed)("some jobs failed");
+            break;
+          }
+          default: {
+            const unexpectedConclusion = conclusion;
+            (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed)(`got unexpected conclusion: ${unexpectedConclusion}`);
+            break;
+          }
         }
+        break;
+      }
+      default: {
+        shouldStop = true;
+        const unexpectedProgress = progress;
+        (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed)(`got unexpected progress: ${unexpectedProgress}`);
+        break;
+      }
     }
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.endGroup)();
+    if (shouldStop) {
+      break;
+    }
+  }
 }
 void run();
 
