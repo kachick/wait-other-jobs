@@ -7,7 +7,7 @@
     "node": "16.x"
   },
   "scripts": {
-    "prebuild": "rimraf lib && tsc",
+    "prebuild": "rimraf lib",
     "build": "npx esbuild src/main.ts --bundle --platform=node --target=node16  --packages=external --outfile=lib/main.js",
     "format:fix": "dprint fmt",
     "format:check": "dprint check",
@@ -21,8 +21,8 @@
     "test:js-with-current-built": "jest --config jest.post.config.ts",
     "test": "npm run test:ts && npm run test:js",
     "almost": "npm run format:check && npm run lint:check && npm run test:ts",
-    "after-lint": "npm run test:ts && npm run build && npm run test:js-with-current-built && npm run package",
-    "all": "npm run format:check && npm run lint:check && npm run after-lint"
+    "typecheck": "tsc",
+    "all": "npm run typecheck && npm run format:check && npm run lint:check && npm run after-lint"
   },
   "repository": {
     "type": "git",
