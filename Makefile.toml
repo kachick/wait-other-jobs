@@ -1,20 +1,29 @@
 [config]
 skip_core_tasks = true
 
-[tasks.lint]
+[tasks.format-check]
 category = "Tools"
-description = "Run linters without changes"
+description = "Run formatters without changes"
 script = [
-  # Do not run parallel, because of dprint is superfast and eslint is slow. So sequencial makes useful here.
   "dprint check",
-  "npm run lint:check",
 ]
 
-[tasks.format]
+[tasks.format-apply]
 category = "Tools"
 description = "Run formatters with changes"
 script = [
   "dprint fmt",
+]
+
+[tasks.lint]
+category = "Tools"
+description = "Run linters without changes"
+dependencies = [
+  # Do not run parallel, because of dprint is superfast and eslint is slow. So sequencial makes useful here.
+  "format-check",
+]
+script = [
+  "npm run lint:check",
 ]
 
 [tasks.test-ts]
