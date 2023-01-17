@@ -16,7 +16,17 @@ on:
       - 'README.md'
       - '.vscode/**'
 jobs:
+  cache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
+
   build:
+    needs: [cache]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -32,6 +42,7 @@ jobs:
         run: git add --intent-to-add . && git diff --exit-code
 
   typecheck:
+    needs: [cache]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -45,6 +56,7 @@ jobs:
         run: npm run typecheck
 
   lint:
+    needs: [cache]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
