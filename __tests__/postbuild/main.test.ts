@@ -12,7 +12,7 @@ test('runs', () => {
   env['GITHUB_REPOSITORY'] = 'kachick/wait-other-jobs';
   env['GITHUB_RUN_ID'] = '2408217435';
   const np = execPath;
-  const ip = join(__dirname, '../..', 'lib', 'main.js');
+  const ip = join(__dirname, '../..', 'dist', 'index.js');
   const options: ExecFileSyncOptions = {
     env,
   };

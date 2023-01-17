@@ -16,7 +16,7 @@
     "prepackage": "rimraf dist && npm run build",
     "package": "ncc build",
     "test:ts": "jest --config jest.pre.config.ts",
-    "pretest:js": "npm run build",
+    "pretest:js": "npm run package",
     "test:js": "npm run test:js-with-current-built",
     "test:js-with-current-built": "jest --config jest.post.config.ts",
     "test": "npm run test:ts && npm run test:js",
