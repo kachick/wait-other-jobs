@@ -7,8 +7,6 @@
     "node": "16.x"
   },
   "scripts": {
-    "format:fix": "dprint fmt",
-    "format:check": "dprint check",
     "lint:fix": "eslint --fix {src,__tests__}/**/*.ts *.ts",
     "lint:check": "eslint {src,__tests__}/**/*.ts *.ts",
     "prepackage": "rimraf lib dist",
@@ -18,8 +16,7 @@
     "pretest:js": "npm run package",
     "test:js": "jest --config jest.post.config.ts",
     "test": "npm run test:ts && npm run test:js",
-    "typecheck": "tsc",
-    "all": "npm run typecheck && npm run format:check && npm test && npm run lint:check"
+    "typecheck": "tsc"
   },
   "repository": {
     "type": "git",
