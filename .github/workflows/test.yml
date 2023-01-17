@@ -26,10 +26,23 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci --ignore-scripts
-      - name: Build, Test, Package
-        run: npm run after-lint
-      - name: Prevent missing commits after compile
+      - name: Build and Test
+        run: npm test
+      - name: Check no diff for products
         run: git add --intent-to-add . && git diff --exit-code
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
+      - name: install dependencies
+        run: npm ci --ignore-scripts
+      - name: Typecheck
+        run: npm run typecheck
 
   lint:
     runs-on: ubuntu-latest
