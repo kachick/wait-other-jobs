@@ -1,0 +1,58 @@
+[config]
+skip_core_tasks = true
+
+[tasks.lint]
+category = "Tools"
+description = "Run linters without changes"
+script = [
+  # Do not run parallel, because of dprint is superfast and eslint is slow. So sequencial makes useful here.
+  "dprint check",
+  "npm run lint:check",
+]
+
+[tasks.format]
+category = "Tools"
+description = "Run formatters with changes"
+script = [
+  "dprint fmt",
+]
+
+[tasks.test-ts]
+category = "Tools"
+description = 'Test typescripts'
+script = [
+  "npm run test:ts",
+]
+
+[tasks.test-js]
+category = "Tools"
+description = 'Test actual env handling'
+script = [
+  "npm run test:js",
+]
+
+[tasks.typecheck]
+category = "Tools"
+description = 'Correctness in TypeScript'
+script = [
+  "npm run typecheck",
+]
+
+[tasks.check]
+category = "Tools"
+description = 'Parallel runner for all tests and linters'
+run_task = { name = ["typecheck", "test-ts", "test-js", "lint"], parallel = true }
+
+[tasks.help]
+category = "Tools"
+description = 'Might help you - (This one)'
+script = [
+  'makers --list-category-steps Tools',
+]
+
+[tasks.check_no_git_diff]
+category = "Tools"
+description = 'This prevents unexpected commit'
+script = [
+  '(git add --intent-to-add . && git diff --exit-code) || (echo "You should commit all diff before running tests"; exit 1)',
+]

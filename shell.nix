@@ -4,5 +4,6 @@ pkgs.mkShell {
   buildInputs = [
     pkgs.nodejs-16_x
     pkgs.dprint
+    pkgs.cargo-make
   ];
 }
