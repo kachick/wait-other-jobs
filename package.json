@@ -19,7 +19,7 @@
     "test:js": "jest --config jest.post.config.ts",
     "test": "npm run test:ts && npm run test:js",
     "typecheck": "tsc",
-    "all": "npm run typecheck && npm run format:check && npm test && npm run lint:check"
+    "all": "concurrently --kill-others-on-fail 'npm run typecheck' 'npm run format:check' 'npm test' 'npm run lint:check'"
   },
   "repository": {
     "type": "git",
