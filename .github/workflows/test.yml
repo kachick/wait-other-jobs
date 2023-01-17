@@ -28,7 +28,7 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Build and Test
         run: npm test
-      - name: Prevent missing commits after compile
+      - name: Check no diff for products
         run: git add --intent-to-add . && git diff --exit-code
 
   typecheck:
