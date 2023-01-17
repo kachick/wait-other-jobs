@@ -18,9 +18,8 @@
     "pretest:js": "npm run package",
     "test:js": "jest --config jest.post.config.ts",
     "test": "npm run test:ts && npm run test:js",
-    "almost": "npm run format:check && npm run lint:check && npm run test:ts",
     "typecheck": "tsc",
-    "all": "npm run typecheck && npm run format:check && npm run lint:check && npm run after-lint"
+    "all": "npm run typecheck && npm run format:check && npm test && npm run lint:check"
   },
   "repository": {
     "type": "git",
