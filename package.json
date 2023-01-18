@@ -32,7 +32,7 @@
   "devDependencies": {
     "@octokit/types": "^8.1.1",
     "@tsconfig/node16-strictest-esm": "^1.0.3",
-    "@types/jest": "^29.2.5",
+    "@types/jest": "^29.2.6",
     "@types/node": "^16.18.11",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
