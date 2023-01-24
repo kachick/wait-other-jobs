@@ -1,4 +1,3 @@
-import { info, isDebug, debug } from '@actions/core';
 import type { getOctokit } from '@actions/github';
 import type { Endpoints } from '@octokit/types';
 
@@ -20,10 +19,14 @@ const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs' as c
 type CheckRunsRoute = typeof checkRunsRoute;
 type CheckRunsParams = Endpoints[CheckRunsRoute]['parameters'];
 type CheckRunsResponse = Endpoints[CheckRunsRoute]['response'];
-type CheckRunsSummary = Pick<
+type CheckRunsSummarySource = Pick<
   CheckRunsResponse['data']['check_runs'][number],
   'id' | 'status' | 'conclusion' | 'started_at' | 'completed_at' | 'html_url' | 'name'
 >;
+interface CheckRunsSummary {
+  source: CheckRunsSummarySource;
+  acceptable: boolean;
+}
 
 // No need to keep as same as GitHub responses so We can change the definition.
 interface Report {
@@ -32,7 +35,7 @@ interface Report {
   summaries: CheckRunsSummary[];
 }
 
-function isAcceptable(conclusion: CheckRunsSummary['conclusion']): boolean {
+function isAcceptable(conclusion: CheckRunsSummarySource['conclusion']): boolean {
   return conclusion === 'success' || conclusion === 'skipped';
 }
 
@@ -72,18 +75,21 @@ async function fetchRunSummaries(
       resp.data.map((checkRun) =>
         // eslint-disable-next-line camelcase
         (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
-          id,
-          status,
-          conclusion,
-          // eslint-disable-next-line camelcase
-          started_at,
-          // eslint-disable-next-line camelcase
-          completed_at,
-          // eslint-disable-next-line camelcase
-          html_url,
-          name,
+          source: {
+            id,
+            status,
+            conclusion,
+            // eslint-disable-next-line camelcase
+            started_at,
+            // eslint-disable-next-line camelcase
+            completed_at,
+            // eslint-disable-next-line camelcase
+            html_url,
+            name,
+          },
+          acceptable: isAcceptable(conclusion),
         }))(checkRun)
-      ).sort((a, b) => a.id - b.id),
+      ).sort((a, b) => a.source.id - b.source.id),
   );
 }
 
@@ -94,33 +100,17 @@ export async function fetchOtherRunStatus(
   ownJobIDs: Readonly<Set<JobID>>,
 ): Promise<Report> {
   const checkRunSummaries = await fetchRunSummaries(octokit, params);
-  if (isDebug()) {
-    debug(JSON.stringify(checkRunSummaries, null, 2));
-  }
-
   const otherRelatedRuns = checkRunSummaries.flatMap<CheckRunsSummary>((summary) =>
-    ownJobIDs.has(summary.id) ? [] : [summary]
+    ownJobIDs.has(summary.source.id) ? [] : [summary]
   );
-  const otherRelatedCompletedRuns: typeof otherRelatedRuns = [];
-  for (const summary of otherRelatedRuns) {
-    if (summary.status === 'completed') {
-      otherRelatedCompletedRuns.push(summary);
-    }
-
-    info(
-      `${summary.id} - ${summary.status} - ${summary.conclusion ?? 'null'}: ${summary.name} - ${
-        summary.html_url ?? 'null'
-      }`,
-    );
-  }
+  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.source.status === 'completed');
 
   const progress: Report['progress'] = otherRelatedCompletedRuns.length === otherRelatedRuns.length
     ? 'done'
     : 'in_progress';
-  const conclusion: Report['conclusion'] =
-    otherRelatedCompletedRuns.every((summary) => isAcceptable(summary.conclusion))
-      ? 'acceptable'
-      : 'bad';
+  const conclusion: Report['conclusion'] = otherRelatedCompletedRuns.every((summary) => summary.acceptable)
+    ? 'acceptable'
+    : 'bad';
 
   return { progress, conclusion, summaries: otherRelatedRuns };
 }

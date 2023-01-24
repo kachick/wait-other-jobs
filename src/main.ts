@@ -18,6 +18,7 @@ import { calculateIntervalMillisecondsAsExponentialBackoffAndJitter, readableDur
 
 const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`);
 const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
+const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
 async function run(): Promise<void> {
   startGroup('Setup variables');
@@ -94,6 +95,16 @@ async function run(): Promise<void> {
       { ...repositoryInfo, ref: commitSha },
       ownJobIDs,
     );
+
+    for (const summary of report.summaries) {
+      const { acceptable, source: { id, status, conclusion, name, html_url } } = summary;
+      const nullHandledConclusion = conclusion ?? 'null';
+      info(
+        `${id} - ${colorize(status, status === 'completed')} - ${
+          colorize(nullHandledConclusion, acceptable)
+        }: ${name} - ${html_url ?? 'null'}`,
+      );
+    }
 
     if (isDebug()) {
       debug(JSON.stringify(report, null, 2));
