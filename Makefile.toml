@@ -15,7 +15,18 @@ script = [
   "dprint fmt",
 ]
 
-[tasks.lint]
+[tasks.lint-apply]
+category = "Tools"
+description = "Run linters with changes"
+dependencies = [
+  # Do not run parallel, because of dprint is superfast and eslint is slow. So sequencial makes useful here.
+  "format-apply",
+]
+script = [
+  "npm run lint:fix",
+]
+
+[tasks.lint-check]
 category = "Tools"
 description = "Run linters without changes"
 dependencies = [
@@ -50,7 +61,7 @@ script = [
 [tasks.check]
 category = "Tools"
 description = 'Parallel runner for all tests and linters'
-run_task = { name = ["typecheck", "test-ts", "test-js", "lint"], parallel = true }
+run_task = { name = ["typecheck", "test-ts", "test-js", "lint-check"], parallel = true }
 
 [tasks.help]
 category = "Tools"

@@ -16,9 +16,8 @@ import styles from 'ansi-styles';
 import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
 import { calculateIntervalMillisecondsAsExponentialBackoffAndJitter, readableDuration, wait } from './wait.js';
 
-const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`)
-const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`)
-
+const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`);
+const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
 
 async function run(): Promise<void> {
   startGroup('Setup variables');
