@@ -60,8 +60,7 @@ jobs:
     steps:
       - name: Dependabot metadata
         id: metadata
-        # Some patterns can't be parsed. See https://github.com/dependabot/fetch-metadata/pull/224
-        uses: dependabot/fetch-metadata@v1.3.4
+        uses: dependabot/fetch-metadata@v1.3.6
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
       - uses: actions/checkout@v3
