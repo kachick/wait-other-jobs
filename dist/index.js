@@ -10050,13 +10050,13 @@ async function run() {
   (0, import_core.endGroup)();
   for (; ; ) {
     attempts += 1;
-    (0, import_core.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const idleMilliseconds = calculateIntervalMillisecondsAsExponentialBackoffAndJitter(
       minIntervalSeconds,
       attempts
     );
     (0, import_core.info)(`[estimation] It will wait ${readableDuration(idleMilliseconds)} to reduce api calling.`);
     await wait(idleMilliseconds);
+    (0, import_core.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
       octokit,
       { ...repositoryInfo, ref: commitSha },

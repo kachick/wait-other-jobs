@@ -81,14 +81,13 @@ async function run(): Promise<void> {
 
   for (;;) {
     attempts += 1;
-    startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
-
     const idleMilliseconds = calculateIntervalMillisecondsAsExponentialBackoffAndJitter(
       minIntervalSeconds,
       attempts,
     );
     info(`[estimation] It will wait ${readableDuration(idleMilliseconds)} to reduce api calling.`);
     await wait(idleMilliseconds);
+    startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
 
     const report = await fetchOtherRunStatus(
       octokit,
