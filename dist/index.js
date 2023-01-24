@@ -10050,7 +10050,7 @@ async function run() {
   (0, import_core.endGroup)();
   for (; ; ) {
     attempts += 1;
-    (0, import_core.startGroup)(`Polling times: ${attempts}`);
+    (0, import_core.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const idleMilliseconds = calculateIntervalMillisecondsAsExponentialBackoffAndJitter(
       minIntervalSeconds,
       attempts

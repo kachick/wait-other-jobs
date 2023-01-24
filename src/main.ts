@@ -81,7 +81,7 @@ async function run(): Promise<void> {
 
   for (;;) {
     attempts += 1;
-    startGroup(`Polling times: ${attempts}`);
+    startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
 
     const idleMilliseconds = calculateIntervalMillisecondsAsExponentialBackoffAndJitter(
       minIntervalSeconds,
