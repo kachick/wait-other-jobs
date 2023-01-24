@@ -9561,6 +9561,245 @@ module.exports = require("zlib");
 
 /***/ }),
 
+/***/ 6844:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   "backgroundColorNames": () => (/* binding */ backgroundColorNames),
+/* harmony export */   "colorNames": () => (/* binding */ colorNames),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "foregroundColorNames": () => (/* binding */ foregroundColorNames),
+/* harmony export */   "modifierNames": () => (/* binding */ modifierNames)
+/* harmony export */ });
+const ANSI_BACKGROUND_OFFSET = 10;
+
+const wrapAnsi16 = (offset = 0) => code => `\u001B[${code + offset}m`;
+
+const wrapAnsi256 = (offset = 0) => code => `\u001B[${38 + offset};5;${code}m`;
+
+const wrapAnsi16m = (offset = 0) => (red, green, blue) => `\u001B[${38 + offset};2;${red};${green};${blue}m`;
+
+const styles = {
+	modifier: {
+		reset: [0, 0],
+		// 21 isn't widely supported and 22 does the same thing
+		bold: [1, 22],
+		dim: [2, 22],
+		italic: [3, 23],
+		underline: [4, 24],
+		overline: [53, 55],
+		inverse: [7, 27],
+		hidden: [8, 28],
+		strikethrough: [9, 29],
+	},
+	color: {
+		black: [30, 39],
+		red: [31, 39],
+		green: [32, 39],
+		yellow: [33, 39],
+		blue: [34, 39],
+		magenta: [35, 39],
+		cyan: [36, 39],
+		white: [37, 39],
+
+		// Bright color
+		blackBright: [90, 39],
+		gray: [90, 39], // Alias of `blackBright`
+		grey: [90, 39], // Alias of `blackBright`
+		redBright: [91, 39],
+		greenBright: [92, 39],
+		yellowBright: [93, 39],
+		blueBright: [94, 39],
+		magentaBright: [95, 39],
+		cyanBright: [96, 39],
+		whiteBright: [97, 39],
+	},
+	bgColor: {
+		bgBlack: [40, 49],
+		bgRed: [41, 49],
+		bgGreen: [42, 49],
+		bgYellow: [43, 49],
+		bgBlue: [44, 49],
+		bgMagenta: [45, 49],
+		bgCyan: [46, 49],
+		bgWhite: [47, 49],
+
+		// Bright color
+		bgBlackBright: [100, 49],
+		bgGray: [100, 49], // Alias of `bgBlackBright`
+		bgGrey: [100, 49], // Alias of `bgBlackBright`
+		bgRedBright: [101, 49],
+		bgGreenBright: [102, 49],
+		bgYellowBright: [103, 49],
+		bgBlueBright: [104, 49],
+		bgMagentaBright: [105, 49],
+		bgCyanBright: [106, 49],
+		bgWhiteBright: [107, 49],
+	},
+};
+
+const modifierNames = Object.keys(styles.modifier);
+const foregroundColorNames = Object.keys(styles.color);
+const backgroundColorNames = Object.keys(styles.bgColor);
+const colorNames = [...foregroundColorNames, ...backgroundColorNames];
+
+function assembleStyles() {
+	const codes = new Map();
+
+	for (const [groupName, group] of Object.entries(styles)) {
+		for (const [styleName, style] of Object.entries(group)) {
+			styles[styleName] = {
+				open: `\u001B[${style[0]}m`,
+				close: `\u001B[${style[1]}m`,
+			};
+
+			group[styleName] = styles[styleName];
+
+			codes.set(style[0], style[1]);
+		}
+
+		Object.defineProperty(styles, groupName, {
+			value: group,
+			enumerable: false,
+		});
+	}
+
+	Object.defineProperty(styles, 'codes', {
+		value: codes,
+		enumerable: false,
+	});
+
+	styles.color.close = '\u001B[39m';
+	styles.bgColor.close = '\u001B[49m';
+
+	styles.color.ansi = wrapAnsi16();
+	styles.color.ansi256 = wrapAnsi256();
+	styles.color.ansi16m = wrapAnsi16m();
+	styles.bgColor.ansi = wrapAnsi16(ANSI_BACKGROUND_OFFSET);
+	styles.bgColor.ansi256 = wrapAnsi256(ANSI_BACKGROUND_OFFSET);
+	styles.bgColor.ansi16m = wrapAnsi16m(ANSI_BACKGROUND_OFFSET);
+
+	// From https://github.com/Qix-/color-convert/blob/3f0e0d4e92e235796ccb17f6e85c72094a651f49/conversions.js
+	Object.defineProperties(styles, {
+		rgbToAnsi256: {
+			value: (red, green, blue) => {
+				// We use the extended greyscale palette here, with the exception of
+				// black and white. normal palette only has 4 greyscale shades.
+				if (red === green && green === blue) {
+					if (red < 8) {
+						return 16;
+					}
+
+					if (red > 248) {
+						return 231;
+					}
+
+					return Math.round(((red - 8) / 247) * 24) + 232;
+				}
+
+				return 16
+					+ (36 * Math.round(red / 255 * 5))
+					+ (6 * Math.round(green / 255 * 5))
+					+ Math.round(blue / 255 * 5);
+			},
+			enumerable: false,
+		},
+		hexToRgb: {
+			value: hex => {
+				const matches = /[a-f\d]{6}|[a-f\d]{3}/i.exec(hex.toString(16));
+				if (!matches) {
+					return [0, 0, 0];
+				}
+
+				let [colorString] = matches;
+
+				if (colorString.length === 3) {
+					colorString = [...colorString].map(character => character + character).join('');
+				}
+
+				const integer = Number.parseInt(colorString, 16);
+
+				return [
+					/* eslint-disable no-bitwise */
+					(integer >> 16) & 0xFF,
+					(integer >> 8) & 0xFF,
+					integer & 0xFF,
+					/* eslint-enable no-bitwise */
+				];
+			},
+			enumerable: false,
+		},
+		hexToAnsi256: {
+			value: hex => styles.rgbToAnsi256(...styles.hexToRgb(hex)),
+			enumerable: false,
+		},
+		ansi256ToAnsi: {
+			value: code => {
+				if (code < 8) {
+					return 30 + code;
+				}
+
+				if (code < 16) {
+					return 90 + (code - 8);
+				}
+
+				let red;
+				let green;
+				let blue;
+
+				if (code >= 232) {
+					red = (((code - 232) * 10) + 8) / 255;
+					green = red;
+					blue = red;
+				} else {
+					code -= 16;
+
+					const remainder = code % 36;
+
+					red = Math.floor(code / 36) / 5;
+					green = Math.floor(remainder / 6) / 5;
+					blue = (remainder % 6) / 5;
+				}
+
+				const value = Math.max(red, green, blue) * 2;
+
+				if (value === 0) {
+					return 30;
+				}
+
+				// eslint-disable-next-line no-bitwise
+				let result = 30 + ((Math.round(blue) << 2) | (Math.round(green) << 1) | Math.round(red));
+
+				if (value === 2) {
+					result += 60;
+				}
+
+				return result;
+			},
+			enumerable: false,
+		},
+		rgbToAnsi: {
+			value: (red, green, blue) => styles.ansi256ToAnsi(styles.rgbToAnsi256(red, green, blue)),
+			enumerable: false,
+		},
+		hexToAnsi: {
+			value: hex => styles.ansi256ToAnsi(styles.hexToAnsi256(hex)),
+			enumerable: false,
+		},
+	});
+
+	return styles;
+}
+
+const ansiStyles = assembleStyles();
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ansiStyles);
+
+
+/***/ }),
+
 /***/ 2020:
 /***/ ((module) => {
 
@@ -9602,6 +9841,34 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
@@ -9612,13 +9879,35 @@ var __webpack_exports__ = {};
 (() => {
 "use strict";
 
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
 
 // src/main.ts
-var import_core2 = __nccwpck_require__(2186);
+var import_core = __nccwpck_require__(2186);
 var import_github = __nccwpck_require__(5438);
+var import_ansi_styles = __toESM(__nccwpck_require__(6844));
 
 // src/github-api.ts
-var import_core = __nccwpck_require__(2186);
 function isAcceptable(conclusion) {
   return conclusion === "success" || conclusion === "skipped";
 }
@@ -9649,40 +9938,32 @@ async function fetchRunSummaries(octokit, params) {
       (checkRun) => (
         // eslint-disable-next-line camelcase
         (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
-          id,
-          status,
-          conclusion,
-          // eslint-disable-next-line camelcase
-          started_at,
-          // eslint-disable-next-line camelcase
-          completed_at,
-          // eslint-disable-next-line camelcase
-          html_url,
-          name
+          source: {
+            id,
+            status,
+            conclusion,
+            // eslint-disable-next-line camelcase
+            started_at,
+            // eslint-disable-next-line camelcase
+            completed_at,
+            // eslint-disable-next-line camelcase
+            html_url,
+            name
+          },
+          acceptable: isAcceptable(conclusion)
         }))(checkRun)
       )
-    ).sort((a, b) => a.id - b.id)
+    ).sort((a, b) => a.source.id - b.source.id)
   );
 }
 async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
   const checkRunSummaries = await fetchRunSummaries(octokit, params);
-  if ((0, import_core.isDebug)()) {
-    (0, import_core.debug)(JSON.stringify(checkRunSummaries, null, 2));
-  }
   const otherRelatedRuns = checkRunSummaries.flatMap(
-    (summary) => ownJobIDs.has(summary.id) ? [] : [summary]
+    (summary) => ownJobIDs.has(summary.source.id) ? [] : [summary]
   );
-  const otherRelatedCompletedRuns = [];
-  for (const summary of otherRelatedRuns) {
-    if (summary.status === "completed") {
-      otherRelatedCompletedRuns.push(summary);
-    }
-    (0, import_core.info)(
-      `${summary.id} - ${summary.status} - ${summary.conclusion ?? "null"}: ${summary.name} - ${summary.html_url ?? "null"}`
-    );
-  }
+  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.source.status === "completed");
   const progress = otherRelatedCompletedRuns.length === otherRelatedRuns.length ? "done" : "in_progress";
-  const conclusion = otherRelatedCompletedRuns.every((summary) => isAcceptable(summary.conclusion)) ? "acceptable" : "bad";
+  const conclusion = otherRelatedCompletedRuns.every((summary) => summary.acceptable) ? "acceptable" : "bad";
   return { progress, conclusion, summaries: otherRelatedRuns };
 }
 
@@ -9717,8 +9998,11 @@ function calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalS
 }
 
 // src/main.ts
+var errorMessage = (body) => `${import_ansi_styles.default.red.open}${body}${import_ansi_styles.default.red.close}`;
+var succeededMessage = (body) => `${import_ansi_styles.default.green.open}${body}${import_ansi_styles.default.green.close}`;
+var colorize = (body, ok) => ok ? succeededMessage(body) : errorMessage(body);
 async function run() {
-  (0, import_core2.startGroup)("Setup variables");
+  (0, import_core.startGroup)("Setup variables");
   const {
     repo: { repo, owner },
     payload,
@@ -9732,79 +10016,86 @@ async function run() {
     if (typeof prSha === "string") {
       commitSha = prSha;
     } else {
-      if ((0, import_core2.isDebug)()) {
-        (0, import_core2.debug)(JSON.stringify(pr, null, 2));
+      if ((0, import_core.isDebug)()) {
+        (0, import_core.debug)(JSON.stringify(pr, null, 2));
       }
-      (0, import_core2.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
-      (0, import_core2.setFailed)("unexpected failure occurred");
+      (0, import_core.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
+      (0, import_core.setFailed)("unexpected failure occurred");
       return;
     }
   }
-  (0, import_core2.info)(JSON.stringify({ triggeredCommitSha: commitSha, ownRunId: runId }, null, 2));
+  (0, import_core.info)(JSON.stringify({ triggeredCommitSha: commitSha, ownRunId: runId }, null, 2));
   const repositoryInfo = {
     owner,
     repo
   };
   const minIntervalSeconds = parseInt(
-    (0, import_core2.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
+    (0, import_core.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
     10
   );
-  const isEarlyExit = (0, import_core2.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
-  const isDryRun = (0, import_core2.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
-  const githubToken = (0, import_core2.getInput)("github-token", { required: true, trimWhitespace: false });
-  (0, import_core2.setSecret)(githubToken);
+  const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
+  const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
+  const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
+  (0, import_core.setSecret)(githubToken);
   const octokit = (0, import_github.getOctokit)(githubToken);
   let attempts = 0;
   let shouldStop = false;
-  (0, import_core2.endGroup)();
+  (0, import_core.endGroup)();
   if (isDryRun) {
     return;
   }
-  (0, import_core2.startGroup)("Get own job_id");
+  (0, import_core.startGroup)("Get own job_id");
   const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
-  (0, import_core2.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
-  (0, import_core2.endGroup)();
+  (0, import_core.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
+  (0, import_core.endGroup)();
   for (; ; ) {
     attempts += 1;
-    (0, import_core2.startGroup)(`Polling times: ${attempts}`);
+    (0, import_core.startGroup)(`Polling times: ${attempts}`);
     const idleMilliseconds = calculateIntervalMillisecondsAsExponentialBackoffAndJitter(
       minIntervalSeconds,
       attempts
     );
-    (0, import_core2.info)(`[estimation] It will wait ${readableDuration(idleMilliseconds)} to reduce api calling.`);
+    (0, import_core.info)(`[estimation] It will wait ${readableDuration(idleMilliseconds)} to reduce api calling.`);
     await wait(idleMilliseconds);
     const report = await fetchOtherRunStatus(
       octokit,
       { ...repositoryInfo, ref: commitSha },
       ownJobIDs
     );
-    if ((0, import_core2.isDebug)()) {
-      (0, import_core2.debug)(JSON.stringify(report, null, 2));
+    for (const summary of report.summaries) {
+      const { acceptable, source: { id, status, conclusion: conclusion2, name, html_url } } = summary;
+      const nullHandledConclusion = conclusion2 ?? "null";
+      (0, import_core.info)(
+        `${id} - ${colorize(status, status === "completed")} - ${colorize(nullHandledConclusion, acceptable)}: ${name} - ${html_url ?? "null"}`
+      );
+    }
+    if ((0, import_core.isDebug)()) {
+      (0, import_core.debug)(JSON.stringify(report, null, 2));
     }
     const { progress, conclusion } = report;
     switch (progress) {
       case "in_progress": {
         if (conclusion === "bad" && isEarlyExit) {
           shouldStop = true;
-          (0, import_core2.setFailed)("some jobs failed");
+          (0, import_core.setFailed)(errorMessage("some jobs failed"));
         }
-        (0, import_core2.info)("some jobs still in progress");
+        (0, import_core.info)("some jobs still in progress");
         break;
       }
       case "done": {
         shouldStop = true;
         switch (conclusion) {
           case "acceptable": {
-            (0, import_core2.info)("all jobs passed");
+            (0, import_core.info)(succeededMessage("all jobs passed"));
             break;
           }
           case "bad": {
-            (0, import_core2.setFailed)("some jobs failed");
+            (0, import_core.setFailed)(errorMessage("some jobs failed"));
             break;
           }
           default: {
             const unexpectedConclusion = conclusion;
-            (0, import_core2.setFailed)(`got unexpected conclusion: ${unexpectedConclusion}`);
+            (0, import_core.setFailed)(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
             break;
           }
         }
@@ -9813,11 +10104,11 @@ async function run() {
       default: {
         shouldStop = true;
         const unexpectedProgress = progress;
-        (0, import_core2.setFailed)(`got unexpected progress: ${unexpectedProgress}`);
+        (0, import_core.setFailed)(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
         break;
       }
     }
-    (0, import_core2.endGroup)();
+    (0, import_core.endGroup)();
     if (shouldStop) {
       break;
     }

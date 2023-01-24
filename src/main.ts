@@ -11,9 +11,14 @@ import {
   error,
 } from '@actions/core';
 import { getOctokit, context } from '@actions/github';
+import styles from 'ansi-styles';
 
 import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
 import { calculateIntervalMillisecondsAsExponentialBackoffAndJitter, readableDuration, wait } from './wait.js';
+
+const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`);
+const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
+const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
 async function run(): Promise<void> {
   startGroup('Setup variables');
@@ -91,6 +96,16 @@ async function run(): Promise<void> {
       ownJobIDs,
     );
 
+    for (const summary of report.summaries) {
+      const { acceptable, source: { id, status, conclusion, name, html_url } } = summary;
+      const nullHandledConclusion = conclusion ?? 'null';
+      info(
+        `${id} - ${colorize(status, status === 'completed')} - ${
+          colorize(nullHandledConclusion, acceptable)
+        }: ${name} - ${html_url ?? 'null'}`,
+      );
+    }
+
     if (isDebug()) {
       debug(JSON.stringify(report, null, 2));
     }
@@ -101,7 +116,7 @@ async function run(): Promise<void> {
       case 'in_progress': {
         if (conclusion === 'bad' && isEarlyExit) {
           shouldStop = true;
-          setFailed('some jobs failed');
+          setFailed(errorMessage('some jobs failed'));
         }
 
         info('some jobs still in progress');
@@ -112,17 +127,17 @@ async function run(): Promise<void> {
 
         switch (conclusion) {
           case 'acceptable': {
-            info('all jobs passed');
+            info(succeededMessage('all jobs passed'));
             break;
           }
           case 'bad': {
-            setFailed('some jobs failed');
+            setFailed(errorMessage('some jobs failed'));
             break;
           }
           default: {
             const unexpectedConclusion: never = conclusion;
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            setFailed(`got unexpected conclusion: ${unexpectedConclusion}`);
+            setFailed(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
             break;
           }
         }
@@ -132,7 +147,7 @@ async function run(): Promise<void> {
         shouldStop = true;
         const unexpectedProgress: never = progress;
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        setFailed(`got unexpected progress: ${unexpectedProgress}`);
+        setFailed(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
         break;
       }
     }
