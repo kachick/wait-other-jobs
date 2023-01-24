@@ -27,3 +27,17 @@ help - ...
 ```
 
 See also [scripts](package.json) for tasks details.
+
+## REPL
+
+You can use `import()` function, not `import statement`.
+
+```console
+> npm run repl
+Welcome to Node.js v16.19.0.
+Type ".help" for more information.
+
+> const { info, isDebug, debug } = await import('@actions/core');
+> isDebug()
+false
+```

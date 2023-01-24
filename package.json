@@ -17,7 +17,7 @@
     "test:js": "jest --config jest.post.config.ts",
     "test": "npm run test:ts && npm run test:js",
     "typecheck": "tsc",
-    "repl": "ts-node"
+    "repl": "tsx"
   },
   "repository": {
     "type": "git",
