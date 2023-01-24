@@ -9903,12 +9903,11 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 
 // src/main.ts
-var import_core2 = __nccwpck_require__(2186);
+var import_core = __nccwpck_require__(2186);
 var import_github = __nccwpck_require__(5438);
 var import_ansi_styles = __toESM(__nccwpck_require__(6844));
 
 // src/github-api.ts
-var import_core = __nccwpck_require__(2186);
 function isAcceptable(conclusion) {
   return conclusion === "success" || conclusion === "skipped";
 }
@@ -9939,40 +9938,32 @@ async function fetchRunSummaries(octokit, params) {
       (checkRun) => (
         // eslint-disable-next-line camelcase
         (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
-          id,
-          status,
-          conclusion,
-          // eslint-disable-next-line camelcase
-          started_at,
-          // eslint-disable-next-line camelcase
-          completed_at,
-          // eslint-disable-next-line camelcase
-          html_url,
-          name
+          source: {
+            id,
+            status,
+            conclusion,
+            // eslint-disable-next-line camelcase
+            started_at,
+            // eslint-disable-next-line camelcase
+            completed_at,
+            // eslint-disable-next-line camelcase
+            html_url,
+            name
+          },
+          acceptable: isAcceptable(conclusion)
         }))(checkRun)
       )
-    ).sort((a, b) => a.id - b.id)
+    ).sort((a, b) => a.source.id - b.source.id)
   );
 }
 async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
   const checkRunSummaries = await fetchRunSummaries(octokit, params);
-  if ((0, import_core.isDebug)()) {
-    (0, import_core.debug)(JSON.stringify(checkRunSummaries, null, 2));
-  }
   const otherRelatedRuns = checkRunSummaries.flatMap(
-    (summary) => ownJobIDs.has(summary.id) ? [] : [summary]
+    (summary) => ownJobIDs.has(summary.source.id) ? [] : [summary]
   );
-  const otherRelatedCompletedRuns = [];
-  for (const summary of otherRelatedRuns) {
-    if (summary.status === "completed") {
-      otherRelatedCompletedRuns.push(summary);
-    }
-    (0, import_core.info)(
-      `${summary.id} - ${summary.status} - ${summary.conclusion ?? "null"}: ${summary.name} - ${summary.html_url ?? "null"}`
-    );
-  }
+  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.source.status === "completed");
   const progress = otherRelatedCompletedRuns.length === otherRelatedRuns.length ? "done" : "in_progress";
-  const conclusion = otherRelatedCompletedRuns.every((summary) => isAcceptable(summary.conclusion)) ? "acceptable" : "bad";
+  const conclusion = otherRelatedCompletedRuns.every((summary) => summary.acceptable) ? "acceptable" : "bad";
   return { progress, conclusion, summaries: otherRelatedRuns };
 }
 
@@ -10009,8 +10000,9 @@ function calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalS
 // src/main.ts
 var errorMessage = (body) => `${import_ansi_styles.default.red.open}${body}${import_ansi_styles.default.red.close}`;
 var succeededMessage = (body) => `${import_ansi_styles.default.green.open}${body}${import_ansi_styles.default.green.close}`;
+var colorize = (body, ok) => ok ? succeededMessage(body) : errorMessage(body);
 async function run() {
-  (0, import_core2.startGroup)("Setup variables");
+  (0, import_core.startGroup)("Setup variables");
   const {
     repo: { repo, owner },
     payload,
@@ -10024,79 +10016,86 @@ async function run() {
     if (typeof prSha === "string") {
       commitSha = prSha;
     } else {
-      if ((0, import_core2.isDebug)()) {
-        (0, import_core2.debug)(JSON.stringify(pr, null, 2));
+      if ((0, import_core.isDebug)()) {
+        (0, import_core.debug)(JSON.stringify(pr, null, 2));
       }
-      (0, import_core2.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
-      (0, import_core2.setFailed)("unexpected failure occurred");
+      (0, import_core.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
+      (0, import_core.setFailed)("unexpected failure occurred");
       return;
     }
   }
-  (0, import_core2.info)(JSON.stringify({ triggeredCommitSha: commitSha, ownRunId: runId }, null, 2));
+  (0, import_core.info)(JSON.stringify({ triggeredCommitSha: commitSha, ownRunId: runId }, null, 2));
   const repositoryInfo = {
     owner,
     repo
   };
   const minIntervalSeconds = parseInt(
-    (0, import_core2.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
+    (0, import_core.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
     10
   );
-  const isEarlyExit = (0, import_core2.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
-  const isDryRun = (0, import_core2.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
-  const githubToken = (0, import_core2.getInput)("github-token", { required: true, trimWhitespace: false });
-  (0, import_core2.setSecret)(githubToken);
+  const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
+  const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
+  const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
+  (0, import_core.setSecret)(githubToken);
   const octokit = (0, import_github.getOctokit)(githubToken);
   let attempts = 0;
   let shouldStop = false;
-  (0, import_core2.endGroup)();
+  (0, import_core.endGroup)();
   if (isDryRun) {
     return;
   }
-  (0, import_core2.startGroup)("Get own job_id");
+  (0, import_core.startGroup)("Get own job_id");
   const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
-  (0, import_core2.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
-  (0, import_core2.endGroup)();
+  (0, import_core.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
+  (0, import_core.endGroup)();
   for (; ; ) {
     attempts += 1;
-    (0, import_core2.startGroup)(`Polling times: ${attempts}`);
+    (0, import_core.startGroup)(`Polling times: ${attempts}`);
     const idleMilliseconds = calculateIntervalMillisecondsAsExponentialBackoffAndJitter(
       minIntervalSeconds,
       attempts
     );
-    (0, import_core2.info)(`[estimation] It will wait ${readableDuration(idleMilliseconds)} to reduce api calling.`);
+    (0, import_core.info)(`[estimation] It will wait ${readableDuration(idleMilliseconds)} to reduce api calling.`);
     await wait(idleMilliseconds);
     const report = await fetchOtherRunStatus(
       octokit,
       { ...repositoryInfo, ref: commitSha },
       ownJobIDs
     );
-    if ((0, import_core2.isDebug)()) {
-      (0, import_core2.debug)(JSON.stringify(report, null, 2));
+    for (const summary of report.summaries) {
+      const { acceptable, source: { id, status, conclusion: conclusion2, name, html_url } } = summary;
+      const nullHandledConclusion = conclusion2 ?? "null";
+      (0, import_core.info)(
+        `${id} - ${colorize(status, status === "completed")} - ${colorize(nullHandledConclusion, acceptable)}: ${name} - ${html_url ?? "null"}`
+      );
+    }
+    if ((0, import_core.isDebug)()) {
+      (0, import_core.debug)(JSON.stringify(report, null, 2));
     }
     const { progress, conclusion } = report;
     switch (progress) {
       case "in_progress": {
         if (conclusion === "bad" && isEarlyExit) {
           shouldStop = true;
-          (0, import_core2.setFailed)(errorMessage("some jobs failed"));
+          (0, import_core.setFailed)(errorMessage("some jobs failed"));
         }
-        (0, import_core2.info)("some jobs still in progress");
+        (0, import_core.info)("some jobs still in progress");
         break;
       }
       case "done": {
         shouldStop = true;
         switch (conclusion) {
           case "acceptable": {
-            (0, import_core2.info)(succeededMessage("all jobs passed"));
+            (0, import_core.info)(succeededMessage("all jobs passed"));
             break;
           }
           case "bad": {
-            (0, import_core2.setFailed)(errorMessage("some jobs failed"));
+            (0, import_core.setFailed)(errorMessage("some jobs failed"));
             break;
           }
           default: {
             const unexpectedConclusion = conclusion;
-            (0, import_core2.setFailed)(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
+            (0, import_core.setFailed)(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
             break;
           }
         }
@@ -10105,11 +10104,11 @@ async function run() {
       default: {
         shouldStop = true;
         const unexpectedProgress = progress;
-        (0, import_core2.setFailed)(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
+        (0, import_core.setFailed)(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
         break;
       }
     }
-    (0, import_core2.endGroup)();
+    (0, import_core.endGroup)();
     if (shouldStop) {
       break;
     }
