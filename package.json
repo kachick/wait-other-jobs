@@ -9,9 +9,9 @@
   "scripts": {
     "lint:fix": "eslint --fix {src,__tests__}/**/*.ts *.ts",
     "lint:check": "eslint {src,__tests__}/**/*.ts *.ts",
-    "prepackage": "rimraf lib dist",
+    "prepackage": "tsx scripts/rmrf.ts lib dist",
     "package": "esbuild src/main.ts --bundle --platform=node --target=node16 --packages=external --outfile=lib/main.js && ncc build",
-    "postpackage": "rimraf lib",
+    "postpackage": "tsx scripts/rmrf.ts lib",
     "test:ts": "jest --config jest.pre.config.ts",
     "pretest:js": "npm run package",
     "test:js": "jest --config jest.post.config.ts",
