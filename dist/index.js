@@ -10078,7 +10078,7 @@ async function run() {
   for (; ; ) {
     attempts += 1;
     if (attempts > attemptLimits) {
-      (0, import_core.setFailed)(errorMessage(`exceeds the given attempt limits "${attemptLimits}`));
+      (0, import_core.setFailed)(errorMessage(`reached to given attempt limits "${attemptLimits}"`));
       break;
     }
     const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);

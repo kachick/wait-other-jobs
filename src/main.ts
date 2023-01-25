@@ -93,7 +93,7 @@ async function run(): Promise<void> {
   for (;;) {
     attempts += 1;
     if (attempts > attemptLimits) {
-      setFailed(errorMessage(`exceeds the given attempt limits "${attemptLimits}`));
+      setFailed(errorMessage(`reached to given attempt limits "${attemptLimits}"`));
       break;
     }
     const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
