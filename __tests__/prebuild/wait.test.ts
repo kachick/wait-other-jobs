@@ -57,7 +57,8 @@ test('interval will be like a cheap exponential backoff', () => {
 });
 
 test('readableDuration', () => {
-  expect(readableDuration(454356)).toBe('approximately 7.57 minutes');
+  expect(readableDuration(454356)).toBe('about 7.6 minutes');
+  expect(readableDuration(32100)).toBe('about 32 seconds');
 });
 
 test('getIdleMilliseconds returns different value with the given method', () => {

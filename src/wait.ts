@@ -22,18 +22,23 @@ function getRandomInt(min: number, max: number) {
   return Math.floor((Math.random() * (Math.floor(max) - flooredMin)) + flooredMin);
 }
 
-// 454356 millseconds => 7.5725999999999996 minutes => approximately 7.57 minutes
+// 454356 millseconds => 7.5725999999999996 minutes => about 7.57 minutes
 export function readableDuration(milliseconds: number): string {
   const msecToSec = 1000;
   const secToMin = 60;
-  const wantPrecision = 2;
+  // const wantPrecision = 2;
+
+  const seconds = milliseconds / msecToSec;
+  const minutes = seconds / secToMin;
+  const { unit, value, wantPrecision } = minutes >= 1
+    ? { unit: 'minutes', value: minutes, wantPrecision: 1 }
+    : { unit: 'seconds', value: seconds, wantPrecision: 0 };
   const adjustor = 10 ** wantPrecision;
-  const minutes = milliseconds / (msecToSec * secToMin);
-  return `approximately ${
-    (Math.round(minutes * adjustor) / adjustor).toFixed(
+  return `about ${
+    (Math.round(value * adjustor) / adjustor).toFixed(
       wantPrecision,
     )
-  } minutes`;
+  } ${unit}`;
 }
 
 export const MIN_JITTER_MILLISECONDS = 1000;

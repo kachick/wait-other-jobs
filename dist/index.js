@@ -9985,12 +9985,13 @@ function getRandomInt(min, max) {
 function readableDuration(milliseconds) {
   const msecToSec = 1e3;
   const secToMin = 60;
-  const wantPrecision = 2;
+  const seconds = milliseconds / msecToSec;
+  const minutes = seconds / secToMin;
+  const { unit, value, wantPrecision } = minutes >= 1 ? { unit: "minutes", value: minutes, wantPrecision: 1 } : { unit: "seconds", value: seconds, wantPrecision: 0 };
   const adjustor = 10 ** wantPrecision;
-  const minutes = milliseconds / (msecToSec * secToMin);
-  return `approximately ${(Math.round(minutes * adjustor) / adjustor).toFixed(
+  return `about ${(Math.round(value * adjustor) / adjustor).toFixed(
     wantPrecision
-  )} minutes`;
+  )} ${unit}`;
 }
 var MIN_JITTER_MILLISECONDS = 1e3;
 var MAX_JITTER_MILLISECONDS = 7e3;
