@@ -10,6 +10,7 @@ test('runs', () => {
   env['INPUT_RETRY-METHOD'] = 'exponential_backoff';
   env['INPUT_DRY-RUN'] = 'true';
   env['INPUT_EARLY-EXIT'] = 'true';
+  env['INPUT_ATTEMPT-LIMITS'] = '42';
   env['GITHUB_REPOSITORY'] = 'kachick/wait-other-jobs';
   env['GITHUB_RUN_ID'] = '2408217435';
   const np = execPath;

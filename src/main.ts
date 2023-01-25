@@ -62,6 +62,10 @@ async function run(): Promise<void> {
     );
     return;
   }
+  const attemptLimits = parseInt(
+    getInput('attempt-limits', { required: true, trimWhitespace: true }),
+    10,
+  );
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
 
@@ -88,6 +92,10 @@ async function run(): Promise<void> {
 
   for (;;) {
     attempts += 1;
+    if (attempts > attemptLimits) {
+      setFailed(errorMessage(`exceeds the given attempt limits "${attemptLimits}`));
+      break;
+    }
     const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
     info(`This action will wait ${readableDuration(msec)} before next polling to reduce api calling.`);
     await wait(msec);

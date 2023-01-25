@@ -42,15 +42,16 @@ with:
   early-exit: 'false' # default 'true'
 ```
 
-Full list of the acceptable inputs
+Full list of the changeable parameters
 
-| NAME                   | DESCRIPTION                                                                | TYPE     | REQUIRED | DEFAULT               |
-| ---------------------- | -------------------------------------------------------------------------- | -------- | -------- | --------------------- |
-| `github-token`         | Basically GITHUB_TOKEN                                                     | `string` | `true`   | `N/A`                 |
-| `early-exit`           | Stop to rest pollings if faced at least 1 bad condition                    | `bool`   | `false`  | `true`                |
-| `min-interval-seconds` | Wait this interval or the multiplied value with jitter for workflows check | `number` | `false`  | `30`                  |
-| `retry-method`         | How to wait for next polling (ex. exponential_backoff, equal_intervals)    | `string` | `false`  | `exponential_backoff` |
-| `dry-run`              | Avoid http requests for tests                                              | `bool`   | `false`  | `false`               |
+| NAME                   | DESCRIPTION                                                                     | TYPE     | REQUIRED | DEFAULT               | OPTIONS                                  |
+| ---------------------- | ------------------------------------------------------------------------------- | -------- | -------- | --------------------- | ---------------------------------------- |
+| `github-token`         | Basically GITHUB_TOKEN                                                          | `string` | `true`   | `N/A`                 |                                          |
+| `min-interval-seconds` | Wait this interval or the multiplied value (and jitter) for next polling        | `number` | `false`  | `30`                  |                                          |
+| `retry-method`         | How to wait for next polling                                                    | `string` | `false`  | `exponential_backoff` | `exponential_backoff`, `equal_intervals` |
+| `early-exit`           | Stop rest pollings if faced at least 1 bad condition                            | `bool`   | `false`  | `true`                |                                          |
+| `attempt-limits`       | Stop rest pollings after this attempts even if other jobs are not yet completed | `number` | `false`  | `1000`                |                                          |
+| `dry-run`              | Avoid http requests for tests                                                   | `bool`   | `false`  | `false`               |                                          |
 
 Below is a typical usecase. Assume test jobs defined in another workflow.
 

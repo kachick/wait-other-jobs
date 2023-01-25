@@ -9,7 +9,7 @@ inputs:
     description: 'Basically GITHUB_TOKEN'
     required: true
   min-interval-seconds:
-    description: 'Wait this interval or the multiplied value with jitter for workflows check'
+    description: 'Wait this interval or the multiplied value (and jitter) for next polling'
     required: false
     default: '30'
   early-exit:
@@ -17,9 +17,13 @@ inputs:
     required: false
     default: 'true'
   retry-method:
-    description: 'How to wait for next polling (ex. exponential_backoff, equal_intervals)'
+    description: 'How to wait for next polling'
     required: false
     default: 'exponential_backoff'
+  attempt-limits:
+    description: 'Stop rest pollings after this limits even if other jobs are not yet completed'
+    required: false
+    default: '1000' # Enough large
   dry-run:
     description: 'Avoid http requests for tests'
     required: false
