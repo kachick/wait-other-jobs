@@ -69,6 +69,7 @@ async function run(): Promise<void> {
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
 
+  // `getIDToken` does not fit for this purpose. It is provided for OIDC Token
   const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
   setSecret(githubToken);
   const octokit = getOctokit(githubToken);

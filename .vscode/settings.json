@@ -4,6 +4,7 @@
   "editor.formatOnSave": true,
   "cSpell.words": [
     "dprint",
+    "OIDC",
     "rmrf"
   ]
 }
