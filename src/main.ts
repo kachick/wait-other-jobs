@@ -14,7 +14,7 @@ import { getOctokit, context } from '@actions/github';
 import styles from 'ansi-styles';
 
 import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
-import { calculateIntervalMillisecondsAsExponentialBackoffAndJitter, readableDuration, wait } from './wait.js';
+import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
 
 const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`);
 const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
@@ -55,6 +55,17 @@ async function run(): Promise<void> {
     getInput('min-interval-seconds', { required: true, trimWhitespace: true }),
     10,
   );
+  const retryMethod = getInput('retry-method', { required: true, trimWhitespace: true });
+  if (!isRetryMethod(retryMethod)) {
+    setFailed(
+      `unknown parameter "${retryMethod}" is given. "retry-method" can take one of ${JSON.stringify(retryMethods)}`,
+    );
+    return;
+  }
+  const attemptLimits = parseInt(
+    getInput('attempt-limits', { required: true, trimWhitespace: true }),
+    10,
+  );
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
 
@@ -81,12 +92,13 @@ async function run(): Promise<void> {
 
   for (;;) {
     attempts += 1;
-    const idleMilliseconds = calculateIntervalMillisecondsAsExponentialBackoffAndJitter(
-      minIntervalSeconds,
-      attempts,
-    );
-    info(`[estimation] It will wait ${readableDuration(idleMilliseconds)} to reduce api calling.`);
-    await wait(idleMilliseconds);
+    if (attempts > attemptLimits) {
+      setFailed(errorMessage(`exceeds the given attempt limits "${attemptLimits}`));
+      break;
+    }
+    const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
+    info(`This action will wait ${readableDuration(msec)} before next polling to reduce api calling.`);
+    await wait(msec);
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
 
     const report = await fetchOtherRunStatus(

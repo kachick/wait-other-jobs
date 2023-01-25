@@ -9976,6 +9976,8 @@ async function wait(milliseconds) {
     setTimeout(() => resolve("done!"), milliseconds);
   });
 }
+var retryMethods = ["exponential_backoff", "equal_intervals"];
+var isRetryMethod = (method) => [...retryMethods].includes(method);
 function getRandomInt(min, max) {
   const flooredMin = Math.ceil(min);
   return Math.floor(Math.random() * (Math.floor(max) - flooredMin) + flooredMin);
@@ -9992,9 +9994,23 @@ function readableDuration(milliseconds) {
 }
 var MIN_JITTER_MILLISECONDS = 1e3;
 var MAX_JITTER_MILLISECONDS = 7e3;
-function calculateIntervalMillisecondsAsExponentialBackoffAndJitter(minIntervalSeconds, attempts) {
+function calcExponentialBackoffAndJitter(minIntervalSeconds, attempts) {
   const jitterMilliseconds = getRandomInt(MIN_JITTER_MILLISECONDS, MAX_JITTER_MILLISECONDS);
   return minIntervalSeconds * 2 ** (attempts - 1) * 1e3 + jitterMilliseconds;
+}
+function getIdleMilliseconds(method, minIntervalSeconds, attempts) {
+  switch (method) {
+    case "exponential_backoff":
+      return calcExponentialBackoffAndJitter(
+        minIntervalSeconds,
+        attempts
+      );
+    case "equal_intervals":
+      return minIntervalSeconds;
+    default:
+      const _exhaustiveCheck = method;
+      return minIntervalSeconds;
+  }
 }
 
 // src/main.ts
@@ -10033,6 +10049,17 @@ async function run() {
     (0, import_core.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
     10
   );
+  const retryMethod = (0, import_core.getInput)("retry-method", { required: true, trimWhitespace: true });
+  if (!isRetryMethod(retryMethod)) {
+    (0, import_core.setFailed)(
+      `unknown parameter "${retryMethod}" is given. "retry-method" can take one of ${JSON.stringify(retryMethods)}`
+    );
+    return;
+  }
+  const attemptLimits = parseInt(
+    (0, import_core.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
+    10
+  );
   const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
@@ -10050,12 +10077,13 @@ async function run() {
   (0, import_core.endGroup)();
   for (; ; ) {
     attempts += 1;
-    const idleMilliseconds = calculateIntervalMillisecondsAsExponentialBackoffAndJitter(
-      minIntervalSeconds,
-      attempts
-    );
-    (0, import_core.info)(`[estimation] It will wait ${readableDuration(idleMilliseconds)} to reduce api calling.`);
-    await wait(idleMilliseconds);
+    if (attempts > attemptLimits) {
+      (0, import_core.setFailed)(errorMessage(`exceeds the given attempt limits "${attemptLimits}`));
+      break;
+    }
+    const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
+    (0, import_core.info)(`This action will wait ${readableDuration(msec)} before next polling to reduce api calling.`);
+    await wait(msec);
     (0, import_core.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
       octokit,

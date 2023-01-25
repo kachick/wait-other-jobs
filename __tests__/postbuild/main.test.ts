@@ -7,8 +7,10 @@ import { expect, test } from '@jest/globals';
 test('runs', () => {
   env['INPUT_GITHUB-TOKEN'] = 'DUMMY_GITHUB_TOKEN-32191280-2027-45a4-b1c1-1050e0054bfc';
   env['INPUT_MIN-INTERVAL-SECONDS'] = '30';
+  env['INPUT_RETRY-METHOD'] = 'exponential_backoff';
   env['INPUT_DRY-RUN'] = 'true';
   env['INPUT_EARLY-EXIT'] = 'true';
+  env['INPUT_ATTEMPT-LIMITS'] = '42';
   env['GITHUB_REPOSITORY'] = 'kachick/wait-other-jobs';
   env['GITHUB_RUN_ID'] = '2408217435';
   const np = execPath;
