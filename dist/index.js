@@ -10056,6 +10056,10 @@ async function run() {
     );
     return;
   }
+  const attemptLimits = parseInt(
+    (0, import_core.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
+    10
+  );
   const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
@@ -10073,6 +10077,10 @@ async function run() {
   (0, import_core.endGroup)();
   for (; ; ) {
     attempts += 1;
+    if (attempts > attemptLimits) {
+      (0, import_core.setFailed)(errorMessage(`exceeds the given attempt limits "${attemptLimits}`));
+      break;
+    }
     const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
     (0, import_core.info)(`This action will wait ${readableDuration(msec)} before next polling to reduce api calling.`);
     await wait(msec);
