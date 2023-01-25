@@ -48,6 +48,8 @@ jobs:
         timeout-minutes: 10
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
+          retry-method: 'equal_intervals'
+          min-interval-seconds: '15'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
         env:
