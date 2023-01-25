@@ -73,5 +73,5 @@ test('getIdleMilliseconds returns different value with the given method', () => 
 
   expect(
     getIdleMilliseconds('equal_intervals', minIntervalSeconds, 5),
-  ).toEqual(minIntervalSeconds);
+  ).toBe(minIntervalSeconds * 1000);
 });

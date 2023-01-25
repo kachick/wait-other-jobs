@@ -60,9 +60,9 @@ export function getIdleMilliseconds(method: retryMethod, minIntervalSeconds: num
         attempts,
       );
     case ('equal_intervals'):
-      return minIntervalSeconds;
+      return minIntervalSeconds * 1000;
     default:
       const _exhaustiveCheck: never = method;
-      return minIntervalSeconds;
+      return minIntervalSeconds * 1000;
   }
 }

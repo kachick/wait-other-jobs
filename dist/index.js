@@ -10007,10 +10007,10 @@ function getIdleMilliseconds(method, minIntervalSeconds, attempts) {
         attempts
       );
     case "equal_intervals":
-      return minIntervalSeconds;
+      return minIntervalSeconds * 1e3;
     default:
       const _exhaustiveCheck = method;
-      return minIntervalSeconds;
+      return minIntervalSeconds * 1e3;
   }
 }
 
