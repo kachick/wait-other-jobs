@@ -3,10 +3,10 @@
 [![CI](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml?query=event%3Apush++)
 [![Itself](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml?query=event%3Apush++)
 
+## Overview
+
 This action waits all GitHub Action jobs even if they are running in other workflows.\
 When some jobs failed, this action exit with NON 0 value. Otherwise exit with 0.
-
-<img src="./assets/actual-log-v1.1.1-passed.png?raw=true" alt="Example of actual log" width=700>
 
 I mainly use this action for below use-case when they should run after multiple CI workflows
 
@@ -15,7 +15,15 @@ I mainly use this action for below use-case when they should run after multiple 
 - [Auto approve and merge dependabot PRs without PAT(Personal Access Token)](https://github.com/kachick/ruby-ulid/blob/ad4c6090d7835d80ff02a1a5f57d6e9ae11a85d3/.github/workflows/merge-bot-pr.yml#L21-L26)
 - [Auto approve and merge renovatebot PRs without `platformAutomerge` feature](https://github.com/kachick/ruby-ulid/blob/ad4c6090d7835d80ff02a1a5f57d6e9ae11a85d3/.github/workflows/merge-bot-pr.yml#L46-L50)
 
-# Usage
+### Success pattern with default inputs, it behaves as `Exponential Backoff And Jitter`.
+
+<img src="./assets/log-v1.2.0-exponential_backoff.png?raw=true" alt="Example of actual log - success in default" width=900>
+
+### Error pattern with specified `equal_intervals` and `attempt-limits`.
+
+<img src="./assets/log-v1.2.0-equal_intervals_and_attempt-limits.png?raw=true" alt="Example of actual log - error in equal_intervals_and_attempt-limits" width=900>
+
+## Usage
 
 Just requires `github-token` for minimum configuration.\
 I recommend to use `timeout-minutes` together with.
@@ -106,7 +114,7 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 ```
 
-# GITHUB_TOKEN vs PAT
+## GITHUB_TOKEN vs PAT
 
 This action just requires following GITHUB_TOKEN permissions. Needless annoying setup and needless unsecure around PAT.
 
@@ -124,7 +132,12 @@ And it requires annoy steps to generate, sets and maintains tokens [even if refi
 
 This action provides another way. It checks other workflows/jobs statuses in actions with GITHUB_TOKEN.
 
-# Why avoid `automerge` and `platformAutomerge` provided by renovate official?
+### Cons
+
+- [Above merging logics are written in GitHub official docs](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/content/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions.md#enable-auto-merge-on-a-pull-request). However [GITHUB_TOKEN merged commit does not trigger new workflows even if defined as "push"](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/data/reusables/actions/actions-do-not-trigger-workflows.md?plain=1#L1). So the badges will not be shown in commit history of default branch :<
+  - ref: https://github.com/orgs/community/discussions/25251#discussioncomment-3247100
+
+## Why avoid `automerge` and `platformAutomerge` provided by renovate official?
 
 `automerge` is slow. `platformAutomerge` requires many repository settings.
 
@@ -133,11 +146,6 @@ It requires many changes in repository settings around `Allow auto-merge`, `Requ
 Especially specifying mandatory CI names in all personal repositories are annoy task to me.\
 If we are talking only about organizations, [hashicorp/terraform](https://github.com/hashicorp/terraform) might resolve it easier.
 
-## Cons
-
-- [Above merging logics are written in GitHub official docs](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/content/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions.md#enable-auto-merge-on-a-pull-request). However [GITHUB_TOKEN merged commit does not trigger new workflows even if defined as "push"](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/data/reusables/actions/actions-do-not-trigger-workflows.md?plain=1#L1). So the badges will not be shown in commit history of default branch :<
-  - ref: https://github.com/orgs/community/discussions/25251#discussioncomment-3247100
-
-# License
+## License
 
 The scripts and documentation in this project are released under the [MIT License](LICENSE)
