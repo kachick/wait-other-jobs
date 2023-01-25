@@ -25,6 +25,10 @@ rules:
     - error
     - selector: TSEnumDeclaration
       message: Don't declare enums.
+  no-unused-vars: 'off'
+  '@typescript-eslint/no-unused-vars':
+    - error
+    - varsIgnorePattern: ^_
   prettier/prettier: 'off'
   no-mixed-operators: error
   '@typescript-eslint/prefer-readonly': error

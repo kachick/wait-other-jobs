@@ -38,8 +38,19 @@ You can adjust status polling interval and turns early-exit as below.
 with:
   github-token: "${{ secrets.GITHUB_TOKEN }}"
   min-interval-seconds: '300' # default '30'
+  retry-method: 'equal_intervals' # default 'exponential_backoff'
   early-exit: 'false' # default 'true'
 ```
+
+Full list of the acceptable inputs
+
+| NAME                   | DESCRIPTION                                                                | TYPE     | REQUIRED | DEFAULT               |
+| ---------------------- | -------------------------------------------------------------------------- | -------- | -------- | --------------------- |
+| `github-token`         | Basically GITHUB_TOKEN                                                     | `string` | `true`   | `N/A`                 |
+| `early-exit`           | Stop to rest pollings if faced at least 1 bad condition                    | `bool`   | `false`  | `true`                |
+| `min-interval-seconds` | Wait this interval or the multiplied value with jitter for workflows check | `number` | `false`  | `30`                  |
+| `retry-method`         | How to wait for next polling (ex. exponential_backoff, equal_intervals)    | `string` | `false`  | `exponential_backoff` |
+| `dry-run`              | Avoid http requests for tests                                              | `bool`   | `false`  | `false`               |
 
 Below is a typical usecase. Assume test jobs defined in another workflow.
 

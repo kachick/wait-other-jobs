@@ -6,7 +6,7 @@ branding:
   color: 'green'
 inputs:
   github-token:
-    description: 'GitHub token (Basically PAT is needless. Passing GITHUB_TOKEN is enough.)'
+    description: 'Basically GITHUB_TOKEN'
     required: true
   min-interval-seconds:
     description: 'Wait this interval or the multiplied value with jitter for workflows check'
@@ -16,6 +16,10 @@ inputs:
     description: 'Stop to rest pollings if faced at least 1 bad condition'
     required: false
     default: 'true'
+  retry-method:
+    description: 'How to wait for next polling (ex. exponential_backoff, equal_intervals)'
+    required: false
+    default: 'exponential_backoff'
   dry-run:
     description: 'Avoid http requests for tests'
     required: false
