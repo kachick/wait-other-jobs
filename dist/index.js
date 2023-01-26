@@ -10041,7 +10041,6 @@ async function run() {
       return;
     }
   }
-  (0, import_core.info)(JSON.stringify({ triggeredCommitSha: commitSha, ownRunId: runId }, null, 2));
   const repositoryInfo = {
     owner,
     repo
@@ -10063,6 +10062,21 @@ async function run() {
   );
   const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
+  (0, import_core.info)(JSON.stringify(
+    {
+      triggeredCommitSha: commitSha,
+      ownRunId: runId,
+      repositoryInfo,
+      minIntervalSeconds,
+      retryMethod,
+      attemptLimits,
+      isEarlyExit,
+      isDryRun
+      // Of course, do NOT include tokens here.
+    },
+    null,
+    2
+  ));
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core.setSecret)(githubToken);
   const octokit = (0, import_github.getOctokit)(githubToken);

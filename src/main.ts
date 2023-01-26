@@ -44,8 +44,6 @@ async function run(): Promise<void> {
     }
   }
 
-  info(JSON.stringify({ triggeredCommitSha: commitSha, ownRunId: runId }, null, 2));
-
   const repositoryInfo = {
     owner,
     repo,
@@ -68,6 +66,22 @@ async function run(): Promise<void> {
   );
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
+
+  info(JSON.stringify(
+    {
+      triggeredCommitSha: commitSha,
+      ownRunId: runId,
+      repositoryInfo,
+      minIntervalSeconds,
+      retryMethod,
+      attemptLimits,
+      isEarlyExit,
+      isDryRun,
+      // Of course, do NOT include tokens here.
+    },
+    null,
+    2,
+  ));
 
   // `getIDToken` does not fit for this purpose. It is provided for OIDC Token
   const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
