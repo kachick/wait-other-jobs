@@ -10107,9 +10107,10 @@ async function run() {
     );
     for (const summary of report.summaries) {
       const { acceptable, source: { id, status, conclusion: conclusion2, name, html_url } } = summary;
-      const nullHandledConclusion = conclusion2 ?? "null";
+      const nullStr = "(null)";
+      const nullHandledConclusion = conclusion2 ?? nullStr;
       (0, import_core.info)(
-        `${id} - ${colorize(status, status === "completed")} - ${colorize(nullHandledConclusion, acceptable)}: ${name} - ${html_url ?? "null"}`
+        `${id} - ${colorize(status, status === "completed")} - ${colorize(nullHandledConclusion, acceptable)}: ${name} - ${html_url ?? nullStr}`
       );
     }
     if ((0, import_core.isDebug)()) {

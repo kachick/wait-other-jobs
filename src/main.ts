@@ -124,11 +124,12 @@ async function run(): Promise<void> {
 
     for (const summary of report.summaries) {
       const { acceptable, source: { id, status, conclusion, name, html_url } } = summary;
-      const nullHandledConclusion = conclusion ?? 'null';
+      const nullStr = '(null)';
+      const nullHandledConclusion = conclusion ?? nullStr;
       info(
         `${id} - ${colorize(status, status === 'completed')} - ${
           colorize(nullHandledConclusion, acceptable)
-        }: ${name} - ${html_url ?? 'null'}`,
+        }: ${name} - ${html_url ?? nullStr}`,
       );
     }
 
