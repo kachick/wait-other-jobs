@@ -2,31 +2,13 @@ name: Itself
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - '.github/dependabot.yml'
-      - '.github/workflows/ci.yml'
-      - '.github/workflows/dependency-review.yml'
-      - '.github/workflows/merge-bot-pr.yml'
-      - '.github/workflows/codeql-analysis.yml'
-      - 'LICENSE'
-      - '.editorconfig'
-      - 'dprint.json'
-      - '.eslintrc.js'
-      - 'README.md'
-      - '.vscode/**'
+    paths:
+      - '.github/workflows/itself.yml'
+      - 'dist/**'
   pull_request:
-    paths-ignore:
-      - '.github/dependabot.yml'
-      - '.github/workflows/ci.yml'
-      - '.github/workflows/dependency-review.yml'
-      - '.github/workflows/merge-bot-pr.yml'
-      - '.github/workflows/codeql-analysis.yml'
-      - 'LICENSE'
-      - '.editorconfig'
-      - 'dprint.json'
-      - '.eslintrc.js'
-      - 'README.md'
-      - '.vscode/**'
+    paths:
+      - '.github/workflows/itself.yml'
+      - 'dist/**'
 
 permissions:
   contents: write
