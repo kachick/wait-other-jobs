@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait other jobs are passed or failed
-        uses: kachick/wait-other-jobs@v1.2.0
+        uses: kachick/wait-other-jobs@v1.2.1
         timeout-minutes: 15
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -86,7 +86,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Wait other jobs
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
-        uses: kachick/wait-other-jobs@v1.2.0
+        uses: kachick/wait-other-jobs@v1.2.1
         timeout-minutes: 10
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
@@ -103,7 +103,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Wait other jobs
-        uses: kachick/wait-other-jobs@v1.2.0
+        uses: kachick/wait-other-jobs@v1.2.1
         timeout-minutes: 10
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
