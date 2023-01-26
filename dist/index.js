@@ -10019,7 +10019,7 @@ var errorMessage = (body) => `${import_ansi_styles.default.red.open}${body}${imp
 var succeededMessage = (body) => `${import_ansi_styles.default.green.open}${body}${import_ansi_styles.default.green.close}`;
 var colorize = (body, ok) => ok ? succeededMessage(body) : errorMessage(body);
 async function run() {
-  (0, import_core.startGroup)("Setup variables");
+  (0, import_core.startGroup)("Parameters");
   const {
     repo: { repo, owner },
     payload,

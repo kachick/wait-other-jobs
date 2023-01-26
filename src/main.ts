@@ -21,7 +21,7 @@ const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles
 const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
 async function run(): Promise<void> {
-  startGroup('Setup variables');
+  startGroup('Parameters');
   const {
     repo: { repo, owner },
     payload,
