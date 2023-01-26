@@ -98,7 +98,7 @@ async function run(): Promise<void> {
       break;
     }
     const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
-    info(`This action will wait ${readableDuration(msec)} before next polling to reduce api calling.`);
+    info(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
     await wait(msec);
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
 

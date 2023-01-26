@@ -10083,7 +10083,7 @@ async function run() {
       break;
     }
     const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
-    (0, import_core.info)(`This action will wait ${readableDuration(msec)} before next polling to reduce api calling.`);
+    (0, import_core.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
     await wait(msec);
     (0, import_core.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
