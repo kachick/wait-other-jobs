@@ -17,7 +17,7 @@ on:
       - '.vscode/**'
 jobs:
   build:
-    needs: [typecheck]
+    needs: [typecheck] # Ensuring cache
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -46,7 +46,7 @@ jobs:
         run: npm run typecheck
 
   lint:
-    needs: [typecheck]
+    needs: [typecheck] # Ensuring cache
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
