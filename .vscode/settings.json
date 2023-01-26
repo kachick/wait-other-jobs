@@ -3,6 +3,7 @@
   "editor.defaultFormatter": "dprint.dprint",
   "editor.formatOnSave": true,
   "cSpell.words": [
+    "deno",
     "dprint",
     "OIDC",
     "rmrf"
