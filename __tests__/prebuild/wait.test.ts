@@ -15,10 +15,11 @@ test('throws invalid number', async () => {
 
 test('wait 500 ms', async () => {
   const start = new Date();
-  await wait(500);
+  await wait(100);
   const end = new Date();
   const delta = Math.abs(end.getTime() - start.getTime());
-  expect(delta).toBeGreaterThan(450);
+  expect(delta).toBeGreaterThanOrEqual(100);
+  expect(delta).toBeLessThan(150);
 });
 
 test('interval will be like a cheap exponential backoff', () => {
