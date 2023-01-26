@@ -114,6 +114,11 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 ```
 
+## Limitations
+
+Judge OK or Bad with the checkRun state at the moment.\
+When some jobs will be triggerred after this action with `needs: [distant-first]`, it might be unaccurate. (I didn't faced yet)
+
 ## GITHUB_TOKEN vs PAT
 
 This action just requires following GITHUB_TOKEN permissions. Needless annoying setup and needless unsecure around PAT.
