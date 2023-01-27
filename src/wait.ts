@@ -1,8 +1,7 @@
 import { setTimeout } from 'timers/promises';
 
-export async function wait(milliseconds: number): Promise<void> {
-  await setTimeout(milliseconds);
-}
+// Just aliasing to avoid misusing setTimeout between ES method and timers/promises version.
+export const wait = setTimeout;
 
 export const retryMethods = ['exponential_backoff', 'equal_intervals'] as const;
 type retryMethod = typeof retryMethods[number];

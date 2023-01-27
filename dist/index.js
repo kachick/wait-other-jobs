@@ -9977,9 +9977,7 @@ async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
 
 // src/wait.ts
 var import_promises = __nccwpck_require__(8670);
-async function wait(milliseconds) {
-  await (0, import_promises.setTimeout)(milliseconds);
-}
+var wait = import_promises.setTimeout;
 var retryMethods = ["exponential_backoff", "equal_intervals"];
 var isRetryMethod = (method) => [...retryMethods].includes(method);
 function getRandomInt(min, max) {
