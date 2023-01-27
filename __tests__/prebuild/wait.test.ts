@@ -13,11 +13,12 @@ test('throws invalid number', async () => {
   await expect(wait(input)).rejects.toThrow('milliseconds not a number');
 });
 
-test('wait 500 ms', async () => {
+test('wait 100 ms', async () => {
   const start = new Date();
   await wait(100);
   const end = new Date();
   const delta = Math.abs(end.getTime() - start.getTime());
+  // This fault once in CI with `99` https://github.com/kachick/wait-other-jobs/actions/runs/4020704486/jobs/6908914747
   expect(delta).toBeGreaterThanOrEqual(100);
   expect(delta).toBeLessThan(150);
 });
