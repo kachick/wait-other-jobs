@@ -8,17 +8,12 @@ import {
 } from '../../src/wait';
 import { expect, test } from '@jest/globals';
 
-test('throws invalid number', async () => {
-  const input = parseInt('foo', 10);
-  await expect(wait(input)).rejects.toThrow('milliseconds not a number');
-});
-
 test('wait 100 ms', async () => {
   const start = new Date();
   await wait(100);
   const end = new Date();
   const delta = Math.abs(end.getTime() - start.getTime());
-  // This fault once in CI with `99` https://github.com/kachick/wait-other-jobs/actions/runs/4020704486/jobs/6908914747
+  // This fault once in CI with `99` https://github.com/kachick/wait-other-jobs/actions/runs/4020704486/jobs/6908914747 before using timers/promises
   expect(delta).toBeGreaterThanOrEqual(100);
   expect(delta).toBeLessThan(150);
 });
