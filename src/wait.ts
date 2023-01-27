@@ -23,13 +23,13 @@ export function readableDuration(milliseconds: number): string {
 
   const seconds = milliseconds / msecToSec;
   const minutes = seconds / secToMin;
-  const { unit, value, wantPrecision } = minutes >= 1
-    ? { unit: 'minutes', value: minutes, wantPrecision: 1 }
-    : { unit: 'seconds', value: seconds, wantPrecision: 0 };
-  const adjustor = 10 ** wantPrecision;
+  const { unit, value, precision }: { unit: string; value: number; precision: number } = minutes >= 1
+    ? { unit: 'minutes', value: minutes, precision: 1 }
+    : { unit: 'seconds', value: seconds, precision: 0 };
+  const adjustor = 10 ** precision;
   return `about ${
     (Math.round(value * adjustor) / adjustor).toFixed(
-      wantPrecision,
+      precision,
     )
   } ${unit}`;
 }
