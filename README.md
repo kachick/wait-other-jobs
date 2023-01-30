@@ -153,11 +153,14 @@ If we are talking only about organizations, [hashicorp/terraform](https://github
 
 ## FAQ
 
-- What is `failed to create review: Message: GitHub Actions is not permitted to approve pull requests.`?\
-  Needs `Allow GitHub Actions to create and approve pull requests` to be enabled at `https://github.com/{onwer}/{repo}/settings/actions`.\
-  See [GitHub Blog](https://github.blog/changelog/2022-05-03-github-actions-prevent-github-actions-from-creating-and-approving-pull-requests/) for further detail.
+Q:\
+What is `failed to create review: Message: GitHub Actions is not permitted to approve pull requests.`?
 
-  ![Disabled `Allow GitHub Actions to create and approve pull requests`](assets/allow-create-approve.png)
+A:\
+Needs `Allow GitHub Actions to create and approve pull requests` to be enabled at `https://github.com/{onwer}/{repo}/settings/actions`.\
+See [GitHub Blog](https://github.blog/changelog/2022-05-03-github-actions-prevent-github-actions-from-creating-and-approving-pull-requests/) for further detail.
+
+![Disabled `Allow GitHub Actions to create and approve pull requests`](assets/allow-create-approve.png)
 
 ## License
 
