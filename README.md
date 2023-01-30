@@ -151,6 +151,14 @@ It requires many changes in repository settings around `Allow auto-merge`, `Requ
 Especially specifying mandatory CI names in all personal repositories are annoy task to me.\
 If we are talking only about organizations, [hashicorp/terraform](https://github.com/hashicorp/terraform) might resolve it easier.
 
+## FAQ
+
+- What is `failed to create review: Message: GitHub Actions is not permitted to approve pull requests.`?\
+  Needs `Allow GitHub Actions to create and approve pull requests` to be enabled at `https://github.com/{onwer}/{repo}/settings/actions`.\
+  See [GitHub Blog](https://github.blog/changelog/2022-05-03-github-actions-prevent-github-actions-from-creating-and-approving-pull-requests/) for further detail.
+
+  ![Disabled `Allow GitHub Actions to create and approve pull requests`](assets/allow-create-approve.png)
+
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](LICENSE)
