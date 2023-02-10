@@ -8,5 +8,14 @@
   "enabledManagers": ["nix", "regex"],
   "nix": {
     "enabled": true
-  }
+  },
+  "packageRules": [
+    {
+      "extends": ["packages:linters", "schedule:weekly"]
+    },
+    {
+      "extends": ["schedule:weekly"],
+      "matchPackagePrefixes": ["dprint"]
+    }
+  ]
 }
