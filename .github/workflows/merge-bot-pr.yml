@@ -18,6 +18,8 @@ jobs:
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Wait other jobs
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         uses: ./
@@ -43,6 +45,8 @@ jobs:
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Wait other jobs
         uses: ./
         timeout-minutes: 10
