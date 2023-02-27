@@ -9,6 +9,7 @@ on:
       - 'package-lock.json'
 jobs:
   format:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

@@ -17,6 +17,7 @@ on:
       - '.vscode/**'
 jobs:
   build:
+    timeout-minutes: 15
     needs: [typecheck] # Ensuring cache
     runs-on: ubuntu-latest
     steps:
@@ -33,6 +34,7 @@ jobs:
         run: git add --intent-to-add . && git diff --exit-code
 
   typecheck:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -46,6 +48,7 @@ jobs:
         run: npm run typecheck
 
   lint:
+    timeout-minutes: 15
     needs: [typecheck] # Ensuring cache
     runs-on: ubuntu-latest
     steps:
