@@ -3,7 +3,6 @@ env:
   es2021: true
   jest/globals: true
 plugins:
-  - deprecation
   - '@typescript-eslint'
 extends:
   - plugin:@typescript-eslint/recommended
@@ -20,7 +19,6 @@ overrides:
       filenames/match-regex: 'off'
 rules:
   i18n-text/no-en: 'off'
-  deprecation/deprecation: error
   no-restricted-syntax:
     - error
     - selector: TSEnumDeclaration
