@@ -33,6 +33,9 @@ rules:
   '@typescript-eslint/prefer-readonly-parameter-types':
     - error
     - ignoreInferredTypes: true
+  # See https://zenn.dev/teppeis/articles/2023-04-typescript-5_0-verbatim-module-syntax for enabling reason
+  '@typescript-eslint/consistent-type-imports': 'error'
+  '@typescript-eslint/no-import-type-side-effects': 'error'
 parser: '@typescript-eslint/parser'
 parserOptions:
   ecmaVersion: 12
