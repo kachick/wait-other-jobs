@@ -2,6 +2,17 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.defaultFormatter": "dprint.dprint",
   "editor.formatOnSave": true,
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  },
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "dprint.json"
+      ],
+      "url": "https://docs.renovatebot.com/renovate-schema.json"
+    }
+  ],
   "cSpell.words": [
     "deno",
     "dprint",
