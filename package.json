@@ -33,7 +33,6 @@
   },
   "devDependencies": {
     "@octokit/types": "^9.0.0",
-    "@tsconfig/node16-strictest-esm": "^1.0.3",
     "@types/jest": "^29.5.0",
     "@types/node": "^16.18.23",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
