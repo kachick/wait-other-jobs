@@ -1,6 +1,6 @@
 {
-  // https://github.com/tsconfig/bases/blob/d1543a94d47c3ef9af9987790742b09caf71b71d/bases/node16-strictest-esm.combined.json
-  "extends": "@tsconfig/node16-strictest-esm/tsconfig.json",
+  // TODO: Use tsconfig/base after all tools support tsconfig.extends array
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
     // https://www.typescriptlang.org/docs/handbook/esm-node.html
     "module": "node16",

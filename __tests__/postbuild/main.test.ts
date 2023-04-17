@@ -1,5 +1,6 @@
 import { env, execPath } from 'process';
-import { execFileSync, ExecFileSyncOptions } from 'child_process';
+import type { ExecFileSyncOptions } from 'child_process';
+import { execFileSync } from 'child_process';
 import { join } from 'path';
 import { expect, test } from '@jest/globals';
 
