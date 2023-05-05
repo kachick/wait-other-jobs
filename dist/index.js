@@ -9931,7 +9931,7 @@ async function fetchJobIDs(octokit, params) {
         filter: "latest"
       },
       (resp) => resp.data.map((job) => {
-        (0, import_core.info)(JSON.stringify({ "debugLog_For#474": job }));
+        (0, import_core.info)(JSON.stringify({ "debugLog_For#474-listJobsForWorkflowRun": job }));
         return job.id;
       })
     )
@@ -9949,7 +9949,7 @@ async function fetchRunSummaries(octokit, params) {
     (resp) => resp.data.map(
       (checkRun) => (
         // eslint-disable-next-line camelcase
-        (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
+        (({ id, status, conclusion, started_at, completed_at, html_url, name, ...others }) => ({
           source: {
             id,
             status,
@@ -9960,7 +9960,8 @@ async function fetchRunSummaries(octokit, params) {
             completed_at,
             // eslint-disable-next-line camelcase
             html_url,
-            name
+            name,
+            others
           },
           acceptable: isAcceptable(conclusion)
         }))(checkRun)
@@ -9970,6 +9971,7 @@ async function fetchRunSummaries(octokit, params) {
 }
 async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
   const checkRunSummaries = await fetchRunSummaries(octokit, params);
+  (0, import_core.info)(JSON.stringify({ "debugLog_For#474-checkRunSummaries": checkRunSummaries }));
   const otherRelatedRuns = checkRunSummaries.flatMap(
     (summary) => ownJobIDs.has(summary.source.id) ? [] : [summary]
   );

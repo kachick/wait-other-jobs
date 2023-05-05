@@ -56,7 +56,7 @@ export async function fetchJobIDs(
       },
       (resp) =>
         resp.data.map((job) => {
-          info(JSON.stringify({ 'debugLog_For#474': job }));
+          info(JSON.stringify({ 'debugLog_For#474-listJobsForWorkflowRun': job }));
           return job.id;
         }),
     ),
@@ -79,7 +79,7 @@ async function fetchRunSummaries(
     (resp) =>
       resp.data.map((checkRun) =>
         // eslint-disable-next-line camelcase
-        (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
+        (({ id, status, conclusion, started_at, completed_at, html_url, name, ...others }) => ({
           source: {
             id,
             status,
@@ -91,6 +91,7 @@ async function fetchRunSummaries(
             // eslint-disable-next-line camelcase
             html_url,
             name,
+            others,
           },
           acceptable: isAcceptable(conclusion),
         }))(checkRun)
@@ -105,6 +106,7 @@ export async function fetchOtherRunStatus(
   ownJobIDs: Readonly<Set<JobID>>,
 ): Promise<Report> {
   const checkRunSummaries = await fetchRunSummaries(octokit, params);
+  info(JSON.stringify({ 'debugLog_For#474-checkRunSummaries': checkRunSummaries }));
   const otherRelatedRuns = checkRunSummaries.flatMap<CheckRunsSummary>((summary) =>
     ownJobIDs.has(summary.source.id) ? [] : [summary]
   );
