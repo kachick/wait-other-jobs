@@ -9931,7 +9931,7 @@ async function fetchJobIDs(octokit, params) {
         filter: "latest"
       },
       (resp) => resp.data.map((job) => {
-        (0, import_core.debug)(JSON.stringify({ "debugLog_For#474": job }));
+        (0, import_core.info)(JSON.stringify({ "debugLog_For#474": job }));
         return job.id;
       })
     )

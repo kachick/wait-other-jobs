@@ -1,4 +1,4 @@
-import { debug } from '@actions/core';
+import { info } from '@actions/core';
 import type { getOctokit } from '@actions/github';
 import type { Endpoints } from '@octokit/types';
 
@@ -56,7 +56,7 @@ export async function fetchJobIDs(
       },
       (resp) =>
         resp.data.map((job) => {
-          debug(JSON.stringify({ 'debugLog_For#474': job }));
+          info(JSON.stringify({ 'debugLog_For#474': job }));
           return job.id;
         }),
     ),
