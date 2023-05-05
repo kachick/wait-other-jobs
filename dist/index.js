@@ -9911,11 +9911,12 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 
 // src/main.ts
-var import_core = __nccwpck_require__(2186);
+var import_core2 = __nccwpck_require__(2186);
 var import_github = __nccwpck_require__(5438);
 var import_ansi_styles = __toESM(__nccwpck_require__(6844));
 
 // src/github-api.ts
+var import_core = __nccwpck_require__(2186);
 function isAcceptable(conclusion) {
   return conclusion === "success" || conclusion === "skipped";
 }
@@ -9929,7 +9930,10 @@ async function fetchJobIDs(octokit, params) {
         per_page: 100,
         filter: "latest"
       },
-      (resp) => resp.data.map((job) => job.id)
+      (resp) => resp.data.map((job) => {
+        (0, import_core.debug)(JSON.stringify({ "debugLog_For#474": job }));
+        return job.id;
+      })
     )
   );
 }
@@ -10021,7 +10025,7 @@ var errorMessage = (body) => `${import_ansi_styles.default.red.open}${body}${imp
 var succeededMessage = (body) => `${import_ansi_styles.default.green.open}${body}${import_ansi_styles.default.green.close}`;
 var colorize = (body, ok) => ok ? succeededMessage(body) : errorMessage(body);
 async function run() {
-  (0, import_core.startGroup)("Parameters");
+  (0, import_core2.startGroup)("Parameters");
   const {
     repo: { repo, owner },
     payload,
@@ -10035,11 +10039,11 @@ async function run() {
     if (typeof prSha === "string") {
       commitSha = prSha;
     } else {
-      if ((0, import_core.isDebug)()) {
-        (0, import_core.debug)(JSON.stringify(pr, null, 2));
+      if ((0, import_core2.isDebug)()) {
+        (0, import_core2.debug)(JSON.stringify(pr, null, 2));
       }
-      (0, import_core.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
-      (0, import_core.setFailed)("unexpected failure occurred");
+      (0, import_core2.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
+      (0, import_core2.setFailed)("unexpected failure occurred");
       return;
     }
   }
@@ -10048,23 +10052,23 @@ async function run() {
     repo
   };
   const minIntervalSeconds = parseInt(
-    (0, import_core.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
+    (0, import_core2.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
     10
   );
-  const retryMethod = (0, import_core.getInput)("retry-method", { required: true, trimWhitespace: true });
+  const retryMethod = (0, import_core2.getInput)("retry-method", { required: true, trimWhitespace: true });
   if (!isRetryMethod(retryMethod)) {
-    (0, import_core.setFailed)(
+    (0, import_core2.setFailed)(
       `unknown parameter "${retryMethod}" is given. "retry-method" can take one of ${JSON.stringify(retryMethods)}`
     );
     return;
   }
   const attemptLimits = parseInt(
-    (0, import_core.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
+    (0, import_core2.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
     10
   );
-  const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
-  const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
-  (0, import_core.info)(JSON.stringify(
+  const isEarlyExit = (0, import_core2.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
+  const isDryRun = (0, import_core2.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
+  (0, import_core2.info)(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
       ownRunId: runId,
@@ -10079,29 +10083,29 @@ async function run() {
     null,
     2
   ));
-  const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
-  (0, import_core.setSecret)(githubToken);
+  const githubToken = (0, import_core2.getInput)("github-token", { required: true, trimWhitespace: false });
+  (0, import_core2.setSecret)(githubToken);
   const octokit = (0, import_github.getOctokit)(githubToken);
   let attempts = 0;
   let shouldStop = false;
-  (0, import_core.endGroup)();
+  (0, import_core2.endGroup)();
   if (isDryRun) {
     return;
   }
-  (0, import_core.startGroup)("Get own job_id");
+  (0, import_core2.startGroup)("Get own job_id");
   const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
-  (0, import_core.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
-  (0, import_core.endGroup)();
+  (0, import_core2.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
+  (0, import_core2.endGroup)();
   for (; ; ) {
     attempts += 1;
     if (attempts > attemptLimits) {
-      (0, import_core.setFailed)(errorMessage(`reached to given attempt limits "${attemptLimits}"`));
+      (0, import_core2.setFailed)(errorMessage(`reached to given attempt limits "${attemptLimits}"`));
       break;
     }
     const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
-    (0, import_core.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
+    (0, import_core2.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
     await wait(msec);
-    (0, import_core.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
+    (0, import_core2.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
       octokit,
       { ...repositoryInfo, ref: commitSha },
@@ -10111,37 +10115,37 @@ async function run() {
       const { acceptable, source: { id, status, conclusion: conclusion2, name, html_url } } = summary;
       const nullStr = "(null)";
       const nullHandledConclusion = conclusion2 ?? nullStr;
-      (0, import_core.info)(
+      (0, import_core2.info)(
         `${id} - ${colorize(status, status === "completed")} - ${colorize(nullHandledConclusion, acceptable)}: ${name} - ${html_url ?? nullStr}`
       );
     }
-    if ((0, import_core.isDebug)()) {
-      (0, import_core.debug)(JSON.stringify(report, null, 2));
+    if ((0, import_core2.isDebug)()) {
+      (0, import_core2.debug)(JSON.stringify(report, null, 2));
     }
     const { progress, conclusion } = report;
     switch (progress) {
       case "in_progress": {
         if (conclusion === "bad" && isEarlyExit) {
           shouldStop = true;
-          (0, import_core.setFailed)(errorMessage("some jobs failed"));
+          (0, import_core2.setFailed)(errorMessage("some jobs failed"));
         }
-        (0, import_core.info)("some jobs still in progress");
+        (0, import_core2.info)("some jobs still in progress");
         break;
       }
       case "done": {
         shouldStop = true;
         switch (conclusion) {
           case "acceptable": {
-            (0, import_core.info)(succeededMessage("all jobs passed"));
+            (0, import_core2.info)(succeededMessage("all jobs passed"));
             break;
           }
           case "bad": {
-            (0, import_core.setFailed)(errorMessage("some jobs failed"));
+            (0, import_core2.setFailed)(errorMessage("some jobs failed"));
             break;
           }
           default: {
             const unexpectedConclusion = conclusion;
-            (0, import_core.setFailed)(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
+            (0, import_core2.setFailed)(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
             break;
           }
         }
@@ -10150,11 +10154,11 @@ async function run() {
       default: {
         shouldStop = true;
         const unexpectedProgress = progress;
-        (0, import_core.setFailed)(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
+        (0, import_core2.setFailed)(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
         break;
       }
     }
-    (0, import_core.endGroup)();
+    (0, import_core2.endGroup)();
     if (shouldStop) {
       break;
     }
