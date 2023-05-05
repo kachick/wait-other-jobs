@@ -1,3 +1,4 @@
+import { debug } from '@actions/core';
 import type { getOctokit } from '@actions/github';
 import type { Endpoints } from '@octokit/types';
 
@@ -53,7 +54,11 @@ export async function fetchJobIDs(
         per_page: 100,
         filter: 'latest',
       },
-      (resp) => resp.data.map((job) => job.id),
+      (resp) =>
+        resp.data.map((job) => {
+          debug(JSON.stringify({ 'debugLog_For#474': job }));
+          return job.id;
+        }),
     ),
   );
 }
