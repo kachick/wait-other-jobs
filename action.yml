@@ -8,6 +8,10 @@ inputs:
   github-token:
     description: 'Basically GITHUB_TOKEN'
     required: true
+  jobs-to-wait-for:
+    description: 'Comma-separated list of job names to wait for'
+    required: false
+    default: ''
   min-interval-seconds:
     description: 'Wait this interval or the multiplied value (and jitter) for next polling'
     required: false

@@ -98,11 +98,17 @@ export async function fetchOtherRunStatus(
   octokit: Parameters<typeof fetchRunSummaries>[0],
   params: Parameters<typeof fetchRunSummaries>[1],
   ownJobIDs: Readonly<Set<JobID>>,
+  jobsToWaitFor: string[],
 ): Promise<Report> {
   const checkRunSummaries = await fetchRunSummaries(octokit, params);
-  const otherRelatedRuns = checkRunSummaries.flatMap<CheckRunsSummary>((summary) =>
+  const filteredCheckRunSummaries = jobsToWaitFor.length === 0
+    ? checkRunSummaries
+    : checkRunSummaries.filter(summary => jobsToWaitFor.includes(summary.source.name));
+
+  const otherRelatedRuns = filteredCheckRunSummaries.flatMap<CheckRunsSummary>((summary) =>
     ownJobIDs.has(summary.source.id) ? [] : [summary]
   );
+
   const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.source.status === 'completed');
 
   const progress: Report['progress'] = otherRelatedCompletedRuns.length === otherRelatedRuns.length

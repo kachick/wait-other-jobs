@@ -116,10 +116,16 @@ async function run(): Promise<void> {
     await wait(msec);
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
 
+    const jobsToWaitFor = getInput('jobs-to-wait-for', { required: true, trimWhitespace: true })
+      .split(',')
+      .map(job => job.trim())
+      .filter(job => job.length > 0);
+
     const report = await fetchOtherRunStatus(
       octokit,
       { ...repositoryInfo, ref: commitSha },
       ownJobIDs,
+      jobsToWaitFor,
     );
 
     for (const summary of report.summaries) {
