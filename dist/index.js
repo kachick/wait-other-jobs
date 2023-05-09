@@ -10070,10 +10070,13 @@ async function run() {
   );
   const isEarlyExit = (0, import_core2.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core2.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
+  const contextAny = import_github.context;
   (0, import_core2.info)(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
       ownRunId: runId,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      ownNodeIds: { nodeId: contextAny.nodeId, node_id: contextAny.node_id },
       repositoryInfo,
       minIntervalSeconds,
       retryMethod,

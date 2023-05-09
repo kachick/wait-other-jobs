@@ -67,10 +67,14 @@ async function run(): Promise<void> {
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const contextAny: any = context;
   info(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
       ownRunId: runId,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      ownNodeIds: { nodeId: contextAny.nodeId, node_id: contextAny.node_id },
       repositoryInfo,
       minIntervalSeconds,
       retryMethod,
