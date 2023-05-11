@@ -7,5 +7,6 @@
     "noEmit": true,
     "noUnusedLocals": false
   },
-  "include": ["src", "**/*.config.ts", "__tests__", "scripts"]
+  "include": ["src", "**/*.config.ts", "__tests__", "scripts"],
+  "exclude": ["src/generated/**"]
 }

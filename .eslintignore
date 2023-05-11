@@ -3,3 +3,5 @@ dist/
 lib/
 jest.config.cjs
 .eslintrc.cjs
+src/generated/
+codegen.ts
