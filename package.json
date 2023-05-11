@@ -33,6 +33,7 @@
     "graphql": "^16.6.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^3.3.1",
     "@octokit/types": "^9.2.1",
     "@types/jest": "^29.5.1",
     "@types/node": "^16.18.28",
