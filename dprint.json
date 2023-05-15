@@ -19,7 +19,7 @@
     "**/*-lock.json",
     "lib/**",
     "dist/**",
-    "codegen.ts",
+    "gql/**",
     "graphql.schema.json",
     "src/generated/**"
   ],
