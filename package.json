@@ -51,6 +51,7 @@
     "typescript": "^5.0.4",
     "@graphql-codegen/typescript-resolvers": "3.2.1",
     "@graphql-codegen/typescript": "3.0.4",
-    "@graphql-codegen/introspection": "3.0.1"
+    "@graphql-codegen/introspection": "3.0.1",
+    "@graphql-codegen/client-preset": "3.0.1"
   }
 }
