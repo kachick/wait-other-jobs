@@ -1,6 +1,7 @@
 import { info } from '@actions/core';
 import type { getOctokit } from '@actions/github';
 import type { Endpoints } from '@octokit/types';
+import { graphql } from '@octokit/graphql';
 
 type Octokit = ReturnType<typeof getOctokit>;
 
@@ -97,6 +98,64 @@ async function fetchRunSummaries(
         }))(checkRun)
       ).sort((a, b) => a.source.id - b.source.id),
   );
+}
+
+export async function fetchRunSummaries2(
+  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
+  token: string,
+  params: Readonly<Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>>,
+): Promise<unknown> {
+  const bar = await graphql<{ foo: string }>({
+    query: `query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!) {
+      repository(owner: $owner, name: $repo) {
+        object(expression: $commitSha) {
+          ... on Commit {
+            checkSuites(first: 10) {
+              edges {
+                node {
+                  id
+                  status
+                  conclusion
+                  workflowRun {
+                    id
+                    databaseId
+                    createdAt
+                    workflow {
+                      id
+                      databaseId
+                      name
+                      resourcePath
+                      url
+                    }
+                  }
+                  checkRuns(first: 10) {
+                    edges {
+                      node {
+                        id
+                        databaseId
+                        name
+                        status
+                        conclusion
+                        startedAt
+                        completedAt
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }`,
+    owner: params.owner || 'kachick',
+    repo: params.repo || 'wait-other-jobs',
+    commitSha: params.ref || '4686c4074b62976294e65cd06eafd7429784ff02',
+    headers: {
+      authorization: token,
+    },
+  });
+  return bar;
 }
 
 export async function fetchOtherRunStatus(

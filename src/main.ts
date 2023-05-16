@@ -13,7 +13,7 @@ import {
 import { getOctokit, context } from '@actions/github';
 import styles from 'ansi-styles';
 
-import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
+import { fetchJobIDs, fetchOtherRunStatus, fetchRunSummaries2 } from './github-api.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
 
 const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`);
@@ -103,6 +103,11 @@ async function run(): Promise<void> {
   const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
   info(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
 
+  endGroup();
+
+  startGroup('[Temp] Testing GraphQL API');
+  const newResp = await fetchRunSummaries2(githubToken, { ...repositoryInfo, ref: commitSha });
+  info(JSON.stringify(newResp));
   endGroup();
 
   for (;;) {
