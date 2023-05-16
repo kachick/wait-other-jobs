@@ -19,7 +19,7 @@
     "**/*-lock.json",
     "lib/**",
     "dist/**",
-    "gql/**",
+    "src/gql/**",
     "graphql.schema.json",
     "src/generated/**"
   ],
