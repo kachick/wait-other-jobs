@@ -10676,8 +10676,8 @@ async function fetchRunSummaries(octokit, params) {
   );
 }
 async function fetchRunSummaries2(token, params) {
-  const bar = await (0, import_graphql.graphql)({
-    query: `query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!) {
+  const bar = await (0, import_graphql.graphql)(
+    `query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!) {
       repository(owner: $owner, name: $repo) {
         object(expression: $commitSha) {
           ... on Commit {
@@ -10719,13 +10719,15 @@ async function fetchRunSummaries2(token, params) {
         }
       }
     }`,
-    owner: params.owner || "kachick",
-    repo: params.repo || "wait-other-jobs",
-    commitSha: params.ref || "4686c4074b62976294e65cd06eafd7429784ff02",
-    headers: {
-      authorization: token
+    {
+      owner: params.owner || "kachick",
+      repo: params.repo || "wait-other-jobs",
+      commitSha: params.ref || "4686c4074b62976294e65cd06eafd7429784ff02",
+      headers: {
+        authorization: token
+      }
     }
-  });
+  );
   return bar;
 }
 async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
