@@ -10676,7 +10676,12 @@ async function fetchRunSummaries(octokit, params) {
   );
 }
 async function fetchRunSummaries2(token, params) {
-  const bar = await (0, import_graphql.graphql)(
+  const graphqlWithAuth = import_graphql.graphql.defaults({
+    headers: {
+      authorization: token
+    }
+  });
+  const bar = await graphqlWithAuth(
     `query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!) {
       repository(owner: $owner, name: $repo) {
         object(expression: $commitSha) {
@@ -10722,10 +10727,7 @@ async function fetchRunSummaries2(token, params) {
     {
       owner: params.owner || "kachick",
       repo: params.repo || "wait-other-jobs",
-      commitSha: params.ref || "4686c4074b62976294e65cd06eafd7429784ff02",
-      headers: {
-        authorization: token
-      }
+      commitSha: params.ref || "4686c4074b62976294e65cd06eafd7429784ff02"
     }
   );
   return bar;

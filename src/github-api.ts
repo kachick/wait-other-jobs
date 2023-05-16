@@ -105,7 +105,13 @@ export async function fetchRunSummaries2(
   token: string,
   params: Readonly<Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>>,
 ): Promise<unknown> {
-  const bar = await graphql<{ foo: string }>(
+  const graphqlWithAuth = graphql.defaults({
+    headers: {
+      authorization: token,
+    },
+  });
+
+  const bar = await graphqlWithAuth<{ foo: string }>(
     `query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!) {
       repository(owner: $owner, name: $repo) {
         object(expression: $commitSha) {
@@ -152,9 +158,6 @@ export async function fetchRunSummaries2(
       owner: params.owner || 'kachick',
       repo: params.repo || 'wait-other-jobs',
       commitSha: params.ref || '4686c4074b62976294e65cd06eafd7429784ff02',
-      headers: {
-        authorization: token,
-      },
     },
   );
   return bar;
