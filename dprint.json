@@ -18,10 +18,7 @@
     "**/node_modules",
     "**/*-lock.json",
     "lib/**",
-    "dist/**",
-    "src/gql/**",
-    "graphql.schema.json",
-    "src/generated/**"
+    "dist/**"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.84.4.wasm",
