@@ -107,7 +107,7 @@ export async function fetchRunSummaries2(
 ): Promise<unknown> {
   const graphqlWithAuth = graphql.defaults({
     headers: {
-      authorization: token,
+      authorization: `token ${token}`,
     },
   });
 

@@ -10678,7 +10678,7 @@ async function fetchRunSummaries(octokit, params) {
 async function fetchRunSummaries2(token, params) {
   const graphqlWithAuth = import_graphql.graphql.defaults({
     headers: {
-      authorization: token
+      authorization: `token ${token}`
     }
   });
   const bar = await graphqlWithAuth(
