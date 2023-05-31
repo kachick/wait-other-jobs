@@ -102,22 +102,19 @@ async function fetchRunSummaries(
   );
 }
 
-export async function fetchRunWithGraphQl(
-  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  token: string,
-  params: Readonly<Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>>,
-): Promise<unknown> {
-  // const graphqlWithAuth = graphql.defaults({
-  //   headers: {
-  //     authorization: `token ${token}`,
-  //   },
-  // });
-
-  const client = new GraphQLClient('https://api.github.com/graphql', {
+export function getGraphQLClient(token: string) {
+  return new GraphQLClient('https://api.github.com/graphql', {
     headers: {
       authorization: `token ${token}`,
     },
   });
+}
+
+export async function fetchRunWithGraphQl(
+  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
+  client: GraphQLClient,
+  params: Readonly<Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>>,
+): Promise<unknown> {
   const sdk = getSdk(client);
   const response = await sdk.GetCheckRuns({
     owner: params.owner || 'kachick',

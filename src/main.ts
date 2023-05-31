@@ -13,7 +13,7 @@ import {
 import { getOctokit, context } from '@actions/github';
 import styles from 'ansi-styles';
 
-import { fetchJobIDs, fetchOtherRunStatus, fetchRunWithGraphQl } from './github-api.js';
+import { fetchJobIDs, fetchOtherRunStatus, fetchRunWithGraphQl, getGraphQLClient } from './github-api.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
 
 const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`);
@@ -106,7 +106,8 @@ async function run(): Promise<void> {
   endGroup();
 
   startGroup('[Temp] Testing GraphQL API');
-  const newRet = await fetchRunWithGraphQl(githubToken, { ...repositoryInfo, ref: commitSha });
+  const graphqlClient = getGraphQLClient(githubToken);
+  const newRet = await fetchRunWithGraphQl(graphqlClient, { ...repositoryInfo, ref: commitSha });
   info(JSON.stringify({ newRet: newRet }));
   endGroup();
 

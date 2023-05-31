@@ -30775,6 +30775,7 @@ var GetCheckRunsDocument = import_graphql_tag.default`
   repository(owner: $owner, name: $repo) {
     object(expression: $commitSha) {
       ... on Commit {
+        __typename
         checkSuites(first: 10) {
           edges {
             node {
@@ -30877,13 +30878,15 @@ async function fetchRunSummaries(octokit, params) {
     ).sort((a, b) => a.source.id - b.source.id)
   );
 }
-async function fetchRunWithGraphQl(token, params) {
-  var _a;
-  const client = new import_graphql_request.GraphQLClient("https://api.github.com/graphql", {
+function getGraphQLClient(token) {
+  return new import_graphql_request.GraphQLClient("https://api.github.com/graphql", {
     headers: {
       authorization: `token ${token}`
     }
   });
+}
+async function fetchRunWithGraphQl(client, params) {
+  var _a;
   const sdk = getSdk(client);
   const response = await sdk.GetCheckRuns({
     owner: params.owner || "kachick",
@@ -31027,7 +31030,8 @@ async function run() {
   (0, import_core2.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
   (0, import_core2.endGroup)();
   (0, import_core2.startGroup)("[Temp] Testing GraphQL API");
-  const newRet = await fetchRunWithGraphQl(githubToken, { ...repositoryInfo, ref: commitSha });
+  const graphqlClient = getGraphQLClient(githubToken);
+  const newRet = await fetchRunWithGraphQl(graphqlClient, { ...repositoryInfo, ref: commitSha });
   (0, import_core2.info)(JSON.stringify({ newRet }));
   (0, import_core2.endGroup)();
   for (; ; ) {

@@ -29121,7 +29121,7 @@ export type GetCheckRunsQueryVariables = Exact<{
 }>;
 
 
-export type GetCheckRunsQuery = { __typename?: 'Query', repository?: { __typename?: 'Repository', object?: { __typename?: 'Commit', checkSuites?: { __typename?: 'CheckSuiteConnection', edges?: Array<{ __typename?: 'CheckSuiteEdge', node?: { __typename?: 'CheckSuite', id: string, status: CheckStatusState, conclusion?: CheckConclusionState | null, workflowRun?: { __typename?: 'WorkflowRun', id: string, databaseId?: number | null, createdAt: any, workflow: { __typename?: 'Workflow', id: string, databaseId?: number | null, name: string, resourcePath: any, url: any } } | null, checkRuns?: { __typename?: 'CheckRunConnection', edges?: Array<{ __typename?: 'CheckRunEdge', node?: { __typename?: 'CheckRun', id: string, databaseId?: number | null, name: string, status: CheckStatusState, conclusion?: CheckConclusionState | null, startedAt?: any | null, completedAt?: any | null } | null } | null> | null } | null } | null } | null> | null } | null } | { __typename?: 'Tree' } | { __typename?: 'Blob' } | { __typename?: 'Tag' } | null } | null };
+export type GetCheckRunsQuery = { __typename?: 'Query', repository?: { __typename?: 'Repository', object?: { __typename: 'Commit', checkSuites?: { __typename?: 'CheckSuiteConnection', edges?: Array<{ __typename?: 'CheckSuiteEdge', node?: { __typename?: 'CheckSuite', id: string, status: CheckStatusState, conclusion?: CheckConclusionState | null, workflowRun?: { __typename?: 'WorkflowRun', id: string, databaseId?: number | null, createdAt: any, workflow: { __typename?: 'Workflow', id: string, databaseId?: number | null, name: string, resourcePath: any, url: any } } | null, checkRuns?: { __typename?: 'CheckRunConnection', edges?: Array<{ __typename?: 'CheckRunEdge', node?: { __typename?: 'CheckRun', id: string, databaseId?: number | null, name: string, status: CheckStatusState, conclusion?: CheckConclusionState | null, startedAt?: any | null, completedAt?: any | null } | null } | null> | null } | null } | null } | null> | null } | null } | { __typename?: 'Tree' } | { __typename?: 'Blob' } | { __typename?: 'Tag' } | null } | null };
 
 
 export const GetCheckRunsDocument = gql`
@@ -29129,6 +29129,7 @@ export const GetCheckRunsDocument = gql`
   repository(owner: $owner, name: $repo) {
     object(expression: $commitSha) {
       ... on Commit {
+        __typename
         checkSuites(first: 10) {
           edges {
             node {
