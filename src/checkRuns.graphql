@@ -1,0 +1,42 @@
+query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!) {
+      repository(owner: $owner, name: $repo) {
+        object(expression: $commitSha) {
+          ... on Commit {
+            checkSuites(first: 10) {
+              edges {
+                node {
+                  id
+                  status
+                  conclusion
+                  workflowRun {
+                    id
+                    databaseId
+                    createdAt
+                    workflow {
+                      id
+                      databaseId
+                      name
+                      resourcePath
+                      url
+                    }
+                  }
+                  checkRuns(first: 10) {
+                    edges {
+                      node {
+                        id
+                        databaseId
+                        name
+                        status
+                        conclusion
+                        startedAt
+                        completedAt
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
