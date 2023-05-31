@@ -6,6 +6,11 @@ updates:
       interval: 'daily'
       time: '08:00'
       timezone: 'Asia/Tokyo'
+    ignore:
+      - dependency-name: 'actions/dependency-review-action'
+        versions:
+          # https://github.com/actions/dependency-review-action/issues/493
+          - '3.0.5'
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
