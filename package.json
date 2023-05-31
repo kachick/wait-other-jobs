@@ -18,7 +18,7 @@
     "test": "npm run test:ts && npm run test:js",
     "typecheck": "tsc",
     "repl": "tsx",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "repository": {
     "type": "git",
@@ -35,6 +35,11 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "4.0.0",
+    "@graphql-codegen/introspection": "4.0.0",
+    "@graphql-codegen/typescript": "4.0.0",
+    "@graphql-codegen/typescript-document-nodes": "4.0.0",
+    "@graphql-codegen/typescript-graphql-request": "^5.0.0",
+    "@graphql-codegen/typescript-operations": "^4.0.0",
     "@octokit/types": "^9.2.3",
     "@types/jest": "^29.5.1",
     "@types/node": "^16.18.34",
@@ -49,9 +54,6 @@
     "jest": "^29.5.0",
     "ts-node": "^10.9.1",
     "tsx": "^3.12.7",
-    "typescript": "^5.0.4",
-    "@graphql-codegen/typescript": "4.0.0",
-    "@graphql-codegen/typescript-document-nodes": "4.0.0",
-    "@graphql-codegen/introspection": "4.0.0"
+    "typescript": "^5.0.4"
   }
 }
