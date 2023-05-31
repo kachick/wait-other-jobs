@@ -1,7 +1,9 @@
 import { info } from '@actions/core';
 import type { getOctokit } from '@actions/github';
 import type { Endpoints } from '@octokit/types';
-import { graphql } from '@octokit/graphql';
+// import { graphql } from '@octokit/graphql';
+import { getSdk } from './generated/graphql';
+import { GraphQLClient } from 'graphql-request';
 
 type Octokit = ReturnType<typeof getOctokit>;
 
@@ -100,67 +102,36 @@ async function fetchRunSummaries(
   );
 }
 
-export async function fetchRunSummaries2(
+export async function fetchRunWithGraphQl(
   // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   token: string,
   params: Readonly<Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>>,
 ): Promise<unknown> {
-  const graphqlWithAuth = graphql.defaults({
+  // const graphqlWithAuth = graphql.defaults({
+  //   headers: {
+  //     authorization: `token ${token}`,
+  //   },
+  // });
+
+  const client = new GraphQLClient('https://api.github.com/graphql', {
     headers: {
       authorization: `token ${token}`,
     },
   });
+  const sdk = getSdk(client);
+  const response = await sdk.GetCheckRuns({
+    owner: params.owner || 'kachick',
+    repo: params.repo || 'wait-other-jobs',
+    commitSha: params.ref || '4686c4074b62976294e65cd06eafd7429784ff02',
+  });
+  const object = response.repository?.object;
+  if (object && object.__typename === 'Commit') {
+    info(JSON.stringify({ 'debugLog_For#474-fetchRunWithGraphQl': object.checkSuites }));
 
-  const bar = await graphqlWithAuth<{ foo: string }>(
-    `query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!) {
-      repository(owner: $owner, name: $repo) {
-        object(expression: $commitSha) {
-          ... on Commit {
-            checkSuites(first: 10) {
-              edges {
-                node {
-                  id
-                  status
-                  conclusion
-                  workflowRun {
-                    id
-                    databaseId
-                    createdAt
-                    workflow {
-                      id
-                      databaseId
-                      name
-                      resourcePath
-                      url
-                    }
-                  }
-                  checkRuns(first: 10) {
-                    edges {
-                      node {
-                        id
-                        databaseId
-                        name
-                        status
-                        conclusion
-                        startedAt
-                        completedAt
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }`,
-    {
-      owner: params.owner || 'kachick',
-      repo: params.repo || 'wait-other-jobs',
-      commitSha: params.ref || '4686c4074b62976294e65cd06eafd7429784ff02',
-    },
-  );
-  return bar;
+    return object.checkSuites;
+  }
+
+  return null;
 }
 
 export async function fetchOtherRunStatus(

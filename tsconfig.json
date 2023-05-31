@@ -8,5 +8,5 @@
     "noUnusedLocals": false
   },
   "include": ["src", "**/*.config.ts", "__tests__", "scripts"],
-  "exclude": ["src/generated/**"]
+  "exclude": ["src/generated/graphql.ts"]
 }
