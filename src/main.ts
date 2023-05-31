@@ -106,7 +106,8 @@ async function run(): Promise<void> {
   endGroup();
 
   startGroup('[Temp] Testing GraphQL API');
-  await fetchRunWithGraphQl(githubToken, { ...repositoryInfo, ref: commitSha });
+  const newRet = await fetchRunWithGraphQl(githubToken, { ...repositoryInfo, ref: commitSha });
+  info(JSON.stringify({ newRet: newRet }));
   endGroup();
 
   for (;;) {

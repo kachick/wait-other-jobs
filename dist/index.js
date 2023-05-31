@@ -30891,8 +30891,8 @@ async function fetchRunWithGraphQl(token, params) {
     commitSha: params.ref || "4686c4074b62976294e65cd06eafd7429784ff02"
   });
   const object = (_a = response.repository) == null ? void 0 : _a.object;
+  (0, import_core.info)(JSON.stringify({ "debugLog_For#474-fetchRunWithGraphQl": response }));
   if (object && object.__typename === "Commit") {
-    (0, import_core.info)(JSON.stringify({ "debugLog_For#474-fetchRunWithGraphQl": object.checkSuites }));
     return object.checkSuites;
   }
   return null;
@@ -31027,7 +31027,8 @@ async function run() {
   (0, import_core2.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
   (0, import_core2.endGroup)();
   (0, import_core2.startGroup)("[Temp] Testing GraphQL API");
-  await fetchRunWithGraphQl(githubToken, { ...repositoryInfo, ref: commitSha });
+  const newRet = await fetchRunWithGraphQl(githubToken, { ...repositoryInfo, ref: commitSha });
+  (0, import_core2.info)(JSON.stringify({ newRet }));
   (0, import_core2.endGroup)();
   for (; ; ) {
     attempts += 1;

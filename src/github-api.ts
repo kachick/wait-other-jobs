@@ -125,9 +125,8 @@ export async function fetchRunWithGraphQl(
     commitSha: params.ref || '4686c4074b62976294e65cd06eafd7429784ff02',
   });
   const object = response.repository?.object;
+  info(JSON.stringify({ 'debugLog_For#474-fetchRunWithGraphQl': response }));
   if (object && object.__typename === 'Commit') {
-    info(JSON.stringify({ 'debugLog_For#474-fetchRunWithGraphQl': object.checkSuites }));
-
     return object.checkSuites;
   }
 
