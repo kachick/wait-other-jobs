@@ -1,0 +1,40 @@
+{
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "postCreateCommand": "makers setup",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "editor.defaultFormatter": "dprint.dprint",
+        "editor.formatOnSave": true,
+        "[nix]": {
+          "editor.defaultFormatter": "jnoortheen.nix-ide"
+        },
+        "json.schemas": [
+          {
+            "fileMatch": [
+              "dprint.json"
+            ],
+            "url": "https://docs.renovatebot.com/renovate-schema.json"
+          }
+        ],
+        "cSpell.words": [
+          "deno",
+          "dprint",
+          "OIDC",
+          "rmrf"
+        ]
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "redhat.vscode-yaml",
+        "editorconfig.editorconfig",
+        "dprint.dprint",
+        "jnoortheen.nix-ide",
+        "tamasfe.even-better-toml"
+      ]
+    }
+  }
+}
