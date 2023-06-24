@@ -15,7 +15,7 @@
     "printWidth": 120,
     "singleQuote": true
   },
-  "includes": ["**/*.{ts,tsx,js,jsx,cjs,mjs,json,md,toml,dockerfile,yml}", "Dockerfile"],
+  "includes": ["**/*.{ts,tsx,js,jsx,cjs,mjs,json,md,toml,dockerfile,yml}", "**/Dockerfile"],
   "excludes": ["**/node_modules", "**/*-lock.json", "lib/**", "dist/**"],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.85.0.wasm",

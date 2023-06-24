@@ -1,8 +1,9 @@
 {
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
+    "context": ".."
   },
-  "postCreateCommand": "makers setup",
+  "remoteUser": "vscode",
   "customizations": {
     "vscode": {
       "settings": {
