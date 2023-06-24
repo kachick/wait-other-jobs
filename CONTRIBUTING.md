@@ -2,6 +2,8 @@
 
 ## Setup
 
+### Nix
+
 1. Install [Nix](https://nixos.org/) package manager
 2. Run `nix-shell`
 3. You can use development tasks
@@ -9,10 +11,33 @@
 ```console
 > nix-shell
 (prepared bash)
+```
 
+### Docker
+
+You can use Docker to skip installing Nix on your local machine.
+
+```console
+> docker run --interactive --tty --rm --volume "$(pwd):$(pwd)" --workdir "$(pwd)" nixos/nix nix-shell
+[nix-shell:/home/YOUR_NAME/wait-other-jobs]#
+```
+
+Or use cached builds.
+
+```console
+> docker pull kachick/wait-other-jobs
+> docker run --interactive --tty --rm --volume "$(pwd):$(pwd)" --workdir "$(pwd)" kachick/wait-other-jobs nix-shell
+[nix-shell:/home/YOUR_NAME/wait-other-jobs]#
+```
+
+### Tasks
+
+```console
 > makers help
-Tools
-----------
+> Tools
+
+---
+
 check - ...
 help - ...
 

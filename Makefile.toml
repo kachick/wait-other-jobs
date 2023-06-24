@@ -70,6 +70,13 @@ category = "Tools"
 description = 'Parallel runner for all tests and linters'
 run_task = { name = ["typecheck", "test-ts", "test-js", "lint-check"], parallel = true }
 
+[tasks.build-docker]
+category = "Tools"
+description = 'Build docker image for developt'
+script = [
+  "docker build . --tag wait-other-jobs:latest --file Dockerfile",
+]
+
 [tasks.help]
 category = "Tools"
 description = 'Might help you - (This one)'
