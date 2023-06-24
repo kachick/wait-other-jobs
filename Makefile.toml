@@ -1,6 +1,13 @@
 [config]
 skip_core_tasks = true
 
+[tasks.setup]
+category = "Tools"
+description = "Install dependencies after nix"
+script = [
+  "npm ci --ignore-scripts",
+]
+
 [tasks.format-check]
 category = "Tools"
 description = "Run formatters without changes"

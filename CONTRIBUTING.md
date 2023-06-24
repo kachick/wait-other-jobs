@@ -10,17 +10,14 @@
 > nix-shell
 (prepared bash)
 
-> npm install
-64 packages are looking for funding
-  run `npm fund` for details
-
-found 0 vulnerabilities..
-
 > makers help
 Tools
 ----------
 check - ...
 help - ...
+
+> makers setup
+added 438 packages, and audited 439 packages in 6s
 
 > makers check
 ...tests, typechecks, linters...
