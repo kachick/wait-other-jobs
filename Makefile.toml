@@ -77,6 +77,17 @@ script = [
   'makers --list-category-steps Tools',
 ]
 
+[tasks.versions]
+category = "Tools"
+description = 'Print dependency versions'
+script = [
+  "node --version",
+  "makers --version",
+  "dprint --version",
+  # Returnes NON 0, why...? :<
+  # "nixpkgs-fmt --version",
+]
+
 [tasks.check_no_git_diff]
 category = "Tools"
 description = 'This prevents unexpected commit'
