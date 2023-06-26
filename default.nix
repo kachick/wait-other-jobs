@@ -8,5 +8,6 @@ pkgs.mkShell {
     pkgs.cargo-make
     pkgs.nil
     pkgs.nixpkgs-fmt
+    pkgs.hadolint
   ];
 }

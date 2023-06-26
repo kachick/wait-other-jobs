@@ -41,6 +41,7 @@ dependencies = [
   "format-check",
 ]
 script = [
+  "hadolint .devcontainer/Dockerfile",
   "npm run lint:check",
 ]
 
@@ -72,9 +73,9 @@ run_task = { name = ["typecheck", "test-ts", "test-js", "lint-check"], parallel 
 
 [tasks.build-docker]
 category = "Tools"
-description = 'Build docker image for developt'
+description = 'Build docker image for devcontainer'
 script = [
-  "docker build . --tag wait-other-jobs:latest --file Dockerfile",
+  "docker build . --tag wait-other-jobs:latest --file .devcontainer/Dockerfile",
 ]
 
 [tasks.help]
@@ -93,6 +94,7 @@ script = [
   "dprint --version",
   # Returnes NON 0, why...? :<
   # "nixpkgs-fmt --version",
+  "hadolint --version",
 ]
 
 [tasks.check_no_git_diff]

@@ -34,7 +34,8 @@
         "editorconfig.editorconfig",
         "dprint.dprint",
         "jnoortheen.nix-ide",
-        "tamasfe.even-better-toml"
+        "tamasfe.even-better-toml",
+        "exiasr.hadolint"
       ]
     }
   }
