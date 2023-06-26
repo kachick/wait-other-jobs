@@ -1,0 +1,27 @@
+name: 'CI - Devcontainer'
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.devcontainer/**'
+      - '.github/workflows/ci-devcontainer.yml'
+      - '*.nix'
+      - 'Makefile.toml'
+      - '**vscode**'
+  pull_request:
+    paths:
+      - '.devcontainer/**'
+      - '.github/workflows/ci-devcontainer.yml'
+      - '*.nix'
+      - 'Makefile.toml'
+      - '**vscode**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build and run dev container task
+        uses: devcontainers/ci@v0.3
+        with:
+          runCmd: makers help && makers setup && makers versions && makers check

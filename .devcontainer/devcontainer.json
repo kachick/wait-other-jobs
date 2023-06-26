@@ -33,6 +33,7 @@
         ]
       },
       "extensions": [
+        "github.vscode-github-actions",
         "dbaeumer.vscode-eslint",
         "redhat.vscode-yaml",
         "editorconfig.editorconfig",
