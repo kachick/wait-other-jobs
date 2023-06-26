@@ -9,11 +9,10 @@ import {
 import { expect, test } from '@jest/globals';
 
 test('wait 100 ms', async () => {
-  const start = new Date();
+  const start = Date.now();
   await wait(100);
-  const end = new Date();
-  const delta = Math.abs(end.getTime() - start.getTime());
-  // This fault once in CI with `99` https://github.com/kachick/wait-other-jobs/actions/runs/4020704486/jobs/6908914747 before using timers/promises
+  const end = Date.now();
+  const delta = Math.abs(end - start);
   expect(delta).toBeGreaterThanOrEqual(100);
   expect(delta).toBeLessThan(150);
 });
