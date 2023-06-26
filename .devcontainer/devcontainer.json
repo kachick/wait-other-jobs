@@ -5,7 +5,7 @@
   },
   "remoteUser": "vscode",
   "userEnvProbe": "loginShell",
-  "postCreateCommand": "mkdir -m 0755 -p /nix/var/nix/{profiles,gcroots}/per-user/vscode && /home/vscode/.nix-profile/bin/nix-shell --run 'direnv allow && makers setup'",
+  "postCreateCommand": "whoami && ls -alh /nix && mkdir -m 0755 -p /nix/var/nix/{profiles,gcroots}/per-user/vscode && /home/vscode/.nix-profile/bin/nix-shell --run 'direnv allow && makers setup'",
   "postStartCommand": "zsh",
   "customizations": {
     "vscode": {
