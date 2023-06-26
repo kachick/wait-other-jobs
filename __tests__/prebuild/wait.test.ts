@@ -1,3 +1,4 @@
+import { performance } from 'node:perf_hooks';
 import {
   wait,
   calcExponentialBackoffAndJitter,
@@ -9,12 +10,17 @@ import {
 import { expect, test } from '@jest/globals';
 
 test('wait 100 ms', async () => {
-  const start = Date.now();
+  performance.mark('start');
   await wait(100);
-  const end = Date.now();
-  const delta = Math.abs(end - start);
-  expect(delta).toBeGreaterThanOrEqual(100);
-  expect(delta).toBeLessThan(150);
+  performance.mark('end');
+  const measure: unknown = performance.measure('Wait duration', 'start', 'end');
+  // The void typing looks like a wrong definition of @types/node
+  // Also PerformanceMeasure looks not defined https://github.com/DefinitelyTyped/DefinitelyTyped/blame/be3a5a945efa53010eb2ed7fc35bcd46038909b0/types/node/v16/perf_hooks.d.ts
+  if (!(measure && typeof measure === 'object' && 'duration' in measure && typeof measure.duration === 'number')) {
+    throw Error('Performance API does incorrectly work');
+  }
+  expect(measure.duration).toBeGreaterThanOrEqual(100);
+  expect(measure.duration).toBeLessThan(150);
 });
 
 test('interval will be like a cheap exponential backoff', () => {
