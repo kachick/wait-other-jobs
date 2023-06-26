@@ -7,9 +7,6 @@
   "userEnvProbe": "loginShell",
   "postCreateCommand": "/home/vscode/.nix-profile/bin/nix-shell --run 'direnv allow && makers setup'",
   "postStartCommand": "zsh",
-  "remoteEnv": {
-    "PATH": "${localEnv:PATH}"
-  },
   "customizations": {
     "vscode": {
       "settings": {
