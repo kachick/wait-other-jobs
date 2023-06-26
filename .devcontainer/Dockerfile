@@ -1,6 +1,6 @@
 # Do not use `FROM nixos/nix`. It cannot use `groupadd` even not the NixOS
 # See https://stackoverflow.com/questions/75653182/why-do-some-official-nix-docker-containers-not-have-the-nixos-rebuild-command
-FROM mcr.microsoft.com/devcontainers/base:ubuntu
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
 # Above microsoft image includes this user
 USER vscode
