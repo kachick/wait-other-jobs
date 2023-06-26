@@ -13,21 +13,17 @@
 (prepared bash)
 ```
 
-### Docker
+### Devcontainer/Docker
 
-You can use Docker to skip installing Nix on your local machine.
-
-```console
-> docker run --interactive --tty --rm --volume "$(pwd):$(pwd)" --workdir "$(pwd)" nixos/nix nix-shell
-[nix-shell:/home/YOUR_NAME/wait-other-jobs]#
-```
-
-Or use cached builds.
+You can use Devcontainer or the Docker to skip installing Nix on your local machine.\
+Simulate devcontainer from docker as following.
 
 ```console
-> docker pull kachick/wait-other-jobs
-> docker run --interactive --tty --rm --volume "$(pwd):$(pwd)" --workdir "$(pwd)" kachick/wait-other-jobs nix-shell
-[nix-shell:/home/YOUR_NAME/wait-other-jobs]#
+> docker build . --tag wait-other-jobs:latest --file .devcontainer/Dockerfile
+> docker run --interactive --tty --rm --volume "$(pwd):/workspaces/wait-other-job" --workdir "/workspaces/wait-other-job" wait-other-jobs:latest
+vscode ➜ /workspaces/wait-other-job (main) $ 
+vscode ➜ /workspaces/wait-other-job (main) $ makers check
+...Done in...
 ```
 
 ### Tasks

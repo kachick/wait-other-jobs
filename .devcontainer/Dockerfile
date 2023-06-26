@@ -5,6 +5,8 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu
 # Above microsoft image includes this user
 USER vscode
 
+# This just uses for following build steps.
+# vscode will set the WORKDIR into `/workspaces/wait-other-job`
 WORKDIR /home/vscode/sandbox
 
 # The install scripts will be syntax error if it will be eval with dash
@@ -17,16 +19,23 @@ RUN bash <(curl -L https://nixos.org/nix/install) --no-daemon --yes
 
 ENV PATH /home/vscode/.nix-profile/bin:$PATH
 
+# Basically do NOT merge files in COPY to prefer inline cache benefit
+
 # Make sure the building phase done. To cache. `nix-build --no-out-link` does similar, but it skips bash.
 # NOTE: This does not mean the entry point is in nix-shell.
-COPY ["../default.nix", "../Makefile.toml", "../package.json", "../package-lock.json", "./"]
+COPY ["../default.nix", "./"]
 
 # Do no include like `npm install` here. Cuurently I don't cache it in container
-RUN nix-channel --update && nix-shell --run 'echo "Welcome to this project :)"'
-COPY ["../.envrc", "./"]
-RUN nix-shell --run 'direnv allow'
-COPY ["./.devcontainer/bootstrap.bash", "./"]
-RUN ./bootstrap.bash
+RUN nix-channel --update && nix-shell --run 'echo "Keep this line to build nix environment in this phase"'
 
-# This can be skipped if you specify `docker run -it wait-other-jobs:ubuntu bash`. Also skipped in devcontainer, Use postCreateCommand instead.
-# CMD nix-shell --command zsh
+COPY ["./.devcontainer/setup_direnv.bash", "./"]
+RUN ./setup_direnv.bash
+
+# Clean up to avoid confusion
+# hadolint ignore=DL3059
+RUN rm ./default.nix ./setup_direnv.bash
+
+# `ENTRYPOINT` and `CMD` will be ignored in .devcontainer. Use postCreateCommand instead
+# To simulate in docker, following CMD requires to specify PWD with repository files. Check `makers docker-shell`
+# CMD nix-shell --run 'direnv allow && makers setup' && zsh
+CMD ["./.devcontainer/bootstrap.bash"]
