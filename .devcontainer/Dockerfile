@@ -10,9 +10,6 @@ WORKDIR /home/vscode/sandbox
 # The install scripts will be syntax error if it will be eval with dash
 SHELL ["/bin/bash", "-c"]
 
-# TODO: Remove this line. After checked the hadolint correctly alerts
-RUN cd /tmp
-
 # daemon mode required systemd, docker disables it
 # As I understand the definition https://hub.docker.com/r/nixos/nix/dockerfile at Nix 2.17, it looks like a single user installation(no-daemon)
 # See https://github.com/NixOS/nix/blob/fd4f03b8fdcb0f33552730c786139019e29f5dbe/scripts/install-nix-from-closure.sh#L129-L139
