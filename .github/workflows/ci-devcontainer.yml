@@ -15,6 +15,10 @@ on:
       - '*.nix'
       - 'Makefile.toml'
       - '**vscode**'
+  schedule:
+    # About JST 8:00
+    - cron: '0 17 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
