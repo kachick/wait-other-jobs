@@ -78,16 +78,12 @@ jobs:
     steps:
       - name: Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v1.3.6
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
+        uses: dependabot/fetch-metadata@v1.5.1
       - uses: actions/checkout@v3
       - name: Wait other jobs
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
-        uses: kachick/wait-other-jobs@v1.2.1
+        uses: kachick/wait-other-jobs@v1.3.0
         timeout-minutes: 10
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
       - name: Approve and merge
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
@@ -101,10 +97,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Wait other jobs
-        uses: kachick/wait-other-jobs@v1.2.1
+        uses: kachick/wait-other-jobs@v1.3.0
         timeout-minutes: 10
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
         env:
