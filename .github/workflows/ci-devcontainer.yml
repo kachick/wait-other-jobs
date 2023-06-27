@@ -40,4 +40,5 @@ jobs:
       - name: Build and run dev container task
         uses: devcontainers/ci@v0.3
         with:
-          runCmd: makers help && makers setup && makers versions && makers check
+          # Can't we call these comands on the nix-shell even enabled direnv...?
+          runCmd: nix-shell -run 'makers help && makers versions && makers check'
