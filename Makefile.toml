@@ -22,6 +22,9 @@ script = [
   "dprint fmt",
 ]
 
+[tasks.fmt]
+alias = "format-apply"
+
 [tasks.lint-apply]
 category = "Tools"
 description = "Run linters with changes"
@@ -41,8 +44,12 @@ dependencies = [
   "format-check",
 ]
 script = [
+  "actionlint",
   "npm run lint:check",
 ]
+
+[tasks.lint]
+alias = "lint-check"
 
 [tasks.test-ts]
 category = "Tools"
@@ -86,6 +93,7 @@ script = [
   "dprint --version",
   # Returnes NON 0, why...? :<
   # "nixpkgs-fmt --version",
+  "actionlint --version",
 ]
 
 [tasks.check_no_git_diff]
