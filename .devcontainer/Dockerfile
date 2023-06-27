@@ -16,7 +16,6 @@ SHELL ["/bin/bash", "-c"]
 # As I understand the definition https://hub.docker.com/r/nixos/nix/dockerfile at Nix 2.17, it looks like a single user installation(no-daemon)
 # See https://github.com/NixOS/nix/blob/fd4f03b8fdcb0f33552730c786139019e29f5dbe/scripts/install-nix-from-closure.sh#L129-L139
 RUN bash <(curl -L https://nixos.org/nix/install) --no-daemon --yes
-RUN chgrp "$USER" /nix
 
 ENV PATH /home/vscode/.nix-profile/bin:$PATH
 

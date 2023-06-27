@@ -4,6 +4,11 @@
     "context": ".."
   },
   "remoteUser": "vscode",
+  "containerUser": "vscode",
+  "updateRemoteUserUID": true,
+  "containerEnv": {
+    "HOME": "/home/vscode"
+  },
   "userEnvProbe": "loginShell",
   "postCreateCommand": "whoami && ls -alh /nix && /home/vscode/.nix-profile/bin/nix-shell --run 'direnv allow && makers setup'",
   "postStartCommand": "zsh",
