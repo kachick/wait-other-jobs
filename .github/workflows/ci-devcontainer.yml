@@ -25,9 +25,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Log host users and file owners
+        run: |
+          whoami
+          id
+          ls -alh
+      - name: Set UID and GID as ENV from repository files
+        run: |
+          uid="$(stat -c '%u' .)"
+          gid="$(stat -c '%g' .)"
+          echo "container_user_uid=${uid}" | tee -a "$GITHUB_ENV"
+          echo "container_user_gid=${gid}" | tee -a "$GITHUB_ENV"
       - name: Build and run dev container task
         uses: devcontainers/ci@v0.3
         with:
-          # https://github.com/devcontainers/ci/issues/176#issuecomment-1291232544
-          skipContainerUserIdUpdate: true
           runCmd: makers help && makers setup && makers versions && makers check

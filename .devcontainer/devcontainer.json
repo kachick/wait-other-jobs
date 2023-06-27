@@ -1,16 +1,20 @@
 {
   "build": {
     "dockerfile": "Dockerfile",
-    "context": ".."
+    "context": "..",
+    "args": {
+      "container_user_uid": "${localEnv:container_user_uid:1000}",
+      "container_user_gid": "${localEnv:container_user_gid:1000}"
+    }
   },
   "remoteUser": "vscode",
   "containerUser": "vscode",
-  "updateRemoteUserUID": false,
+  "updateRemoteUserUID": true,
   "containerEnv": {
     "HOME": "/home/vscode"
   },
   "userEnvProbe": "loginShell",
-  "postCreateCommand": "whoami && cat /etc/passwd && ls -alh /nix && ls -alh . && /home/vscode/.nix-profile/bin/nix-shell --run 'direnv allow && makers setup'",
+  "postCreateCommand": "./.devcontainer/bootstrap.bash",
   "postStartCommand": "zsh",
   "customizations": {
     "vscode": {

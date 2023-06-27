@@ -2,7 +2,14 @@
 # See https://stackoverflow.com/questions/75653182/why-do-some-official-nix-docker-containers-not-have-the-nixos-rebuild-command
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
-# Above microsoft image includes this user
+# Above microsoft image contains to create vscode user
+
+# Use same UID/GID to avoid mount and nix path permission issues
+ARG container_user_uid
+ARG container_user_gid
+RUN usermod -u $container_user_uid vscode && groupmod -g $container_user_gid vscode
+
+# Switching the user should be after the changed IDs
 USER vscode
 
 # This just uses for following build steps.

@@ -75,14 +75,14 @@ run_task = { name = ["typecheck", "test-ts", "test-js", "lint-check"], parallel 
 category = "Tools"
 description = 'Build docker image for devcontainer'
 script = [
-  "docker build . --tag wait-other-jobs:latest --file .devcontainer/Dockerfile",
+  "./.devcontainer/docker_build.bash",
 ]
 
 [tasks.docker-shell]
 category = "Tools"
 description = 'Login to built container'
 script = [
-  "docker run --interactive --tty --rm --volume \"$(pwd):/workspaces/wait-other-job\" --workdir \"/workspaces/wait-other-job\" wait-other-jobs:latest",
+  "./.devcontainer/docker_shell.bash",
 ]
 
 [tasks.help]

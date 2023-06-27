@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
-whoami && cat /etc/passwd && ls -alh /nix && \
+
+whoami && id && cat /etc/passwd && ls -alh /nix && ls -alh . && \
   nix-shell --run 'direnv allow && makers setup' && \
   zsh
