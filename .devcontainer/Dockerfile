@@ -44,5 +44,5 @@ RUN rm ./default.nix ./setup_direnv.bash
 
 # `ENTRYPOINT` and `CMD` will be ignored in .devcontainer. Use postCreateCommand instead
 # To simulate in docker, following CMD requires to specify PWD with repository files. Check `makers docker-shell`
-# CMD nix-shell --run 'direnv allow && makers setup' && zsh
-CMD ["./.devcontainer/bootstrap.bash"]
+ENTRYPOINT ["./.devcontainer/bootstrap.bash"]
+CMD ["zsh"]
