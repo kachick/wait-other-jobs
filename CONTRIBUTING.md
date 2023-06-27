@@ -15,12 +15,15 @@
 
 ### Devcontainer/Docker
 
-You can use Devcontainer or the Docker to skip installing Nix on your local machine.\
+You can use Devcontainer or the Docker to skip installing Nix on your local machine.
+
+[![Open in Dev Containers](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/kachick/vwait-other-jobs) 🚶
+
 Simulate devcontainer from docker as following.
 
 ```console
-> docker build . --tag wait-other-jobs:latest --file .devcontainer/Dockerfile
-> docker run --interactive --tty --rm --volume "$(pwd):/workspaces/wait-other-job" --workdir "/workspaces/wait-other-job" wait-other-jobs:latest
+> ./.devcontainer/docker_build.bash
+> ./.devcontainer/docker_shell.bash
 vscode ➜ /workspaces/wait-other-job (main) $ 
 vscode ➜ /workspaces/wait-other-job (main) $ makers check
 ...Done in...
