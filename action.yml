@@ -6,8 +6,9 @@ branding:
   color: 'green'
 inputs:
   github-token:
-    description: 'Basically GITHUB_TOKEN'
+    description: 'The GITHUB_TOKEN secret'
     required: true
+    default: ${{ github.token }}
   min-interval-seconds:
     description: 'Wait this interval or the multiplied value (and jitter) for next polling'
     required: false
