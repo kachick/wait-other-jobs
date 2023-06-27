@@ -28,6 +28,4 @@ jobs:
       - name: Build and run dev container task
         uses: devcontainers/ci@v0.3
         with:
-          # https://github.com/devcontainers/ci/issues/176#issuecomment-1291232544
-          skipContainerUserIdUpdate: true
           runCmd: makers help && makers setup && makers versions && makers check
