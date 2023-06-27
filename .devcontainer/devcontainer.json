@@ -10,7 +10,7 @@
     "HOME": "/home/vscode"
   },
   "userEnvProbe": "loginShell",
-  "postCreateCommand": "whoami && cat /etc/passwd && ls -alh /nix && /home/vscode/.nix-profile/bin/nix-shell --run 'direnv allow && makers setup'",
+  "postCreateCommand": "whoami && cat /etc/passwd && ls -alh /nix && ls -alh . && /home/vscode/.nix-profile/bin/nix-shell --run 'direnv allow && makers setup'",
   "postStartCommand": "zsh",
   "customizations": {
     "vscode": {
