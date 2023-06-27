@@ -8,10 +8,7 @@ pkgs.mkShell {
     pkgs.cargo-make
     pkgs.nil
     pkgs.nixpkgs-fmt
-<<<<<<< HEAD
-    pkgs.hadolint
-=======
     pkgs.actionlint
->>>>>>> main
+    pkgs.hadolint
   ];
 }
