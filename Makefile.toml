@@ -45,6 +45,7 @@ dependencies = [
 ]
 script = [
   "actionlint",
+  "hadolint .devcontainer/Dockerfile",
   "npm run lint:check",
 ]
 
@@ -77,6 +78,20 @@ category = "Tools"
 description = 'Parallel runner for all tests and linters'
 run_task = { name = ["typecheck", "test-ts", "test-js", "lint-check"], parallel = true }
 
+[tasks.docker-build]
+category = "Tools"
+description = 'Build docker image for devcontainer'
+script = [
+  "./.devcontainer/docker_build.bash",
+]
+
+[tasks.docker-shell]
+category = "Tools"
+description = 'Login to built container'
+script = [
+  "./.devcontainer/docker_shell.bash",
+]
+
 [tasks.help]
 category = "Tools"
 description = 'Might help you - (This one)'
@@ -94,6 +109,7 @@ script = [
   # Returnes NON 0, why...? :<
   # "nixpkgs-fmt --version",
   "actionlint --version",
+  "hadolint --version",
 ]
 
 [tasks.check_no_git_diff]
