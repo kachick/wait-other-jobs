@@ -34,7 +34,7 @@
   "devDependencies": {
     "@octokit/types": "^10.0.0",
     "@types/jest": "^29.5.2",
-    "@types/node": "^16.18.36",
+    "@types/node": "^16.18.37",
     "@typescript-eslint/eslint-plugin": "^5.59.8",
     "@typescript-eslint/parser": "^5.59.8",
     "@vercel/ncc": "^0.36.1",
