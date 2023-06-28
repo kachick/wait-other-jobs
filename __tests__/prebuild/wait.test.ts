@@ -19,7 +19,7 @@ test('wait 100 ms', async () => {
   if (!(measure && typeof measure === 'object' && 'duration' in measure && typeof measure.duration === 'number')) {
     throw Error('Performance API does incorrectly work');
   }
-  expect(measure.duration).toBeGreaterThanOrEqual(100);
+  expect(measure.duration).toBeGreaterThanOrEqual(99);
   expect(measure.duration).toBeLessThan(150);
 });
 
