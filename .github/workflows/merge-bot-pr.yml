@@ -16,21 +16,17 @@ jobs:
       - name: Dependabot metadata
         id: metadata
         uses: dependabot/fetch-metadata@v1.6.0
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
       - uses: actions/checkout@v3
       - name: Wait other jobs
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         uses: ./
         timeout-minutes: 10
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
       - name: Approve and merge
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
         env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Avoid `automerge` renovate official feature.
   #   It wait longtime to be merged.
@@ -49,11 +45,10 @@ jobs:
         uses: ./
         timeout-minutes: 10
         with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
           retry-method: 'equal_intervals'
           min-interval-seconds: '15'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
         env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

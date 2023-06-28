@@ -33,7 +33,7 @@ jobs:
   with-waiting:
     runs-on: ubuntu-latest
     steps:
-      - name: Wait other jobs are passed or failed
+      - name: Wait for other jobs to pass or fail
         uses: kachick/wait-other-jobs@v1.3.0
         timeout-minutes: 15
 ```
@@ -80,7 +80,7 @@ jobs:
         id: metadata
         uses: dependabot/fetch-metadata@v1.5.1
       - uses: actions/checkout@v3
-      - name: Wait other jobs
+      - name: Wait for other jobs to pass or fail
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         uses: kachick/wait-other-jobs@v1.3.0
         timeout-minutes: 10
@@ -96,7 +96,7 @@ jobs:
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       - uses: actions/checkout@v3
-      - name: Wait other jobs
+      - name: Wait for other jobs to pass or fail
         uses: kachick/wait-other-jobs@v1.3.0
         timeout-minutes: 10
       - name: Approve and merge
@@ -132,7 +132,7 @@ This action provides another way. It checks other workflows/jobs statuses in act
 ### Cons
 
 - [Above merging logics are written in GitHub official docs](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/content/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions.md#enable-auto-merge-on-a-pull-request). However [GITHUB_TOKEN merged commit does not trigger new workflows even if defined as "push"](https://github.com/github/docs/blob/914134b5c7d10ceb19a50919b267480fd1ad55f1/data/reusables/actions/actions-do-not-trigger-workflows.md?plain=1#L1). So the badges will not be shown in commit history of default branch :<
-  - ref: https://github.com/orgs/community/discussions/25251#discussioncomment-3247100
+  - ref: <https://github.com/orgs/community/discussions/25251#discussioncomment-3247100>
 
 ## Why avoid `automerge` and `platformAutomerge` provided by renovate official?
 
