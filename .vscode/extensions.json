@@ -1,10 +1,13 @@
 {
   "recommendations": [
+    "github.vscode-github-actions",
     "dbaeumer.vscode-eslint",
     "redhat.vscode-yaml",
     "editorconfig.editorconfig",
     "dprint.dprint",
     "jnoortheen.nix-ide",
-    "tamasfe.even-better-toml"
+    "tamasfe.even-better-toml",
+    "exiasr.hadolint",
+    "ms-azuretools.vscode-docker"
   ]
 }

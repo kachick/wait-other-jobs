@@ -25,7 +25,7 @@ I mainly use this action for below use-case when they should run after multiple 
 
 ## Usage
 
-Just requires `github-token` for minimum configuration.\
+This is the minimum configuration.\
 I recommend to use `timeout-minutes` together with.
 
 ```yaml
@@ -34,17 +34,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait other jobs are passed or failed
-        uses: kachick/wait-other-jobs@v1.2.1
+        uses: kachick/wait-other-jobs@v1.3.0
         timeout-minutes: 15
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
 ```
 
-You can adjust status polling interval and turns early-exit as below.
+You can change the token, status polling interval and turns early-exit as below.
 
 ```yaml
 with:
-  github-token: "${{ secrets.GITHUB_TOKEN }}"
+  github-token: "${{ secrets.YOUR_PAT }}"
   min-interval-seconds: '300' # default '30'
   retry-method: 'equal_intervals' # default 'exponential_backoff'
   early-exit: 'false' # default 'true'
@@ -54,7 +52,7 @@ Full list of the changeable parameters
 
 | NAME                   | DESCRIPTION                                                                     | TYPE     | REQUIRED | DEFAULT               | OPTIONS                                  |
 | ---------------------- | ------------------------------------------------------------------------------- | -------- | -------- | --------------------- | ---------------------------------------- |
-| `github-token`         | Basically GITHUB_TOKEN                                                          | `string` | `true`   | `N/A`                 |                                          |
+| `github-token`         | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `true`   | `${{ github.token }}` |                                          |
 | `min-interval-seconds` | Wait this interval or the multiplied value (and jitter) for next polling        | `number` | `false`  | `30`                  |                                          |
 | `retry-method`         | How to wait for next polling                                                    | `string` | `false`  | `exponential_backoff` | `exponential_backoff`, `equal_intervals` |
 | `early-exit`           | Stop rest pollings if faced at least 1 bad condition                            | `bool`   | `false`  | `true`                |                                          |
@@ -80,16 +78,12 @@ jobs:
     steps:
       - name: Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v1.3.6
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
+        uses: dependabot/fetch-metadata@v1.5.1
       - uses: actions/checkout@v3
       - name: Wait other jobs
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
-        uses: kachick/wait-other-jobs@v1.2.1
+        uses: kachick/wait-other-jobs@v1.3.0
         timeout-minutes: 10
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
       - name: Approve and merge
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
@@ -103,10 +97,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Wait other jobs
-        uses: kachick/wait-other-jobs@v1.2.1
+        uses: kachick/wait-other-jobs@v1.3.0
         timeout-minutes: 10
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
         env:
