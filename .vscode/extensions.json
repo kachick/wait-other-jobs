@@ -2,7 +2,6 @@
   "recommendations": [
     "github.vscode-github-actions",
     "dbaeumer.vscode-eslint",
-    "redhat.vscode-yaml",
     "editorconfig.editorconfig",
     "dprint.dprint",
     "jnoortheen.nix-ide",
