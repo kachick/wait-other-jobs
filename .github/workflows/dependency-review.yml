@@ -21,3 +21,4 @@ jobs:
         with:
           # https://spdx.org/licenses/
           allow-licenses: MIT, BSD-3-Clause, BSD-2-Clause, 0BSD, Unlicense, ISC, Apache-2.0, CC-BY-4.0
+          allow-dependencies-licenses: pkg:githubactions/DeterminateSystems/nix-installer-action@4
