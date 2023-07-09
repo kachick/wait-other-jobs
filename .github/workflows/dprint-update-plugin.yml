@@ -5,7 +5,8 @@ on:
     paths:
       - '.github/workflows/dprint-update-plugin.yml'
   schedule:
-    - cron: '0 17 * * *'
+    # Run at 17:00 UTC every Monday
+    - cron: '0 17 * * 1'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
