@@ -4,6 +4,7 @@
     "dbaeumer.vscode-eslint",
     "editorconfig.editorconfig",
     "dprint.dprint",
+    "tekumara.typos-vscode",
     "jnoortheen.nix-ide",
     "tamasfe.even-better-toml",
     "exiasr.hadolint",
