@@ -22,6 +22,13 @@ script = [
   "dprint fmt",
 ]
 
+[tasks.typos-check]
+category = "Tools"
+description = "Run formatters without changes"
+script = [
+  "typos",
+]
+
 [tasks.fmt]
 alias = "format-apply"
 
@@ -76,7 +83,7 @@ script = [
 [tasks.check]
 category = "Tools"
 description = 'Parallel runner for all tests and linters'
-run_task = { name = ["typecheck", "test-ts", "test-js", "lint-check"], parallel = true }
+run_task = { name = ["typos-check", "typecheck", "test-ts", "test-js", "lint-check"], parallel = true }
 
 [tasks.docker-build]
 category = "Tools"
@@ -110,6 +117,7 @@ script = [
   # "nixpkgs-fmt --version",
   "actionlint --version",
   "hadolint --version",
+  "typos --version",
 ]
 
 [tasks.check_no_git_diff]
