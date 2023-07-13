@@ -11,6 +11,7 @@ updates:
         versions:
           # https://github.com/actions/dependency-review-action/issues/493
           - '3.0.5'
+      - dependency-name: 'crate-ci/typos'
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
