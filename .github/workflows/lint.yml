@@ -1,4 +1,4 @@
-name: Format
+name: Linters
 on:
   push:
     branches: [main]
