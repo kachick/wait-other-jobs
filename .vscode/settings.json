@@ -11,11 +11,5 @@
       ],
       "url": "https://docs.renovatebot.com/renovate-schema.json"
     }
-  ],
-  "cSpell.words": [
-    "deno",
-    "dprint",
-    "OIDC",
-    "rmrf"
   ]
 }
