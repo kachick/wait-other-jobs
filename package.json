@@ -7,8 +7,8 @@
     "node": "16.x"
   },
   "scripts": {
-    "lint:fix": "eslint --fix {src,__tests__}/**/*.ts *.ts",
-    "lint:check": "eslint {src,__tests__}/**/*.ts *.ts",
+    "lint:fix": "eslint --fix .",
+    "lint:check": "eslint .",
     "prepackage": "tsx scripts/rmrf.ts lib dist",
     "package": "esbuild src/main.ts --bundle --platform=node --target=node16 --packages=external --outfile=lib/main.js && ncc build",
     "postpackage": "tsx scripts/rmrf.ts lib",
