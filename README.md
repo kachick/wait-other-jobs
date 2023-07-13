@@ -109,7 +109,7 @@ jobs:
 ## Limitations
 
 Judge OK or Bad with the checkRun state at the moment.\
-When some jobs will be triggerred after this action with `needs: [distant-first]`, it might be unaccurate. (I didn't faced yet)
+When some jobs will be triggered after this action with `needs: [distant-first]`, it might be unaccurate. (I didn't faced yet)
 
 ## GITHUB_TOKEN vs PAT
 

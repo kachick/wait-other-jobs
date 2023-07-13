@@ -29,7 +29,7 @@ alias = "format-apply"
 category = "Tools"
 description = "Run linters with changes"
 dependencies = [
-  # Do not run parallel, because of dprint is superfast and eslint is slow. So sequencial makes useful here.
+  # Do not run parallel, because of dprint is superfast and eslint is slow. So sequential makes useful here.
   "format-apply",
 ]
 script = [
@@ -40,7 +40,7 @@ script = [
 category = "Tools"
 description = "Run linters without changes"
 dependencies = [
-  # Do not run parallel, because of dprint is superfast and eslint is slow. So sequencial makes useful here.
+  # Do not run parallel, because of dprint is superfast and eslint is slow. So sequential makes useful here.
   "format-check",
 ]
 script = [
@@ -106,7 +106,7 @@ script = [
   "node --version",
   "makers --version",
   "dprint --version",
-  # Returnes NON 0, why...? :<
+  # Returns NON 0, why...? :<
   # "nixpkgs-fmt --version",
   "actionlint --version",
   "hadolint --version",

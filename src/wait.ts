@@ -16,7 +16,7 @@ function getRandomInt(min: number, max: number) {
   return Math.floor((Math.random() * (Math.floor(max) - flooredMin)) + flooredMin);
 }
 
-// 454356 millseconds => 7.5725999999999996 minutes => about 7.6 minutes
+// 454356 milliseconds => 7.5725999999999996 minutes => about 7.6 minutes
 export function readableDuration(milliseconds: number): string {
   const msecToSec = 1000;
   const secToMin = 60;
