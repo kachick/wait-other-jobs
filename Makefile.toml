@@ -20,13 +20,14 @@ category = "Tools"
 description = "Run formatters with changes"
 script = [
   "dprint fmt",
+  "typos . .github .vscode .devcontainer --write-changes",
 ]
 
 [tasks.typos-check]
 category = "Tools"
 description = "Run formatters without changes"
 script = [
-  "typos",
+  "typos . .github .vscode .devcontainer",
 ]
 
 [tasks.fmt]
