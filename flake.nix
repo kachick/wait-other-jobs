@@ -7,7 +7,16 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        # https://discourse.nixos.org/t/mark-a-devshell-dependency-as-insecure/24354/3
+        pkgs = import nixpkgs
+          {
+            inherit system;
+            config = {
+              permittedInsecurePackages = [
+                "nodejs-16.20.1"
+              ];
+            };
+          };
       in
       {
         devShells.default = with pkgs;
