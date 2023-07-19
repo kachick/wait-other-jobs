@@ -30,25 +30,12 @@
         "dprint.path": "/nix/store/2rmr7ybmnr5xdcy6sw1073p0j5ljgw0n-dprint-0.37.1/bin/dprint",
         "[nix]": {
           "editor.defaultFormatter": "jnoortheen.nix-ide"
-        },
-        "json.schemas": [
-          {
-            "fileMatch": [
-              "dprint.json"
-            ],
-            "url": "https://docs.renovatebot.com/renovate-schema.json"
-          }
-        ],
-        "cSpell.words": [
-          "deno",
-          "dprint",
-          "OIDC",
-          "rmrf"
-        ]
+        }
       },
       "extensions": [
         "github.vscode-github-actions",
         "dbaeumer.vscode-eslint",
+        "tekumara.typos-vscode",
         "editorconfig.editorconfig",
         "dprint.dprint",
         "jnoortheen.nix-ide",
