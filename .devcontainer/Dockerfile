@@ -32,7 +32,9 @@ ENV PATH /home/vscode/.nix-profile/bin:$PATH
 # NOTE: This does not mean the entry point is in nix-shell.
 COPY ["../default.nix", "./"]
 
-# Do no include like `npm install` here. Cuurently I don't cache it in container
+ENV NIXPKGS_ALLOW_INSECURE 1
+
+# Do no include like `npm install` here. Currently I don't cache it in container
 RUN nix-channel --update && nix-shell --run 'echo "Keep this line to build nix environment in this phase"'
 
 COPY ["./.devcontainer/setup_direnv.bash", "./"]

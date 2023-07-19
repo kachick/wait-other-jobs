@@ -20,13 +20,14 @@ category = "Tools"
 description = "Run formatters with changes"
 script = [
   "dprint fmt",
+  "typos . .github .vscode .devcontainer --write-changes",
 ]
 
 [tasks.typos-check]
 category = "Tools"
 description = "Run formatters without changes"
 script = [
-  "typos",
+  "typos . .github .vscode .devcontainer",
 ]
 
 [tasks.fmt]
@@ -106,11 +107,12 @@ script = [
   'makers --list-category-steps Tools',
 ]
 
-[tasks.versions]
+[tasks.deps]
 category = "Tools"
-description = 'Print dependency versions'
+description = 'Print dependency and the versions'
 script = [
   "node --version",
+  "nix --version",
   "makers --version",
   "dprint --version",
   # Returns NON 0, why...? :<
