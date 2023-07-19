@@ -26,8 +26,8 @@
         "terminal.integrated.defaultProfile.linux": "zsh",
         "editor.defaultFormatter": "dprint.dprint",
         "editor.formatOnSave": true,
-        "hadolint.hadolintPath": "/nix/store/3lrlw90virfykpbxv4n1mbap0g8593r5-hadolint-2.12.0/bin/hadolint",
-        "dprint.path": "/nix/store/6rzbms3q4p7yfp56c9vcr9ip83r1rl8m-dprint-0.36.1/bin/dprint",
+        "hadolint.hadolintPath": "/nix/store/3gl6j30ak4n692vfs5l1rsqf07pdr429-hadolint-2.12.0/bin/hadolint",
+        "dprint.path": "/nix/store/2rmr7ybmnr5xdcy6sw1073p0j5ljgw0n-dprint-0.37.1/bin/dprint",
         "[nix]": {
           "editor.defaultFormatter": "jnoortheen.nix-ide"
         },

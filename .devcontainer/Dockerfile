@@ -48,5 +48,5 @@ RUN rm ./flake.nix ./setup_direnv.bash
 
 # `ENTRYPOINT` and `CMD` will be ignored in .devcontainer. Use postCreateCommand instead
 # To simulate in docker, following CMD requires to specify PWD with repository files. Check `makers docker-shell`
-ENTRYPOINT ["./.devcontainer/bootstrap.bash"]
-CMD ["zsh"]
+COPY .devcontainer/bootstrap.bash /home/vscode/
+CMD ["/home/vscode/bootstrap.bash"]
