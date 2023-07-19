@@ -1,4 +1,4 @@
-## How to update path for each extentions of devcontainer.json?
+## How to update path for each extensions of devcontainer.json?
 
 Like this.
 
