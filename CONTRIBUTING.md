@@ -5,12 +5,12 @@
 ### Nix
 
 1. Install [Nix](https://nixos.org/) package manager
-2. Run `nix-shell`
+2. Run `nix develop` or `direnv allow`
 3. You can use development tasks
 
 ```console
-> nix-shell
-(prepared bash)
+> nix develop
+(prepared shell)
 ```
 
 ### Devcontainer/Docker

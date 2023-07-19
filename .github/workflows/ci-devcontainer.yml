@@ -41,5 +41,8 @@ jobs:
       - name: Build and run dev container task
         uses: devcontainers/ci@v0.3
         with:
-          # Can't we call these commands on the nix-shell even enabled direnv...?
-          runCmd: nix-shell --run 'makers help && makers deps && makers check'
+          # Can't we call these commands on the nix develop even enabled direnv...?
+          runCmd: |
+            nix develop --command makers help;
+            nix develop --command makers deps;
+            nix develop --command makers check

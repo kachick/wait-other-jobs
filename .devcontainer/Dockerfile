@@ -29,20 +29,20 @@ ENV PATH /home/vscode/.nix-profile/bin:$PATH
 # Basically do NOT merge files in COPY to prefer inline cache benefit
 
 # Make sure the building phase done. To cache. `nix-build --no-out-link` does similar, but it skips bash.
-# NOTE: This does not mean the entry point is in nix-shell.
-COPY ["../default.nix", "./"]
+# NOTE: This does not mean the entry point is in nix develop.
+COPY ["../flake.nix", "./"]
 
 ENV NIXPKGS_ALLOW_INSECURE 1
 
 # Do no include like `npm install` here. Currently I don't cache it in container
-RUN nix-channel --update && nix-shell --run 'echo "Keep this line to build nix environment in this phase"'
+RUN nix-channel --update && nix develop --command echo "Keep this line to build nix environment in this phase"
 
 COPY ["./.devcontainer/setup_direnv.bash", "./"]
 RUN ./setup_direnv.bash
 
 # Clean up to avoid confusion
 # hadolint ignore=DL3059
-RUN rm ./default.nix ./setup_direnv.bash
+RUN rm ./flake.nix ./setup_direnv.bash
 
 # `ENTRYPOINT` and `CMD` will be ignored in .devcontainer. Use postCreateCommand instead
 # To simulate in docker, following CMD requires to specify PWD with repository files. Check `makers docker-shell`
