@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-whoami && id && ls -alh /nix && ls -alh . && \
+whoami && id && \
   nix develop --command direnv allow

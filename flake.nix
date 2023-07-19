@@ -22,7 +22,6 @@
         devShells.default = with pkgs;
           mkShell {
             buildInputs = [
-              direnv
               nodejs-16_x
               dprint
               cargo-make

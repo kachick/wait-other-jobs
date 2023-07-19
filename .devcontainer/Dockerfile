@@ -17,7 +17,7 @@ USER vscode
 WORKDIR /home/vscode/sandbox
 
 # The install scripts will be syntax error if it will be eval with dash
-SHELL ["/bin/bash", "-c"]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # daemon mode required systemd, docker disables it
 # As I understand the definition https://hub.docker.com/r/nixos/nix/dockerfile at Nix 2.17, it looks like a single user installation(no-daemon)
@@ -39,6 +39,7 @@ COPY ["../flake.nix", "./"]
 # Do no include like `npm install` here. Currently I don't cache it in container
 RUN nix-channel --update && nix develop --command echo "Keep this line to build nix environment in this phase"
 
+RUN curl -sfL https://direnv.net/install.sh | bash
 COPY ["./.devcontainer/setup_direnv.bash", "./"]
 RUN ./setup_direnv.bash
 
