@@ -43,6 +43,5 @@ jobs:
         with:
           # Can't we call these commands on the nix develop even enabled direnv...?
           runCmd: |
-            nix develop --command makers help;
             nix develop --command makers deps;
-            nix develop --command makers check
+            nix develop --command makers setup && nix develop --command makers check
