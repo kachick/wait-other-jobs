@@ -26,6 +26,10 @@ RUN bash <(curl -L https://nixos.org/nix/install) --no-daemon --yes
 
 ENV PATH /home/vscode/.nix-profile/bin:$PATH
 
+ENV XDG_CONFIG_HOME /home/vscode/.config
+# Using ENV in COPY is an annoy - https://stackoverflow.com/questions/43473236/docker-build-arg-and-copy#comment-104466815
+COPY .devcontainer/.config/ /home/vscode/.config/
+
 # Basically do NOT merge files in COPY to prefer inline cache benefit
 
 # Make sure the building phase done. To cache. `nix-build --no-out-link` does similar, but it skips bash.
