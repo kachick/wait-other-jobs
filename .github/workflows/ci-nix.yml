@@ -21,6 +21,9 @@ jobs:
   tasks:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      # Required to allow nodejs16.x in latest Nix
+      NIXPKGS_ALLOW_INSECURE: '1'
     steps:
       - uses: actions/checkout@v3
       - uses: DeterminateSystems/nix-installer-action@v4
