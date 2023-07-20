@@ -1,2 +1,2 @@
 [files]
-extend-exclude = ["dist/", "node_modules/"]
+extend-exclude = ["dist/"]
