@@ -23,9 +23,9 @@ Simulate devcontainer from docker as following.
 
 ```console
 > ./.devcontainer/docker_build.bash
+...
 > ./.devcontainer/docker_shell.bash
-vscode ➜ /workspaces/wait-other-job (main) $ 
-vscode ➜ /workspaces/wait-other-job (main) $ makers check
+vscode ➜ /workspaces/wait-other-jobs (main) $ makers check
 ...Done in...
 ```
 
