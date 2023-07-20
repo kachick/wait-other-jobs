@@ -1,11 +1,12 @@
 ## How to update path for each extensions of devcontainer.json?
 
-Like this.
+Just get from Nix shell as follows.
 
 ```console
-nix-instantiate --eval -E '(import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/4ef0dd85324fca49bf06fd9f2d52711503b1128c.tar.gz") {}).pkgs.dprint.outPath' | tr -d '"'
+> which dprint
+/nix/store/2rmr7ybmnr5xdcy6sw1073p0j5ljgw0n-dprint-0.37.1/bin/dprint
+> which hadolint
+/nix/store/3gl6j30ak4n692vfs5l1rsqf07pdr429-hadolint-2.12.0/bin/hadolint
 ```
-
-You should update them after updating fetchTarball path in default.nix
 
 I want to realize better integration, but I don't know it.

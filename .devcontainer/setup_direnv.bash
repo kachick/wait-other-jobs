@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
-echo 'eval "$(nix-shell --run '"'"'direnv hook bash'"'"')"' >> ~/.bashrc
-echo 'eval "$(nix-shell --run '"'"'direnv hook zsh'"'"')"' >> ~/.zshrc
+nix-env --install direnv
+echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
+echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
