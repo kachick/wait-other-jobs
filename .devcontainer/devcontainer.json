@@ -18,16 +18,6 @@
   "customizations": {
     "vscode": {
       "settings": {
-        "terminal.integrated.profiles.linux": {
-          "Nix Shell": {
-            "path": "nix",
-            "args": [
-              "develop"
-            ],
-            "icon": "terminal-linux"
-          }
-        },
-        "terminal.integrated.defaultProfile.linux": "Nix Shell",
         "editor.defaultFormatter": "dprint.dprint",
         "editor.formatOnSave": true,
         "hadolint.hadolintPath": "/nix/store/3gl6j30ak4n692vfs5l1rsqf07pdr429-hadolint-2.12.0/bin/hadolint",
