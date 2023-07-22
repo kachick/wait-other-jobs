@@ -6,9 +6,8 @@ env:
 plugins:
   - '@typescript-eslint'
 extends:
-  - plugin:@typescript-eslint/recommended
-  - plugin:@typescript-eslint/recommended-requiring-type-checking
-  - plugin:@typescript-eslint/strict
+  - plugin:@typescript-eslint/strict-type-checked
+  - plugin:@typescript-eslint/stylistic-type-checked
 overrides:
   - files:
       - __tests__/**/*.ts
