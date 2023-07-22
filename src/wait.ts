@@ -54,8 +54,9 @@ export function getIdleMilliseconds(method: retryMethod, minIntervalSeconds: num
       );
     case ('equal_intervals'):
       return minIntervalSeconds * 1000;
-    default:
+    default: {
       const _exhaustiveCheck: never = method;
       return minIntervalSeconds * 1000;
+    }
   }
 }
