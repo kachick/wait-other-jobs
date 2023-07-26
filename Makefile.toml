@@ -8,14 +8,7 @@ script = [
   "npm ci --ignore-scripts",
 ]
 
-[tasks.format-check]
-category = "Tools"
-description = "Run formatters without changes"
-script = [
-  "dprint check",
-]
-
-[tasks.format-apply]
+[tasks.fmt]
 category = "Tools"
 description = "Run formatters with changes"
 script = [
@@ -23,42 +16,16 @@ script = [
   "typos . .github .vscode .devcontainer --write-changes",
 ]
 
-[tasks.typos-check]
-category = "Tools"
-description = "Run formatters without changes"
-script = [
-  "typos . .github .vscode .devcontainer",
-]
-
-[tasks.fmt]
-alias = "format-apply"
-
-[tasks.lint-apply]
-category = "Tools"
-description = "Run linters with changes"
-dependencies = [
-  # Do not run parallel, because of dprint is superfast and eslint is slow. So sequential makes useful here.
-  "format-apply",
-]
-script = [
-  "npm run lint:fix",
-]
-
-[tasks.lint-check]
+[tasks.lint]
 category = "Tools"
 description = "Run linters without changes"
-dependencies = [
-  # Do not run parallel, because of dprint is superfast and eslint is slow. So sequential makes useful here.
-  "format-check",
-]
 script = [
+  "dprint check",
+  "deno lint",
+  "typos . .github .vscode .devcontainer",
   "actionlint",
   "hadolint .devcontainer/Dockerfile",
-  "npm run lint:check",
 ]
-
-[tasks.lint]
-alias = "lint-check"
 
 [tasks.test-ts]
 category = "Tools"
@@ -84,7 +51,7 @@ script = [
 [tasks.check]
 category = "Tools"
 description = 'Parallel runner for all tests and linters'
-run_task = { name = ["typos-check", "typecheck", "test-ts", "test-js", "lint-check"], parallel = true }
+run_task = { name = ["typecheck", "test-ts", "test-js", "lint"], parallel = true }
 
 [tasks.docker-build]
 category = "Tools"
@@ -113,6 +80,7 @@ description = 'Print dependency and the versions'
 script = [
   "node --version",
   "nix --version",
+  "deno --version",
   "makers --version",
   "dprint --version",
   # Returns NON 0, why...? :<

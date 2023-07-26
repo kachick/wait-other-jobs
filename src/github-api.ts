@@ -40,7 +40,6 @@ function isAcceptable(conclusion: CheckRunsSummarySource['conclusion']): boolean
 }
 
 export async function fetchJobIDs(
-  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   octokit: Octokit,
   params: Readonly<Pick<ListWorkflowRunsParams, 'owner' | 'repo' | 'run_id'>>,
 ): Promise<Set<JobID>> {
@@ -49,7 +48,6 @@ export async function fetchJobIDs(
       octokit.rest.actions.listJobsForWorkflowRun,
       {
         ...params,
-        // eslint-disable-next-line camelcase
         per_page: 100,
         filter: 'latest',
       },
@@ -59,7 +57,6 @@ export async function fetchJobIDs(
 }
 
 async function fetchRunSummaries(
-  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   octokit: Octokit,
   params: Readonly<Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>>,
 ): Promise<CheckRunsSummary[]> {
@@ -67,23 +64,18 @@ async function fetchRunSummaries(
     octokit.rest.checks.listForRef,
     {
       ...params,
-      // eslint-disable-next-line camelcase
       per_page: 100,
       filter: 'latest',
     },
     (resp) =>
       resp.data.map((checkRun) =>
-        // eslint-disable-next-line camelcase
         (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
           source: {
             id,
             status,
             conclusion,
-            // eslint-disable-next-line camelcase
             started_at,
-            // eslint-disable-next-line camelcase
             completed_at,
-            // eslint-disable-next-line camelcase
             html_url,
             name,
           },
@@ -94,7 +86,6 @@ async function fetchRunSummaries(
 }
 
 export async function fetchOtherRunStatus(
-  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   octokit: Parameters<typeof fetchRunSummaries>[0],
   params: Parameters<typeof fetchRunSummaries>[1],
   ownJobIDs: Readonly<Set<JobID>>,

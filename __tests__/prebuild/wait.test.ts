@@ -14,7 +14,6 @@ test('wait 100 ms', async () => {
   await wait(100);
   performance.mark('end');
   // The void typing looks like a wrong definition of @types/node
-  // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
   const measure: unknown = performance.measure('Wait duration', 'start', 'end');
   // Also PerformanceMeasure looks not defined https://github.com/DefinitelyTyped/DefinitelyTyped/blame/be3a5a945efa53010eb2ed7fc35bcd46038909b0/types/node/v16/perf_hooks.d.ts
   if (!(measure && typeof measure === 'object' && 'duration' in measure && typeof measure.duration === 'number')) {
