@@ -23,6 +23,7 @@
           mkShell {
             buildInputs = [
               nodejs-16_x
+              deno
               dprint
               cargo-make
               nil
