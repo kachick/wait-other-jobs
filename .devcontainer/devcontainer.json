@@ -28,7 +28,6 @@
       },
       "extensions": [
         "github.vscode-github-actions",
-        "dbaeumer.vscode-eslint",
         "tekumara.typos-vscode",
         "editorconfig.editorconfig",
         "dprint.dprint",

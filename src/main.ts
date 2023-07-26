@@ -99,7 +99,6 @@ async function run(): Promise<void> {
 
   startGroup('Get own job_id');
 
-  // eslint-disable-next-line camelcase
   const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
   info(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
 
@@ -163,7 +162,6 @@ async function run(): Promise<void> {
           }
           default: {
             const unexpectedConclusion: never = conclusion;
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             setFailed(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
             break;
           }
@@ -173,7 +171,6 @@ async function run(): Promise<void> {
       default: {
         shouldStop = true;
         const unexpectedProgress: never = progress;
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         setFailed(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
         break;
       }

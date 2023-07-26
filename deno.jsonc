@@ -1,0 +1,8 @@
+{
+  "lint": {
+    "include": ["*.ts", "src/"],
+    "rules": {
+      "tags": ["recommended"]
+    }
+  }
+}

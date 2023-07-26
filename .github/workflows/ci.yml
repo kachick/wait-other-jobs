@@ -49,15 +49,11 @@ jobs:
 
   lint:
     timeout-minutes: 15
-    needs: [typecheck] # Ensuring cache
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: denoland/setup-deno@v1
         with:
-          node-version: 16
-          cache: npm
-      - name: install dependencies
-        run: npm ci --ignore-scripts
-      - name: Lint
-        run: npm run lint:check
+          # Keep same version as used in *.nix
+          deno-version: '1.35.1'
+      - run: deno lint

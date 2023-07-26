@@ -7,8 +7,6 @@
     "node": "16.x"
   },
   "scripts": {
-    "lint:fix": "eslint --fix .",
-    "lint:check": "eslint .",
     "prepackage": "tsx scripts/rmrf.ts lib dist",
     "package": "esbuild src/main.ts --bundle --platform=node --target=node16 --packages=external --outfile=lib/main.js && ncc build",
     "postpackage": "tsx scripts/rmrf.ts lib",
@@ -34,13 +32,9 @@
   "devDependencies": {
     "@octokit/types": "^11.1.0",
     "@types/node": "^16.18.39",
-    "@typescript-eslint/eslint-plugin": "^6.1.0",
-    "@typescript-eslint/parser": "^6.1.0",
     "@vercel/ncc": "^0.36.1",
     "esbuild": "0.17.19",
     "esbuild-jest-transform": "^1.1.1",
-    "eslint": "^8.45.0",
-    "eslint-plugin-jest": "^27.2.3",
     "jest": "^29.6.1",
     "ts-node": "^10.9.1",
     "tsx": "^3.12.7",
