@@ -9925,7 +9925,6 @@ async function fetchJobIDs(octokit, params) {
       octokit.rest.actions.listJobsForWorkflowRun,
       {
         ...params,
-        // eslint-disable-next-line camelcase
         per_page: 100,
         filter: "latest"
       },
@@ -9938,29 +9937,22 @@ async function fetchRunSummaries(octokit, params) {
     octokit.rest.checks.listForRef,
     {
       ...params,
-      // eslint-disable-next-line camelcase
       per_page: 100,
       filter: "latest"
     },
     (resp) => resp.data.map(
-      (checkRun) => (
-        // eslint-disable-next-line camelcase
-        (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
-          source: {
-            id,
-            status,
-            conclusion,
-            // eslint-disable-next-line camelcase
-            started_at,
-            // eslint-disable-next-line camelcase
-            completed_at,
-            // eslint-disable-next-line camelcase
-            html_url,
-            name
-          },
-          acceptable: isAcceptable(conclusion)
-        }))(checkRun)
-      )
+      (checkRun) => (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
+        source: {
+          id,
+          status,
+          conclusion,
+          started_at,
+          completed_at,
+          html_url,
+          name
+        },
+        acceptable: isAcceptable(conclusion)
+      }))(checkRun)
     ).sort((a, b) => a.source.id - b.source.id)
   );
 }
