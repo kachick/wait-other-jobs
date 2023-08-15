@@ -1,11 +1,8 @@
 {
-  // TODO: Use tsconfig/base after all tools support tsconfig.extends array
-  "extends": "./tsconfig.base.json",
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node20/tsconfig"],
   "compilerOptions": {
-    // https://www.typescriptlang.org/docs/handbook/esm-node.html
-    "module": "NodeNext",
     "noEmit": true,
-    "noUnusedLocals": false
+    "allowImportingTsExtensions": true
   },
-  "include": ["src", "**/*.config.ts", "__tests__", "scripts"]
+  "include": ["**/*.ts"]
 }
