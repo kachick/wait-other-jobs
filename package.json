@@ -6,14 +6,12 @@
   "engines": {
     "node": "20.x"
   },
+  "type": "module",
   "scripts": {
     "prepackage": "tsx scripts/rmrf.ts lib dist",
     "package": "esbuild src/main.ts --bundle --platform=node --target=node20 --packages=external --outfile=lib/main.js && ncc build",
     "postpackage": "tsx scripts/rmrf.ts lib",
-    "test:ts": "jest --config jest.pre.config.ts",
-    "pretest:js": "npm run package",
-    "test:js": "jest --config jest.post.config.ts",
-    "test": "npm run test:ts && npm run test:js",
+    "test": "glob -c \"node --loader tsx --no-warnings --test\" \"./**/*test.ts\"",
     "typecheck": "tsc",
     "repl": "tsx"
   },
@@ -27,7 +25,8 @@
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
-    "ansi-styles": "^6.2.1"
+    "ansi-styles": "^6.2.1",
+    "glob": "^10.3.3"
   },
   "devDependencies": {
     "@octokit/types": "^11.1.0",
