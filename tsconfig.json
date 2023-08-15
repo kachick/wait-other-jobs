@@ -3,7 +3,7 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     // https://www.typescriptlang.org/docs/handbook/esm-node.html
-    "module": "node16",
+    "module": "NodeNext",
     "noEmit": true,
     "noUnusedLocals": false
   },

@@ -8,21 +8,13 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         # https://discourse.nixos.org/t/mark-a-devshell-dependency-as-insecure/24354/3
-        pkgs = import nixpkgs
-          {
-            inherit system;
-            config = {
-              permittedInsecurePackages = [
-                "nodejs-16.20.1"
-              ];
-            };
-          };
+        pkgs = nixpkgs.legacyPackages.${system};
       in
       {
         devShells.default = with pkgs;
           mkShell {
             buildInputs = [
-              nodejs-16_x
+              nodejs_20
               deno
               dprint
               cargo-make

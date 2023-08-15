@@ -9,7 +9,7 @@ const config: Config.InitialOptions = {
     '^.+\\.(t|j)sx?$': [
       'esbuild-jest-transform',
       {
-        'target': 'node16',
+        'target': 'node20',
         'packages': 'external',
       },
     ],
