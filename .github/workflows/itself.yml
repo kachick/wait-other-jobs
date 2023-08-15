@@ -4,10 +4,12 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/itself.yml'
+      - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
       - '.github/workflows/itself.yml'
+      - 'action.yml'
       - 'dist/**'
 
 permissions:
