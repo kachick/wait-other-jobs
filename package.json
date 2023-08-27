@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@octokit/types": "^11.1.0",
-    "@types/node": "^16.18.41",
+    "@types/node": "^16.18.46",
     "@vercel/ncc": "^0.36.1",
     "esbuild": "0.17.19",
     "esbuild-jest-transform": "^1.1.1",
