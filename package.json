@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "prepackage": "tsx scripts/rmrf.ts lib dist",
-    "package": "esbuild src/main.ts --bundle --platform=node --target=node20 --format=esm --outfile=dist/index.js",
+    "package": "tsx scripts/package.ts",
     "test": "scripts/run_tests.bash",
     "typecheck": "tsc",
     "repl": "tsx"
