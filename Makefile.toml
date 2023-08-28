@@ -41,10 +41,17 @@ script = [
   "npm run typecheck",
 ]
 
+[tasks.build]
+category = "Tools"
+description = 'Build that actually run in production'
+script = [
+  "npm run build",
+]
+
 [tasks.check]
 category = "Tools"
 description = 'Parallel runner for all tests and linters'
-run_task = { name = ["typecheck", "test", "lint"], parallel = true }
+run_task = { name = ["typecheck", "test", "lint", "build"], parallel = true }
 
 [tasks.docker-build]
 category = "Tools"

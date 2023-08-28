@@ -8,8 +8,8 @@
   },
   "type": "module",
   "scripts": {
-    "prepackage": "tsx scripts/rmrf.ts lib dist",
-    "package": "tsx scripts/package.ts",
+    "prebuild": "tsx scripts/rmrf.ts lib dist",
+    "build": "tsx scripts/build.ts",
     "test": "scripts/run_tests.bash",
     "typecheck": "tsc",
     "repl": "tsx"
