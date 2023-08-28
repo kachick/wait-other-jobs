@@ -82,12 +82,3 @@ esbuild app.jsx --bundle --platform=node --packages=external
 
 If you do this, your dependencies must still be present on the file system at run-time since they are no longer included in the bundle.
 ```
-
-## Why using nodejs16 instead of deno/bun/nodejs18?
-
-They are not yet supported in JavaScript action engine.
-
-- https://github.com/actions/runner/blob/5421fe3f7107f770c904ed4c7e506ae7a5cde2c2/src/Runner.Worker/ActionManifestManager.cs#L492
-- https://github.com/kachick/wait-other-jobs/pull/273#issuecomment-1306058624
-
-After bumped to nodejs18, I'd like to replace jest with [built-in test runner](https://github.com/nodejs/node/pull/42325).

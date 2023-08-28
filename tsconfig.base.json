@@ -1,14 +1,16 @@
 {
-  // Import from https://github.com/tsconfig/bases/commit/0ae4791797d8ba3dd2bca9aca880eb2d3e30e6fb
-  // To avoid issues around tsconfig.extends array
+  // Import from tsconfig/bases
+  //   - https://github.com/tsconfig/bases/blob/5ee68ffc8325546335649525a3553067d2d27830/bases/node20.json
+  //   - https://github.com/tsconfig/bases/blob/5ee68ffc8325546335649525a3553067d2d27830/bases/strictest.json
+  // Inlined to avoid problems around tsconfig.extends array
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Node 16 + Strictest",
+  "display": "Node 20 + Strictest",
   "compilerOptions": {
     "lib": [
-      "es2021"
+      "es2023"
     ],
     "module": "node16",
-    "target": "es2021",
+    "target": "es2022",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
