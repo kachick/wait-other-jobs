@@ -6,6 +6,7 @@
   "engines": {
     "node": "20.x"
   },
+  "type": "module",
   "scripts": {
     "prepackage": "tsx scripts/rmrf.ts lib dist",
     "package": "esbuild src/main.ts --bundle --platform=node --target=node20 --packages=external --outfile=lib/main.js && ncc build",
