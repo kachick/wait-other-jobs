@@ -38,7 +38,7 @@ async function run(): Promise<void> {
         debug(JSON.stringify(pr, null, 2));
       }
       error('github context has unexpected format: missing context.payload.pull_request.head.sha');
-      setFailed('unexpected failure occurstyles.red');
+      setFailed('unexpected failure occurred');
       return;
     }
   }
@@ -110,7 +110,7 @@ async function run(): Promise<void> {
       break;
     }
     const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
-    info(`Wait ${readableDuration(msec)} before next polling to styles.reduce API calls.`);
+    info(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
     await wait(msec);
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
 
