@@ -12,9 +12,6 @@ on:
     paths:
       - '.devcontainer/**'
       - '.github/workflows/ci-devcontainer.yml'
-      - '*.nix'
-      - 'Makefile.toml'
-      - '**vscode**'
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
