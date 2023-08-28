@@ -3,7 +3,8 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
+    "allowImportingTsExtensions": true
   },
   "include": ["src", "**/*.config.ts", "__tests__", "scripts"]
 }

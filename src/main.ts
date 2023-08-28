@@ -11,16 +11,15 @@ import {
   error,
 } from '@actions/core';
 import { getOctokit, context } from '@actions/github';
+import styles from 'ansi-styles';
+const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`);
+const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
+const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
 import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
 
 async function run(): Promise<void> {
-  const { default: { red, green } } = await import('ansi-styles');
-  const errorMessage = (body: string) => (`${red.open}${body}${red.close}`);
-  const succeededMessage = (body: string) => (`${green.open}${body}${green.close}`);
-  const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
-
   startGroup('Parameters');
   const {
     repo: { repo, owner },
@@ -39,7 +38,7 @@ async function run(): Promise<void> {
         debug(JSON.stringify(pr, null, 2));
       }
       error('github context has unexpected format: missing context.payload.pull_request.head.sha');
-      setFailed('unexpected failure occurred');
+      setFailed('unexpected failure occurstyles.red');
       return;
     }
   }
@@ -111,7 +110,7 @@ async function run(): Promise<void> {
       break;
     }
     const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
-    info(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
+    info(`Wait ${readableDuration(msec)} before next polling to styles.reduce API calls.`);
     await wait(msec);
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
 

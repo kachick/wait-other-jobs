@@ -6,14 +6,11 @@
   "engines": {
     "node": "20.x"
   },
+  "type": "module",
   "scripts": {
     "prepackage": "tsx scripts/rmrf.ts lib dist",
-    "package": "esbuild src/main.ts --bundle --platform=node --target=node20 --packages=external --outfile=lib/main.js && ncc build",
-    "postpackage": "tsx scripts/rmrf.ts lib",
-    "test:ts": "jest --config jest.pre.config.ts",
-    "pretest:js": "npm run package",
-    "test:js": "jest --config jest.post.config.ts",
-    "test": "npm run test:ts && npm run test:js",
+    "package": "esbuild src/main.ts --bundle --platform=node --target=node20 --format=esm --packages=external --outfile=lib/main.js && ncc build",
+    "test": "scripts/run_tests.bash",
     "typecheck": "tsc",
     "repl": "tsx"
   },
@@ -34,9 +31,6 @@
     "@types/node": "^16.18.46",
     "@vercel/ncc": "^0.36.1",
     "esbuild": "0.17.19",
-    "esbuild-jest-transform": "^1.1.1",
-    "jest": "^29.6.4",
-    "ts-node": "^10.9.1",
     "tsx": "^3.12.7",
     "typescript": "^5.2.2"
   }
