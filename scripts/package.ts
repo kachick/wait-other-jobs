@@ -11,6 +11,7 @@ await esbuild.build({
   banner: {
     js: `
         import { fileURLToPath } from 'url';
+        import path from "node:path";
         import { createRequire as topLevelCreateRequire } from 'module';
         const require = topLevelCreateRequire(import.meta.url);
         const __filename = fileURLToPath(import.meta.url);
