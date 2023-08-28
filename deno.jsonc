@@ -1,8 +1,7 @@
 {
   "lint": {
     // Intentionally avoided to specify `**/*.js` for faster execution even in having exclude...
-    "include": ["**/*.ts"],
-    "exclude": ["dist/", "node_modules/"],
+    "include": ["*.ts", "src/", "__tests__/", "scripts/"],
     "rules": {
       "tags": ["recommended"]
     }
