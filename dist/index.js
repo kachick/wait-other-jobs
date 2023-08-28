@@ -7936,7 +7936,7 @@ async function run() {
         (0, import_core.debug)(JSON.stringify(pr, null, 2));
       }
       (0, import_core.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
-      (0, import_core.setFailed)("unexpected failure occurstyles.red");
+      (0, import_core.setFailed)("unexpected failure occurred");
       return;
     }
   }
@@ -7996,7 +7996,7 @@ async function run() {
       break;
     }
     const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
-    (0, import_core.info)(`Wait ${readableDuration(msec)} before next polling to styles.reduce API calls.`);
+    (0, import_core.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
     await wait(msec);
     (0, import_core.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
