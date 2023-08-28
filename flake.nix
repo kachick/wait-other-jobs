@@ -13,16 +13,7 @@
   outputs = { self, nixpkgs-unstable, nixpkgs-stable, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        # https://discourse.nixos.org/t/mark-a-devshell-dependency-as-insecure/24354/3
-        unstable-pkgs = import nixpkgs-unstable
-          {
-            inherit system;
-            config = {
-              permittedInsecurePackages = [
-                "nodejs-16.20.2"
-              ];
-            };
-          };
+        unstable-pkgs = nixpkgs-unstable.legacyPackages.${system};
         stable-pkgs = nixpkgs-stable.legacyPackages.${system};
       in
       {
@@ -32,7 +23,7 @@
               # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
               bashInteractive
 
-              nodejs-16_x
+              nodejs_20
               deno
               dprint
               cargo-make
