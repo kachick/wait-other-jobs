@@ -11,16 +11,16 @@ import {
   error,
 } from '@actions/core';
 import { getOctokit, context } from '@actions/github';
-import styles from 'ansi-styles';
 
 import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
 
-const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`);
-const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
-const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
-
 async function run(): Promise<void> {
+  const { default: { red, green } } = await import('ansi-styles');
+  const errorMessage = (body: string) => (`${red.open}${body}${red.close}`);
+  const succeededMessage = (body: string) => (`${green.open}${body}${green.close}`);
+  const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
+
   startGroup('Parameters');
   const {
     repo: { repo, owner },
