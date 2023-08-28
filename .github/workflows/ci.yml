@@ -18,7 +18,6 @@ on:
 jobs:
   build:
     timeout-minutes: 15
-    needs: [typecheck] # Ensuring cache
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

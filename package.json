@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "prepackage": "tsx scripts/rmrf.ts lib dist",
-    "package": "esbuild src/main.ts --bundle --platform=node --target=node20 --format=esm --packages=external --outfile=lib/main.js && ncc build",
+    "package": "tsx scripts/package.ts",
     "test": "scripts/run_tests.bash",
     "typecheck": "tsc",
     "repl": "tsx"
@@ -31,7 +31,6 @@
     "@tsconfig/node20": "^20.1.2",
     "@tsconfig/strictest": "^2.0.1",
     "@types/node": "^20.5.7",
-    "@vercel/ncc": "^0.36.1",
     "esbuild": "0.17.19",
     "tsx": "^3.12.7",
     "typescript": "^5.2.2"
