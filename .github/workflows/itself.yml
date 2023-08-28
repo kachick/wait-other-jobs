@@ -4,10 +4,12 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/itself.yml'
+      - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
       - '.github/workflows/itself.yml'
+      - 'action.yml'
       - 'dist/**'
 
 permissions:
@@ -17,7 +19,7 @@ permissions:
 
 jobs:
   # Keep sequential to avoid infinite loop
-  equal_intervals: # make sure the action works on a clean machine without building
+  exponential_backoff:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
@@ -26,15 +28,27 @@ jobs:
       - uses: ./
         continue-on-error: true
         with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          retry-method: 'exponential_backoff'
+          min-interval-seconds: 5
+          attempt-limits: 2
+  equal_intervals:
+    needs: [exponential_backoff]
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        continue-on-error: true
+        with:
           retry-method: 'equal_intervals'
           min-interval-seconds: 10
-          attempt-limits: 2
+          attempt-limits: 60
   default:
     needs: [equal_intervals]
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
       - uses: ./
