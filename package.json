@@ -4,11 +4,11 @@
   "description": "",
   "main": "lib/main.js",
   "engines": {
-    "node": "16.x"
+    "node": "20.x"
   },
   "scripts": {
     "prepackage": "tsx scripts/rmrf.ts lib dist",
-    "package": "esbuild src/main.ts --bundle --platform=node --target=node16 --packages=external --outfile=lib/main.js && ncc build",
+    "package": "esbuild src/main.ts --bundle --platform=node --target=node20 --packages=external --outfile=lib/main.js && ncc build",
     "postpackage": "tsx scripts/rmrf.ts lib",
     "test:ts": "jest --config jest.pre.config.ts",
     "pretest:js": "npm run package",
