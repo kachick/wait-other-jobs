@@ -10,11 +10,7 @@
   "scripts": {
     "prepackage": "tsx scripts/rmrf.ts lib dist",
     "package": "esbuild src/main.ts --bundle --platform=node --target=node20 --packages=external --outfile=lib/main.js && ncc build",
-    "postpackage": "tsx scripts/rmrf.ts lib",
-    "test:ts": "jest --config jest.pre.config.ts",
-    "pretest:js": "npm run package",
-    "test:js": "jest --config jest.post.config.ts",
-    "test": "npm run test:ts && npm run test:js",
+    "test": "scripts/run_tests.bash",
     "typecheck": "tsc",
     "repl": "tsx"
   },

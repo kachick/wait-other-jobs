@@ -27,18 +27,11 @@ script = [
   "hadolint .devcontainer/Dockerfile",
 ]
 
-[tasks.test-ts]
+[tasks.test]
 category = "Tools"
-description = 'Test typescripts'
+description = 'Test'
 script = [
-  "npm run test:ts",
-]
-
-[tasks.test-js]
-category = "Tools"
-description = 'Test actual env handling'
-script = [
-  "npm run test:js",
+  "npm run test",
 ]
 
 [tasks.typecheck]
@@ -51,7 +44,7 @@ script = [
 [tasks.check]
 category = "Tools"
 description = 'Parallel runner for all tests and linters'
-run_task = { name = ["typecheck", "test-ts", "test-js", "lint"], parallel = true }
+run_task = { name = ["typecheck", "test", "lint"], parallel = true }
 
 [tasks.docker-build]
 category = "Tools"
