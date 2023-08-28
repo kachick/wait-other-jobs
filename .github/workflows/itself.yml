@@ -31,7 +31,7 @@ jobs:
           retry-method: 'exponential_backoff'
           min-interval-seconds: 5
           attempt-limits: 2
-  equal_intervals: # make sure the action works on a clean machine without building
+  equal_intervals:
     needs: [exponential_backoff]
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
