@@ -52,18 +52,15 @@ See also [scripts](package.json) for tasks details.
 ## REPL
 
 ```typescript
-> npm run repl
-Welcome to Node.js v16.19.0.
+npm run repl
+
+Welcome to Node.js v20.5.1.
 Type ".help" for more information.
 
 > // You can use `import()` function, not `import statement`.
 > const { info, isDebug, debug } = await import('@actions/core');
 > isDebug()
 false
-
-> // TypeScript syntax can be used, but no typechecking executed.
-> const foo: number = 42;
-undefined
 
 > // Utils can be loaded
 > const { readableDuration } = await import('./src/wait.ts');
