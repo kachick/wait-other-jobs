@@ -10,7 +10,7 @@
   "scripts": {
     "prebuild": "tsx scripts/rmrf.ts lib dist",
     "build": "tsx scripts/build.ts",
-    "test": "scripts/run_tests.bash",
+    "test": "tsx scripts/run_tests.ts",
     "typecheck": "tsc",
     "repl": "tsx"
   },
