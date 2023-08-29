@@ -1,19 +1,26 @@
 // Update
-
-import { readdirSync } from 'node:fs';
-import { join } from 'path';
-import { execFileSync } from 'node:child_process';
+// import { join } from 'path';
+// import { execFileSync } from 'node:child_process';
 
 // node --loader tsx --no-warnings --test ./src/**/*.test.ts
 
 // Missing in v20.5.1
 //   - https://github.com/kachick/times_kachick/issues/244
 //   - https://github.com/nodejs/node/pull/48698
-const dirEnts = readdirSync('src', { recursive: false, withFileTypes: true });
+// const dirEnts = readdirSync('src', { recursive: false, withFileTypes: true });
 
-// const testPaths = dirEnts.flatMap((dirEnt) => dirEnt.name.endsWith('.test.ts') ? [join(dirEnt.path, dirEnt.name)] : []);
-const testPaths = dirEnts;
+import { walkSync } from 'https://deno.land/std@0.200.0/fs/walk.ts';
 
-const output = execFileSync('node', ['--loader', 'tsx', '--no-warnings', '--test', '--version']).toString();
-console.log(output);
-console.log(testPaths);
+const testPaths = [];
+
+for (const walkEnt of walkSync('./src')) {
+  if (walkEnt.name.endsWith('.test.ts') && walkEnt.isFile) {
+    testPaths.push(walkEnt.path);
+  }
+}
+
+const command = new Deno.Command('node', { args: ['--loader', 'tsx', '--no-warnings', '--test', ...testPaths] });
+
+const output = command.outputSync();
+console.log(output.stderr.toString());
+console.log(testPaths.join(', '));
