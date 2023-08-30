@@ -6075,9 +6075,9 @@ var require_dist_node5 = __commonJS({
   }
 });
 
-// node_modules/@octokit/graphql/dist-node/index.js
+// node_modules/@octokit/core/node_modules/@octokit/graphql/dist-node/index.js
 var require_dist_node6 = __commonJS({
-  "node_modules/@octokit/graphql/dist-node/index.js"(exports) {
+  "node_modules/@octokit/core/node_modules/@octokit/graphql/dist-node/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var request = require_dist_node5();
@@ -7820,6 +7820,61 @@ var ansiStyles = assembleStyles();
 var ansi_styles_default = ansiStyles;
 
 // src/github-api.ts
+async function fetchGraphQl(octokit, params) {
+  const { repository: { object: { checkSuites } } } = await octokit.graphql(
+    `
+    {
+      repository(owner: $owner, name: $repo) {
+        object(expression: $commitSha) {
+          ... on Commit {
+            __typename
+            checkSuites(first: 10) {
+              edges {
+                node {
+                  id
+                  status
+                  conclusion
+                  workflowRun {
+                    id
+                    databaseId
+                    createdAt
+                    workflow {
+                      id
+                      databaseId
+                      name
+                      resourcePath
+                      url
+                    }
+                  }
+                  checkRuns(first: 10) {
+                    edges {
+                      node {
+                        id
+                        databaseId
+                        name
+                        status
+                        conclusion
+                        startedAt
+                        completedAt
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `,
+    {
+      owner: params.owner,
+      repo: params.repo,
+      commitSha: params.ref
+    }
+  );
+  return checkSuites;
+}
 function isAcceptable(conclusion) {
   return conclusion === "success" || conclusion === "skipped";
 }
@@ -7989,6 +8044,9 @@ async function run() {
   const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
   (0, import_core.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
   (0, import_core.endGroup)();
+  const gqlRet = await fetchGraphQl(octokit, { ...repositoryInfo, ref: commitSha });
+  console.info(gqlRet);
+  (0, import_core.info)(JSON.stringify(gqlRet));
   for (; ; ) {
     attempts += 1;
     if (attempts > attemptLimits) {

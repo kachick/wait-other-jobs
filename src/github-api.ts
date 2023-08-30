@@ -1,6 +1,73 @@
 import type { getOctokit } from '@actions/github';
 import type { Endpoints } from '@octokit/types';
 
+// import { graphql } from '@octokit/graphql';
+import schema from '@octokit/graphql-schema';
+
+export async function fetchGraphQl(
+  octokit: Octokit,
+  params: { 'owner': string; 'repo': string; ref: string },
+): Promise<object | undefined | null> {
+  const { repository: { object: { checkSuites } } } = await octokit.graphql<
+    { repository: { object: { checkSuites: schema.Commit['checkSuites'] } } }
+  >(
+    `
+    {
+      repository(owner: $owner, name: $repo) {
+        object(expression: $commitSha) {
+          ... on Commit {
+            __typename
+            checkSuites(first: 10) {
+              edges {
+                node {
+                  id
+                  status
+                  conclusion
+                  workflowRun {
+                    id
+                    databaseId
+                    createdAt
+                    workflow {
+                      id
+                      databaseId
+                      name
+                      resourcePath
+                      url
+                    }
+                  }
+                  checkRuns(first: 10) {
+                    edges {
+                      node {
+                        id
+                        databaseId
+                        name
+                        status
+                        conclusion
+                        startedAt
+                        completedAt
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `,
+    {
+      owner: params.owner,
+      repo: params.repo,
+      commitSha: params.ref,
+    },
+  );
+
+  // checkSuites?.edges[0]?.node;
+  // console.info(checkSuites);
+  return checkSuites;
+}
+
 type Octokit = ReturnType<typeof getOctokit>;
 
 // REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run

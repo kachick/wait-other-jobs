@@ -16,7 +16,7 @@ const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.c
 const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
 const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
-import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
+import { fetchGraphQl, fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
 
 async function run(): Promise<void> {
@@ -102,6 +102,10 @@ async function run(): Promise<void> {
   info(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
 
   endGroup();
+
+  const gqlRet = await fetchGraphQl(octokit, { ...repositoryInfo, ref: commitSha });
+  console.info(gqlRet);
+  info(JSON.stringify(gqlRet));
 
   for (;;) {
     attempts += 1;
