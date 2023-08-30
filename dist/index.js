@@ -7823,11 +7823,10 @@ var ansi_styles_default = ansiStyles;
 async function fetchGraphQl(octokit, params) {
   const { repository: { object: { checkSuites } } } = await octokit.graphql(
     `
-    {
+    query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!) {
       repository(owner: $owner, name: $repo) {
         object(expression: $commitSha) {
           ... on Commit {
-            __typename
             checkSuites(first: 10) {
               edges {
                 node {

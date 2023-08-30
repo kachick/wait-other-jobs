@@ -12,11 +12,10 @@ export async function fetchGraphQl(
     { repository: { object: { checkSuites: schema.Commit['checkSuites'] } } }
   >(
     `
-    {
+    query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!) {
       repository(owner: $owner, name: $repo) {
         object(expression: $commitSha) {
           ... on Commit {
-            __typename
             checkSuites(first: 10) {
               edges {
                 node {
