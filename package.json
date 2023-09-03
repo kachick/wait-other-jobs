@@ -29,7 +29,7 @@
   "devDependencies": {
     "@octokit/types": "^11.1.0",
     "@tsconfig/node20": "^20.1.2",
-    "@tsconfig/strictest": "^2.0.1",
+    "@tsconfig/strictest": "^2.0.2",
     "@types/node": "^20.5.9",
     "esbuild": "0.17.19",
     "tsx": "^3.12.7",
