@@ -30,7 +30,7 @@
     "@octokit/types": "^11.1.0",
     "@tsconfig/node20": "^20.1.2",
     "@tsconfig/strictest": "^2.0.2",
-    "@types/node": "^20.5.9",
+    "@types/node": "^20.6.0",
     "esbuild": "0.19.2",
     "tsx": "^3.12.8",
     "typescript": "^5.2.2"
