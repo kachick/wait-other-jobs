@@ -2,6 +2,13 @@ import type { getOctokit } from '@actions/github';
 import { CheckSuite, Workflow, CheckRun, Commit } from '@octokit/graphql-schema';
 import { error } from '@actions/core';
 import { join, relative } from 'path';
+import { z } from 'zod';
+
+const ListItem = z.object({
+  workflowFile: z.string().endsWith('.yml'),
+  jobName: z.string().min(1),
+});
+export const List = z.array(ListItem);
 
 interface Summary {
   acceptable: boolean; // Set by us
@@ -122,9 +129,28 @@ interface Report {
 export async function fetchOtherRunStatus(
   octokit: Parameters<typeof getCheckRunSummaries>[0],
   params: Parameters<typeof getCheckRunSummaries>[1],
+  waitList: z.infer<typeof List>,
+  skipList: z.infer<typeof List>,
 ): Promise<Report> {
+  if (waitList.length > 0 && skipList.length > 0) {
+    throw new Error('Do not specify both wait-list and skip-list');
+  }
+
   const checkRunSummaries = await getCheckRunSummaries(octokit, params);
-  const completedRuns = checkRunSummaries.filter((summary) => summary.runStatus === 'COMPLETED');
+  let completedRuns = checkRunSummaries.filter((summary) => summary.runStatus === 'COMPLETED');
+  const getComparePath = (item: z.infer<typeof ListItem>) => (`${item.workflowFile}/${item.jobName}`);
+  if (waitList.length > 1) {
+    const waitPathSet = new Set(waitList.map(getComparePath));
+    completedRuns = completedRuns.filter((summary) =>
+      waitPathSet.has(getComparePath({ workflowFile: summary.workflowName, jobName: summary.jobName }))
+    );
+  }
+  if (skipList.length > 1) {
+    const waitPathSet = new Set(waitList.map(getComparePath));
+    completedRuns = completedRuns.filter((summary) =>
+      !waitPathSet.has(getComparePath({ workflowFile: summary.workflowName, jobName: summary.jobName }))
+    );
+  }
 
   const progress: Report['progress'] = completedRuns.length === checkRunSummaries.length
     ? 'done'

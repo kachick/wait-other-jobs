@@ -16,7 +16,7 @@ const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.c
 const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
 const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
-import { fetchOtherRunStatus } from './github-api.js';
+import { List, fetchOtherRunStatus } from './github-api.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
 
 async function run(): Promise<void> {
@@ -63,6 +63,12 @@ async function run(): Promise<void> {
     getInput('attempt-limits', { required: true, trimWhitespace: true }),
     10,
   );
+  const waitList = List.parse(JSON.parse(getInput('wait-list', { required: true })));
+  const skipList = List.parse(JSON.parse(getInput('wait-list', { required: true })));
+  if (waitList.length > 0 && skipList.length > 0) {
+    error('Do not specify both wait-list and skip-list');
+    setFailed('Specified both list');
+  }
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
 
@@ -76,6 +82,8 @@ async function run(): Promise<void> {
       attemptLimits,
       isEarlyExit,
       isDryRun,
+      waitList,
+      skipList,
       // Of course, do NOT include tokens here.
     },
     null,
@@ -110,6 +118,8 @@ async function run(): Promise<void> {
     const report = await fetchOtherRunStatus(
       octokit,
       { ...repositoryInfo, ref: commitSha, triggerRunId: runId },
+      waitList,
+      skipList,
     );
 
     for (const summary of report.summaries) {
