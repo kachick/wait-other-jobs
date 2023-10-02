@@ -10,7 +10,7 @@ import {
   endGroup,
   error,
 } from '@actions/core';
-import { getOctokit, context } from '@actions/github';
+import { context } from '@actions/github';
 import styles from 'ansi-styles';
 const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`);
 const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
@@ -93,7 +93,6 @@ async function run(): Promise<void> {
   // `getIDToken` does not fit for this purpose. It is provided for OIDC Token
   const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
   setSecret(githubToken);
-  const octokit = getOctokit(githubToken);
 
   let attempts = 0;
   let shouldStop = false;
@@ -116,7 +115,7 @@ async function run(): Promise<void> {
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
 
     const report = await fetchOtherRunStatus(
-      octokit,
+      githubToken,
       { ...repositoryInfo, ref: commitSha, triggerRunId: runId },
       waitList,
       skipList,

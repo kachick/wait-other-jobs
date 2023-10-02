@@ -1,8 +1,10 @@
-import type { getOctokit } from '@actions/github';
+import { Octokit } from '@octokit/core';
+import { paginateGraphql } from '@octokit/plugin-paginate-graphql';
 import { CheckSuite, Workflow, CheckRun, Commit } from '@octokit/graphql-schema';
-import { error } from '@actions/core';
 import { join, relative } from 'path';
 import { z } from 'zod';
+
+const PaginatableOctokit = Octokit.plugin(paginateGraphql);
 
 const ListItem = z.object({
   workflowFile: z.string().endsWith('.yml'),
@@ -26,23 +28,25 @@ interface Summary {
   runConclusion: CheckRun['conclusion']; // null if status is in progress
 }
 
-// Currently no paging is considered for my usecase
-// If needed to cover long list > 100, consider one of follows
-// - Paging with https://github.com/octokit/plugin-paginate-graphql.js
-// - Filtering in GraphQL query layer with wait only list. This changes current reporting behaviors to omit finished jobs
 export async function getCheckRunSummaries(
-  octokit: Octokit,
+  token: string,
   params: { owner: string; repo: string; ref: string; triggerRunId: number },
 ): Promise<Array<Summary>> {
-  const { repository: { object: { checkSuites } } } = await octokit.graphql<
+  const octokit = new PaginatableOctokit({ auth: token });
+  const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate<
     { repository: { object: { checkSuites: Commit['checkSuites'] } } }
   >(
     `
-    query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!) {
+    query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!, $cursor: String) {
       repository(owner: $owner, name: $repo) {
         object(expression: $commitSha) {
           ... on Commit {
-            checkSuites(first: 100) {
+            checkSuites(first: 100, after: $cursor) {
+              totalCount
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
               nodes {
                 status
                 conclusion
@@ -54,6 +58,11 @@ export async function getCheckRunSummaries(
                   }
                 }
                 checkRuns(first: 100) {
+                  totalCount
+                  pageInfo {
+                    hasNextPage
+                    endCursor
+                  }
                   nodes {
                     databaseId
                     name
@@ -78,7 +87,6 @@ export async function getCheckRunSummaries(
 
   const checkSuiteNodes = checkSuites?.nodes?.flatMap((node) => node ? [node] : []);
   if (!checkSuiteNodes) {
-    error('Cannot correctly get via GraphQL');
     throw new Error('no checkSuiteNodes');
   }
 
@@ -92,9 +100,17 @@ export async function getCheckRunSummaries(
       return [];
     }
 
-    const runNodes = checkSuite?.checkRuns?.nodes?.flatMap((node) => node ? [node] : []);
+    const checkRuns = checkSuite?.checkRuns;
+    if (!checkRuns) {
+      throw new Error('no checkRuns');
+    }
+
+    if (checkRuns.totalCount > 100) {
+      throw new Error('exceeded checkable runs limit');
+    }
+
+    const runNodes = checkRuns.nodes?.flatMap((node) => node ? [node] : []);
     if (!runNodes) {
-      error('Cannot correctly get via GraphQL');
       throw new Error('no runNodes');
     }
 
@@ -117,8 +133,6 @@ export async function getCheckRunSummaries(
   return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
 }
 
-type Octokit = ReturnType<typeof getOctokit>;
-
 // No need to keep as same as GitHub responses so We can change the definition.
 interface Report {
   progress: 'in_progress' | 'done';
@@ -127,7 +141,7 @@ interface Report {
 }
 
 export async function fetchOtherRunStatus(
-  octokit: Parameters<typeof getCheckRunSummaries>[0],
+  token: string,
   params: Parameters<typeof getCheckRunSummaries>[1],
   waitList: z.infer<typeof List>,
   skipList: z.infer<typeof List>,
@@ -136,7 +150,7 @@ export async function fetchOtherRunStatus(
     throw new Error('Do not specify both wait-list and skip-list');
   }
 
-  let checkRunSummaries = await getCheckRunSummaries(octokit, params);
+  let checkRunSummaries = await getCheckRunSummaries(token, params);
 
   if (waitList.length > 0) {
     checkRunSummaries = checkRunSummaries.filter((summary) =>

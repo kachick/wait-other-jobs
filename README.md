@@ -133,8 +133,8 @@ jobs:
 Judge OK or Bad with the checkRun state at the moment.\
 When some jobs will be triggered after this action with `needs: [distant-first]`, it might be unaccurate. (I didn't faced yet)
 
-Since v2, paging feature is not implemented yet.\
-If your trigger starts many workflows as 100+, or any workflow starts many jobs as 100+, this action will not fit. (for now)
+If any workflow starts many jobs as 100+, this action does not support it.\
+Because of nested paging in GraphQL makes complex. See [related docs](https://github.com/octokit/plugin-paginate-graphql.js/blob/a6b12e867466b0c583b002acd1cb1ed90b11841f/README.md#L184-L218) for further detail.
 
 ## GITHUB_TOKEN vs PAT
 
