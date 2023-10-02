@@ -103,15 +103,6 @@ async function run(): Promise<void> {
 
   endGroup();
 
-  // const runIdToSummary = await getCheckRunSummaries(octokit, { ...repositoryInfo, ref: commitSha });
-  // info(JSON.stringify(gqlRet));
-  // if (!gqlRet) {
-  //   error('Cannot correctly get via GraphQL');
-  //   return;
-  // }
-  // const nodes = gqlRet.edges?.flatMap((edge) => edge ? [edge] : []);
-  // info(JSON.stringify(['debug the gathered map', runIdToSummary.size, Object.fromEntries(runIdToSummary)]));
-
   for (;;) {
     attempts += 1;
     if (attempts > attemptLimits) {
