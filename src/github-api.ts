@@ -1,5 +1,5 @@
 import type { getOctokit } from '@actions/github';
-import schema from '@octokit/graphql-schema';
+import { CheckSuite, Workflow, CheckRun, Commit } from '@octokit/graphql-schema';
 import { error } from '@actions/core';
 import { join, relative } from 'path';
 
@@ -7,16 +7,16 @@ interface Summary {
   acceptable: boolean; // Set by us
   workflowPath: string; // Set by us
 
-  checkSuiteStatus: schema.CheckSuite['status'];
-  checkSuiteConclusion: schema.CheckSuite['conclusion'];
+  checkSuiteStatus: CheckSuite['status'];
+  checkSuiteConclusion: CheckSuite['conclusion'];
 
-  workflowName: schema.Workflow['name'];
+  workflowName: Workflow['name'];
 
-  runDatabaseId: schema.CheckRun['databaseId'];
-  jobName: schema.CheckRun['name'];
-  checkRunUrl: schema.CheckRun['detailsUrl'];
-  runStatus: schema.CheckRun['status'];
-  runConclusion: schema.CheckRun['conclusion']; // null if status is in progress
+  runDatabaseId: CheckRun['databaseId'];
+  jobName: CheckRun['name'];
+  checkRunUrl: CheckRun['detailsUrl'];
+  runStatus: CheckRun['status'];
+  runConclusion: CheckRun['conclusion']; // null if status is in progress
 }
 
 export async function getCheckRunSummaries(
@@ -24,7 +24,7 @@ export async function getCheckRunSummaries(
   params: { owner: string; repo: string; ref: string; triggerRunId: number },
 ): Promise<Array<Summary>> {
   const { repository: { object: { checkSuites } } } = await octokit.graphql<
-    { repository: { object: { checkSuites: schema.Commit['checkSuites'] } } }
+    { repository: { object: { checkSuites: Commit['checkSuites'] } } }
   >(
     `
     query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!) {
