@@ -8079,7 +8079,8 @@ async function run() {
       } = summary;
       const nullStr = "(null)";
       (0, import_core2.info)(
-        `${workflowPath}(${workflowName}/${jobName}):  [suiteStatus: ${colorize(checkSuiteStatus, checkSuiteStatus === "COMPLETED")}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${colorize(runStatus, runStatus === "COMPLETED")}][runConclusion: ${colorize(runConclusion ?? nullStr, acceptable)}] - ${checkRunUrl}`
+        `${workflowPath}(${colorize(`${workflowName}/${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${runStatus}]
+        }][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`
       );
     }
     if ((0, import_core2.isDebug)()) {

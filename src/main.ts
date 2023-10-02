@@ -144,11 +144,12 @@ async function run(): Promise<void> {
       const nullStr = '(null)';
 
       info(
-        `${workflowPath}(${workflowName}/${jobName}):  [suiteStatus: ${
-          colorize(checkSuiteStatus, checkSuiteStatus === 'COMPLETED')
-        }][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${
-          colorize(runStatus, runStatus === 'COMPLETED')
-        }][runConclusion: ${colorize(runConclusion ?? nullStr, acceptable)}] - ${checkRunUrl}`,
+        `${workflowPath}(${
+          colorize(`${workflowName}/${jobName}`, acceptable)
+        }): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${
+          checkSuiteConclusion ?? nullStr
+        }][runStatus: ${runStatus}]
+        }][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`,
       );
     }
 
