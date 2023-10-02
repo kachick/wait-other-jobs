@@ -110,7 +110,7 @@ async function run(): Promise<void> {
   //   return;
   // }
   // const nodes = gqlRet.edges?.flatMap((edge) => edge ? [edge] : []);
-  info(JSON.stringify(runIdToSummary));
+  info(JSON.stringify(['debug the gathered map', runIdToSummary.size, Object.fromEntries(runIdToSummary)]));
 
   for (;;) {
     attempts += 1;

@@ -8079,7 +8079,7 @@ async function run() {
   (0, import_core2.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
   (0, import_core2.endGroup)();
   const runIdToSummary = await fetchGraphQl(octokit, { ...repositoryInfo, ref: commitSha });
-  (0, import_core2.info)(JSON.stringify(runIdToSummary));
+  (0, import_core2.info)(JSON.stringify(["debug the gathered map", runIdToSummary.size, Object.fromEntries(runIdToSummary)]));
   for (; ; ) {
     attempts += 1;
     if (attempts > attemptLimits) {
