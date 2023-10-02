@@ -25,6 +25,14 @@ inputs:
     description: 'Stop rest pollings after this limits even if other jobs are not yet completed'
     required: false
     default: '1000' # Enough large
+  wait-list:
+    description: 'This action will not wait for items other than this list'
+    required: false
+    default: '[]'
+  skip-list:
+    description: 'This action will not wait for items on this list'
+    required: false
+    default: '[]'
   dry-run:
     description: 'Avoid http requests for tests'
     required: false

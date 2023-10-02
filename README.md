@@ -3,6 +3,8 @@
 [![CI](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml?query=event%3Apush++)
 [![Itself](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml?query=event%3Apush++)
 
+This README describes development version as main branch, refer [v1 README](https://github.com/kachick/wait-other-jobs/blob/v1/README.md) for released versions.
+
 ## Overview
 
 This action waits all GitHub Action jobs even if they are running in other workflows.\
@@ -34,11 +36,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for other jobs to pass or fail
-        uses: kachick/wait-other-jobs@v1.3.0
+        uses: kachick/wait-other-jobs@v2.0.0
         timeout-minutes: 15
 ```
 
-You can change the token, status polling interval and turns early-exit as below.
+You can change the token, polling interval, allow/deny list and turns early-exit as below.
 
 ```yaml
 with:
@@ -46,18 +48,40 @@ with:
   min-interval-seconds: '300' # default '30'
   retry-method: 'equal_intervals' # default 'exponential_backoff'
   early-exit: 'false' # default 'true'
+  # lists should be given with JSON formatted array, do not specify both wait-list and skip-list
+  # Each items should have "workflowFile" field and they can optinaly have "jobName" field
+  wait-list: |
+    [
+      {
+        "workflowFile": "ci.yml",
+        "jobName": "test"
+      },
+      {
+        "workflowFile": "release.yml",
+        "jobName": "goreleaser"
+      }
+    ]
+  skip-list: |
+    [
+      {
+        "workflowFile": "pages.yml",
+        "jobName": "deploy"
+      }
+    ]
 ```
 
 Full list of the changeable parameters
 
-| NAME                   | DESCRIPTION                                                                     | TYPE     | REQUIRED | DEFAULT               | OPTIONS                                  |
-| ---------------------- | ------------------------------------------------------------------------------- | -------- | -------- | --------------------- | ---------------------------------------- |
-| `github-token`         | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `true`   | `${{ github.token }}` |                                          |
-| `min-interval-seconds` | Wait this interval or the multiplied value (and jitter) for next polling        | `number` | `false`  | `30`                  |                                          |
-| `retry-method`         | How to wait for next polling                                                    | `string` | `false`  | `exponential_backoff` | `exponential_backoff`, `equal_intervals` |
-| `early-exit`           | Stop rest pollings if faced at least 1 bad condition                            | `bool`   | `false`  | `true`                |                                          |
-| `attempt-limits`       | Stop rest pollings after this attempts even if other jobs are not yet completed | `number` | `false`  | `1000`                |                                          |
-| `dry-run`              | Avoid http requests for tests                                                   | `bool`   | `false`  | `false`               |                                          |
+| NAME                   | DESCRIPTION                                                                     | TYPE                 | REQUIRED | DEFAULT               | OPTIONS                                  |
+| ---------------------- | ------------------------------------------------------------------------------- | -------------------- | -------- | --------------------- | ---------------------------------------- |
+| `github-token`         | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string`             | `true`   | `${{ github.token }}` |                                          |
+| `min-interval-seconds` | Wait this interval or the multiplied value (and jitter) for next polling        | `number`             | `false`  | `30`                  |                                          |
+| `retry-method`         | How to wait for next polling                                                    | `string`             | `false`  | `exponential_backoff` | `exponential_backoff`, `equal_intervals` |
+| `early-exit`           | Stop rest pollings if faced at least 1 bad condition                            | `bool`               | `false`  | `true`                |                                          |
+| `attempt-limits`       | Stop rest pollings after this attempts even if other jobs are not yet completed | `number`             | `false`  | `1000`                |                                          |
+| `wait-list`            | This action will not wait for items other than this list                        | `string(JSON Array)` | `false`  | `[]`                  |                                          |
+| `skip-list`            | This action will not wait for items on this list                                | `string(JSON Array)` | `false`  | `[]`                  |                                          |
+| `dry-run`              | Avoid requests for tests                                                        | `bool`               | `false`  | `false`               |                                          |
 
 Below is a typical usecase. Assume test jobs defined in another workflow.
 
@@ -82,7 +106,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Wait for other jobs to pass or fail
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
-        uses: kachick/wait-other-jobs@v1.3.0
+        uses: kachick/wait-other-jobs@v2.0.0
         timeout-minutes: 10
       - name: Approve and merge
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
@@ -97,7 +121,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Wait for other jobs to pass or fail
-        uses: kachick/wait-other-jobs@v1.3.0
+        uses: kachick/wait-other-jobs@v2.0.0
         timeout-minutes: 10
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
