@@ -3,7 +3,7 @@
 [![CI](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml?query=event%3Apush++)
 [![Itself](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml?query=event%3Apush++)
 
-This README describes development version as main branch, refer [v1 README](https://github.com/kachick/wait-other-jobs/blob/v1/README.md) for released versions.
+This README may describe around development version, refer [v2 README](https://github.com/kachick/wait-other-jobs/blob/v2/README.md) for latest stable version.
 
 ## Overview
 
@@ -17,14 +17,6 @@ I mainly use this action for below use-case when they should run after multiple 
 - [Auto approve and merge dependabot PRs without PAT(Personal Access Token)](https://github.com/kachick/ruby-ulid/blob/ad4c6090d7835d80ff02a1a5f57d6e9ae11a85d3/.github/workflows/merge-bot-pr.yml#L21-L26)
 - [Auto approve and merge renovatebot PRs without `platformAutomerge` feature](https://github.com/kachick/ruby-ulid/blob/ad4c6090d7835d80ff02a1a5f57d6e9ae11a85d3/.github/workflows/merge-bot-pr.yml#L46-L50)
 
-### Success pattern with `Exponential Backoff And Jitter`.
-
-<img src="./assets/log-v1.2.0-exponential_backoff.png?raw=true" alt="Example of actual log - success in default" width=900>
-
-### Error pattern with `equal_intervals` and `attempt-limits`.
-
-<img src="./assets/log-v1.2.0-equal_intervals_and_attempt-limits.png?raw=true" alt="Example of actual log - error in equal_intervals_and_attempt-limits" width=900>
-
 ## Usage
 
 This is the minimum configuration.\
@@ -32,7 +24,7 @@ I recommend to use `timeout-minutes` together with.
 
 ```yaml
 jobs:
-  with-waiting:
+  steps-with-waiting:
     runs-on: ubuntu-latest
     steps:
       - uses: kachick/wait-other-jobs@v2.0.0
