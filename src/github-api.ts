@@ -5,6 +5,7 @@ import type { Endpoints } from '@octokit/types';
 import schema from '@octokit/graphql-schema';
 import { error } from '@actions/core';
 import { relative } from 'path';
+import { info } from 'console';
 
 interface Summary {
   acceptable: boolean; // Set by us
@@ -90,6 +91,7 @@ export async function fetchGraphQl(
   for (const checkSuite of css) {
     const workflow = checkSuite.workflowRun?.workflow;
     if (!workflow) {
+      info('skip', checkSuite);
       continue;
     }
     const runEdges = checkSuite.checkRuns?.edges;
