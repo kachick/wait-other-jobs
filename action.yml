@@ -16,7 +16,7 @@ inputs:
   min-interval-seconds:
     description: 'Wait this interval or the multiplied value (and jitter) for next polling'
     required: false
-    default: '30'
+    default: '15'
   early-exit:
     description: 'Stop to rest pollings if faced at least 1 bad condition'
     required: false
