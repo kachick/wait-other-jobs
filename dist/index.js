@@ -8072,15 +8072,13 @@ async function run() {
         checkSuiteConclusion,
         runStatus,
         runConclusion,
-        workflowName,
         jobName,
         workflowPath,
         checkRunUrl
       } = summary;
       const nullStr = "(null)";
       (0, import_core2.info)(
-        `${workflowPath}(${colorize(`${workflowName}/${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${runStatus}]
-        }][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`
+        `${workflowPath}(${colorize(`${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`
       );
     }
     if ((0, import_core2.isDebug)()) {

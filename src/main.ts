@@ -136,7 +136,6 @@ async function run(): Promise<void> {
         checkSuiteConclusion,
         runStatus,
         runConclusion,
-        workflowName,
         jobName,
         workflowPath,
         checkRunUrl,
@@ -144,12 +143,9 @@ async function run(): Promise<void> {
       const nullStr = '(null)';
 
       info(
-        `${workflowPath}(${
-          colorize(`${workflowName}/${jobName}`, acceptable)
-        }): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${
+        `${workflowPath}(${colorize(`${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${
           checkSuiteConclusion ?? nullStr
-        }][runStatus: ${runStatus}]
-        }][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`,
+        }][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`,
       );
     }
 
