@@ -3,6 +3,8 @@
 [![CI](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml?query=event%3Apush++)
 [![Itself](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml?query=event%3Apush++)
 
+This README describes development version as main branch, refer [v1 README](https://github.com/kachick/wait-other-jobs/blob/v1/README.md) for released versions.
+
 ## Overview
 
 This action waits all GitHub Action jobs even if they are running in other workflows.\
@@ -33,12 +35,11 @@ jobs:
   with-waiting:
     runs-on: ubuntu-latest
     steps:
-      - name: Wait for other jobs to pass or fail
-        uses: kachick/wait-other-jobs@v1.3.0
+      - uses: kachick/wait-other-jobs@v2.0.0
         timeout-minutes: 15
 ```
 
-You can change the token, status polling interval and turns early-exit as below.
+You can change the token, polling interval, allow/deny list and turns early-exit as below.
 
 ```yaml
 with:
@@ -46,6 +47,25 @@ with:
   min-interval-seconds: '300' # default '30'
   retry-method: 'equal_intervals' # default 'exponential_backoff'
   early-exit: 'false' # default 'true'
+  # lists should be given with JSON formatted array, do not specify both wait-list and skip-list
+  # Each items should have "workflowFile" field and they can optinaly have "jobName" field
+  # If no jobName is specified, all of jobs in the workflow will be targeted
+  wait-list: |
+    [
+      {
+        "workflowFile": "ci.yml",
+        "jobName": "test"
+      },
+      {
+        "workflowFile": "release.yml"
+      }
+    ]
+  skip-list: |
+    [
+      {
+        "workflowFile": "pages.yml",
+      }
+    ]
 ```
 
 Full list of the changeable parameters
@@ -57,7 +77,9 @@ Full list of the changeable parameters
 | `retry-method`         | How to wait for next polling                                                    | `string` | `false`  | `exponential_backoff` | `exponential_backoff`, `equal_intervals` |
 | `early-exit`           | Stop rest pollings if faced at least 1 bad condition                            | `bool`   | `false`  | `true`                |                                          |
 | `attempt-limits`       | Stop rest pollings after this attempts even if other jobs are not yet completed | `number` | `false`  | `1000`                |                                          |
-| `dry-run`              | Avoid http requests for tests                                                   | `bool`   | `false`  | `false`               |                                          |
+| `wait-list`            | This action will not wait for items other than this list                        | `string` | `false`  | `[]`                  |                                          |
+| `skip-list`            | This action will not wait for items on this list                                | `string` | `false`  | `[]`                  |                                          |
+| `dry-run`              | Avoid requests for tests                                                        | `bool`   | `false`  | `false`               |                                          |
 
 Below is a typical usecase. Assume test jobs defined in another workflow.
 
@@ -78,11 +100,11 @@ jobs:
     steps:
       - name: Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v1.5.1
-      - uses: actions/checkout@v3
+        uses: dependabot/fetch-metadata@v1.6.0
+      - uses: actions/checkout@v4
       - name: Wait for other jobs to pass or fail
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
-        uses: kachick/wait-other-jobs@v1.3.0
+        uses: kachick/wait-other-jobs@v2.0.0
         timeout-minutes: 10
       - name: Approve and merge
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
@@ -95,9 +117,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Wait for other jobs to pass or fail
-        uses: kachick/wait-other-jobs@v1.3.0
+        uses: kachick/wait-other-jobs@v2.0.0
         timeout-minutes: 10
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
@@ -110,6 +132,9 @@ jobs:
 
 Judge OK or Bad with the checkRun state at the moment.\
 When some jobs will be triggered after this action with `needs: [distant-first]`, it might be unaccurate. (I didn't faced yet)
+
+If any workflow starts many jobs as 100+, this action does not support it.\
+Because of nested paging in GraphQL makes complex. See [related docs](https://github.com/octokit/plugin-paginate-graphql.js/blob/a6b12e867466b0c583b002acd1cb1ed90b11841f/README.md#L184-L218) for further detail.
 
 ## GITHUB_TOKEN vs PAT
 

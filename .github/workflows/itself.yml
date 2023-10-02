@@ -43,3 +43,45 @@ jobs:
           retry-method: 'equal_intervals'
           min-interval-seconds: 10
           attempt-limits: 60
+  wait-list:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          retry-method: 'equal_intervals'
+          min-interval-seconds: 5
+          attempt-limits: 30
+          wait-list: |
+            [
+              {
+                "workflowFile": "lint.yml"
+              },
+              {
+                "workflowFile": "merge-bot-pr.yml",
+                "jobName": "dependabot"
+              }
+            ]
+  skip-list:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          retry-method: 'equal_intervals'
+          min-interval-seconds: 5
+          attempt-limits: 30
+          skip-list: |
+            [
+              {
+                "workflowFile": "ci.yml"
+              },
+              {
+                "workflowFile": "merge-bot-pr.yml",
+                "jobName": "dependabot"
+              }
+            ]

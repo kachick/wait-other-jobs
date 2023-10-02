@@ -1,107 +1,180 @@
-import type { getOctokit } from '@actions/github';
-import type { Endpoints } from '@octokit/types';
+import { Octokit } from '@octokit/core';
+import { paginateGraphql } from '@octokit/plugin-paginate-graphql';
+import { CheckSuite, Workflow, CheckRun, Commit } from '@octokit/graphql-schema';
+import { join, relative } from 'path';
+import { z } from 'zod';
 
-type Octokit = ReturnType<typeof getOctokit>;
+const PaginatableOctokit = Octokit.plugin(paginateGraphql);
 
-// REST: https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
-// GitHub does not provide to get job_id, we should get from the run_id https://github.com/actions/starter-workflows/issues/292#issuecomment-922372823
-const listWorkflowRunsRoute = 'GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs' as const;
-type ListWorkflowRunsRoute = typeof listWorkflowRunsRoute;
-type ListWorkflowRunsResponse = Endpoints[ListWorkflowRunsRoute]['response'];
-type ListWorkflowRunsParams = Endpoints[ListWorkflowRunsRoute]['parameters'];
+const ListItem = z.object({
+  workflowFile: z.string().endsWith('.yml'),
+  jobName: (z.string().min(1)).optional(),
+});
+export const List = z.array(ListItem);
 
-type JobID = ListWorkflowRunsResponse['data']['jobs'][number]['id'];
+interface Summary {
+  acceptable: boolean; // Set by us
+  workflowPath: string; // Set by us
 
-// REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
-// At 2022-05-27, GitHub does not provide this feature in their v4(GraphQL). So using v3(REST).
-// Track the development status here https://github.community/t/graphql-check-runs/14449
-const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs' as const;
-type CheckRunsRoute = typeof checkRunsRoute;
-type CheckRunsParams = Endpoints[CheckRunsRoute]['parameters'];
-type CheckRunsResponse = Endpoints[CheckRunsRoute]['response'];
-type CheckRunsSummarySource = Pick<
-  CheckRunsResponse['data']['check_runs'][number],
-  'id' | 'status' | 'conclusion' | 'started_at' | 'completed_at' | 'html_url' | 'name'
->;
-interface CheckRunsSummary {
-  source: CheckRunsSummarySource;
-  acceptable: boolean;
+  checkSuiteStatus: CheckSuite['status'];
+  checkSuiteConclusion: CheckSuite['conclusion'];
+
+  workflowName: Workflow['name'];
+
+  runDatabaseId: CheckRun['databaseId'];
+  jobName: CheckRun['name'];
+  checkRunUrl: CheckRun['detailsUrl'];
+  runStatus: CheckRun['status'];
+  runConclusion: CheckRun['conclusion']; // null if status is in progress
+}
+
+export async function getCheckRunSummaries(
+  token: string,
+  params: { owner: string; repo: string; ref: string; triggerRunId: number },
+): Promise<Array<Summary>> {
+  const octokit = new PaginatableOctokit({ auth: token });
+  const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate<
+    { repository: { object: { checkSuites: Commit['checkSuites'] } } }
+  >(
+    `
+    query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!, $cursor: String) {
+      repository(owner: $owner, name: $repo) {
+        object(expression: $commitSha) {
+          ... on Commit {
+            checkSuites(first: 100, after: $cursor) {
+              totalCount
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                status
+                conclusion
+                workflowRun {
+                  databaseId
+                  workflow {
+                    name
+                    resourcePath
+                  }
+                }
+                checkRuns(first: 100) {
+                  totalCount
+                  pageInfo {
+                    hasNextPage
+                    endCursor
+                  }
+                  nodes {
+                    databaseId
+                    name
+                    status
+                    detailsUrl
+                    conclusion
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `,
+    {
+      owner: params.owner,
+      repo: params.repo,
+      commitSha: params.ref,
+    },
+  );
+
+  const checkSuiteNodes = checkSuites?.nodes?.flatMap((node) => node ? [node] : []);
+  if (!checkSuiteNodes) {
+    throw new Error('no checkSuiteNodes');
+  }
+
+  const summaries = checkSuiteNodes.flatMap((checkSuite) => {
+    const workflow = checkSuite.workflowRun?.workflow;
+    if (!workflow) {
+      return [];
+    }
+
+    if (checkSuite.workflowRun?.databaseId === params.triggerRunId) {
+      return [];
+    }
+
+    const checkRuns = checkSuite?.checkRuns;
+    if (!checkRuns) {
+      throw new Error('no checkRuns');
+    }
+
+    if (checkRuns.totalCount > 100) {
+      throw new Error('exceeded checkable runs limit');
+    }
+
+    const runNodes = checkRuns.nodes?.flatMap((node) => node ? [node] : []);
+    if (!runNodes) {
+      throw new Error('no runNodes');
+    }
+
+    return runNodes.map((run) => ({
+      acceptable: run.conclusion == 'SUCCESS' || run.conclusion === 'SKIPPED' || checkSuite.conclusion === 'SKIPPED',
+      workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
+
+      checkSuiteStatus: checkSuite.status,
+      checkSuiteConclusion: checkSuite.conclusion,
+
+      runDatabaseId: run.databaseId,
+      workflowName: workflow.name,
+      jobName: run.name,
+      checkRunUrl: run.detailsUrl,
+      runStatus: run.status,
+      runConclusion: run.conclusion,
+    }));
+  });
+
+  return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
 }
 
 // No need to keep as same as GitHub responses so We can change the definition.
 interface Report {
   progress: 'in_progress' | 'done';
   conclusion: 'acceptable' | 'bad';
-  summaries: CheckRunsSummary[];
-}
-
-function isAcceptable(conclusion: CheckRunsSummarySource['conclusion']): boolean {
-  return conclusion === 'success' || conclusion === 'skipped';
-}
-
-export async function fetchJobIDs(
-  octokit: Octokit,
-  params: Readonly<Pick<ListWorkflowRunsParams, 'owner' | 'repo' | 'run_id'>>,
-): Promise<Set<JobID>> {
-  return new Set(
-    await octokit.paginate(
-      octokit.rest.actions.listJobsForWorkflowRun,
-      {
-        ...params,
-        per_page: 100,
-        filter: 'latest',
-      },
-      (resp) => resp.data.map((job) => job.id),
-    ),
-  );
-}
-
-async function fetchRunSummaries(
-  octokit: Octokit,
-  params: Readonly<Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>>,
-): Promise<CheckRunsSummary[]> {
-  return await octokit.paginate(
-    octokit.rest.checks.listForRef,
-    {
-      ...params,
-      per_page: 100,
-      filter: 'latest',
-    },
-    (resp) =>
-      resp.data.map((checkRun) =>
-        (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
-          source: {
-            id,
-            status,
-            conclusion,
-            started_at,
-            completed_at,
-            html_url,
-            name,
-          },
-          acceptable: isAcceptable(conclusion),
-        }))(checkRun)
-      ).sort((a, b) => a.source.id - b.source.id),
-  );
+  summaries: Summary[];
 }
 
 export async function fetchOtherRunStatus(
-  octokit: Parameters<typeof fetchRunSummaries>[0],
-  params: Parameters<typeof fetchRunSummaries>[1],
-  ownJobIDs: Readonly<Set<JobID>>,
+  token: string,
+  params: Parameters<typeof getCheckRunSummaries>[1],
+  waitList: z.infer<typeof List>,
+  skipList: z.infer<typeof List>,
 ): Promise<Report> {
-  const checkRunSummaries = await fetchRunSummaries(octokit, params);
-  const otherRelatedRuns = checkRunSummaries.flatMap<CheckRunsSummary>((summary) =>
-    ownJobIDs.has(summary.source.id) ? [] : [summary]
-  );
-  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.source.status === 'completed');
+  if (waitList.length > 0 && skipList.length > 0) {
+    throw new Error('Do not specify both wait-list and skip-list');
+  }
 
-  const progress: Report['progress'] = otherRelatedCompletedRuns.length === otherRelatedRuns.length
+  let checkRunSummaries = await getCheckRunSummaries(token, params);
+
+  if (waitList.length > 0) {
+    checkRunSummaries = checkRunSummaries.filter((summary) =>
+      waitList.some((target) =>
+        target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
+      )
+    );
+  }
+  if (skipList.length > 0) {
+    checkRunSummaries = checkRunSummaries.filter((summary) =>
+      !skipList.some((target) =>
+        target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
+      )
+    );
+  }
+
+  const completedRuns = checkRunSummaries.filter((summary) => summary.runStatus === 'COMPLETED');
+
+  const progress: Report['progress'] = completedRuns.length === checkRunSummaries.length
     ? 'done'
     : 'in_progress';
-  const conclusion: Report['conclusion'] = otherRelatedCompletedRuns.every((summary) => summary.acceptable)
+  const conclusion: Report['conclusion'] = completedRuns.every((summary) => summary.acceptable)
     ? 'acceptable'
     : 'bad';
 
-  return { progress, conclusion, summaries: otherRelatedRuns };
+  return { progress, conclusion, summaries: checkRunSummaries };
 }

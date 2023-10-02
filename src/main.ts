@@ -10,13 +10,13 @@ import {
   endGroup,
   error,
 } from '@actions/core';
-import { getOctokit, context } from '@actions/github';
+import { context } from '@actions/github';
 import styles from 'ansi-styles';
 const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`);
 const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
 const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
-import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
+import { List, fetchOtherRunStatus } from './github-api.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
 
 async function run(): Promise<void> {
@@ -63,19 +63,27 @@ async function run(): Promise<void> {
     getInput('attempt-limits', { required: true, trimWhitespace: true }),
     10,
   );
+  const waitList = List.parse(JSON.parse(getInput('wait-list', { required: true })));
+  const skipList = List.parse(JSON.parse(getInput('skip-list', { required: true })));
+  if (waitList.length > 0 && skipList.length > 0) {
+    error('Do not specify both wait-list and skip-list');
+    setFailed('Specified both list');
+  }
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
 
   info(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
-      ownRunId: runId,
+      runId,
       repositoryInfo,
       minIntervalSeconds,
       retryMethod,
       attemptLimits,
       isEarlyExit,
       isDryRun,
+      waitList,
+      skipList,
       // Of course, do NOT include tokens here.
     },
     null,
@@ -85,7 +93,6 @@ async function run(): Promise<void> {
   // `getIDToken` does not fit for this purpose. It is provided for OIDC Token
   const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
   setSecret(githubToken);
-  const octokit = getOctokit(githubToken);
 
   let attempts = 0;
   let shouldStop = false;
@@ -95,13 +102,6 @@ async function run(): Promise<void> {
   if (isDryRun) {
     return;
   }
-
-  startGroup('Get own job_id');
-
-  const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
-  info(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
-
-  endGroup();
 
   for (;;) {
     attempts += 1;
@@ -115,19 +115,29 @@ async function run(): Promise<void> {
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
 
     const report = await fetchOtherRunStatus(
-      octokit,
-      { ...repositoryInfo, ref: commitSha },
-      ownJobIDs,
+      githubToken,
+      { ...repositoryInfo, ref: commitSha, triggerRunId: runId },
+      waitList,
+      skipList,
     );
 
     for (const summary of report.summaries) {
-      const { acceptable, source: { id, status, conclusion, name, html_url } } = summary;
+      const {
+        acceptable,
+        checkSuiteStatus,
+        checkSuiteConclusion,
+        runStatus,
+        runConclusion,
+        jobName,
+        workflowPath,
+        checkRunUrl,
+      } = summary;
       const nullStr = '(null)';
-      const nullHandledConclusion = conclusion ?? nullStr;
+
       info(
-        `${id} - ${colorize(status, status === 'completed')} - ${
-          colorize(nullHandledConclusion, acceptable)
-        }: ${name} - ${html_url ?? nullStr}`,
+        `${workflowPath}(${colorize(`${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${
+          checkSuiteConclusion ?? nullStr
+        }][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`,
       );
     }
 
