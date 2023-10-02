@@ -7886,11 +7886,11 @@ async function fetchGraphQl(octokit, params) {
     }
     const runs = checkSuite.checkRuns?.nodes;
     if (!runs) {
-      throw new Error("no runs");
+      continue;
     }
     for (const run2 of runs) {
       if (!run2) {
-        throw new Error("no run");
+        continue;
       }
       runIdToSummary.set(run2.id, {
         acceptable: run2.conclusion == "SUCCESS" || run2.conclusion == "SKIPPED",

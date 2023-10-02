@@ -90,11 +90,13 @@ export async function fetchGraphQl(
     }
     const runs = checkSuite.checkRuns?.nodes;
     if (!runs) {
-      throw new Error('no runs');
+      // throw new Error('no runs');
+      continue;
     }
     for (const run of runs) {
       if (!run) {
-        throw new Error('no run');
+        // throw new Error('no run');
+        continue;
       }
       runIdToSummary.set(run.id, {
         acceptable: run.conclusion == 'SUCCESS' || run.conclusion == 'SKIPPED',
