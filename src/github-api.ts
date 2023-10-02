@@ -5,23 +5,24 @@ import type { Endpoints } from '@octokit/types';
 import schema from '@octokit/graphql-schema';
 import { error } from '@actions/core';
 import { relative } from 'path';
-import { info } from 'console';
 
 interface Summary {
   acceptable: boolean; // Set by us
   workflowPath: string; // Set by us
 
   workflowName: schema.Workflow['name'];
+
+  runDatabaseId: schema.CheckRun['databaseId'];
   jobName: schema.CheckRun['name'];
   checkRunUrl: schema.CheckRun['detailsUrl'];
   status: schema.CheckRun['status'];
   conclusion: schema.CheckRun['conclusion']; // null if status is in progress
 }
 
-export async function fetchGraphQl(
+export async function getCheckRunSummaries(
   octokit: Octokit,
   params: { 'owner': string; 'repo': string; ref: string },
-): Promise<Map<schema.CheckRun['id'], Summary>> {
+): Promise<Array<Summary>> {
   const { repository: { object: { checkSuites } } } = await octokit.graphql<
     { repository: { object: { checkSuites: schema.Commit['checkSuites'] } } }
   >(
@@ -38,6 +39,7 @@ export async function fetchGraphQl(
                   workflowRun {
                     createdAt
                     workflow {
+                      databaseId
                       name
                       resourcePath
                       url
@@ -46,7 +48,7 @@ export async function fetchGraphQl(
                   checkRuns(first: 100) {
                     edges {
                       node {
-                        id
+                        databaseId
                         name
                         status
                       	detailsUrl
@@ -81,18 +83,18 @@ export async function fetchGraphQl(
     error('Cannot correctly get via GraphQL');
     throw new Error('no edges');
   }
-  const css = edges.flatMap((edge) => {
+  const checkSuiteNodes = edges.flatMap((edge) => {
     const node = edge?.node;
     return node ? [node] : [];
   });
 
-  const runIdToSummary = new Map<schema.CheckRun['id'], Summary>();
+  // const runIdToSummary = new Map<schema.CheckRun['id'], Summary>();
 
-  for (const checkSuite of css) {
+  const summaries = checkSuiteNodes.flatMap((checkSuite) => {
+    checkSuite.conclusion;
     const workflow = checkSuite.workflowRun?.workflow;
     if (!workflow) {
-      info('skip', checkSuite);
-      continue;
+      return [];
     }
     const runEdges = checkSuite.checkRuns?.edges;
     if (!runEdges) {
@@ -103,21 +105,52 @@ export async function fetchGraphQl(
       const node = edge?.node;
       return node ? [node] : [];
     });
-    for (const run of runs) {
-      runIdToSummary.set(run.id, {
-        acceptable: run.conclusion == 'SUCCESS' || run.conclusion == 'SKIPPED',
-        workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
 
-        workflowName: workflow.name,
-        jobName: run.name,
-        checkRunUrl: run.detailsUrl,
-        status: run.status,
-        conclusion: run.conclusion,
-      });
-    }
-  }
+    return runs.map((run) => ({
+      acceptable: run.conclusion == 'SUCCESS' || run.conclusion == 'SKIPPED',
+      workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
 
-  return runIdToSummary;
+      runDatabaseId: run.databaseId,
+      workflowName: workflow.name,
+      jobName: run.name,
+      checkRunUrl: run.detailsUrl,
+      status: run.status,
+      conclusion: run.conclusion,
+    }));
+  });
+
+  return summaries.toSorted((a, b) => a.workflowPath.localeCompare(b.workflowPath));
+
+  // for (const checkSuite of checkSuiteNodes) {
+  //   const workflow = checkSuite.workflowRun?.workflow;
+  //   if (!workflow) {
+  //     info('skip', checkSuite);
+  //     continue;
+  //   }
+  //   const runEdges = checkSuite.checkRuns?.edges;
+  //   if (!runEdges) {
+  //     error('Cannot correctly get via GraphQL');
+  //     throw new Error('no edges');
+  //   }
+  //   const runs = runEdges.flatMap((edge) => {
+  //     const node = edge?.node;
+  //     return node ? [node] : [];
+  //   });
+  //   for (const run of runs) {
+  //     runIdToSummary.set(run.id, {
+  //       acceptable: run.conclusion == 'SUCCESS' || run.conclusion == 'SKIPPED',
+  //       workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
+
+  //       workflowName: workflow.name,
+  //       jobName: run.name,
+  //       checkRunUrl: run.detailsUrl,
+  //       status: run.status,
+  //       conclusion: run.conclusion,
+  //     });
+  //   }
+  // }
+
+  // return runIdToSummary;
 }
 
 type Octokit = ReturnType<typeof getOctokit>;
@@ -131,31 +164,11 @@ type ListWorkflowRunsParams = Endpoints[ListWorkflowRunsRoute]['parameters'];
 
 type JobID = ListWorkflowRunsResponse['data']['jobs'][number]['id'];
 
-// REST: https://docs.github.com/en/rest/checks/runs#list-check-runs-for-a-git-reference
-// At 2022-05-27, GitHub does not provide this feature in their v4(GraphQL). So using v3(REST).
-// Track the development status here https://github.community/t/graphql-check-runs/14449
-const checkRunsRoute = 'GET /repos/{owner}/{repo}/commits/{ref}/check-runs' as const;
-type CheckRunsRoute = typeof checkRunsRoute;
-type CheckRunsParams = Endpoints[CheckRunsRoute]['parameters'];
-type CheckRunsResponse = Endpoints[CheckRunsRoute]['response'];
-type CheckRunsSummarySource = Pick<
-  CheckRunsResponse['data']['check_runs'][number],
-  'id' | 'status' | 'conclusion' | 'started_at' | 'completed_at' | 'html_url' | 'name'
->;
-interface CheckRunsSummary {
-  source: CheckRunsSummarySource;
-  acceptable: boolean;
-}
-
 // No need to keep as same as GitHub responses so We can change the definition.
 interface Report {
   progress: 'in_progress' | 'done';
   conclusion: 'acceptable' | 'bad';
-  summaries: CheckRunsSummary[];
-}
-
-function isAcceptable(conclusion: CheckRunsSummarySource['conclusion']): boolean {
-  return conclusion === 'success' || conclusion === 'skipped';
+  summaries: Summary[];
 }
 
 export async function fetchJobIDs(
@@ -175,45 +188,16 @@ export async function fetchJobIDs(
   );
 }
 
-async function fetchRunSummaries(
-  octokit: Octokit,
-  params: Readonly<Pick<CheckRunsParams, 'owner' | 'repo' | 'ref'>>,
-): Promise<CheckRunsSummary[]> {
-  return await octokit.paginate(
-    octokit.rest.checks.listForRef,
-    {
-      ...params,
-      per_page: 100,
-      filter: 'latest',
-    },
-    (resp) =>
-      resp.data.map((checkRun) =>
-        (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
-          source: {
-            id,
-            status,
-            conclusion,
-            started_at,
-            completed_at,
-            html_url,
-            name,
-          },
-          acceptable: isAcceptable(conclusion),
-        }))(checkRun)
-      ).sort((a, b) => a.source.id - b.source.id),
-  );
-}
-
 export async function fetchOtherRunStatus(
-  octokit: Parameters<typeof fetchRunSummaries>[0],
-  params: Parameters<typeof fetchRunSummaries>[1],
+  octokit: Parameters<typeof getCheckRunSummaries>[0],
+  params: Parameters<typeof getCheckRunSummaries>[1],
   ownJobIDs: Readonly<Set<JobID>>,
 ): Promise<Report> {
-  const checkRunSummaries = await fetchRunSummaries(octokit, params);
-  const otherRelatedRuns = checkRunSummaries.flatMap<CheckRunsSummary>((summary) =>
-    ownJobIDs.has(summary.source.id) ? [] : [summary]
+  const checkRunSummaries = await getCheckRunSummaries(octokit, params);
+  const otherRelatedRuns = checkRunSummaries.flatMap((summary) =>
+    summary.runDatabaseId ? (ownJobIDs.has(summary.runDatabaseId) ? [] : [summary]) : []
   );
-  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.source.status === 'completed');
+  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.status === 'COMPLETED');
 
   const progress: Report['progress'] = otherRelatedCompletedRuns.length === otherRelatedRuns.length
     ? 'done'

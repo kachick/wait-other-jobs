@@ -16,7 +16,7 @@ const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.c
 const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
 const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
-import { fetchGraphQl, fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
+import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
 
 async function run(): Promise<void> {
@@ -103,14 +103,14 @@ async function run(): Promise<void> {
 
   endGroup();
 
-  const runIdToSummary = await fetchGraphQl(octokit, { ...repositoryInfo, ref: commitSha });
+  // const runIdToSummary = await getCheckRunSummaries(octokit, { ...repositoryInfo, ref: commitSha });
   // info(JSON.stringify(gqlRet));
   // if (!gqlRet) {
   //   error('Cannot correctly get via GraphQL');
   //   return;
   // }
   // const nodes = gqlRet.edges?.flatMap((edge) => edge ? [edge] : []);
-  info(JSON.stringify(['debug the gathered map', runIdToSummary.size, Object.fromEntries(runIdToSummary)]));
+  // info(JSON.stringify(['debug the gathered map', runIdToSummary.size, Object.fromEntries(runIdToSummary)]));
 
   for (;;) {
     attempts += 1;
@@ -130,13 +130,14 @@ async function run(): Promise<void> {
     );
 
     for (const summary of report.summaries) {
-      const { acceptable, source: { id, status, conclusion, name, html_url } } = summary;
+      const { acceptable, runDatabaseId, status, conclusion, workflowName, jobName, workflowPath, checkRunUrl } =
+        summary;
       const nullStr = '(null)';
       const nullHandledConclusion = conclusion ?? nullStr;
       info(
-        `${id} - ${colorize(status, status === 'completed')} - ${
+        `${runDatabaseId} - ${colorize(status, status === 'COMPLETED')} - ${
           colorize(nullHandledConclusion, acceptable)
-        }: ${name} - ${html_url ?? nullStr}`,
+        }: ${workflowPath}(${workflowName}/${jobName}) - ${checkRunUrl}`,
       );
     }
 

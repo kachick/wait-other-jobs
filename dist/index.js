@@ -1142,12 +1142,12 @@ var require_lib = __commonJS({
             throw new Error("Client has already been disposed.");
           }
           const parsedUrl = new URL(requestUrl);
-          let info3 = this._prepareRequest(verb, parsedUrl, headers);
+          let info2 = this._prepareRequest(verb, parsedUrl, headers);
           const maxTries = this._allowRetries && RetryableHttpVerbs.includes(verb) ? this._maxRetries + 1 : 1;
           let numTries = 0;
           let response;
           do {
-            response = yield this.requestRaw(info3, data);
+            response = yield this.requestRaw(info2, data);
             if (response && response.message && response.message.statusCode === HttpCodes.Unauthorized) {
               let authenticationHandler;
               for (const handler of this.handlers) {
@@ -1157,7 +1157,7 @@ var require_lib = __commonJS({
                 }
               }
               if (authenticationHandler) {
-                return authenticationHandler.handleAuthentication(this, info3, data);
+                return authenticationHandler.handleAuthentication(this, info2, data);
               } else {
                 return response;
               }
@@ -1180,8 +1180,8 @@ var require_lib = __commonJS({
                   }
                 }
               }
-              info3 = this._prepareRequest(verb, parsedRedirectUrl, headers);
-              response = yield this.requestRaw(info3, data);
+              info2 = this._prepareRequest(verb, parsedRedirectUrl, headers);
+              response = yield this.requestRaw(info2, data);
               redirectsRemaining--;
             }
             if (!response.message.statusCode || !HttpResponseRetryCodes.includes(response.message.statusCode)) {
@@ -1210,7 +1210,7 @@ var require_lib = __commonJS({
        * @param info
        * @param data
        */
-      requestRaw(info3, data) {
+      requestRaw(info2, data) {
         return __awaiter(this, void 0, void 0, function* () {
           return new Promise((resolve, reject) => {
             function callbackForResult(err, res) {
@@ -1222,7 +1222,7 @@ var require_lib = __commonJS({
                 resolve(res);
               }
             }
-            this.requestRawWithCallback(info3, data, callbackForResult);
+            this.requestRawWithCallback(info2, data, callbackForResult);
           });
         });
       }
@@ -1232,12 +1232,12 @@ var require_lib = __commonJS({
        * @param data
        * @param onResult
        */
-      requestRawWithCallback(info3, data, onResult) {
+      requestRawWithCallback(info2, data, onResult) {
         if (typeof data === "string") {
-          if (!info3.options.headers) {
-            info3.options.headers = {};
+          if (!info2.options.headers) {
+            info2.options.headers = {};
           }
-          info3.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
+          info2.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
         }
         let callbackCalled = false;
         function handleResult(err, res) {
@@ -1246,7 +1246,7 @@ var require_lib = __commonJS({
             onResult(err, res);
           }
         }
-        const req = info3.httpModule.request(info3.options, (msg) => {
+        const req = info2.httpModule.request(info2.options, (msg) => {
           const res = new HttpClientResponse(msg);
           handleResult(void 0, res);
         });
@@ -1258,7 +1258,7 @@ var require_lib = __commonJS({
           if (socket) {
             socket.end();
           }
-          handleResult(new Error(`Request timeout: ${info3.options.path}`));
+          handleResult(new Error(`Request timeout: ${info2.options.path}`));
         });
         req.on("error", function(err) {
           handleResult(err);
@@ -1285,27 +1285,27 @@ var require_lib = __commonJS({
         return this._getAgent(parsedUrl);
       }
       _prepareRequest(method, requestUrl, headers) {
-        const info3 = {};
-        info3.parsedUrl = requestUrl;
-        const usingSsl = info3.parsedUrl.protocol === "https:";
-        info3.httpModule = usingSsl ? https : http;
+        const info2 = {};
+        info2.parsedUrl = requestUrl;
+        const usingSsl = info2.parsedUrl.protocol === "https:";
+        info2.httpModule = usingSsl ? https : http;
         const defaultPort = usingSsl ? 443 : 80;
-        info3.options = {};
-        info3.options.host = info3.parsedUrl.hostname;
-        info3.options.port = info3.parsedUrl.port ? parseInt(info3.parsedUrl.port) : defaultPort;
-        info3.options.path = (info3.parsedUrl.pathname || "") + (info3.parsedUrl.search || "");
-        info3.options.method = method;
-        info3.options.headers = this._mergeHeaders(headers);
+        info2.options = {};
+        info2.options.host = info2.parsedUrl.hostname;
+        info2.options.port = info2.parsedUrl.port ? parseInt(info2.parsedUrl.port) : defaultPort;
+        info2.options.path = (info2.parsedUrl.pathname || "") + (info2.parsedUrl.search || "");
+        info2.options.method = method;
+        info2.options.headers = this._mergeHeaders(headers);
         if (this.userAgent != null) {
-          info3.options.headers["user-agent"] = this.userAgent;
+          info2.options.headers["user-agent"] = this.userAgent;
         }
-        info3.options.agent = this._getAgent(info3.parsedUrl);
+        info2.options.agent = this._getAgent(info2.parsedUrl);
         if (this.handlers) {
           for (const handler of this.handlers) {
-            handler.prepareRequest(info3.options);
+            handler.prepareRequest(info2.options);
           }
         }
-        return info3;
+        return info2;
       }
       _mergeHeaders(headers) {
         if (this.requestOptions && this.requestOptions.headers) {
@@ -2149,10 +2149,10 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issueCommand("notice", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
     exports.notice = notice;
-    function info3(message) {
+    function info2(message) {
       process.stdout.write(message + os.EOL);
     }
-    exports.info = info3;
+    exports.info = info2;
     function startGroup2(name) {
       command_1.issue("group", name);
     }
@@ -7822,8 +7822,7 @@ var ansi_styles_default = ansiStyles;
 // src/github-api.ts
 var import_core = __toESM(require_core(), 1);
 import { relative } from "path";
-import { info } from "console";
-async function fetchGraphQl(octokit, params) {
+async function getCheckRunSummaries(octokit, params) {
   const { repository: { object: { checkSuites } } } = await octokit.graphql(
     `
     query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!) {
@@ -7838,6 +7837,7 @@ async function fetchGraphQl(octokit, params) {
                   workflowRun {
                     createdAt
                     workflow {
+                      databaseId
                       name
                       resourcePath
                       url
@@ -7846,7 +7846,7 @@ async function fetchGraphQl(octokit, params) {
                   checkRuns(first: 100) {
                     edges {
                       node {
-                        id
+                        databaseId
                         name
                         status
                       	detailsUrl
@@ -7875,16 +7875,15 @@ async function fetchGraphQl(octokit, params) {
     (0, import_core.error)("Cannot correctly get via GraphQL");
     throw new Error("no edges");
   }
-  const css = edges.flatMap((edge) => {
+  const checkSuiteNodes = edges.flatMap((edge) => {
     const node = edge?.node;
     return node ? [node] : [];
   });
-  const runIdToSummary = /* @__PURE__ */ new Map();
-  for (const checkSuite of css) {
+  const summaries = checkSuiteNodes.flatMap((checkSuite) => {
+    checkSuite.conclusion;
     const workflow = checkSuite.workflowRun?.workflow;
     if (!workflow) {
-      info("skip", checkSuite);
-      continue;
+      return [];
     }
     const runEdges = checkSuite.checkRuns?.edges;
     if (!runEdges) {
@@ -7895,22 +7894,18 @@ async function fetchGraphQl(octokit, params) {
       const node = edge?.node;
       return node ? [node] : [];
     });
-    for (const run2 of runs) {
-      runIdToSummary.set(run2.id, {
-        acceptable: run2.conclusion == "SUCCESS" || run2.conclusion == "SKIPPED",
-        workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
-        workflowName: workflow.name,
-        jobName: run2.name,
-        checkRunUrl: run2.detailsUrl,
-        status: run2.status,
-        conclusion: run2.conclusion
-      });
-    }
-  }
-  return runIdToSummary;
-}
-function isAcceptable(conclusion) {
-  return conclusion === "success" || conclusion === "skipped";
+    return runs.map((run2) => ({
+      acceptable: run2.conclusion == "SUCCESS" || run2.conclusion == "SKIPPED",
+      workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
+      runDatabaseId: run2.databaseId,
+      workflowName: workflow.name,
+      jobName: run2.name,
+      checkRunUrl: run2.detailsUrl,
+      status: run2.status,
+      conclusion: run2.conclusion
+    }));
+  });
+  return summaries.toSorted((a, b) => a.workflowPath.localeCompare(b.workflowPath));
 }
 async function fetchJobIDs(octokit, params) {
   return new Set(
@@ -7925,36 +7920,12 @@ async function fetchJobIDs(octokit, params) {
     )
   );
 }
-async function fetchRunSummaries(octokit, params) {
-  return await octokit.paginate(
-    octokit.rest.checks.listForRef,
-    {
-      ...params,
-      per_page: 100,
-      filter: "latest"
-    },
-    (resp) => resp.data.map(
-      (checkRun) => (({ id, status, conclusion, started_at, completed_at, html_url, name }) => ({
-        source: {
-          id,
-          status,
-          conclusion,
-          started_at,
-          completed_at,
-          html_url,
-          name
-        },
-        acceptable: isAcceptable(conclusion)
-      }))(checkRun)
-    ).sort((a, b) => a.source.id - b.source.id)
-  );
-}
 async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
-  const checkRunSummaries = await fetchRunSummaries(octokit, params);
+  const checkRunSummaries = await getCheckRunSummaries(octokit, params);
   const otherRelatedRuns = checkRunSummaries.flatMap(
-    (summary) => ownJobIDs.has(summary.source.id) ? [] : [summary]
+    (summary) => summary.runDatabaseId ? ownJobIDs.has(summary.runDatabaseId) ? [] : [summary] : []
   );
-  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.source.status === "completed");
+  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.status === "COMPLETED");
   const progress = otherRelatedCompletedRuns.length === otherRelatedRuns.length ? "done" : "in_progress";
   const conclusion = otherRelatedCompletedRuns.every((summary) => summary.acceptable) ? "acceptable" : "bad";
   return { progress, conclusion, summaries: otherRelatedRuns };
@@ -8078,8 +8049,6 @@ async function run() {
   const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
   (0, import_core2.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
   (0, import_core2.endGroup)();
-  const runIdToSummary = await fetchGraphQl(octokit, { ...repositoryInfo, ref: commitSha });
-  (0, import_core2.info)(JSON.stringify(["debug the gathered map", runIdToSummary.size, Object.fromEntries(runIdToSummary)]));
   for (; ; ) {
     attempts += 1;
     if (attempts > attemptLimits) {
@@ -8096,11 +8065,11 @@ async function run() {
       ownJobIDs
     );
     for (const summary of report.summaries) {
-      const { acceptable, source: { id, status, conclusion: conclusion2, name, html_url } } = summary;
+      const { acceptable, runDatabaseId, status, conclusion: conclusion2, workflowName, jobName, workflowPath, checkRunUrl } = summary;
       const nullStr = "(null)";
       const nullHandledConclusion = conclusion2 ?? nullStr;
       (0, import_core2.info)(
-        `${id} - ${colorize(status, status === "completed")} - ${colorize(nullHandledConclusion, acceptable)}: ${name} - ${html_url ?? nullStr}`
+        `${runDatabaseId} - ${colorize(status, status === "COMPLETED")} - ${colorize(nullHandledConclusion, acceptable)}: ${workflowPath}(${workflowName}/${jobName}) - ${checkRunUrl}`
       );
     }
     if ((0, import_core2.isDebug)()) {
