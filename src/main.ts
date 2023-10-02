@@ -16,7 +16,7 @@ const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.c
 const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
 const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
-import { fetchJobIDs, fetchOtherRunStatus } from './github-api.js';
+import { fetchOtherRunStatus } from './github-api.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
 
 async function run(): Promise<void> {
@@ -69,7 +69,7 @@ async function run(): Promise<void> {
   info(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
-      ownRunId: runId,
+      runId,
       repositoryInfo,
       minIntervalSeconds,
       retryMethod,
@@ -96,13 +96,6 @@ async function run(): Promise<void> {
     return;
   }
 
-  startGroup('Get own job_id');
-
-  const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
-  info(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
-
-  endGroup();
-
   for (;;) {
     attempts += 1;
     if (attempts > attemptLimits) {
@@ -116,8 +109,7 @@ async function run(): Promise<void> {
 
     const report = await fetchOtherRunStatus(
       octokit,
-      { ...repositoryInfo, ref: commitSha },
-      ownJobIDs,
+      { ...repositoryInfo, ref: commitSha, triggerRunId: runId },
     );
 
     for (const summary of report.summaries) {

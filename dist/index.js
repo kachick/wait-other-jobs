@@ -7834,9 +7834,8 @@ async function getCheckRunSummaries(octokit, params) {
                 status
                 conclusion
                 workflowRun {
-                  createdAt
+                  databaseId
                   workflow {
-                    databaseId
                     name
                     resourcePath
                   }
@@ -7873,6 +7872,9 @@ async function getCheckRunSummaries(octokit, params) {
     if (!workflow) {
       return [];
     }
+    if (checkSuite.workflowRun?.databaseId === params.triggerRunId) {
+      return [];
+    }
     const runNodes = checkSuite?.checkRuns?.nodes?.flatMap((node) => node ? [node] : []);
     if (!runNodes) {
       (0, import_core.error)("Cannot correctly get via GraphQL");
@@ -7893,28 +7895,12 @@ async function getCheckRunSummaries(octokit, params) {
   });
   return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
 }
-async function fetchJobIDs(octokit, params) {
-  return new Set(
-    await octokit.paginate(
-      octokit.rest.actions.listJobsForWorkflowRun,
-      {
-        ...params,
-        per_page: 100,
-        filter: "latest"
-      },
-      (resp) => resp.data.map((job) => job.id)
-    )
-  );
-}
-async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
+async function fetchOtherRunStatus(octokit, params) {
   const checkRunSummaries = await getCheckRunSummaries(octokit, params);
-  const otherRelatedRuns = checkRunSummaries.flatMap(
-    (summary) => summary.runDatabaseId ? ownJobIDs.has(summary.runDatabaseId) ? [] : [summary] : []
-  );
-  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.runStatus === "COMPLETED");
-  const progress = otherRelatedCompletedRuns.length === otherRelatedRuns.length ? "done" : "in_progress";
-  const conclusion = otherRelatedCompletedRuns.every((summary) => summary.acceptable) ? "acceptable" : "bad";
-  return { progress, conclusion, summaries: otherRelatedRuns };
+  const completedRuns = checkRunSummaries.filter((summary) => summary.runStatus === "COMPLETED");
+  const progress = completedRuns.length === checkRunSummaries.length ? "done" : "in_progress";
+  const conclusion = completedRuns.every((summary) => summary.acceptable) ? "acceptable" : "bad";
+  return { progress, conclusion, summaries: checkRunSummaries };
 }
 
 // src/wait.ts
@@ -8010,7 +7996,7 @@ async function run() {
   (0, import_core2.info)(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
-      ownRunId: runId,
+      runId,
       repositoryInfo,
       minIntervalSeconds,
       retryMethod,
@@ -8031,10 +8017,6 @@ async function run() {
   if (isDryRun) {
     return;
   }
-  (0, import_core2.startGroup)("Get own job_id");
-  const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
-  (0, import_core2.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
-  (0, import_core2.endGroup)();
   for (; ; ) {
     attempts += 1;
     if (attempts > attemptLimits) {
@@ -8047,8 +8029,7 @@ async function run() {
     (0, import_core2.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
       octokit,
-      { ...repositoryInfo, ref: commitSha },
-      ownJobIDs
+      { ...repositoryInfo, ref: commitSha, triggerRunId: runId }
     );
     for (const summary of report.summaries) {
       const {
