@@ -11733,7 +11733,7 @@ async function run() {
     10
   );
   const waitList = List.parse(JSON.parse((0, import_core2.getInput)("wait-list", { required: true })));
-  const skipList = List.parse(JSON.parse((0, import_core2.getInput)("wait-list", { required: true })));
+  const skipList = List.parse(JSON.parse((0, import_core2.getInput)("skip-list", { required: true })));
   if (waitList.length > 0 && skipList.length > 0) {
     (0, import_core2.error)("Do not specify both wait-list and skip-list");
     (0, import_core2.setFailed)("Specified both list");

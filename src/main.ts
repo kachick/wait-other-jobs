@@ -64,7 +64,7 @@ async function run(): Promise<void> {
     10,
   );
   const waitList = List.parse(JSON.parse(getInput('wait-list', { required: true })));
-  const skipList = List.parse(JSON.parse(getInput('wait-list', { required: true })));
+  const skipList = List.parse(JSON.parse(getInput('skip-list', { required: true })));
   if (waitList.length > 0 && skipList.length > 0) {
     error('Do not specify both wait-list and skip-list');
     setFailed('Specified both list');
