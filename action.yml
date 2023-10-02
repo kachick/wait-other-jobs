@@ -9,6 +9,10 @@ inputs:
     description: 'The GITHUB_TOKEN secret'
     required: true
     default: ${{ github.token }}
+  wait-seconds-before-first-polling:
+    description: 'Wait this seconds before first polling'
+    required: false
+    default: '10'
   min-interval-seconds:
     description: 'Wait this interval or the multiplied value (and jitter) for next polling'
     required: false

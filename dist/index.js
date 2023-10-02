@@ -12961,6 +12961,10 @@ async function run() {
     owner,
     repo
   };
+  const waitSecondsBeforeFirstPolling = parseInt(
+    (0, import_core2.getInput)("wait-seconds-before-first-polling", { required: true, trimWhitespace: true }),
+    10
+  );
   const minIntervalSeconds = parseInt(
     (0, import_core2.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
     10
@@ -12989,6 +12993,7 @@ async function run() {
       triggeredCommitSha: commitSha,
       runId,
       repositoryInfo,
+      waitSecondsBeforeFirstPolling,
       minIntervalSeconds,
       retryMethod,
       attemptLimits,
@@ -13015,9 +13020,15 @@ async function run() {
       (0, import_core2.setFailed)(errorMessage(`reached to given attempt limits "${attemptLimits}"`));
       break;
     }
-    const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
-    (0, import_core2.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
-    await wait(msec);
+    if (attempts === 1) {
+      const initialMsec = waitSecondsBeforeFirstPolling * 1e3;
+      (0, import_core2.info)(`Wait ${readableDuration(initialMsec)} before first polling.`);
+      await wait(initialMsec);
+    } else {
+      const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
+      (0, import_core2.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
+      await wait(msec);
+    }
     (0, import_core2.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
       githubToken,

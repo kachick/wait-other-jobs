@@ -44,6 +44,7 @@ You can change the token, polling interval, allow/deny list and turns early-exit
 ```yaml
 with:
   github-token: "${{ secrets.YOUR_PAT }}"
+  wait-seconds-before-first-polling: '30' # default '10'
   min-interval-seconds: '300' # default '30'
   retry-method: 'exponential_backoff' # default 'equal_intervals'
   early-exit: 'false' # default 'true'
@@ -70,16 +71,17 @@ with:
 
 Full list of the changeable parameters
 
-| NAME                   | DESCRIPTION                                                                     | TYPE     | REQUIRED | DEFAULT               | OPTIONS                                  |
-| ---------------------- | ------------------------------------------------------------------------------- | -------- | -------- | --------------------- | ---------------------------------------- |
-| `github-token`         | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `true`   | `${{ github.token }}` |                                          |
-| `min-interval-seconds` | Wait this interval or the multiplied value (and jitter) for next polling        | `number` | `false`  | `30`                  |                                          |
-| `retry-method`         | How to wait for next polling                                                    | `string` | `false`  | `equal_intervals`     | `exponential_backoff`, `equal_intervals` |
-| `early-exit`           | Stop rest pollings if faced at least 1 bad condition                            | `bool`   | `false`  | `true`                |                                          |
-| `attempt-limits`       | Stop rest pollings after this attempts even if other jobs are not yet completed | `number` | `false`  | `1000`                |                                          |
-| `wait-list`            | This action will not wait for items other than this list                        | `string` | `false`  | `[]`                  |                                          |
-| `skip-list`            | This action will not wait for items on this list                                | `string` | `false`  | `[]`                  |                                          |
-| `dry-run`              | Avoid requests for tests                                                        | `bool`   | `false`  | `false`               |                                          |
+| NAME                                | DESCRIPTION                                                                     | TYPE     | REQUIRED | DEFAULT               | OPTIONS                                  |
+| ----------------------------------- | ------------------------------------------------------------------------------- | -------- | -------- | --------------------- | ---------------------------------------- |
+| `github-token`                      | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `true`   | `${{ github.token }}` |                                          |
+| `wait-seconds-before-first-polling` | Wait this interval before first polling                                         | `number` | `false`  | `10`                  |                                          |
+| `min-interval-seconds`              | Wait this interval or the multiplied value (and jitter) for next polling        | `number` | `false`  | `30`                  |                                          |
+| `retry-method`                      | How to wait for next polling                                                    | `string` | `false`  | `equal_intervals`     | `exponential_backoff`, `equal_intervals` |
+| `early-exit`                        | Stop rest pollings if faced at least 1 bad condition                            | `bool`   | `false`  | `true`                |                                          |
+| `attempt-limits`                    | Stop rest pollings after this attempts even if other jobs are not yet completed | `number` | `false`  | `1000`                |                                          |
+| `wait-list`                         | This action will not wait for items other than this list                        | `string` | `false`  | `[]`                  |                                          |
+| `skip-list`                         | This action will not wait for items on this list                                | `string` | `false`  | `[]`                  |                                          |
+| `dry-run`                           | Avoid requests for tests                                                        | `bool`   | `false`  | `false`               |                                          |
 
 Below is a typical usecase. Assume test jobs defined in another workflow.
 
