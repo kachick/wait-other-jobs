@@ -7827,31 +7827,28 @@ async function fetchGraphQl(octokit, params) {
       repository(owner: $owner, name: $repo) {
         object(expression: $commitSha) {
           ... on Commit {
-            checkSuites(first: 10) {
+            checkSuites(first: 100) {
               edges {
                 node {
-                  id
                   status
                   conclusion
                   workflowRun {
-                    id
                     databaseId
                     createdAt
                     workflow {
-                      id
                       databaseId
                       name
                       resourcePath
                       url
                     }
                   }
-                  checkRuns(first: 10) {
+                  checkRuns(first: 100) {
                     edges {
                       node {
-                        id
                         databaseId
                         name
                         status
+                      	detailsUrl
                         conclusion
                         startedAt
                         completedAt
@@ -8044,8 +8041,13 @@ async function run() {
   (0, import_core.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
   (0, import_core.endGroup)();
   const gqlRet = await fetchGraphQl(octokit, { ...repositoryInfo, ref: commitSha });
-  console.info(gqlRet);
   (0, import_core.info)(JSON.stringify(gqlRet));
+  if (!gqlRet) {
+    (0, import_core.error)("Cannot correctly get via GraphQL");
+    return;
+  }
+  const nodes = gqlRet.edges?.flatMap((edge) => edge ? [edge] : []);
+  (0, import_core.info)(JSON.stringify(nodes));
   for (; ; ) {
     attempts += 1;
     if (attempts > attemptLimits) {

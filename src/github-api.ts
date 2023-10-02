@@ -7,7 +7,7 @@ import schema from '@octokit/graphql-schema';
 export async function fetchGraphQl(
   octokit: Octokit,
   params: { 'owner': string; 'repo': string; ref: string },
-): Promise<object | undefined | null> {
+) {
   const { repository: { object: { checkSuites } } } = await octokit.graphql<
     { repository: { object: { checkSuites: schema.Commit['checkSuites'] } } }
   >(
@@ -16,31 +16,28 @@ export async function fetchGraphQl(
       repository(owner: $owner, name: $repo) {
         object(expression: $commitSha) {
           ... on Commit {
-            checkSuites(first: 10) {
+            checkSuites(first: 100) {
               edges {
                 node {
-                  id
                   status
                   conclusion
                   workflowRun {
-                    id
                     databaseId
                     createdAt
                     workflow {
-                      id
                       databaseId
                       name
                       resourcePath
                       url
                     }
                   }
-                  checkRuns(first: 10) {
+                  checkRuns(first: 100) {
                     edges {
                       node {
-                        id
                         databaseId
                         name
                         status
+                      	detailsUrl
                         conclusion
                         startedAt
                         completedAt
@@ -62,8 +59,6 @@ export async function fetchGraphQl(
     },
   );
 
-  // checkSuites?.edges[0]?.node;
-  // console.info(checkSuites);
   return checkSuites;
 }
 
