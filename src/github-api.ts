@@ -146,7 +146,7 @@ export async function fetchOtherRunStatus(
     );
   }
   if (skipList.length > 0) {
-    const skipPathSet = new Set(waitList.map(getComparePath));
+    const skipPathSet = new Set(skipList.map(getComparePath));
     checkRunSummaries = checkRunSummaries.filter((summary) =>
       !skipPathSet.has(getComparePath({ workflowFile: summary.workflowPath, jobName: summary.jobName }))
     );
