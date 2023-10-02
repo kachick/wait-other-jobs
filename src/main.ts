@@ -130,13 +130,24 @@ async function run(): Promise<void> {
     );
 
     for (const summary of report.summaries) {
-      const { acceptable, runDatabaseId, status, conclusion, workflowName, jobName, workflowPath, checkRunUrl } =
-        summary;
+      const {
+        acceptable,
+        runDatabaseId,
+        checkSuiteStatus,
+        checkSuiteConclusion,
+        runStatus,
+        runConclusion,
+        workflowName,
+        jobName,
+        workflowPath,
+        checkRunUrl,
+      } = summary;
       const nullStr = '(null)';
-      const nullHandledConclusion = conclusion ?? nullStr;
       info(
-        `${runDatabaseId} - ${colorize(status, status === 'COMPLETED')} - ${
-          colorize(nullHandledConclusion, acceptable)
+        `${runDatabaseId} - run: ${colorize(runStatus, runStatus === 'COMPLETED')} - suite: ${
+          colorize(checkSuiteStatus, checkSuiteStatus === 'COMPLETED')
+        } - ${checkSuiteConclusion ?? nullStr} - ${
+          colorize(runConclusion ?? nullStr, acceptable)
         }: ${workflowPath}(${workflowName}/${jobName}) - ${checkRunUrl}`,
       );
     }

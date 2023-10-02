@@ -10,13 +10,16 @@ interface Summary {
   acceptable: boolean; // Set by us
   workflowPath: string; // Set by us
 
+  checkSuiteStatus: schema.CheckSuite['status'];
+  checkSuiteConclusion: schema.CheckSuite['conclusion'];
+
   workflowName: schema.Workflow['name'];
 
   runDatabaseId: schema.CheckRun['databaseId'];
   jobName: schema.CheckRun['name'];
   checkRunUrl: schema.CheckRun['detailsUrl'];
-  status: schema.CheckRun['status'];
-  conclusion: schema.CheckRun['conclusion']; // null if status is in progress
+  runStatus: schema.CheckRun['status'];
+  runConclusion: schema.CheckRun['conclusion']; // null if status is in progress
 }
 
 export async function getCheckRunSummaries(
@@ -91,7 +94,6 @@ export async function getCheckRunSummaries(
   // const runIdToSummary = new Map<schema.CheckRun['id'], Summary>();
 
   const summaries = checkSuiteNodes.flatMap((checkSuite) => {
-    checkSuite.conclusion;
     const workflow = checkSuite.workflowRun?.workflow;
     if (!workflow) {
       return [];
@@ -110,12 +112,15 @@ export async function getCheckRunSummaries(
       acceptable: run.conclusion == 'SUCCESS' || run.conclusion == 'SKIPPED',
       workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
 
+      checkSuiteStatus: checkSuite.status,
+      checkSuiteConclusion: checkSuite.conclusion,
+
       runDatabaseId: run.databaseId,
       workflowName: workflow.name,
       jobName: run.name,
       checkRunUrl: run.detailsUrl,
-      status: run.status,
-      conclusion: run.conclusion,
+      runStatus: run.status,
+      runConclusion: run.conclusion,
     }));
   });
 
@@ -197,7 +202,7 @@ export async function fetchOtherRunStatus(
   const otherRelatedRuns = checkRunSummaries.flatMap((summary) =>
     summary.runDatabaseId ? (ownJobIDs.has(summary.runDatabaseId) ? [] : [summary]) : []
   );
-  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.status === 'COMPLETED');
+  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.runStatus === 'COMPLETED');
 
   const progress: Report['progress'] = otherRelatedCompletedRuns.length === otherRelatedRuns.length
     ? 'done'

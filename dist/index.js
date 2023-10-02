@@ -7880,7 +7880,6 @@ async function getCheckRunSummaries(octokit, params) {
     return node ? [node] : [];
   });
   const summaries = checkSuiteNodes.flatMap((checkSuite) => {
-    checkSuite.conclusion;
     const workflow = checkSuite.workflowRun?.workflow;
     if (!workflow) {
       return [];
@@ -7897,12 +7896,14 @@ async function getCheckRunSummaries(octokit, params) {
     return runs.map((run2) => ({
       acceptable: run2.conclusion == "SUCCESS" || run2.conclusion == "SKIPPED",
       workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
+      checkSuiteStatus: checkSuite.status,
+      checkSuiteConclusion: checkSuite.conclusion,
       runDatabaseId: run2.databaseId,
       workflowName: workflow.name,
       jobName: run2.name,
       checkRunUrl: run2.detailsUrl,
-      status: run2.status,
-      conclusion: run2.conclusion
+      runStatus: run2.status,
+      runConclusion: run2.conclusion
     }));
   });
   return summaries.toSorted((a, b) => a.workflowPath.localeCompare(b.workflowPath));
@@ -7925,7 +7926,7 @@ async function fetchOtherRunStatus(octokit, params, ownJobIDs) {
   const otherRelatedRuns = checkRunSummaries.flatMap(
     (summary) => summary.runDatabaseId ? ownJobIDs.has(summary.runDatabaseId) ? [] : [summary] : []
   );
-  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.status === "COMPLETED");
+  const otherRelatedCompletedRuns = otherRelatedRuns.filter((summary) => summary.runStatus === "COMPLETED");
   const progress = otherRelatedCompletedRuns.length === otherRelatedRuns.length ? "done" : "in_progress";
   const conclusion = otherRelatedCompletedRuns.every((summary) => summary.acceptable) ? "acceptable" : "bad";
   return { progress, conclusion, summaries: otherRelatedRuns };
@@ -8065,11 +8066,21 @@ async function run() {
       ownJobIDs
     );
     for (const summary of report.summaries) {
-      const { acceptable, runDatabaseId, status, conclusion: conclusion2, workflowName, jobName, workflowPath, checkRunUrl } = summary;
+      const {
+        acceptable,
+        runDatabaseId,
+        checkSuiteStatus,
+        checkSuiteConclusion,
+        runStatus,
+        runConclusion,
+        workflowName,
+        jobName,
+        workflowPath,
+        checkRunUrl
+      } = summary;
       const nullStr = "(null)";
-      const nullHandledConclusion = conclusion2 ?? nullStr;
       (0, import_core2.info)(
-        `${runDatabaseId} - ${colorize(status, status === "COMPLETED")} - ${colorize(nullHandledConclusion, acceptable)}: ${workflowPath}(${workflowName}/${jobName}) - ${checkRunUrl}`
+        `${runDatabaseId} - run: ${colorize(runStatus, runStatus === "COMPLETED")} - suite: ${colorize(checkSuiteStatus, checkSuiteStatus === "COMPLETED")} - ${checkSuiteConclusion ?? nullStr} - ${colorize(runConclusion ?? nullStr, acceptable)}: ${workflowPath}(${workflowName}/${jobName}) - ${checkRunUrl}`
       );
     }
     if ((0, import_core2.isDebug)()) {
