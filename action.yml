@@ -9,6 +9,10 @@ inputs:
     description: 'The GITHUB_TOKEN secret'
     required: true
     default: ${{ github.token }}
+  wait-seconds-before-first-polling:
+    description: 'Wait this seconds before first polling'
+    required: false
+    default: '10'
   min-interval-seconds:
     description: 'Wait this interval or the multiplied value (and jitter) for next polling'
     required: false
@@ -20,7 +24,7 @@ inputs:
   retry-method:
     description: 'How to wait for next polling'
     required: false
-    default: 'exponential_backoff'
+    default: 'equal_intervals'
   attempt-limits:
     description: 'Stop rest pollings after this limits even if other jobs are not yet completed'
     required: false

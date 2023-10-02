@@ -48,6 +48,10 @@ async function run(): Promise<void> {
     repo,
   } as const;
 
+  const waitSecondsBeforeFirstPolling = parseInt(
+    getInput('wait-seconds-before-first-polling', { required: true, trimWhitespace: true }),
+    10,
+  );
   const minIntervalSeconds = parseInt(
     getInput('min-interval-seconds', { required: true, trimWhitespace: true }),
     10,
@@ -77,6 +81,7 @@ async function run(): Promise<void> {
       triggeredCommitSha: commitSha,
       runId,
       repositoryInfo,
+      waitSecondsBeforeFirstPolling,
       minIntervalSeconds,
       retryMethod,
       attemptLimits,
@@ -109,9 +114,17 @@ async function run(): Promise<void> {
       setFailed(errorMessage(`reached to given attempt limits "${attemptLimits}"`));
       break;
     }
-    const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
-    info(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
-    await wait(msec);
+
+    if (attempts === 1) {
+      const initialMsec = waitSecondsBeforeFirstPolling * 1000;
+      info(`Wait ${readableDuration(initialMsec)} before first polling.`);
+      await wait(initialMsec);
+    } else {
+      const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
+      info(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
+      await wait(msec);
+    }
+
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
 
     const report = await fetchOtherRunStatus(
