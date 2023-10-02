@@ -1,10 +1,8 @@
 import type { getOctokit } from '@actions/github';
 import type { Endpoints } from '@octokit/types';
-
-// import { graphql } from '@octokit/graphql';
 import schema from '@octokit/graphql-schema';
 import { error } from '@actions/core';
-import { relative } from 'path';
+import { join, relative } from 'path';
 
 interface Summary {
   acceptable: boolean; // Set by us
@@ -76,10 +74,6 @@ export async function getCheckRunSummaries(
     },
   );
 
-  // const getNodes = (maybe: schema.Maybe<unknown>) => {
-  //   const edges = maybe?.edges;
-  // }
-
   const edges = checkSuites?.edges;
 
   if (!edges) {
@@ -90,8 +84,6 @@ export async function getCheckRunSummaries(
     const node = edge?.node;
     return node ? [node] : [];
   });
-
-  // const runIdToSummary = new Map<schema.CheckRun['id'], Summary>();
 
   const summaries = checkSuiteNodes.flatMap((checkSuite) => {
     const workflow = checkSuite.workflowRun?.workflow;
@@ -109,7 +101,7 @@ export async function getCheckRunSummaries(
     });
 
     return runs.map((run) => ({
-      acceptable: run.conclusion == 'SUCCESS' || run.conclusion == 'SKIPPED',
+      acceptable: run.conclusion == 'SUCCESS' || run.conclusion === 'SKIPPED' || checkSuite.conclusion === 'SKIPPED',
       workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
 
       checkSuiteStatus: checkSuite.status,
@@ -124,38 +116,7 @@ export async function getCheckRunSummaries(
     }));
   });
 
-  return summaries.toSorted((a, b) => a.workflowPath.localeCompare(b.workflowPath));
-
-  // for (const checkSuite of checkSuiteNodes) {
-  //   const workflow = checkSuite.workflowRun?.workflow;
-  //   if (!workflow) {
-  //     info('skip', checkSuite);
-  //     continue;
-  //   }
-  //   const runEdges = checkSuite.checkRuns?.edges;
-  //   if (!runEdges) {
-  //     error('Cannot correctly get via GraphQL');
-  //     throw new Error('no edges');
-  //   }
-  //   const runs = runEdges.flatMap((edge) => {
-  //     const node = edge?.node;
-  //     return node ? [node] : [];
-  //   });
-  //   for (const run of runs) {
-  //     runIdToSummary.set(run.id, {
-  //       acceptable: run.conclusion == 'SUCCESS' || run.conclusion == 'SKIPPED',
-  //       workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
-
-  //       workflowName: workflow.name,
-  //       jobName: run.name,
-  //       checkRunUrl: run.detailsUrl,
-  //       status: run.status,
-  //       conclusion: run.conclusion,
-  //     });
-  //   }
-  // }
-
-  // return runIdToSummary;
+  return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
 }
 
 type Octokit = ReturnType<typeof getOctokit>;

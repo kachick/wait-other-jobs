@@ -7821,7 +7821,7 @@ var ansi_styles_default = ansiStyles;
 
 // src/github-api.ts
 var import_core = __toESM(require_core(), 1);
-import { relative } from "path";
+import { join, relative } from "path";
 async function getCheckRunSummaries(octokit, params) {
   const { repository: { object: { checkSuites } } } = await octokit.graphql(
     `
@@ -7894,7 +7894,7 @@ async function getCheckRunSummaries(octokit, params) {
       return node ? [node] : [];
     });
     return runs.map((run2) => ({
-      acceptable: run2.conclusion == "SUCCESS" || run2.conclusion == "SKIPPED",
+      acceptable: run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || checkSuite.conclusion === "SKIPPED",
       workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
       checkSuiteStatus: checkSuite.status,
       checkSuiteConclusion: checkSuite.conclusion,
@@ -7906,7 +7906,7 @@ async function getCheckRunSummaries(octokit, params) {
       runConclusion: run2.conclusion
     }));
   });
-  return summaries.toSorted((a, b) => a.workflowPath.localeCompare(b.workflowPath));
+  return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
 }
 async function fetchJobIDs(octokit, params) {
   return new Set(
@@ -8068,7 +8068,6 @@ async function run() {
     for (const summary of report.summaries) {
       const {
         acceptable,
-        runDatabaseId,
         checkSuiteStatus,
         checkSuiteConclusion,
         runStatus,
@@ -8080,7 +8079,7 @@ async function run() {
       } = summary;
       const nullStr = "(null)";
       (0, import_core2.info)(
-        `${runDatabaseId} - run: ${colorize(runStatus, runStatus === "COMPLETED")} - suite: ${colorize(checkSuiteStatus, checkSuiteStatus === "COMPLETED")} - ${checkSuiteConclusion ?? nullStr} - ${colorize(runConclusion ?? nullStr, acceptable)}: ${workflowPath}(${workflowName}/${jobName}) - ${checkRunUrl}`
+        `${workflowPath}(${workflowName}/${jobName}):  [suiteStatus: ${colorize(checkSuiteStatus, checkSuiteStatus === "COMPLETED")}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${colorize(runStatus, runStatus === "COMPLETED")}][runConclusion: ${colorize(runConclusion ?? nullStr, acceptable)}] - ${checkRunUrl}`
       );
     }
     if ((0, import_core2.isDebug)()) {
