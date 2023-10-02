@@ -103,14 +103,14 @@ async function run(): Promise<void> {
 
   endGroup();
 
-  const gqlRet = await fetchGraphQl(octokit, { ...repositoryInfo, ref: commitSha });
-  info(JSON.stringify(gqlRet));
-  if (!gqlRet) {
-    error('Cannot correctly get via GraphQL');
-    return;
-  }
-  const nodes = gqlRet.edges?.flatMap((edge) => edge ? [edge] : []);
-  info(JSON.stringify(nodes));
+  const runIdToSummary = await fetchGraphQl(octokit, { ...repositoryInfo, ref: commitSha });
+  // info(JSON.stringify(gqlRet));
+  // if (!gqlRet) {
+  //   error('Cannot correctly get via GraphQL');
+  //   return;
+  // }
+  // const nodes = gqlRet.edges?.flatMap((edge) => edge ? [edge] : []);
+  info(JSON.stringify(runIdToSummary));
 
   for (;;) {
     attempts += 1;

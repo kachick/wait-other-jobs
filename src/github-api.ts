@@ -3,11 +3,24 @@ import type { Endpoints } from '@octokit/types';
 
 // import { graphql } from '@octokit/graphql';
 import schema from '@octokit/graphql-schema';
+import { error } from '@actions/core';
+import path from 'path';
+
+interface Summary {
+  acceptable: boolean; // Set by us
+  workflowPath: string; // Set by us
+
+  workflowName: schema.Workflow['name'];
+  jobName: schema.CheckRun['name'];
+  checkRunUrl: schema.CheckRun['detailsUrl'];
+  status: schema.CheckRun['status'];
+  conclusion: schema.CheckRun['conclusion']; // null if status is in progress
+}
 
 export async function fetchGraphQl(
   octokit: Octokit,
   params: { 'owner': string; 'repo': string; ref: string },
-) {
+): Promise<Map<schema.CheckRun['id'], Summary>> {
   const { repository: { object: { checkSuites } } } = await octokit.graphql<
     { repository: { object: { checkSuites: schema.Commit['checkSuites'] } } }
   >(
@@ -22,10 +35,8 @@ export async function fetchGraphQl(
                   status
                   conclusion
                   workflowRun {
-                    databaseId
                     createdAt
                     workflow {
-                      databaseId
                       name
                       resourcePath
                       url
@@ -34,7 +45,7 @@ export async function fetchGraphQl(
                   checkRuns(first: 100) {
                     edges {
                       node {
-                        databaseId
+                        id
                         name
                         status
                       	detailsUrl
@@ -59,7 +70,46 @@ export async function fetchGraphQl(
     },
   );
 
-  return checkSuites;
+  const edges = checkSuites?.edges;
+
+  if (!edges) {
+    error('Cannot correctly get via GraphQL');
+    throw Error('fff');
+  }
+  const css = edges.flatMap((edge) => {
+    const node = edge?.node;
+    return node ? [node] : [];
+  });
+
+  const runIdToSummary = new Map<schema.CheckRun['id'], Summary>();
+
+  for (const checkSuite of css) {
+    const workflow = checkSuite.workflowRun?.workflow;
+    if (!workflow) {
+      continue;
+    }
+    const runs = checkSuite.checkRuns?.nodes;
+    if (!runs) {
+      throw Error('fff');
+    }
+    for (const run of runs) {
+      if (!run) {
+        throw Error('fff');
+      }
+      runIdToSummary.set(run.id, {
+        acceptable: run.conclusion == 'SUCCESS' || run.conclusion == 'SKIPPED',
+        workflowPath: path.relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
+
+        workflowName: workflow.name,
+        jobName: run.name,
+        checkRunUrl: run.detailsUrl,
+        status: run.status,
+        conclusion: run.conclusion,
+      });
+    }
+  }
+
+  return runIdToSummary;
 }
 
 type Octokit = ReturnType<typeof getOctokit>;

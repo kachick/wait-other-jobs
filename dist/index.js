@@ -749,18 +749,18 @@ var require_tunnel = __commonJS({
             res.statusCode
           );
           socket.destroy();
-          var error2 = new Error("tunneling socket could not be established, statusCode=" + res.statusCode);
-          error2.code = "ECONNRESET";
-          options.request.emit("error", error2);
+          var error3 = new Error("tunneling socket could not be established, statusCode=" + res.statusCode);
+          error3.code = "ECONNRESET";
+          options.request.emit("error", error3);
           self.removeSocket(placeholder);
           return;
         }
         if (head.length > 0) {
           debug2("got illegal response body from proxy");
           socket.destroy();
-          var error2 = new Error("got illegal response body from proxy");
-          error2.code = "ECONNRESET";
-          options.request.emit("error", error2);
+          var error3 = new Error("got illegal response body from proxy");
+          error3.code = "ECONNRESET";
+          options.request.emit("error", error3);
           self.removeSocket(placeholder);
           return;
         }
@@ -775,9 +775,9 @@ var require_tunnel = __commonJS({
           cause.message,
           cause.stack
         );
-        var error2 = new Error("tunneling socket could not be established, cause=" + cause.message);
-        error2.code = "ECONNRESET";
-        options.request.emit("error", error2);
+        var error3 = new Error("tunneling socket could not be established, cause=" + cause.message);
+        error3.code = "ECONNRESET";
+        options.request.emit("error", error3);
         self.removeSocket(placeholder);
       }
     };
@@ -1604,12 +1604,12 @@ var require_oidc_utils = __commonJS({
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
           const httpclient = _OidcClient.createHttpClient();
-          const res = yield httpclient.getJson(id_token_url).catch((error2) => {
+          const res = yield httpclient.getJson(id_token_url).catch((error3) => {
             throw new Error(`Failed to get ID Token. 
  
-        Error Code : ${error2.statusCode}
+        Error Code : ${error3.statusCode}
  
-        Error Message: ${error2.message}`);
+        Error Message: ${error3.message}`);
           });
           const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
           if (!id_token) {
@@ -1630,8 +1630,8 @@ var require_oidc_utils = __commonJS({
             const id_token = yield _OidcClient.getCall(id_token_url);
             core_1.setSecret(id_token);
             return id_token;
-          } catch (error2) {
-            throw new Error(`Error message: ${error2.message}`);
+          } catch (error3) {
+            throw new Error(`Error message: ${error3.message}`);
           }
         });
       }
@@ -1968,7 +1968,7 @@ var require_path_utils = __commonJS({
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.toPlatformPath = exports.toWin32Path = exports.toPosixPath = void 0;
-    var path = __importStar(__require("path"));
+    var path2 = __importStar(__require("path"));
     function toPosixPath(pth) {
       return pth.replace(/[\\]/g, "/");
     }
@@ -1978,7 +1978,7 @@ var require_path_utils = __commonJS({
     }
     exports.toWin32Path = toWin32Path;
     function toPlatformPath(pth) {
-      return pth.replace(/[/\\]/g, path.sep);
+      return pth.replace(/[/\\]/g, path2.sep);
     }
     exports.toPlatformPath = toPlatformPath;
   }
@@ -2049,7 +2049,7 @@ var require_core = __commonJS({
     var file_command_1 = require_file_command();
     var utils_1 = require_utils();
     var os = __importStar(__require("os"));
-    var path = __importStar(__require("path"));
+    var path2 = __importStar(__require("path"));
     var oidc_utils_1 = require_oidc_utils();
     var ExitCode;
     (function(ExitCode2) {
@@ -2077,7 +2077,7 @@ var require_core = __commonJS({
       } else {
         command_1.issueCommand("add-path", {}, inputPath);
       }
-      process.env["PATH"] = `${inputPath}${path.delimiter}${process.env["PATH"]}`;
+      process.env["PATH"] = `${inputPath}${path2.delimiter}${process.env["PATH"]}`;
     }
     exports.addPath = addPath;
     function getInput2(name, options) {
@@ -2126,7 +2126,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
     exports.setCommandEcho = setCommandEcho;
     function setFailed2(message) {
       process.exitCode = ExitCode.Failure;
-      error2(message);
+      error3(message);
     }
     exports.setFailed = setFailed2;
     function isDebug2() {
@@ -2137,10 +2137,10 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issueCommand("debug", {}, message);
     }
     exports.debug = debug2;
-    function error2(message, properties = {}) {
+    function error3(message, properties = {}) {
       command_1.issueCommand("error", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
-    exports.error = error2;
+    exports.error = error3;
     function warning(message, properties = {}) {
       command_1.issueCommand("warning", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
@@ -2232,8 +2232,8 @@ var require_context = __commonJS({
           if (fs_1.existsSync(process.env.GITHUB_EVENT_PATH)) {
             this.payload = JSON.parse(fs_1.readFileSync(process.env.GITHUB_EVENT_PATH, { encoding: "utf8" }));
           } else {
-            const path = process.env.GITHUB_EVENT_PATH;
-            process.stdout.write(`GITHUB_EVENT_PATH ${path} does not exist${os_1.EOL}`);
+            const path2 = process.env.GITHUB_EVENT_PATH;
+            process.stdout.write(`GITHUB_EVENT_PATH ${path2} does not exist${os_1.EOL}`);
           }
         }
         this.eventName = process.env.GITHUB_EVENT_NAME;
@@ -2400,8 +2400,8 @@ var require_add = __commonJS({
       }
       if (kind === "error") {
         hook = function(method, options) {
-          return Promise.resolve().then(method.bind(null, options)).catch(function(error2) {
-            return orig(error2, options);
+          return Promise.resolve().then(method.bind(null, options)).catch(function(error3) {
+            return orig(error3, options);
           });
         };
       }
@@ -3083,21 +3083,21 @@ var require_tr46 = __commonJS({
         label = punycode.toUnicode(label);
         processing_option = PROCESSING_OPTIONS.NONTRANSITIONAL;
       }
-      var error2 = false;
+      var error3 = false;
       if (normalize(label) !== label || label[3] === "-" && label[4] === "-" || label[0] === "-" || label[label.length - 1] === "-" || label.indexOf(".") !== -1 || label.search(combiningMarksRegex) === 0) {
-        error2 = true;
+        error3 = true;
       }
       var len = countSymbols(label);
       for (var i = 0; i < len; ++i) {
         var status = findStatus(label.codePointAt(i));
         if (processing === PROCESSING_OPTIONS.TRANSITIONAL && status[1] !== "valid" || processing === PROCESSING_OPTIONS.NONTRANSITIONAL && status[1] !== "valid" && status[1] !== "deviation") {
-          error2 = true;
+          error3 = true;
           break;
         }
       }
       return {
         label,
-        error: error2
+        error: error3
       };
     }
     function processing(domain_name, useSTD3, processing_option) {
@@ -3546,14 +3546,14 @@ var require_url_state_machine = __commonJS({
       return url.replace(/\u0009|\u000A|\u000D/g, "");
     }
     function shortenPath(url) {
-      const path = url.path;
-      if (path.length === 0) {
+      const path2 = url.path;
+      if (path2.length === 0) {
         return;
       }
-      if (url.scheme === "file" && path.length === 1 && isNormalizedWindowsDriveLetter(path[0])) {
+      if (url.scheme === "file" && path2.length === 1 && isNormalizedWindowsDriveLetter(path2[0])) {
         return;
       }
-      path.pop();
+      path2.pop();
     }
     function includesCredentials(url) {
       return url.username !== "" || url.password !== "";
@@ -4749,8 +4749,8 @@ var require_lib3 = __commonJS({
       this.timeout = timeout;
       if (body instanceof Stream) {
         body.on("error", function(err) {
-          const error2 = err.name === "AbortError" ? err : new FetchError(`Invalid response body while trying to fetch ${_this.url}: ${err.message}`, "system", err);
-          _this[INTERNALS].error = error2;
+          const error3 = err.name === "AbortError" ? err : new FetchError(`Invalid response body while trying to fetch ${_this.url}: ${err.message}`, "system", err);
+          _this[INTERNALS].error = error3;
         });
       }
     }
@@ -5593,14 +5593,14 @@ var require_lib3 = __commonJS({
         const signal = request.signal;
         let response = null;
         const abort = function abort2() {
-          let error2 = new AbortError("The user aborted a request.");
-          reject(error2);
+          let error3 = new AbortError("The user aborted a request.");
+          reject(error3);
           if (request.body && request.body instanceof Stream.Readable) {
-            request.body.destroy(error2);
+            request.body.destroy(error3);
           }
           if (!response || !response.body)
             return;
-          response.body.emit("error", error2);
+          response.body.emit("error", error3);
         };
         if (signal && signal.aborted) {
           abort();
@@ -5997,7 +5997,7 @@ var require_dist_node5 = __commonJS({
         }
         if (status >= 400) {
           const data = await getResponseData(response);
-          const error2 = new requestError.RequestError(toErrorMessage(data), status, {
+          const error3 = new requestError.RequestError(toErrorMessage(data), status, {
             response: {
               url,
               status,
@@ -6006,7 +6006,7 @@ var require_dist_node5 = __commonJS({
             },
             request: requestOptions
           });
-          throw error2;
+          throw error3;
         }
         return getResponseData(response);
       }).then((data) => {
@@ -6016,10 +6016,10 @@ var require_dist_node5 = __commonJS({
           headers,
           data
         };
-      }).catch((error2) => {
-        if (error2 instanceof requestError.RequestError)
-          throw error2;
-        throw new requestError.RequestError(error2.message, 500, {
+      }).catch((error3) => {
+        if (error3 instanceof requestError.RequestError)
+          throw error3;
+        throw new requestError.RequestError(error3.message, 500, {
           request: requestOptions
         });
       });
@@ -7459,9 +7459,9 @@ var require_dist_node10 = __commonJS({
               return {
                 value: normalizedResponse
               };
-            } catch (error2) {
-              if (error2.status !== 409)
-                throw error2;
+            } catch (error3) {
+              if (error3.status !== 409)
+                throw error3;
               url = "";
               return {
                 value: {
@@ -7630,7 +7630,7 @@ var require_github = __commonJS({
 });
 
 // src/main.ts
-var import_core = __toESM(require_core(), 1);
+var import_core2 = __toESM(require_core(), 1);
 var import_github = __toESM(require_github(), 1);
 
 // node_modules/ansi-styles/index.js
@@ -7820,6 +7820,8 @@ var ansiStyles = assembleStyles();
 var ansi_styles_default = ansiStyles;
 
 // src/github-api.ts
+var import_core = __toESM(require_core(), 1);
+import path from "path";
 async function fetchGraphQl(octokit, params) {
   const { repository: { object: { checkSuites } } } = await octokit.graphql(
     `
@@ -7833,10 +7835,8 @@ async function fetchGraphQl(octokit, params) {
                   status
                   conclusion
                   workflowRun {
-                    databaseId
                     createdAt
                     workflow {
-                      databaseId
                       name
                       resourcePath
                       url
@@ -7845,7 +7845,7 @@ async function fetchGraphQl(octokit, params) {
                   checkRuns(first: 100) {
                     edges {
                       node {
-                        databaseId
+                        id
                         name
                         status
                       	detailsUrl
@@ -7869,7 +7869,41 @@ async function fetchGraphQl(octokit, params) {
       commitSha: params.ref
     }
   );
-  return checkSuites;
+  const edges = checkSuites?.edges;
+  if (!edges) {
+    (0, import_core.error)("Cannot correctly get via GraphQL");
+    throw Error("fff");
+  }
+  const css = edges.flatMap((edge) => {
+    const node = edge?.node;
+    return node ? [node] : [];
+  });
+  const runIdToSummary = /* @__PURE__ */ new Map();
+  for (const checkSuite of css) {
+    const workflow = checkSuite.workflowRun?.workflow;
+    if (!workflow) {
+      continue;
+    }
+    const runs = checkSuite.checkRuns?.nodes;
+    if (!runs) {
+      throw Error("fff");
+    }
+    for (const run2 of runs) {
+      if (!run2) {
+        throw Error("fff");
+      }
+      runIdToSummary.set(run2.id, {
+        acceptable: run2.conclusion == "SUCCESS" || run2.conclusion == "SKIPPED",
+        workflowPath: path.relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
+        workflowName: workflow.name,
+        jobName: run2.name,
+        checkRunUrl: run2.detailsUrl,
+        status: run2.status,
+        conclusion: run2.conclusion
+      });
+    }
+  }
+  return runIdToSummary;
 }
 function isAcceptable(conclusion) {
   return conclusion === "success" || conclusion === "skipped";
@@ -7969,7 +8003,7 @@ var errorMessage = (body) => `${ansi_styles_default.red.open}${body}${ansi_style
 var succeededMessage = (body) => `${ansi_styles_default.green.open}${body}${ansi_styles_default.green.close}`;
 var colorize = (body, ok) => ok ? succeededMessage(body) : errorMessage(body);
 async function run() {
-  (0, import_core.startGroup)("Parameters");
+  (0, import_core2.startGroup)("Parameters");
   const {
     repo: { repo, owner },
     payload,
@@ -7983,11 +8017,11 @@ async function run() {
     if (typeof prSha === "string") {
       commitSha = prSha;
     } else {
-      if ((0, import_core.isDebug)()) {
-        (0, import_core.debug)(JSON.stringify(pr, null, 2));
+      if ((0, import_core2.isDebug)()) {
+        (0, import_core2.debug)(JSON.stringify(pr, null, 2));
       }
-      (0, import_core.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
-      (0, import_core.setFailed)("unexpected failure occurred");
+      (0, import_core2.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
+      (0, import_core2.setFailed)("unexpected failure occurred");
       return;
     }
   }
@@ -7996,23 +8030,23 @@ async function run() {
     repo
   };
   const minIntervalSeconds = parseInt(
-    (0, import_core.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
+    (0, import_core2.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
     10
   );
-  const retryMethod = (0, import_core.getInput)("retry-method", { required: true, trimWhitespace: true });
+  const retryMethod = (0, import_core2.getInput)("retry-method", { required: true, trimWhitespace: true });
   if (!isRetryMethod(retryMethod)) {
-    (0, import_core.setFailed)(
+    (0, import_core2.setFailed)(
       `unknown parameter "${retryMethod}" is given. "retry-method" can take one of ${JSON.stringify(retryMethods)}`
     );
     return;
   }
   const attemptLimits = parseInt(
-    (0, import_core.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
+    (0, import_core2.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
     10
   );
-  const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
-  const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
-  (0, import_core.info)(JSON.stringify(
+  const isEarlyExit = (0, import_core2.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
+  const isDryRun = (0, import_core2.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
+  (0, import_core2.info)(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
       ownRunId: runId,
@@ -8027,37 +8061,31 @@ async function run() {
     null,
     2
   ));
-  const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
-  (0, import_core.setSecret)(githubToken);
+  const githubToken = (0, import_core2.getInput)("github-token", { required: true, trimWhitespace: false });
+  (0, import_core2.setSecret)(githubToken);
   const octokit = (0, import_github.getOctokit)(githubToken);
   let attempts = 0;
   let shouldStop = false;
-  (0, import_core.endGroup)();
+  (0, import_core2.endGroup)();
   if (isDryRun) {
     return;
   }
-  (0, import_core.startGroup)("Get own job_id");
+  (0, import_core2.startGroup)("Get own job_id");
   const ownJobIDs = await fetchJobIDs(octokit, { ...repositoryInfo, run_id: runId });
-  (0, import_core.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
-  (0, import_core.endGroup)();
-  const gqlRet = await fetchGraphQl(octokit, { ...repositoryInfo, ref: commitSha });
-  (0, import_core.info)(JSON.stringify(gqlRet));
-  if (!gqlRet) {
-    (0, import_core.error)("Cannot correctly get via GraphQL");
-    return;
-  }
-  const nodes = gqlRet.edges?.flatMap((edge) => edge ? [edge] : []);
-  (0, import_core.info)(JSON.stringify(nodes));
+  (0, import_core2.info)(JSON.stringify({ ownJobIDs: [...ownJobIDs] }, null, 2));
+  (0, import_core2.endGroup)();
+  const runIdToSummary = await fetchGraphQl(octokit, { ...repositoryInfo, ref: commitSha });
+  (0, import_core2.info)(JSON.stringify(runIdToSummary));
   for (; ; ) {
     attempts += 1;
     if (attempts > attemptLimits) {
-      (0, import_core.setFailed)(errorMessage(`reached to given attempt limits "${attemptLimits}"`));
+      (0, import_core2.setFailed)(errorMessage(`reached to given attempt limits "${attemptLimits}"`));
       break;
     }
     const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
-    (0, import_core.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
+    (0, import_core2.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
     await wait(msec);
-    (0, import_core.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
+    (0, import_core2.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
       octokit,
       { ...repositoryInfo, ref: commitSha },
@@ -8067,37 +8095,37 @@ async function run() {
       const { acceptable, source: { id, status, conclusion: conclusion2, name, html_url } } = summary;
       const nullStr = "(null)";
       const nullHandledConclusion = conclusion2 ?? nullStr;
-      (0, import_core.info)(
+      (0, import_core2.info)(
         `${id} - ${colorize(status, status === "completed")} - ${colorize(nullHandledConclusion, acceptable)}: ${name} - ${html_url ?? nullStr}`
       );
     }
-    if ((0, import_core.isDebug)()) {
-      (0, import_core.debug)(JSON.stringify(report, null, 2));
+    if ((0, import_core2.isDebug)()) {
+      (0, import_core2.debug)(JSON.stringify(report, null, 2));
     }
     const { progress, conclusion } = report;
     switch (progress) {
       case "in_progress": {
         if (conclusion === "bad" && isEarlyExit) {
           shouldStop = true;
-          (0, import_core.setFailed)(errorMessage("some jobs failed"));
+          (0, import_core2.setFailed)(errorMessage("some jobs failed"));
         }
-        (0, import_core.info)("some jobs still in progress");
+        (0, import_core2.info)("some jobs still in progress");
         break;
       }
       case "done": {
         shouldStop = true;
         switch (conclusion) {
           case "acceptable": {
-            (0, import_core.info)(succeededMessage("all jobs passed"));
+            (0, import_core2.info)(succeededMessage("all jobs passed"));
             break;
           }
           case "bad": {
-            (0, import_core.setFailed)(errorMessage("some jobs failed"));
+            (0, import_core2.setFailed)(errorMessage("some jobs failed"));
             break;
           }
           default: {
             const unexpectedConclusion = conclusion;
-            (0, import_core.setFailed)(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
+            (0, import_core2.setFailed)(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
             break;
           }
         }
@@ -8106,11 +8134,11 @@ async function run() {
       default: {
         shouldStop = true;
         const unexpectedProgress = progress;
-        (0, import_core.setFailed)(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
+        (0, import_core2.setFailed)(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
         break;
       }
     }
-    (0, import_core.endGroup)();
+    (0, import_core2.endGroup)();
     if (shouldStop) {
       break;
     }
