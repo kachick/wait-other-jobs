@@ -101,8 +101,8 @@ jobs:
     steps:
       - name: Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v1.5.1
-      - uses: actions/checkout@v3
+        uses: dependabot/fetch-metadata@v1.6.0
+      - uses: actions/checkout@v4
       - name: Wait for other jobs to pass or fail
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         uses: kachick/wait-other-jobs@v2.0.0
@@ -118,7 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Wait for other jobs to pass or fail
         uses: kachick/wait-other-jobs@v2.0.0
         timeout-minutes: 10
