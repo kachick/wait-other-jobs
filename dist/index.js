@@ -11626,13 +11626,13 @@ async function fetchOtherRunStatus(octokit, params, waitList, skipList) {
   }
   let checkRunSummaries = await getCheckRunSummaries(octokit, params);
   const getComparePath = (item) => `${item.workflowFile}/${item.jobName}`;
-  if (waitList.length > 1) {
+  if (waitList.length > 0) {
     const waitPathSet = new Set(waitList.map(getComparePath));
     checkRunSummaries = checkRunSummaries.filter(
       (summary) => waitPathSet.has(getComparePath({ workflowFile: summary.workflowPath, jobName: summary.jobName }))
     );
   }
-  if (skipList.length > 1) {
+  if (skipList.length > 0) {
     const skipPathSet = new Set(waitList.map(getComparePath));
     checkRunSummaries = checkRunSummaries.filter(
       (summary) => !skipPathSet.has(getComparePath({ workflowFile: summary.workflowPath, jobName: summary.jobName }))
