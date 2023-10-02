@@ -31,6 +31,13 @@ jobs:
           retry-method: 'exponential_backoff'
           min-interval-seconds: 5
           attempt-limits: 2
+          skip-list: |
+            [
+              {
+                "workflowFile": "merge-bot-pr.yml",
+                "jobName": "dependabot"
+              }
+            ]
   equal_intervals:
     needs: [exponential_backoff]
     runs-on: ubuntu-latest
@@ -43,3 +50,21 @@ jobs:
           retry-method: 'equal_intervals'
           min-interval-seconds: 10
           attempt-limits: 60
+  wait-list:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          retry-method: 'equal_intervals'
+          min-interval-seconds: 5
+          attempt-limits: 2
+          wait-list: |
+            [
+              {
+                "workflowFile": "lint.yml",
+                "jobName": "typos"
+              }
+            ]
