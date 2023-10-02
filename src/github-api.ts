@@ -33,31 +33,24 @@ export async function getCheckRunSummaries(
         object(expression: $commitSha) {
           ... on Commit {
             checkSuites(first: 100) {
-              edges {
-                node {
-                  status
-                  conclusion
-                  workflowRun {
-                    createdAt
-                    workflow {
-                      databaseId
-                      name
-                      resourcePath
-                      url
-                    }
+              nodes {
+                status
+                conclusion
+                workflowRun {
+                  createdAt
+                  workflow {
+                    databaseId
+                    name
+                    resourcePath
                   }
-                  checkRuns(first: 100) {
-                    edges {
-                      node {
-                        databaseId
-                        name
-                        status
-                      	detailsUrl
-                        conclusion
-                        startedAt
-                        completedAt
-                      }
-                    }
+                }
+                checkRuns(first: 100) {
+                  nodes {
+                    databaseId
+                    name
+                    status
+                    detailsUrl
+                    conclusion
                   }
                 }
               }
@@ -74,33 +67,25 @@ export async function getCheckRunSummaries(
     },
   );
 
-  const edges = checkSuites?.edges;
-
-  if (!edges) {
+  const checkSuiteNodes = checkSuites?.nodes?.flatMap((node) => node ? [node] : []);
+  if (!checkSuiteNodes) {
     error('Cannot correctly get via GraphQL');
-    throw new Error('no edges');
+    throw new Error('no checkSuiteNodes');
   }
-  const checkSuiteNodes = edges.flatMap((edge) => {
-    const node = edge?.node;
-    return node ? [node] : [];
-  });
 
   const summaries = checkSuiteNodes.flatMap((checkSuite) => {
     const workflow = checkSuite.workflowRun?.workflow;
     if (!workflow) {
       return [];
     }
-    const runEdges = checkSuite.checkRuns?.edges;
-    if (!runEdges) {
-      error('Cannot correctly get via GraphQL');
-      throw new Error('no edges');
-    }
-    const runs = runEdges.flatMap((edge) => {
-      const node = edge?.node;
-      return node ? [node] : [];
-    });
 
-    return runs.map((run) => ({
+    const runNodes = checkSuite?.checkRuns?.nodes?.flatMap((node) => node ? [node] : []);
+    if (!runNodes) {
+      error('Cannot correctly get via GraphQL');
+      throw new Error('no runNodes');
+    }
+
+    return runNodes.map((run) => ({
       acceptable: run.conclusion == 'SUCCESS' || run.conclusion === 'SKIPPED' || checkSuite.conclusion === 'SKIPPED',
       workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
 
