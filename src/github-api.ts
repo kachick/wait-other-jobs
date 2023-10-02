@@ -136,21 +136,23 @@ export async function fetchOtherRunStatus(
     throw new Error('Do not specify both wait-list and skip-list');
   }
 
-  const checkRunSummaries = await getCheckRunSummaries(octokit, params);
-  let completedRuns = checkRunSummaries.filter((summary) => summary.runStatus === 'COMPLETED');
+  let checkRunSummaries = await getCheckRunSummaries(octokit, params);
+
   const getComparePath = (item: z.infer<typeof ListItem>) => (`${item.workflowFile}/${item.jobName}`);
   if (waitList.length > 1) {
     const waitPathSet = new Set(waitList.map(getComparePath));
-    completedRuns = completedRuns.filter((summary) =>
-      waitPathSet.has(getComparePath({ workflowFile: summary.workflowName, jobName: summary.jobName }))
+    checkRunSummaries = checkRunSummaries.filter((summary) =>
+      waitPathSet.has(getComparePath({ workflowFile: summary.workflowPath, jobName: summary.jobName }))
     );
   }
   if (skipList.length > 1) {
-    const waitPathSet = new Set(waitList.map(getComparePath));
-    completedRuns = completedRuns.filter((summary) =>
-      !waitPathSet.has(getComparePath({ workflowFile: summary.workflowName, jobName: summary.jobName }))
+    const skipPathSet = new Set(waitList.map(getComparePath));
+    checkRunSummaries = checkRunSummaries.filter((summary) =>
+      !skipPathSet.has(getComparePath({ workflowFile: summary.workflowPath, jobName: summary.jobName }))
     );
   }
+
+  const completedRuns = checkRunSummaries.filter((summary) => summary.runStatus === 'COMPLETED');
 
   const progress: Report['progress'] = completedRuns.length === checkRunSummaries.length
     ? 'done'
