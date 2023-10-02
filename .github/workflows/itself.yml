@@ -53,15 +53,15 @@ jobs:
         with:
           retry-method: 'equal_intervals'
           min-interval-seconds: 5
-          attempt-limits: 2
+          attempt-limits: 30
           wait-list: |
             [
               {
                 "workflowFile": "lint.yml"
               },
               {
-                "workflowFile": "ci.yml",
-                "jobName": "typecheck"
+                "workflowFile": "merge-bot-pr.yml",
+                "jobName": "dependabot"
               }
             ]
   skip-list:
@@ -74,7 +74,7 @@ jobs:
         with:
           retry-method: 'equal_intervals'
           min-interval-seconds: 5
-          attempt-limits: 2
+          attempt-limits: 30
           skip-list: |
             [
               {
