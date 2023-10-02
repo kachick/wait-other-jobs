@@ -20,10 +20,10 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: '20.8.0' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm run build
@@ -34,10 +34,10 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: '20.8.0' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm test
@@ -46,10 +46,10 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: '20.8.0' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
           cache: npm
       - run: npm ci --ignore-scripts
       - name: Typecheck
@@ -59,9 +59,8 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v1
         with:
-          # Keep same version as used in *.nix
-          deno-version: '1.36.0'
+          deno-version: '1.37.1' # selfup { "regex": "\\d[^']+", "script": "deno --version | head -n 1 | cut -d ' ' -f 2" }
       - run: deno lint
