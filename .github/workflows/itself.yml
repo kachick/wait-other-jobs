@@ -57,7 +57,7 @@ jobs:
           wait-list: |
             [
               {
-                "workflowFile": "lint.yml",
+                "workflowFile": "lint.yml"
               },
               {
                 "workflowFile": "ci.yml",
@@ -78,7 +78,7 @@ jobs:
           skip-list: |
             [
               {
-                "workflowFile": "ci.yml",
+                "workflowFile": "ci.yml"
               },
               {
                 "workflowFile": "merge-bot-pr.yml",
