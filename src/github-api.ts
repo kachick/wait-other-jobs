@@ -4,7 +4,7 @@ import type { Endpoints } from '@octokit/types';
 // import { graphql } from '@octokit/graphql';
 import schema from '@octokit/graphql-schema';
 import { error } from '@actions/core';
-import path from 'path';
+import { relative } from 'path';
 
 interface Summary {
   acceptable: boolean; // Set by us
@@ -98,7 +98,7 @@ export async function fetchGraphQl(
       }
       runIdToSummary.set(run.id, {
         acceptable: run.conclusion == 'SUCCESS' || run.conclusion == 'SKIPPED',
-        workflowPath: path.relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
+        workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
 
         workflowName: workflow.name,
         jobName: run.name,
