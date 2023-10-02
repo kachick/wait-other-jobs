@@ -11544,7 +11544,7 @@ var z = /* @__PURE__ */ Object.freeze({
 // src/github-api.ts
 var ListItem = z.object({
   workflowFile: z.string().endsWith(".yml"),
-  jobName: z.string().min(1)
+  jobName: z.string().min(1).optional()
 });
 var List = z.array(ListItem);
 async function getCheckRunSummaries(octokit, params) {
@@ -11625,17 +11625,18 @@ async function fetchOtherRunStatus(octokit, params, waitList, skipList) {
     throw new Error("Do not specify both wait-list and skip-list");
   }
   let checkRunSummaries = await getCheckRunSummaries(octokit, params);
-  const getComparePath = (item) => `${item.workflowFile}/${item.jobName}`;
   if (waitList.length > 0) {
-    const waitPathSet = new Set(waitList.map(getComparePath));
     checkRunSummaries = checkRunSummaries.filter(
-      (summary) => waitPathSet.has(getComparePath({ workflowFile: summary.workflowPath, jobName: summary.jobName }))
+      (summary) => waitList.some(
+        (target) => target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)
+      )
     );
   }
   if (skipList.length > 0) {
-    const skipPathSet = new Set(skipList.map(getComparePath));
     checkRunSummaries = checkRunSummaries.filter(
-      (summary) => !skipPathSet.has(getComparePath({ workflowFile: summary.workflowPath, jobName: summary.jobName }))
+      (summary) => !skipList.some(
+        (target) => target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)
+      )
     );
   }
   const completedRuns = checkRunSummaries.filter((summary) => summary.runStatus === "COMPLETED");

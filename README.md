@@ -49,6 +49,7 @@ with:
   early-exit: 'false' # default 'true'
   # lists should be given with JSON formatted array, do not specify both wait-list and skip-list
   # Each items should have "workflowFile" field and they can optinaly have "jobName" field
+  # If no jobName is specified, all of jobs in the workflow will be targeted
   wait-list: |
     [
       {
@@ -56,15 +57,13 @@ with:
         "jobName": "test"
       },
       {
-        "workflowFile": "release.yml",
-        "jobName": "goreleaser"
+        "workflowFile": "release.yml"
       }
     ]
   skip-list: |
     [
       {
         "workflowFile": "pages.yml",
-        "jobName": "deploy"
       }
     ]
 ```

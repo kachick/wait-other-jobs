@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 const ListItem = z.object({
   workflowFile: z.string().endsWith('.yml'),
-  jobName: z.string().min(1),
+  jobName: (z.string().min(1)).optional(),
 });
 export const List = z.array(ListItem);
 
@@ -138,17 +138,18 @@ export async function fetchOtherRunStatus(
 
   let checkRunSummaries = await getCheckRunSummaries(octokit, params);
 
-  const getComparePath = (item: z.infer<typeof ListItem>) => (`${item.workflowFile}/${item.jobName}`);
   if (waitList.length > 0) {
-    const waitPathSet = new Set(waitList.map(getComparePath));
     checkRunSummaries = checkRunSummaries.filter((summary) =>
-      waitPathSet.has(getComparePath({ workflowFile: summary.workflowPath, jobName: summary.jobName }))
+      waitList.some((target) =>
+        target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
+      )
     );
   }
   if (skipList.length > 0) {
-    const skipPathSet = new Set(skipList.map(getComparePath));
     checkRunSummaries = checkRunSummaries.filter((summary) =>
-      !skipPathSet.has(getComparePath({ workflowFile: summary.workflowPath, jobName: summary.jobName }))
+      !skipList.some((target) =>
+        target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
+      )
     );
   }
 
