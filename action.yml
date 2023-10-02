@@ -20,7 +20,7 @@ inputs:
   retry-method:
     description: 'How to wait for next polling'
     required: false
-    default: 'exponential_backoff'
+    default: 'equal_intervals'
   attempt-limits:
     description: 'Stop rest pollings after this limits even if other jobs are not yet completed'
     required: false

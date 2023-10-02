@@ -43,6 +43,14 @@ jobs:
           retry-method: 'equal_intervals'
           min-interval-seconds: 10
           attempt-limits: 60
+  default_logic:
+    needs: [equal_intervals]
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
   wait-list:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
