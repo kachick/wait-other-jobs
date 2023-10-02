@@ -19,6 +19,10 @@ interface Summary {
   runConclusion: CheckRun['conclusion']; // null if status is in progress
 }
 
+// Currently no paging is considered for my usecase
+// If needed to cover long list > 100, consider one of follows
+// - Paging with https://github.com/octokit/plugin-paginate-graphql.js
+// - Filtering in GraphQL query layer with wait only list. This changes current reporting behaviors to omit finished jobs
 export async function getCheckRunSummaries(
   octokit: Octokit,
   params: { owner: string; repo: string; ref: string; triggerRunId: number },
