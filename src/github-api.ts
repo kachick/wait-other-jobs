@@ -70,6 +70,10 @@ export async function fetchGraphQl(
     },
   );
 
+  // const getNodes = (maybe: schema.Maybe<unknown>) => {
+  //   const edges = maybe?.edges;
+  // }
+
   const edges = checkSuites?.edges;
 
   if (!edges) {
@@ -88,16 +92,16 @@ export async function fetchGraphQl(
     if (!workflow) {
       continue;
     }
-    const runs = checkSuite.checkRuns?.nodes;
-    if (!runs) {
-      // throw new Error('no runs');
-      continue;
+    const runEdges = checkSuite.checkRuns?.edges;
+    if (!runEdges) {
+      error('Cannot correctly get via GraphQL');
+      throw new Error('no edges');
     }
+    const runs = runEdges.flatMap((edge) => {
+      const node = edge?.node;
+      return node ? [node] : [];
+    });
     for (const run of runs) {
-      if (!run) {
-        // throw new Error('no run');
-        continue;
-      }
       runIdToSummary.set(run.id, {
         acceptable: run.conclusion == 'SUCCESS' || run.conclusion == 'SKIPPED',
         workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),

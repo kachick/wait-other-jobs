@@ -7884,14 +7884,16 @@ async function fetchGraphQl(octokit, params) {
     if (!workflow) {
       continue;
     }
-    const runs = checkSuite.checkRuns?.nodes;
-    if (!runs) {
-      continue;
+    const runEdges = checkSuite.checkRuns?.edges;
+    if (!runEdges) {
+      (0, import_core.error)("Cannot correctly get via GraphQL");
+      throw new Error("no edges");
     }
+    const runs = runEdges.flatMap((edge) => {
+      const node = edge?.node;
+      return node ? [node] : [];
+    });
     for (const run2 of runs) {
-      if (!run2) {
-        continue;
-      }
       runIdToSummary.set(run2.id, {
         acceptable: run2.conclusion == "SUCCESS" || run2.conclusion == "SKIPPED",
         workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
