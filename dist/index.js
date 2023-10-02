@@ -7872,7 +7872,7 @@ async function fetchGraphQl(octokit, params) {
   const edges = checkSuites?.edges;
   if (!edges) {
     (0, import_core.error)("Cannot correctly get via GraphQL");
-    throw Error("fff");
+    throw new Error("no edges");
   }
   const css = edges.flatMap((edge) => {
     const node = edge?.node;
@@ -7886,11 +7886,11 @@ async function fetchGraphQl(octokit, params) {
     }
     const runs = checkSuite.checkRuns?.nodes;
     if (!runs) {
-      throw Error("fff");
+      throw new Error("no runs");
     }
     for (const run2 of runs) {
       if (!run2) {
-        throw Error("fff");
+        throw new Error("no run");
       }
       runIdToSummary.set(run2.id, {
         acceptable: run2.conclusion == "SUCCESS" || run2.conclusion == "SKIPPED",

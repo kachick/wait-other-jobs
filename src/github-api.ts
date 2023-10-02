@@ -74,7 +74,7 @@ export async function fetchGraphQl(
 
   if (!edges) {
     error('Cannot correctly get via GraphQL');
-    throw Error('fff');
+    throw new Error('no edges');
   }
   const css = edges.flatMap((edge) => {
     const node = edge?.node;
@@ -90,11 +90,11 @@ export async function fetchGraphQl(
     }
     const runs = checkSuite.checkRuns?.nodes;
     if (!runs) {
-      throw Error('fff');
+      throw new Error('no runs');
     }
     for (const run of runs) {
       if (!run) {
-        throw Error('fff');
+        throw new Error('no run');
       }
       runIdToSummary.set(run.id, {
         acceptable: run.conclusion == 'SUCCESS' || run.conclusion == 'SKIPPED',
