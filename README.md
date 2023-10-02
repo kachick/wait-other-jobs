@@ -35,8 +35,7 @@ jobs:
   with-waiting:
     runs-on: ubuntu-latest
     steps:
-      - name: Wait for other jobs to pass or fail
-        uses: kachick/wait-other-jobs@v2.0.0
+      - uses: kachick/wait-other-jobs@v2.0.0
         timeout-minutes: 15
 ```
 
@@ -72,16 +71,16 @@ with:
 
 Full list of the changeable parameters
 
-| NAME                   | DESCRIPTION                                                                     | TYPE                 | REQUIRED | DEFAULT               | OPTIONS                                  |
-| ---------------------- | ------------------------------------------------------------------------------- | -------------------- | -------- | --------------------- | ---------------------------------------- |
-| `github-token`         | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string`             | `true`   | `${{ github.token }}` |                                          |
-| `min-interval-seconds` | Wait this interval or the multiplied value (and jitter) for next polling        | `number`             | `false`  | `30`                  |                                          |
-| `retry-method`         | How to wait for next polling                                                    | `string`             | `false`  | `exponential_backoff` | `exponential_backoff`, `equal_intervals` |
-| `early-exit`           | Stop rest pollings if faced at least 1 bad condition                            | `bool`               | `false`  | `true`                |                                          |
-| `attempt-limits`       | Stop rest pollings after this attempts even if other jobs are not yet completed | `number`             | `false`  | `1000`                |                                          |
-| `wait-list`            | This action will not wait for items other than this list                        | `string(JSON Array)` | `false`  | `[]`                  |                                          |
-| `skip-list`            | This action will not wait for items on this list                                | `string(JSON Array)` | `false`  | `[]`                  |                                          |
-| `dry-run`              | Avoid requests for tests                                                        | `bool`               | `false`  | `false`               |                                          |
+| NAME                   | DESCRIPTION                                                                     | TYPE     | REQUIRED | DEFAULT               | OPTIONS                                  |
+| ---------------------- | ------------------------------------------------------------------------------- | -------- | -------- | --------------------- | ---------------------------------------- |
+| `github-token`         | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `true`   | `${{ github.token }}` |                                          |
+| `min-interval-seconds` | Wait this interval or the multiplied value (and jitter) for next polling        | `number` | `false`  | `30`                  |                                          |
+| `retry-method`         | How to wait for next polling                                                    | `string` | `false`  | `exponential_backoff` | `exponential_backoff`, `equal_intervals` |
+| `early-exit`           | Stop rest pollings if faced at least 1 bad condition                            | `bool`   | `false`  | `true`                |                                          |
+| `attempt-limits`       | Stop rest pollings after this attempts even if other jobs are not yet completed | `number` | `false`  | `1000`                |                                          |
+| `wait-list`            | This action will not wait for items other than this list                        | `string` | `false`  | `[]`                  |                                          |
+| `skip-list`            | This action will not wait for items on this list                                | `string` | `false`  | `[]`                  |                                          |
+| `dry-run`              | Avoid requests for tests                                                        | `bool`   | `false`  | `false`               |                                          |
 
 Below is a typical usecase. Assume test jobs defined in another workflow.
 
@@ -134,6 +133,9 @@ jobs:
 
 Judge OK or Bad with the checkRun state at the moment.\
 When some jobs will be triggered after this action with `needs: [distant-first]`, it might be unaccurate. (I didn't faced yet)
+
+Since v2, paging feature is not implemented yet.\
+If your trigger starts many workflows as 100+, or any workflow starts many jobs as 100+, this action will not fit. (for now)
 
 ## GITHUB_TOKEN vs PAT
 
