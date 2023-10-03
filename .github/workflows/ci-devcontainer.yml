@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - name: Log host users and file owners
         run: |
           whoami
@@ -36,7 +36,7 @@ jobs:
           echo "container_user_uid=${uid}" | tee -a "$GITHUB_ENV"
           echo "container_user_gid=${gid}" | tee -a "$GITHUB_ENV"
       - name: Build and run dev container task
-        uses: devcontainers/ci@v0.3
+        uses: devcontainers/ci@57eaf0c9b518a76872bc429cdceefd65a912309b # v0.3
         with:
           # Can't we call these commands on the nix develop even enabled direnv...?
           runCmd: |

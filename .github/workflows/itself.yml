@@ -24,7 +24,7 @@ jobs:
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - uses: ./
         continue-on-error: true
         with:
@@ -37,7 +37,7 @@ jobs:
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - uses: ./
         with:
           retry-method: 'equal_intervals'
@@ -49,14 +49,14 @@ jobs:
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - uses: ./
   wait-list:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - uses: ./
         with:
           retry-method: 'equal_intervals'
@@ -77,7 +77,7 @@ jobs:
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - uses: ./
         with:
           retry-method: 'equal_intervals'
@@ -87,6 +87,12 @@ jobs:
             [
               {
                 "workflowFile": "ci.yml"
+              },
+              {
+                "workflowFile": "ci-nix.yml"
+              },
+              {
+                "workflowFile": "ci-devcontainer.yml"
               },
               {
                 "workflowFile": "merge-bot-pr.yml",
