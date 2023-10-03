@@ -12,6 +12,9 @@ on:
       - 'action.yml'
       - 'dist/**'
 
+# Disable all permissions in workflow global to clarify which scope is needed for private repositories
+permissions: {}
+
 jobs:
   # Keep sequential to avoid infinite loop
   exponential_backoff:
