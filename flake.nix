@@ -31,6 +31,10 @@
               nixpkgs-fmt
               typos
               actionlint
+
+              gh
+              jq
+
               # Avoided broken hadolint in latest
               # https://github.com/NixOS/nixpkgs/pull/240387#issuecomment-1686601267
               stable-pkgs.hadolint
