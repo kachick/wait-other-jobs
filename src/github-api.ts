@@ -52,6 +52,9 @@ export async function getCheckRunSummaries(
                 conclusion
                 workflowRun {
                   databaseId
+                  file {
+                    path
+                  }
                 }
                 checkRuns(first: 100) {
                   totalCount

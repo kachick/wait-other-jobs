@@ -12793,6 +12793,9 @@ async function getCheckRunSummaries(token, params) {
                 conclusion
                 workflowRun {
                   databaseId
+                  file {
+                    path
+                  }
                 }
                 checkRuns(first: 100) {
                   totalCount
