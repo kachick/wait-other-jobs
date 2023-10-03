@@ -89,6 +89,12 @@ jobs:
                 "workflowFile": "ci.yml"
               },
               {
+                "workflowFile": "ci-nix.yml"
+              },
+              {
+                "workflowFile": "ci-devcontainer.yml"
+              },
+              {
                 "workflowFile": "merge-bot-pr.yml",
                 "jobName": "dependabot"
               }
