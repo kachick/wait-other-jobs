@@ -12,11 +12,6 @@ on:
       - 'action.yml'
       - 'dist/**'
 
-permissions:
-  contents: write
-  checks: read
-  actions: read
-
 jobs:
   # Keep sequential to avoid infinite loop
   exponential_backoff:
@@ -52,6 +47,8 @@ jobs:
       - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - uses: ./
   wait-list:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
@@ -73,6 +70,8 @@ jobs:
               }
             ]
   skip-list:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
