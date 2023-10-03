@@ -56,7 +56,7 @@ with:
   skip-list: |
     [
       {
-        "workflowFile": "pages.yml",
+        "workflowFile": "pages.yml"
       }
     ]
 ```
