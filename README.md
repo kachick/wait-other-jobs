@@ -48,7 +48,6 @@ with:
   # lists should be given with JSON formatted array, do not specify both wait-list and skip-list
   #   - Each items should have "workflowFile" field and they can optinaly have "jobName" field
   #   - If no jobName is specified, all of jobs in the workflow will be targeted
-  # list-based mode requires `contents: read` permission in addition to `checks: read` and `actions: read`
   wait-list: |
     [
       {
