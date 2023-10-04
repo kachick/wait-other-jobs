@@ -12,10 +12,9 @@ on:
       - 'action.yml'
       - 'dist/**'
 
-permissions:
-  contents: write
-  checks: read
-  actions: read
+# Disable all permissions in workflow global as to setup clean room
+# However PRs will have read permissions because this project is on a public repository
+permissions: {}
 
 jobs:
   # Keep sequential to avoid infinite loop

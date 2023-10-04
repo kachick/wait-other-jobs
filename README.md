@@ -25,6 +25,11 @@ I recommend to use `timeout-minutes` together with.
 ```yaml
 jobs:
   steps-with-waiting:
+    # Enabling these permissions are required in private repositories
+    # permissions:
+    #   contents: read
+    #   checks: read
+    #   actions: read
     runs-on: ubuntu-latest
     steps:
       - uses: kachick/wait-other-jobs@6311df9bc725c0a5092e2db322c7cbe19165d47d # v2.0.0
@@ -41,8 +46,8 @@ with:
   retry-method: 'exponential_backoff' # default 'equal_intervals'
   early-exit: 'false' # default 'true'
   # lists should be given with JSON formatted array, do not specify both wait-list and skip-list
-  # Each items should have "workflowFile" field and they can optinaly have "jobName" field
-  # If no jobName is specified, all of jobs in the workflow will be targeted
+  #   - Each items should have "workflowFile" field and they can optinaly have "jobName" field
+  #   - If no jobName is specified, all of jobs in the workflow will be targeted
   wait-list: |
     [
       {
@@ -136,7 +141,7 @@ This action just requires following GITHUB_TOKEN permissions. Needless annoying 
 
 ```yaml
 permissions:
-  contents: write
+  contents: read # Since v2
   checks: read
   actions: read
 ```

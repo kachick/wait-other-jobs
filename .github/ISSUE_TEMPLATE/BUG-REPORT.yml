@@ -1,0 +1,50 @@
+name: Bug Report
+description: File a bug report or questions for unexpected behaviors
+title: '[Bug/Question]: '
+labels: ['bug', 'triage']
+assignees:
+  - kachick
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        If you are using this action in private repositories, please confirm the required permissions are enabled
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: What version are you using?
+      options:
+        - v2.0.0
+        - v2
+        - v1.3.0
+        - v1
+        - other
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: permissions
+    attributes:
+      label: Permissions
+      description: Actual permissions in your run
+      placeholder: |
+        Copy from your action log's "Set up job" section.
+        See https://github.com/kachick/wait-other-jobs/issues/598#issuecomment-1744790616 for detail
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
