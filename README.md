@@ -25,10 +25,11 @@ I recommend to use `timeout-minutes` together with.
 ```yaml
 jobs:
   steps-with-waiting:
-    permissions:
-      contents: read
-      # checks: read # For private repositories
-      # actions: read # For private repositories
+    # Enabling these permissions are required in private repositories
+    # permissions:
+    #   contents: read
+    #   checks: read
+    #   actions: read
     runs-on: ubuntu-latest
     steps:
       - uses: kachick/wait-other-jobs@6311df9bc725c0a5092e2db322c7cbe19165d47d # v2.0.0
@@ -141,7 +142,7 @@ This action just requires following GITHUB_TOKEN permissions. Needless annoying 
 
 ```yaml
 permissions:
-  contents: read
+  contents: read # Since v2
   checks: read
   actions: read
 ```
