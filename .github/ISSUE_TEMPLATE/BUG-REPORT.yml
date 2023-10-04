@@ -44,6 +44,18 @@ body:
     validations:
       required: true
   - type: textarea
+    id: parameters
+    attributes:
+      label: Parameters
+      description: |
+        Actual parameters in your job
+        See https://github.com/kachick/wait-other-jobs/blob/main/assets/parameters.png for the place
+        They are parsed values from your inputs
+      placeholder: |
+        Copy from your job log's "Parameters" section.
+    validations:
+      required: true
+  - type: textarea
     id: logs
     attributes:
       label: Relevant log output
