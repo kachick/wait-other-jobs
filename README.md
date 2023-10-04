@@ -32,7 +32,7 @@ jobs:
     #   actions: read
     runs-on: ubuntu-latest
     steps:
-      - uses: kachick/wait-other-jobs@6311df9bc725c0a5092e2db322c7cbe19165d47d # v2.0.0
+      - uses: kachick/wait-other-jobs@963552d49b8f1de06214db5ade5826763eefd29d # v2.0.1
         timeout-minutes: 15
 ```
 
@@ -103,7 +103,7 @@ jobs:
       - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - name: Wait for other jobs to pass or fail
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
-        uses: kachick/wait-other-jobs@6311df9bc725c0a5092e2db322c7cbe19165d47d # v2.0.0
+        uses: kachick/wait-other-jobs@963552d49b8f1de06214db5ade5826763eefd29d # v2.0.1
         timeout-minutes: 10
       - name: Approve and merge
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
@@ -118,7 +118,7 @@ jobs:
     steps:
       - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - name: Wait for other jobs to pass or fail
-        uses: kachick/wait-other-jobs@6311df9bc725c0a5092e2db322c7cbe19165d47d # v2.0.0
+        uses: kachick/wait-other-jobs@963552d49b8f1de06214db5ade5826763eefd29d # v2.0.1
         timeout-minutes: 10
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
