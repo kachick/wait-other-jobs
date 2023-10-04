@@ -12,7 +12,8 @@ on:
       - 'action.yml'
       - 'dist/**'
 
-# Disable all permissions in workflow global to clarify which scope is needed for private repositories
+# Disable all permissions in workflow global as to setup clean room
+# However PRs will have read permissions because this project is on a public repository
 permissions: {}
 
 jobs:
@@ -50,8 +51,6 @@ jobs:
       - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - uses: ./
   wait-list:
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
@@ -73,8 +72,6 @@ jobs:
               }
             ]
   skip-list:
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
