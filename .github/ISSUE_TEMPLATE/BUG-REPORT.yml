@@ -36,15 +36,20 @@ body:
     id: permissions
     attributes:
       label: Permissions
-      description: Actual permissions in your run
+      description: |
+        Actual permissions in your run
+        See https://github.com/kachick/wait-other-jobs/issues/598#issuecomment-1744790616 for detail
       placeholder: |
         Copy from your action log's "Set up job" section.
-        See https://github.com/kachick/wait-other-jobs/issues/598#issuecomment-1744790616 for detail
     validations:
       required: true
   - type: textarea
     id: logs
     attributes:
       label: Relevant log output
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      description: |
+        Please copy and paste any relevant log output.
+        This will be automatically formatted into code, so no need for backticks.
       render: shell
+    validations:
+      required: true
