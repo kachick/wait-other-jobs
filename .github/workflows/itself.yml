@@ -52,7 +52,6 @@ jobs:
   wait-list:
     permissions:
       contents: read
-      checks: none
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
@@ -76,7 +75,6 @@ jobs:
   skip-list:
     permissions:
       contents: read
-      actions: none
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
