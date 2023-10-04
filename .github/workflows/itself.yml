@@ -18,10 +18,6 @@ permissions: {}
 jobs:
   # Keep sequential to avoid infinite loop
   exponential_backoff:
-    permissions:
-      contents: none
-      checks: none
-      actions: none
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
