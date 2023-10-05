@@ -115,7 +115,9 @@ export async function getCheckRunSummaries(
     }
 
     return runNodes.map((run) => ({
-      acceptable: run.conclusion == 'SUCCESS' || run.conclusion === 'SKIPPED' || checkSuite.conclusion === 'SKIPPED',
+      acceptable: run.conclusion == 'SUCCESS' || run.conclusion === 'SKIPPED'
+        || (run.conclusion === 'NEUTRAL'
+          && (checkSuite.conclusion === 'SUCCESS' || checkSuite.conclusion === 'SKIPPED')),
       workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
 
       checkSuiteStatus: checkSuite.status,

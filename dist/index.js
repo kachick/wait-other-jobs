@@ -12849,7 +12849,7 @@ async function getCheckRunSummaries(token, params) {
       throw new Error("no runNodes");
     }
     return runNodes.map((run2) => ({
-      acceptable: run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || checkSuite.conclusion === "SKIPPED",
+      acceptable: run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || run2.conclusion === "NEUTRAL" && (checkSuite.conclusion === "SUCCESS" || checkSuite.conclusion === "SKIPPED"),
       workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
       checkSuiteStatus: checkSuite.status,
       checkSuiteConclusion: checkSuite.conclusion,
