@@ -9798,10 +9798,11 @@ var ZodType = class {
 };
 var cuidRegex = /^c[^\s-]{8,}$/i;
 var cuid2Regex = /^[a-z][a-z0-9]*$/;
-var ulidRegex = /[0-9A-HJKMNP-TV-Z]{26}/;
+var ulidRegex = /^[0-9A-HJKMNP-TV-Z]{26}$/;
 var uuidRegex = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/i;
 var emailRegex = /^(?!\.)(?!.*\.\.)([A-Z0-9_+-\.]*)[A-Z0-9_+-]@([A-Z0-9][A-Z0-9\-]*\.)+[A-Z]{2,}$/i;
-var emojiRegex = new RegExp("^(\\p{Extended_Pictographic}|\\p{Emoji_Component})+$", "u");
+var _emojiRegex = `^(\\p{Extended_Pictographic}|\\p{Emoji_Component})+$`;
+var emojiRegex;
 var ipv4Regex = /^(((25[0-5])|(2[0-4][0-9])|(1[0-9]{2})|([0-9]{1,2}))\.){3}((25[0-5])|(2[0-4][0-9])|(1[0-9]{2})|([0-9]{1,2}))$/;
 var ipv6Regex = /^(([a-f0-9]{1,4}:){7}|::([a-f0-9]{1,4}:){0,6}|([a-f0-9]{1,4}:){1}:([a-f0-9]{1,4}:){0,5}|([a-f0-9]{1,4}:){2}:([a-f0-9]{1,4}:){0,4}|([a-f0-9]{1,4}:){3}:([a-f0-9]{1,4}:){0,3}|([a-f0-9]{1,4}:){4}:([a-f0-9]{1,4}:){0,2}|([a-f0-9]{1,4}:){5}:([a-f0-9]{1,4}:){0,1})([a-f0-9]{1,4}|(((25[0-5])|(2[0-4][0-9])|(1[0-9]{2})|([0-9]{1,2}))\.){3}((25[0-5])|(2[0-4][0-9])|(1[0-9]{2})|([0-9]{1,2})))$/;
 var datetimeRegex = (args) => {
@@ -9835,27 +9836,6 @@ function isValidIP(ip, version2) {
   return false;
 }
 var ZodString = class _ZodString extends ZodType {
-  constructor() {
-    super(...arguments);
-    this._regex = (regex, validation, message) => this.refinement((data) => regex.test(data), {
-      validation,
-      code: ZodIssueCode.invalid_string,
-      ...errorUtil.errToObj(message)
-    });
-    this.nonempty = (message) => this.min(1, errorUtil.errToObj(message));
-    this.trim = () => new _ZodString({
-      ...this._def,
-      checks: [...this._def.checks, { kind: "trim" }]
-    });
-    this.toLowerCase = () => new _ZodString({
-      ...this._def,
-      checks: [...this._def.checks, { kind: "toLowerCase" }]
-    });
-    this.toUpperCase = () => new _ZodString({
-      ...this._def,
-      checks: [...this._def.checks, { kind: "toUpperCase" }]
-    });
-  }
   _parse(input) {
     if (this._def.coerce) {
       input.data = String(input.data);
@@ -9940,6 +9920,9 @@ var ZodString = class _ZodString extends ZodType {
           status.dirty();
         }
       } else if (check.kind === "emoji") {
+        if (!emojiRegex) {
+          emojiRegex = new RegExp(_emojiRegex, "u");
+        }
         if (!emojiRegex.test(input.data)) {
           ctx = this._getOrReturnCtx(input, ctx);
           addIssueToContext(ctx, {
@@ -10076,6 +10059,13 @@ var ZodString = class _ZodString extends ZodType {
     }
     return { status: status.value, value: input.data };
   }
+  _regex(regex, validation, message) {
+    return this.refinement((data) => regex.test(data), {
+      validation,
+      code: ZodIssueCode.invalid_string,
+      ...errorUtil.errToObj(message)
+    });
+  }
   _addCheck(check) {
     return new _ZodString({
       ...this._def,
@@ -10171,6 +10161,31 @@ var ZodString = class _ZodString extends ZodType {
       kind: "length",
       value: len,
       ...errorUtil.errToObj(message)
+    });
+  }
+  /**
+   * @deprecated Use z.string().min(1) instead.
+   * @see {@link ZodString.min}
+   */
+  nonempty(message) {
+    return this.min(1, errorUtil.errToObj(message));
+  }
+  trim() {
+    return new _ZodString({
+      ...this._def,
+      checks: [...this._def.checks, { kind: "trim" }]
+    });
+  }
+  toLowerCase() {
+    return new _ZodString({
+      ...this._def,
+      checks: [...this._def.checks, { kind: "toLowerCase" }]
+    });
+  }
+  toUpperCase() {
+    return new _ZodString({
+      ...this._def,
+      checks: [...this._def.checks, { kind: "toUpperCase" }]
     });
   }
   get isDatetime() {
