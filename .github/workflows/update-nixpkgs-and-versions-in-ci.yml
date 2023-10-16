@@ -11,10 +11,13 @@ on:
 
 jobs:
   update-nixpkgs:
-    uses: kachick/anylang-template/.github/workflows/reusable-update-nixpkgs-and-versions-in-ci.yml@0d50545d31a5b7b878d2738db38654c23cd37ef4
+    uses: kachick/anylang-template/.github/workflows/reusable-update-nixpkgs-and-versions-in-ci.yml@e975e064e5e0acc3d99808ac9142bfba3c78a3b0
     if: (github.event.sender.login == 'kachick') || (github.event_name != 'pull_request')
     with:
       dry-run: ${{ github.event_name == 'pull_request' }}
+      optional-run: |
+        nix develop --command nix run github:kachick/selfup/v0.0.2 -- run --prefix='# selfup ' --skip-by='nix run' .github/ISSUE_TEMPLATE/*.yml
+        git diff-index --quiet HEAD || git commit -m 'Update latest versions in issue template' .github
     secrets:
       APP_ID: ${{ secrets.APP_ID }}
       APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
