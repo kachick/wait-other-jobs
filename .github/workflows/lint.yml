@@ -24,7 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
-      - uses: crate-ci/typos@1ccb2ff8ad0982a2afcc3f4f473819df0d2e819f # v1.16.15 # selfup { "regex": "crate-ci/typos@\\S+ # \\S+", "script": "./scripts/get-typos-action-ref.bash" }
+      # Intentionally point to the latest version, not the version bound by nix.
+      # Because getting commit ref from version string requires network access.
+      - uses: crate-ci/typos@35a8bc67870d6c0b7407683319ae175577e24261 # v1.16.19
         with:
           files: |
             .
