@@ -35,7 +35,7 @@
     "@tsconfig/strictest": "^2.0.2",
     "@types/node": "^20.8.6",
     "esbuild": "0.19.4",
-    "tsx": "^3.13.0",
+    "tsx": "^3.14.0",
     "typescript": "^5.2.2"
   }
 }
