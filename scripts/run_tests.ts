@@ -7,7 +7,7 @@ const testPaths = dirEnts.flatMap((dirent) => dirent.name.endsWith('.test.ts') ?
 
 console.log('Starting to run tests for', testPaths);
 
-execFileSync('node', ['--loader', 'tsx', '--no-warnings', '--test', ...testPaths], {
+execFileSync('node', ['--import', 'tsx', '--no-warnings', '--test', ...testPaths], {
   // preserving color: https://github.com/nodejs/help/issues/2183#issuecomment-532362821
   stdio: 'inherit',
 });
