@@ -146,7 +146,7 @@ interface Report {
 export async function fetchOtherRunStatus(
   apiUrl: string,
   token: string,
-  params: Parameters<typeof getCheckRunSummaries>[1],
+  params: Parameters<typeof getCheckRunSummaries>[2],
   waitList: z.infer<typeof List>,
   skipList: z.infer<typeof List>,
 ): Promise<Report> {

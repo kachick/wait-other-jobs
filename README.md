@@ -68,18 +68,18 @@ with:
 
 Full list of the changeable parameters
 
-| NAME                                | DESCRIPTION                                                                     | TYPE     | REQUIRED | DEFAULT               | OPTIONS                                  |
-| ----------------------------------- | ------------------------------------------------------------------------------- | -------- | -------- | --------------------- | ---------------------------------------- |
-| `github-api-url`                      | The Github API endpoint. Override for Github Enterprise usage.                           | `string` | `true`   | `https://api.github.com` |                                          |
-| `github-token`                      | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `true`   | `${{ github.token }}` |                                          |
-| `wait-seconds-before-first-polling` | Wait this interval before first polling                                         | `number` | `false`  | `10`                  |                                          |
-| `min-interval-seconds`              | Wait this interval or the multiplied value (and jitter) for next polling        | `number` | `false`  | `15`                  |                                          |
-| `retry-method`                      | How to wait for next polling                                                    | `string` | `false`  | `equal_intervals`     | `exponential_backoff`, `equal_intervals` |
-| `early-exit`                        | Stop rest pollings if faced at least 1 bad condition                            | `bool`   | `false`  | `true`                |                                          |
-| `attempt-limits`                    | Stop rest pollings after this attempts even if other jobs are not yet completed | `number` | `false`  | `1000`                |                                          |
-| `wait-list`                         | This action will not wait for items other than this list                        | `string` | `false`  | `[]`                  |                                          |
-| `skip-list`                         | This action will not wait for items on this list                                | `string` | `false`  | `[]`                  |                                          |
-| `dry-run`                           | Avoid requests for tests                                                        | `bool`   | `false`  | `false`               |                                          |
+| NAME                                | DESCRIPTION                                                                     | TYPE     | REQUIRED | DEFAULT                 | OPTIONS                                  |
+| ----------------------------------- | ------------------------------------------------------------------------------- | -------- | -------- | ----------------------- | ---------------------------------------- |
+| `github-api-url`                    | The Github API endpoint. Override for Github Enterprise usage.                  | `string` | `true`   | `${{ github.api_url }}` |                                          |
+| `github-token`                      | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `true`   | `${{ github.token }}`   |                                          |
+| `wait-seconds-before-first-polling` | Wait this interval before first polling                                         | `number` | `false`  | `10`                    |                                          |
+| `min-interval-seconds`              | Wait this interval or the multiplied value (and jitter) for next polling        | `number` | `false`  | `15`                    |                                          |
+| `retry-method`                      | How to wait for next polling                                                    | `string` | `false`  | `equal_intervals`       | `exponential_backoff`, `equal_intervals` |
+| `early-exit`                        | Stop rest pollings if faced at least 1 bad condition                            | `bool`   | `false`  | `true`                  |                                          |
+| `attempt-limits`                    | Stop rest pollings after this attempts even if other jobs are not yet completed | `number` | `false`  | `1000`                  |                                          |
+| `wait-list`                         | This action will not wait for items other than this list                        | `string` | `false`  | `[]`                    |                                          |
+| `skip-list`                         | This action will not wait for items on this list                                | `string` | `false`  | `[]`                    |                                          |
+| `dry-run`                           | Avoid requests for tests                                                        | `bool`   | `false`  | `false`                 |                                          |
 
 Below is a typical usecase. Assume test jobs defined in another workflow.
 
@@ -156,12 +156,12 @@ This action provides another way. It checks other workflows/jobs statuses in act
 
 ## Support for Github Enterprise
 
-To run this action in your Github Enterprise (GHE) instance you need to override `github-api-url`:
+To run this action in your Github Enterprise (GHE) instance you might need to
+override `github-api-url` in some cases:
 
-``` yaml
+```yaml
 with:
-  github-api-url: "https://ghe-host.acme.net/api/v3"
-
+  github-api-url: 'https://ghe-host.example.net/api/v3'
 ```
 
 ### Cons
