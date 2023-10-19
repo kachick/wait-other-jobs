@@ -25922,8 +25922,8 @@ var ListItem = z.object({
   jobName: z.string().min(1).optional()
 });
 var List = z.array(ListItem);
-async function getCheckRunSummaries(token, params) {
-  const octokit = new PaginatableOctokit({ auth: token });
+async function getCheckRunSummaries(apiUrl, token, params) {
+  const octokit = new PaginatableOctokit({ auth: token, baseUrl: apiUrl });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate(
     `
     query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!, $cursor: String) {
@@ -26011,11 +26011,11 @@ async function getCheckRunSummaries(token, params) {
   });
   return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
 }
-async function fetchOtherRunStatus(token, params, waitList, skipList) {
+async function fetchOtherRunStatus(apiUrl, token, params, waitList, skipList) {
   if (waitList.length > 0 && skipList.length > 0) {
     throw new Error("Do not specify both wait-list and skip-list");
   }
-  let checkRunSummaries = await getCheckRunSummaries(token, params);
+  let checkRunSummaries = await getCheckRunSummaries(apiUrl, token, params);
   if (waitList.length > 0) {
     checkRunSummaries = checkRunSummaries.filter(
       (summary) => waitList.some(
@@ -26124,6 +26124,7 @@ async function run() {
     );
     return;
   }
+  const githubApiUrl = (0, import_core2.getInput)("github-api-url", { required: true, trimWhitespace: true });
   const attemptLimits = parseInt(
     (0, import_core2.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
     10
@@ -26138,6 +26139,7 @@ async function run() {
   const isDryRun = (0, import_core2.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   (0, import_core2.info)(JSON.stringify(
     {
+      githubApiUrl,
       triggeredCommitSha: commitSha,
       runId,
       repositoryInfo,
@@ -26179,6 +26181,7 @@ async function run() {
     }
     (0, import_core2.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
+      githubApiUrl,
       githubToken,
       { ...repositoryInfo, ref: commitSha, triggerRunId: runId },
       waitList,

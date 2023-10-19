@@ -70,6 +70,7 @@ Full list of the changeable parameters
 
 | NAME                                | DESCRIPTION                                                                     | TYPE     | REQUIRED | DEFAULT               | OPTIONS                                  |
 | ----------------------------------- | ------------------------------------------------------------------------------- | -------- | -------- | --------------------- | ---------------------------------------- |
+| `github-api-url`                      | The Github API endpoint. Override for Github Enterprise usage.                           | `string` | `true`   | `https://api.github.com` |                                          |
 | `github-token`                      | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `true`   | `${{ github.token }}` |                                          |
 | `wait-seconds-before-first-polling` | Wait this interval before first polling                                         | `number` | `false`  | `10`                  |                                          |
 | `min-interval-seconds`              | Wait this interval or the multiplied value (and jitter) for next polling        | `number` | `false`  | `15`                  |                                          |
@@ -152,6 +153,16 @@ However it requires PAT(Personal Access Token).\
 And it requires annoy steps to generate, sets and maintains tokens [even if refined with beta version](https://github.blog/changelog/2022-10-18-introducing-fine-grained-personal-access-tokens/).
 
 This action provides another way. It checks other workflows/jobs statuses in actions with GITHUB_TOKEN.
+
+## Support for Github Enterprise
+
+To run this action in your Github Enterprise (GHE) instance you need to override `github-api-url`:
+
+``` yaml
+with:
+  github-api-url: "https://ghe-host.acme.net/api/v3"
+
+```
 
 ### Cons
 
