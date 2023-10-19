@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - uses: dprint/check@2f1cf31537886c3bfb05591c031f7744e48ba8a1 # v2.2
         with:
-          dprint-version: '0.40.2' # selfup { "regex": "\\d[^']+", "script": "dprint --version | cut -d ' ' -f 2" }
+          dprint-version: '0.41.0' # selfup { "regex": "\\d[^']+", "script": "dprint --version | cut -d ' ' -f 2" }
 
   typos:
     timeout-minutes: 15
