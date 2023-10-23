@@ -40,7 +40,7 @@ You can change the token, polling interval, allow/deny list and turns early-exit
 
 ```yaml
 with:
-  github-token: "${{ secrets.YOUR_PAT }}"
+  github-token: '${{ secrets.YOUR_PAT }}'
   wait-seconds-before-first-polling: '30' # default '10'
   min-interval-seconds: '300' # default '15'
   retry-method: 'exponential_backoff' # default 'equal_intervals'

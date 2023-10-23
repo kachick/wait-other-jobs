@@ -10,7 +10,7 @@ inputs:
     required: true
     default: ${{ github.token }}
   github-api-url:
-    description: "Github API URL"
+    description: 'Github API URL'
     required: true
     default: ${{ github.api_url }}
   wait-seconds-before-first-polling:
