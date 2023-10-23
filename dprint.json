@@ -7,7 +7,9 @@
     "importDeclaration.sortNamedImports": "maintain",
     "exportDeclaration.sortNamedExports": "maintain"
   },
-  "json": {},
+  "json": {
+    "trailingCommas": "never"
+  },
   "markdown": {},
   "prettier": {
     "printWidth": 120,
