@@ -36,7 +36,7 @@ jobs:
           echo "container_user_uid=${uid}" | tee -a "$GITHUB_ENV"
           echo "container_user_gid=${gid}" | tee -a "$GITHUB_ENV"
       - name: Build and run dev container task
-        uses: devcontainers/ci@57eaf0c9b518a76872bc429cdceefd65a912309b # v0.3
+        uses: devcontainers/ci@c3e31cc561800ac318ed000e22ffc6713c93d009 # v0.3
         with:
           # Can't we call these commands on the nix develop even enabled direnv...?
           runCmd: |
