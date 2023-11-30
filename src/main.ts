@@ -63,6 +63,8 @@ async function run(): Promise<void> {
     );
     return;
   }
+  const githubApiUrl = getInput('github-api-url', { required: true, trimWhitespace: true });
+
   const attemptLimits = parseInt(
     getInput('attempt-limits', { required: true, trimWhitespace: true }),
     10,
@@ -78,6 +80,7 @@ async function run(): Promise<void> {
 
   info(JSON.stringify(
     {
+      githubApiUrl,
       triggeredCommitSha: commitSha,
       runId,
       repositoryInfo,
@@ -128,6 +131,7 @@ async function run(): Promise<void> {
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
 
     const report = await fetchOtherRunStatus(
+      githubApiUrl,
       githubToken,
       { ...repositoryInfo, ref: commitSha, triggerRunId: runId },
       waitList,

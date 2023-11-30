@@ -29,10 +29,11 @@ interface Summary {
 }
 
 export async function getCheckRunSummaries(
+  apiUrl: string,
   token: string,
   params: { owner: string; repo: string; ref: string; triggerRunId: number },
 ): Promise<Array<Summary>> {
-  const octokit = new PaginatableOctokit({ auth: token });
+  const octokit = new PaginatableOctokit({ auth: token, baseUrl: apiUrl });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate<
     { repository: { object: { checkSuites: Commit['checkSuites'] } } }
   >(
@@ -143,8 +144,9 @@ interface Report {
 }
 
 export async function fetchOtherRunStatus(
+  apiUrl: string,
   token: string,
-  params: Parameters<typeof getCheckRunSummaries>[1],
+  params: Parameters<typeof getCheckRunSummaries>[2],
   waitList: z.infer<typeof List>,
   skipList: z.infer<typeof List>,
 ): Promise<Report> {
@@ -152,7 +154,7 @@ export async function fetchOtherRunStatus(
     throw new Error('Do not specify both wait-list and skip-list');
   }
 
-  let checkRunSummaries = await getCheckRunSummaries(token, params);
+  let checkRunSummaries = await getCheckRunSummaries(apiUrl, token, params);
 
   if (waitList.length > 0) {
     checkRunSummaries = checkRunSummaries.filter((summary) =>
