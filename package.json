@@ -33,7 +33,7 @@
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",
     "@tsconfig/strictest": "^2.0.2",
-    "@types/node": "^20.10.3",
+    "@types/node": "^20.10.4",
     "esbuild": "0.19.8",
     "tsx": "^4.6.2",
     "typescript": "^5.3.2"
