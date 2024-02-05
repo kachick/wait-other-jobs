@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
         with:
-          node-version: '20.10.0' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
+          node-version: '20.11.0' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm run build
@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
         with:
-          node-version: '20.10.0' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
+          node-version: '20.11.0' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm test
@@ -49,7 +49,7 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
         with:
-          node-version: '20.10.0' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
+          node-version: '20.11.0' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
           cache: npm
       - run: npm ci --ignore-scripts
       - name: Typecheck
@@ -62,5 +62,5 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - uses: denoland/setup-deno@041b854f97b325bd60e53e9dc2de9cb9f9ac0cba # v1.1.4
         with:
-          deno-version: '1.39.1' # selfup { "regex": "\\d[^']+", "script": "deno --version | head -n 1 | cut -d ' ' -f 2" }
+          deno-version: '1.40.2' # selfup { "regex": "\\d[^']+", "script": "deno --version | head -n 1 | cut -d ' ' -f 2" }
       - run: deno lint
