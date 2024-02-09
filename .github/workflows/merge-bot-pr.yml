@@ -16,7 +16,6 @@ jobs:
       - name: Dependabot metadata
         id: metadata
         uses: dependabot/fetch-metadata@c9c4182bf1b97f5224aee3906fd373f6b61b4526 # v1.6.0
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Wait other jobs
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         uses: ./
@@ -40,7 +39,6 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Wait other jobs
         uses: ./
         timeout-minutes: 10
@@ -49,6 +47,21 @@ jobs:
           min-interval-seconds: '15'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # https://github.com/kachick/anylang-template/issues/51
+  selfup-runner:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'selfup-runner[bot]' }}
+    steps:
+      - name: Wait other jobs
+        uses: ./
+        timeout-minutes: 20
+      - name: Approve and merge
+        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --delete-branch --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
