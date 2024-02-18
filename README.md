@@ -32,7 +32,7 @@ jobs:
     #   actions: read
     runs-on: ubuntu-latest
     steps:
-      - uses: kachick/wait-other-jobs@2e18e23fce3e7bc76cfb125b4a75acd091c84347 # v2.0.3
+      - uses: kachick/wait-other-jobs@v2
         timeout-minutes: 15
 ```
 
