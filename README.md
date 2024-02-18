@@ -32,7 +32,7 @@ jobs:
     #   actions: read
     runs-on: ubuntu-latest
     steps:
-      - uses: kachick/wait-other-jobs@fe30bb3fc06912519e744b0eaa638f17a9953685 # v2.0.2
+      - uses: kachick/wait-other-jobs@2e18e23fce3e7bc76cfb125b4a75acd091c84347 # v2.0.3
         timeout-minutes: 15
 ```
 
@@ -102,7 +102,7 @@ jobs:
         uses: dependabot/fetch-metadata@c9c4182bf1b97f5224aee3906fd373f6b61b4526 # v1.6.0
       - name: Wait for other jobs to pass or fail
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
-        uses: kachick/wait-other-jobs@fe30bb3fc06912519e744b0eaa638f17a9953685 # v2.0.2
+        uses: kachick/wait-other-jobs@2e18e23fce3e7bc76cfb125b4a75acd091c84347 # v2.0.3
         timeout-minutes: 10
       - name: Approve and merge
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
@@ -116,7 +116,7 @@ jobs:
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       - name: Wait for other jobs to pass or fail
-        uses: kachick/wait-other-jobs@fe30bb3fc06912519e744b0eaa638f17a9953685 # v2.0.2
+        uses: kachick/wait-other-jobs@2e18e23fce3e7bc76cfb125b4a75acd091c84347 # v2.0.3
         timeout-minutes: 10
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
