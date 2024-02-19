@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
-          node-version: '20.11.0' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
+          node-version: '20.11.1' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm run build
@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
-          node-version: '20.11.0' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
+          node-version: '20.11.1' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm test
@@ -49,7 +49,7 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
-          node-version: '20.11.0' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
+          node-version: '20.11.1' # selfup { "regex": "\\d[^']+", "script": "node --version | tr -d v" }
           cache: npm
       - run: npm ci --ignore-scripts
       - name: Typecheck
