@@ -3,9 +3,7 @@ updates:
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: 'daily'
-      time: '08:00'
-      timezone: 'Asia/Tokyo'
+      interval: 'weekly'
     ignore:
       - dependency-name: 'actions/dependency-review-action'
         versions:
@@ -16,8 +14,6 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-      time: '08:00'
-      timezone: 'Asia/Tokyo'
     ignore:
       - dependency-name: '@types/*'
         update-types: ['version-update:semver-major']
