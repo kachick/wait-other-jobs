@@ -17,3 +17,13 @@ updates:
     ignore:
       - dependency-name: '@types/*'
         update-types: ['version-update:semver-major']
+    groups:
+      octokit-dependencies:
+        patterns:
+          - '@octokit/*'
+      tsconfig-dependencies:
+        patterns:
+          - '@tsconfig/*'
+      actions-dependencies:
+        patterns:
+          - '@actions/*'
