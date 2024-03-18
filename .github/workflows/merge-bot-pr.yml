@@ -17,7 +17,7 @@ jobs:
         id: metadata
         uses: dependabot/fetch-metadata@c9c4182bf1b97f5224aee3906fd373f6b61b4526 # v1.6.0
       # Required for checkout before referring to your own action as `uses: ./`.
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - name: Wait other jobs
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         uses: ./
@@ -42,7 +42,7 @@ jobs:
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - name: Wait other jobs
         uses: ./
         timeout-minutes: 10
@@ -62,7 +62,7 @@ jobs:
     if: ${{ github.actor == 'selfup-runner[bot]' }}
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - name: Wait other jobs
         uses: ./
         timeout-minutes: 20
