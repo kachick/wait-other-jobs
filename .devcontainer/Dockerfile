@@ -45,7 +45,6 @@ COPY ["./.devcontainer/setup_direnv.bash", "./"]
 RUN ./setup_direnv.bash
 
 # Clean up to avoid confusion
-# hadolint ignore=DL3059
 RUN rm ./flake.nix ./setup_direnv.bash
 
 # `ENTRYPOINT` and `CMD` will be ignored in .devcontainer. Use postCreateCommand instead

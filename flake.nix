@@ -5,19 +5,17 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/release-23.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs-unstable, nixpkgs-stable, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        unstable-pkgs = nixpkgs-unstable.legacyPackages.${system};
-        stable-pkgs = nixpkgs-stable.legacyPackages.${system};
+        pkgs = nixpkgs.legacyPackages.${system};
       in
       {
-        devShells.default = with unstable-pkgs;
+        devShells.default = with pkgs;
           mkShell {
             buildInputs = [
               # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
@@ -35,9 +33,7 @@
               gh
               jq
 
-              # Avoided broken hadolint in latest
-              # https://github.com/NixOS/nixpkgs/pull/240387#issuecomment-1686601267
-              stable-pkgs.hadolint
+              trivy
             ];
           };
       });
