@@ -20,7 +20,6 @@
       "settings": {
         "editor.defaultFormatter": "dprint.dprint",
         "editor.formatOnSave": true,
-        "hadolint.hadolintPath": "/nix/store/3gl6j30ak4n692vfs5l1rsqf07pdr429-hadolint-2.12.0/bin/hadolint",
         "dprint.path": "/nix/store/2rmr7ybmnr5xdcy6sw1073p0j5ljgw0n-dprint-0.37.1/bin/dprint",
         "[nix]": {
           "editor.defaultFormatter": "jnoortheen.nix-ide"
@@ -33,7 +32,6 @@
         "dprint.dprint",
         "jnoortheen.nix-ide",
         "tamasfe.even-better-toml",
-        "exiasr.hadolint",
         "ms-azuretools.vscode-docker"
       ]
     }

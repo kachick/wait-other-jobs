@@ -24,7 +24,7 @@ script = [
   "deno lint",
   "typos . .github .vscode .devcontainer",
   "actionlint",
-  "hadolint .devcontainer/Dockerfile",
+  "trivy config --exit-code 1 .",
 ]
 
 [tasks.test]
@@ -86,7 +86,7 @@ script = [
   # Returns NON 0, why...? :<
   # "nixpkgs-fmt --version",
   "actionlint --version",
-  "hadolint --version",
+  "trivy --version",
   "typos --version",
 ]
 

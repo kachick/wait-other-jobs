@@ -6,7 +6,6 @@
     "tekumara.typos-vscode",
     "jnoortheen.nix-ide",
     "tamasfe.even-better-toml",
-    "exiasr.hadolint",
     "ms-azuretools.vscode-docker"
   ]
 }
