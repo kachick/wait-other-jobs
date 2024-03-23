@@ -24,7 +24,7 @@ script = [
   "deno lint",
   "typos . .github .vscode .devcontainer",
   "actionlint",
-  "trivy config --offline-scan --exit-code 1 .",
+  "trivy config --exit-code 1 .",
 ]
 
 [tasks.test]
