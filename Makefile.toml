@@ -13,7 +13,7 @@ category = "Tools"
 description = "Run formatters with changes"
 script = [
   "dprint fmt",
-  "typos . .github .vscode .devcontainer --write-changes",
+  "typos . .github .vscode --write-changes",
 ]
 
 [tasks.lint]
@@ -22,9 +22,8 @@ description = "Run linters without changes"
 script = [
   "dprint check",
   "deno lint",
-  "typos . .github .vscode .devcontainer",
+  "typos . .github .vscode",
   "actionlint",
-  "trivy config --exit-code 1 .",
 ]
 
 [tasks.test]
@@ -53,20 +52,6 @@ category = "Tools"
 description = 'Parallel runner for all tests and linters'
 run_task = { name = ["typecheck", "test", "lint", "build"], parallel = true }
 
-[tasks.docker-build]
-category = "Tools"
-description = 'Build docker image for devcontainer'
-script = [
-  "./.devcontainer/docker_build.bash",
-]
-
-[tasks.docker-shell]
-category = "Tools"
-description = 'Login to built container'
-script = [
-  "./.devcontainer/docker_shell.bash",
-]
-
 [tasks.help]
 category = "Tools"
 description = 'Might help you - (This one)'
@@ -86,7 +71,6 @@ script = [
   # Returns NON 0, why...? :<
   # "nixpkgs-fmt --version",
   "actionlint --version",
-  "trivy --version",
   "typos --version",
 ]
 

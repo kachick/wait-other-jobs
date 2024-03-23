@@ -18,22 +18,22 @@
         devShells.default = with pkgs;
           mkShell {
             buildInputs = [
+              # For Nix environments
               # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
               bashInteractive
+              nil
+              nixpkgs-fmt
 
               nodejs_20
               deno
               dprint
               cargo-make
-              nil
-              nixpkgs-fmt
               typos
               actionlint
 
+              # For fighting the GitHub API
               gh
               jq
-
-              trivy
             ];
           };
       });
