@@ -36,7 +36,7 @@ jobs:
         uses: ./
         timeout-minutes: 10
       - name: Approve and merge
-        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
+        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash --delete-branch "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -62,7 +62,7 @@ jobs:
           retry-method: 'equal_intervals'
           min-interval-seconds: '15'
       - name: Approve and merge
-        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
+        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash --delete-branch "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -35,7 +35,7 @@ jobs:
         timeout-minutes: 10
       - name: Approve and merge
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
-        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
+        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash --delete-branch "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -48,7 +48,7 @@ jobs:
         uses: kachick/wait-other-jobs@2e18e23fce3e7bc76cfb125b4a75acd091c84347 # v2.0.3
         timeout-minutes: 10
       - name: Approve and merge
-        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
+        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash --delete-branch "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
