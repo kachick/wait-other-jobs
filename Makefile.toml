@@ -72,6 +72,10 @@ script = [
   # "nixpkgs-fmt --version",
   "actionlint --version",
   "typos --version",
+  "gh --version",
+  "jq --version",
+  "jnv --version",
+  "pinact --version",
 ]
 
 [tasks.check_no_git_diff]

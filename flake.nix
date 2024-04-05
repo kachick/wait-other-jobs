@@ -32,11 +32,15 @@
               edge-pkgs.deno
               edge-pkgs.dprint
               edge-pkgs.typos
+
+              # Helper for writing and linting actions
               edge-pkgs.actionlint
+              edge-pkgs.pinact
 
               # For fighting the GitHub API
               gh
               jq
+              edge-pkgs.jnv
             ];
           };
       });
