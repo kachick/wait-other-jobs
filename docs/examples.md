@@ -31,7 +31,7 @@ jobs:
         uses: dependabot/fetch-metadata@0fb21704c18a42ce5aa8d720ea4b912f5e6babef # v2.0.0
       - name: Wait other jobs
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
-        uses: kachick/wait-other-jobs@2e18e23fce3e7bc76cfb125b4a75acd091c84347 # v2.0.3
+        uses: kachick/wait-other-jobs@2f486e6edf4772ae8aa7f4776c8ba6b079aef33e # v2.0.4
         timeout-minutes: 10
       - name: Approve and merge
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
@@ -45,7 +45,7 @@ jobs:
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       - name: Wait other jobs
-        uses: kachick/wait-other-jobs@2e18e23fce3e7bc76cfb125b4a75acd091c84347 # v2.0.3
+        uses: kachick/wait-other-jobs@2f486e6edf4772ae8aa7f4776c8ba6b079aef33e # v2.0.4
         timeout-minutes: 10
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash --delete-branch "$PR_URL"
