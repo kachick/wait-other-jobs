@@ -1,10 +1,10 @@
 import { Octokit } from '@octokit/core';
-import { paginateGraphql } from '@octokit/plugin-paginate-graphql';
+import { paginateGraphQL } from '@octokit/plugin-paginate-graphql';
 import { CheckSuite, Workflow, CheckRun, Commit } from '@octokit/graphql-schema';
 import { join, relative } from 'path';
 import { z } from 'zod';
 
-const PaginatableOctokit = Octokit.plugin(paginateGraphql);
+const PaginatableOctokit = Octokit.plugin(paginateGraphQL);
 
 const ListItem = z.object({
   workflowFile: z.string().endsWith('.yml'),
