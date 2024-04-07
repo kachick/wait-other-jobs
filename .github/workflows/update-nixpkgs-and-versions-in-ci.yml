@@ -12,18 +12,10 @@ on:
 jobs:
   update-nixpkgs:
     uses: kachick/selfup/.github/workflows/reusable-bump-flake-lock-and-selfup.yml@action-v1
-    if: (github.event.sender.login == 'kachick') || (github.event_name != 'pull_request')
     with:
       dry-run: ${{ github.event_name == 'pull_request' }}
       optional-run: |
-        nix develop --command nix run github:kachick/selfup/v0.0.2 -- run --prefix='# selfup ' --skip-by='nix run' .github/ISSUE_TEMPLATE/*.yml
-        git diff-index --quiet HEAD || git commit -m 'Update latest versions in issue template' .github
-
-        nix develop --command bash -c 'node --version | tr -d v' > .node-version
-        git add .node-version
-        # https://stackoverflow.com/q/34807971
-        git update-index -q --really-refresh
-        git diff-index --quiet HEAD || git commit -m 'Update .node-version' .node-version
+        nix run .#bump-nix-dependencies
     secrets:
       APP_ID: ${{ secrets.APP_ID }}
       APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}

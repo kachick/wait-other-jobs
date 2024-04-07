@@ -14,7 +14,7 @@ updates:
       determinatesystems-actions:
         patterns:
           - 'DeterminateSystems*'
-  - package-ecosystem: 'npm'
+  - package-ecosystem: 'npm' # `pnpm` uses `npm` specifier
     directory: '/'
     schedule:
       interval: 'weekly'

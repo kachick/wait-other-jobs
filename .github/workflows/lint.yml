@@ -4,11 +4,11 @@ on:
     branches: [main]
     paths-ignore:
       - 'dist/**'
-      - 'package-lock.json'
+      - 'pnpm-lock.yaml'
   pull_request:
     paths-ignore:
       - 'dist/**'
-      - 'package-lock.json'
+      - 'pnpm-lock.yaml'
 jobs:
   dprint:
     timeout-minutes: 15

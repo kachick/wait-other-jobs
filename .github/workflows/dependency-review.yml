@@ -4,7 +4,7 @@ on:
     paths:
       - '.github/workflows/**'
       - 'package.json'
-      - 'package-lock.json'
+      - 'pnpm-lock.yaml'
 
 permissions:
   contents: read
