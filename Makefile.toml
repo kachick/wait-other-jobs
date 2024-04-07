@@ -5,7 +5,7 @@ skip_core_tasks = true
 category = "Tools"
 description = "Install dependencies after nix"
 script = [
-  "npm ci --ignore-scripts",
+  "pnpm install --frozen-lockfile",
 ]
 
 [tasks.fmt]
@@ -30,21 +30,21 @@ script = [
 category = "Tools"
 description = 'Test'
 script = [
-  "npm run test",
+  "pnpm run test",
 ]
 
 [tasks.typecheck]
 category = "Tools"
 description = 'Correctness in TypeScript'
 script = [
-  "npm run typecheck",
+  "pnpm run typecheck",
 ]
 
 [tasks.build]
 category = "Tools"
 description = 'Build that actually run in production'
 script = [
-  "npm run build",
+  "pnpm run build",
 ]
 
 [tasks.check]
@@ -64,6 +64,7 @@ category = "Tools"
 description = 'Print dependency and the versions'
 script = [
   "node --version",
+  "pnpm --version",
   "nix --version",
   "deno --version",
   "makers --version",

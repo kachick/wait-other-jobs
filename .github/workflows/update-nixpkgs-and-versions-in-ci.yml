@@ -21,6 +21,8 @@ jobs:
 
         nix develop --command bash -c 'node --version | tr -d v' > .node-version
         git add .node-version
+        sd '("packageManager": "pnpm)@([0-9\.]+)' "\$1@$(pnpm --version)" package.json
+        git add package.json
         # https://stackoverflow.com/q/34807971
         git update-index -q --really-refresh
         git diff-index --quiet HEAD || git commit -m 'Update .node-version' .node-version

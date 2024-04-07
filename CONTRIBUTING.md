@@ -36,7 +36,7 @@ See also [scripts](package.json) for tasks details.
 ## REPL
 
 ```typescript
-npm run repl
+pnpm run repl
 
 Welcome to Node.js v20.5.1.
 Type ".help" for more information.

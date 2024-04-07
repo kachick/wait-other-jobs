@@ -27,8 +27,10 @@
               nixpkgs-fmt
 
               cargo-make
+              sd
 
               edge-pkgs.nodejs_20
+              edge-pkgs.nodejs_20.pkgs.pnpm
               edge-pkgs.deno
               edge-pkgs.dprint
               edge-pkgs.typos
