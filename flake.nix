@@ -45,5 +45,34 @@
               edge-pkgs.jnv
             ];
           };
+
+        apps = {
+          bump-nix-dependencies = {
+            type = "app";
+            program = with pkgs; lib.getExe (writeShellApplication {
+              name = "bump-nix-dependencies.bash";
+              runtimeInputs = [ nix git sd edge-pkgs.nodejs_20 edge-pkgs.nodejs_20.pkgs.pnpm ];
+              # Why --really-refresh?: https://stackoverflow.com/q/34807971
+              text = ''
+                set -x
+
+                nix run github:kachick/selfup/v0.0.2 -- run --prefix='# selfup ' --skip-by='nix run' .github/ISSUE_TEMPLATE/*.yml && git add .github
+                git update-index -q --really-refresh
+                git diff-index --quiet HEAD || git commit -m 'Update latest versions in issue template' .github
+
+                node --version | sd '^v?' "" > .node-version && git add .node-version
+                git update-index -q --really-refresh
+                git diff-index --quiet HEAD || git commit -m 'Sync .node-version with nixpkgs' .node-version
+
+                sd '("packageManager": "pnpm)@([0-9\.]+)' "\$1@$(pnpm --version)" package.json && git add package.json
+                git update-index -q --really-refresh
+                git diff-index --quiet HEAD || git commit -m 'Sync pnpm version with nixpkgs' package.json
+              '';
+              meta = {
+                description = "Bump dependency versions except managed by node package manager";
+              };
+            });
+          };
+        };
       });
 }
