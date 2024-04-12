@@ -28237,36 +28237,34 @@ async function getCheckRunSummaries(token, trigger) {
   });
   return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
 }
-async function fetchOtherRunStatus(token, trigger, waitList, skipList) {
+async function fetchOtherRunStatus(token, trigger, waitList, skipList, shouldSkipSameWorkflow) {
   if (waitList.length > 0 && skipList.length > 0) {
     throw new Error("Do not specify both wait-list and skip-list");
   }
-  const checkRunSummaries = await getCheckRunSummaries(token, trigger);
-  const otherRunSummaries = checkRunSummaries.filter(
-    (summary) => !(summary.isSameWorkflow && summary.jobName === trigger.jobName)
-  );
-  if (otherRunSummaries.length === 0) {
-    throw new Error("No check runs found except wait-other-jobs itself");
-  }
-  let filteredSummraries = otherRunSummaries;
+  const summaries = await getCheckRunSummaries(token, trigger);
+  const others = summaries.filter((summary) => !(summary.isSameWorkflow && trigger.jobName === summary.jobName));
+  let filtered = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
   if (waitList.length > 0) {
-    filteredSummraries = filteredSummraries.filter(
+    filtered = filtered.filter(
       (summary) => waitList.some(
         (target) => target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)
       )
     );
   }
   if (skipList.length > 0) {
-    filteredSummraries = filteredSummraries.filter(
+    filtered = filtered.filter(
       (summary) => !skipList.some(
         (target) => target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)
       )
     );
   }
-  const completedRuns = filteredSummraries.filter((summary) => summary.runStatus === "COMPLETED");
-  const progress = completedRuns.length === filteredSummraries.length ? "done" : "in_progress";
-  const conclusion = completedRuns.every((summary) => summary.acceptable) ? "acceptable" : "bad";
-  return { progress, conclusion, summaries: filteredSummraries };
+  if (filtered.length === 0) {
+    throw new Error("No targets found except wait-other-jobs itself");
+  }
+  const completed = filtered.filter((summary) => summary.runStatus === "COMPLETED");
+  const progress = completed.length === filtered.length ? "done" : "in_progress";
+  const conclusion = completed.every((summary) => summary.acceptable) ? "acceptable" : "bad";
+  return { progress, conclusion, summaries: filtered };
 }
 
 // src/wait.ts
@@ -28373,6 +28371,7 @@ async function run() {
     (0, import_core2.setFailed)("Specified both list");
   }
   const isEarlyExit = (0, import_core2.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
+  const shouldSkipSameWorkflow = (0, import_core2.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core2.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   (0, import_core2.info)(JSON.stringify(
     {
@@ -28423,7 +28422,8 @@ async function run() {
       githubToken,
       { ...repositoryInfo, ref: commitSha, runId, jobName: job },
       waitList,
-      skipList
+      skipList,
+      shouldSkipSameWorkflow
     );
     for (const summary of report.summaries) {
       const {

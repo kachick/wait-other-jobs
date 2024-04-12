@@ -11,7 +11,7 @@ I mainly use this action for below use-case when they should run after multiple 
 
 - Assume test jobs defined in another workflow.
 - Assume it named as `.github/workflows/merge-bot-pr.yml`
-- Assume 1 workflow file defines 2 jobs with this action, it needs to avoid deadloks with `skip-list` option
+- Assume 1 workflow file defines 2 jobs with this action, it needs to avoid deadloks with `skip-list` or `skip-same-workflow` option
 
 ```yaml
 name: Merge bot PR after CI
@@ -36,12 +36,7 @@ jobs:
         uses: kachick/wait-other-jobs@v3.0.0
         timeout-minutes: 10
         with:
-          skip-list: |
-            [
-              {
-                "workflowFile": "merge-bot-pr.yml"
-              }
-            ]
+          skip-same-workflow: 'true'
       - name: Approve and merge
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash --delete-branch "$PR_URL"
@@ -57,12 +52,7 @@ jobs:
         uses: kachick/wait-other-jobs@v3.0.0
         timeout-minutes: 10
         with:
-          skip-list: |
-            [
-              {
-                "workflowFile": "merge-bot-pr.yml"
-              }
-            ]
+          skip-same-workflow: 'true'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash --delete-branch "$PR_URL"
         env:

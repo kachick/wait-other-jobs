@@ -154,44 +154,43 @@ export async function fetchOtherRunStatus(
   trigger: Trigger,
   waitList: z.infer<typeof FilterConditions>,
   skipList: z.infer<typeof FilterConditions>,
+  shouldSkipSameWorkflow: boolean,
 ): Promise<Report> {
   if (waitList.length > 0 && skipList.length > 0) {
     throw new Error('Do not specify both wait-list and skip-list');
   }
 
-  const checkRunSummaries = await getCheckRunSummaries(token, trigger);
-  const otherRunSummaries = checkRunSummaries.filter((summary) =>
-    !(summary.isSameWorkflow && summary.jobName === trigger.jobName)
-  );
-  if (otherRunSummaries.length === 0) {
-    throw new Error('No check runs found except wait-other-jobs itself');
-  }
-
-  let filteredSummraries = otherRunSummaries;
+  const summaries = await getCheckRunSummaries(token, trigger);
+  const others = summaries.filter((summary) => !(summary.isSameWorkflow && (trigger.jobName === summary.jobName)));
+  let filtered = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
 
   if (waitList.length > 0) {
-    filteredSummraries = filteredSummraries.filter((summary) =>
+    filtered = filtered.filter((summary) =>
       waitList.some((target) =>
         target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
       )
     );
   }
   if (skipList.length > 0) {
-    filteredSummraries = filteredSummraries.filter((summary) =>
+    filtered = filtered.filter((summary) =>
       !skipList.some((target) =>
         target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
       )
     );
   }
 
-  const completedRuns = filteredSummraries.filter((summary) => summary.runStatus === 'COMPLETED');
+  if (filtered.length === 0) {
+    throw new Error('No targets found except wait-other-jobs itself');
+  }
 
-  const progress: Report['progress'] = completedRuns.length === filteredSummraries.length
+  const completed = filtered.filter((summary) => summary.runStatus === 'COMPLETED');
+
+  const progress: Report['progress'] = completed.length === filtered.length
     ? 'done'
     : 'in_progress';
-  const conclusion: Report['conclusion'] = completedRuns.every((summary) => summary.acceptable)
+  const conclusion: Report['conclusion'] = completed.every((summary) => summary.acceptable)
     ? 'acceptable'
     : 'bad';
 
-  return { progress, conclusion, summaries: filteredSummraries };
+  return { progress, conclusion, summaries: filtered };
 }

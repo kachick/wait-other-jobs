@@ -80,6 +80,7 @@ async function run(): Promise<void> {
     setFailed('Specified both list');
   }
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
+  const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
 
   info(JSON.stringify(
@@ -141,6 +142,7 @@ async function run(): Promise<void> {
       { ...repositoryInfo, ref: commitSha, runId, jobName: job },
       waitList,
       skipList,
+      shouldSkipSameWorkflow,
     );
 
     for (const summary of report.summaries) {

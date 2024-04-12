@@ -43,12 +43,7 @@ jobs:
           wait-seconds-before-first-polling: 2
           min-interval-seconds: 2
           attempt-limits: 2
-          skip-list: |
-            [
-              {
-                "workflowFile": "itself.yml"
-              }
-            ]
+          skip-same-workflow: 'true'
   equal_intervals:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
@@ -62,12 +57,7 @@ jobs:
           retry-method: 'equal_intervals'
           min-interval-seconds: 10
           attempt-limits: 60
-          skip-list: |
-            [
-              {
-                "workflowFile": "itself.yml"
-              }
-            ]
+          skip-same-workflow: 'true'
   wait-list:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
@@ -100,6 +90,7 @@ jobs:
           retry-method: 'equal_intervals'
           min-interval-seconds: 5
           attempt-limits: 30
+          skip-same-workflow: 'false' # Intentionally set false to test skip list also can cover this use case
           skip-list: |
             [
               {

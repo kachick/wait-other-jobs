@@ -7,14 +7,14 @@ branding:
 inputs:
   github-token:
     description: 'The GITHUB_TOKEN secret'
-    required: true
+    required: false
     default: ${{ github.token }}
   wait-seconds-before-first-polling:
     description: 'Wait this seconds before first polling'
     required: false
     default: '10'
   min-interval-seconds:
-    description: 'Wait this interval or the multiplied value (and jitter) for next polling'
+    description: 'Wait this interval or the multiplied value (and jitter)'
     required: false
     default: '15'
   early-exit:
@@ -26,17 +26,21 @@ inputs:
     required: false
     default: 'equal_intervals'
   attempt-limits:
-    description: 'Stop rest pollings after this limits even if other jobs are not yet completed'
+    description: 'Stop rest pollings if reached to this limit'
     required: false
     default: '1000' # Enough large
   wait-list:
-    description: 'This action will not wait for items other than this list'
+    description: 'Wait only these jobs'
     required: false
     default: '[]'
   skip-list:
-    description: 'This action will not wait for items on this list'
+    description: 'Wait except these jobs'
     required: false
     default: '[]'
+  skip-same-workflow:
+    description: 'Skip jobs defined in the same workflow which using this action'
+    required: false
+    default: 'false'
   dry-run:
     description: 'Avoid http requests for tests'
     required: false
