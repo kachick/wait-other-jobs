@@ -28333,7 +28333,6 @@ async function run() {
       if ((0, import_core3.isDebug)()) {
         (0, import_core3.debug)(JSON.stringify(pr, null, 2));
         (0, import_core3.debug)(JSON.stringify(import_github.context));
-        (0, import_core3.debug)(JSON.stringify({ runId, workflow, job }));
       }
       (0, import_core3.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
       (0, import_core3.setFailed)("unexpected failure occurred");
@@ -28375,6 +28374,8 @@ async function run() {
     {
       triggeredCommitSha: commitSha,
       runId,
+      workflow,
+      job,
       repositoryInfo,
       waitSecondsBeforeFirstPolling,
       minIntervalSeconds,
