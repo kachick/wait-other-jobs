@@ -16,7 +16,7 @@ const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.c
 const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
 const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
-import { FilterConditions, fetchOtherRunStatus } from './github-api.js';
+import { SkipFilterConditions, WaitFilterConditions, fetchOtherRunStatus } from './github-api.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
 
 async function run(): Promise<void> {
@@ -73,8 +73,8 @@ async function run(): Promise<void> {
     getInput('attempt-limits', { required: true, trimWhitespace: true }),
     10,
   );
-  const waitList = FilterConditions.parse(JSON.parse(getInput('wait-list', { required: true })));
-  const skipList = FilterConditions.parse(JSON.parse(getInput('skip-list', { required: true })));
+  const waitList = WaitFilterConditions.parse(JSON.parse(getInput('wait-list', { required: true })));
+  const skipList = SkipFilterConditions.parse(JSON.parse(getInput('skip-list', { required: true })));
   if (waitList.length > 0 && skipList.length > 0) {
     error('Do not specify both wait-list and skip-list');
     setFailed('Specified both list');

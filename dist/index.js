@@ -28150,7 +28150,11 @@ var FilterCondition = z.object({
   workflowFile: z.string().endsWith(".yml"),
   jobName: z.string().min(1).optional()
 });
-var FilterConditions = z.array(FilterCondition);
+var WaitFilterCondition = FilterCondition.extend(
+  { optional: z.boolean().optional().default(false) }
+);
+var SkipFilterConditions = z.array(FilterCondition);
+var WaitFilterConditions = z.array(WaitFilterCondition);
 async function getCheckRunSummaries(token, trigger) {
   const octokit = new PaginatableOctokit({ auth: token });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate(
@@ -28366,8 +28370,8 @@ async function run() {
     (0, import_core2.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
     10
   );
-  const waitList = FilterConditions.parse(JSON.parse((0, import_core2.getInput)("wait-list", { required: true })));
-  const skipList = FilterConditions.parse(JSON.parse((0, import_core2.getInput)("skip-list", { required: true })));
+  const waitList = WaitFilterConditions.parse(JSON.parse((0, import_core2.getInput)("wait-list", { required: true })));
+  const skipList = SkipFilterConditions.parse(JSON.parse((0, import_core2.getInput)("skip-list", { required: true })));
   if (waitList.length > 0 && skipList.length > 0) {
     (0, import_core2.error)("Do not specify both wait-list and skip-list");
     (0, import_core2.setFailed)("Specified both list");

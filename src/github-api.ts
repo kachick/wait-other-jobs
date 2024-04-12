@@ -10,7 +10,11 @@ const FilterCondition = z.object({
   workflowFile: z.string().endsWith('.yml'),
   jobName: (z.string().min(1)).optional(),
 });
-export const FilterConditions = z.array(FilterCondition);
+const WaitFilterCondition = FilterCondition.extend(
+  { optional: z.boolean().optional().default(false) },
+);
+export const SkipFilterConditions = z.array(FilterCondition);
+export const WaitFilterConditions = z.array(WaitFilterCondition);
 
 interface Trigger {
   owner: string;
@@ -152,8 +156,8 @@ interface Report {
 export async function fetchOtherRunStatus(
   token: string,
   trigger: Trigger,
-  waitList: z.infer<typeof FilterConditions>,
-  skipList: z.infer<typeof FilterConditions>,
+  waitList: z.infer<typeof WaitFilterConditions>,
+  skipList: z.infer<typeof SkipFilterConditions>,
   shouldSkipSameWorkflow: boolean,
 ): Promise<Report> {
   if (waitList.length > 0 && skipList.length > 0) {
