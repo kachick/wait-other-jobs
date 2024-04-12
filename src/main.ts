@@ -99,6 +99,7 @@ async function run(): Promise<void> {
       isDryRun,
       waitList,
       skipList,
+      shouldSkipSameWorkflow,
       // Of course, do NOT include tokens here.
     },
     null,
