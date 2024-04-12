@@ -16,7 +16,7 @@ const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.c
 const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
 const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
-import { List, fetchOtherRunStatus } from './github-api.js';
+import { FilterConditions, fetchOtherRunStatus } from './github-api.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
 
 async function run(): Promise<void> {
@@ -24,7 +24,11 @@ async function run(): Promise<void> {
   const {
     repo: { repo, owner },
     payload,
+    runId,
+    runNumber,
+    // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     workflow,
+    // On the otherhand, jobName should be unique in each workflow from YAML spec
     job,
     sha,
   } = context;
@@ -69,8 +73,8 @@ async function run(): Promise<void> {
     getInput('attempt-limits', { required: true, trimWhitespace: true }),
     10,
   );
-  const waitList = List.parse(JSON.parse(getInput('wait-list', { required: true })));
-  const skipList = List.parse(JSON.parse(getInput('skip-list', { required: true })));
+  const waitList = FilterConditions.parse(JSON.parse(getInput('wait-list', { required: true })));
+  const skipList = FilterConditions.parse(JSON.parse(getInput('skip-list', { required: true })));
   if (waitList.length > 0 && skipList.length > 0) {
     error('Do not specify both wait-list and skip-list');
     setFailed('Specified both list');
@@ -81,6 +85,8 @@ async function run(): Promise<void> {
   info(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
+      runId,
+      runNumber,
       workflow,
       job,
       repositoryInfo,
@@ -132,8 +138,7 @@ async function run(): Promise<void> {
 
     const report = await fetchOtherRunStatus(
       githubToken,
-      { ...repositoryInfo, ref: commitSha },
-      { workflowName: workflow, jobName: job },
+      { ...repositoryInfo, ref: commitSha, runId, jobName: job },
       waitList,
       skipList,
     );

@@ -6,15 +6,24 @@ import { z } from 'zod';
 
 const PaginatableOctokit = Octokit.plugin(paginateGraphQL);
 
-const ListItem = z.object({
+const FilterCondition = z.object({
   workflowFile: z.string().endsWith('.yml'),
   jobName: (z.string().min(1)).optional(),
 });
-export const List = z.array(ListItem);
+export const FilterConditions = z.array(FilterCondition);
+
+interface Trigger {
+  owner: string;
+  repo: string;
+  ref: string;
+  runId: number;
+  jobName: string;
+}
 
 interface Summary {
   acceptable: boolean; // Set by us
   workflowPath: string; // Set by us
+  isSameWorkflow: boolean; // Set by us
 
   checkSuiteStatus: CheckSuite['status'];
   checkSuiteConclusion: CheckSuite['conclusion'];
@@ -30,7 +39,7 @@ interface Summary {
 
 export async function getCheckRunSummaries(
   token: string,
-  params: { owner: string; repo: string; ref: string },
+  trigger: Trigger,
 ): Promise<Array<Summary>> {
   const octokit = new PaginatableOctokit({ auth: token });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate<
@@ -79,9 +88,9 @@ export async function getCheckRunSummaries(
     }
   `,
     {
-      owner: params.owner,
-      repo: params.repo,
-      commitSha: params.ref,
+      owner: trigger.owner,
+      repo: trigger.repo,
+      commitSha: trigger.ref,
     },
   );
 
@@ -114,7 +123,9 @@ export async function getCheckRunSummaries(
       acceptable: run.conclusion == 'SUCCESS' || run.conclusion === 'SKIPPED'
         || (run.conclusion === 'NEUTRAL'
           && (checkSuite.conclusion === 'SUCCESS' || checkSuite.conclusion === 'SKIPPED')),
-      workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
+      workflowPath: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
+      // Another file can set same workflow name. So you should filter workfrows from runId or the filename
+      isSameWorkflow: checkSuite.workflowRun?.databaseId === trigger.runId,
 
       checkSuiteStatus: checkSuite.status,
       checkSuiteConclusion: checkSuite.conclusion,
@@ -140,18 +151,17 @@ interface Report {
 
 export async function fetchOtherRunStatus(
   token: string,
-  params: Parameters<typeof getCheckRunSummaries>[1],
-  trigger: { workflowName: string; jobName: string },
-  waitList: z.infer<typeof List>,
-  skipList: z.infer<typeof List>,
+  trigger: Trigger,
+  waitList: z.infer<typeof FilterConditions>,
+  skipList: z.infer<typeof FilterConditions>,
 ): Promise<Report> {
   if (waitList.length > 0 && skipList.length > 0) {
     throw new Error('Do not specify both wait-list and skip-list');
   }
 
-  const checkRunSummaries = await getCheckRunSummaries(token, params);
+  const checkRunSummaries = await getCheckRunSummaries(token, trigger);
   const otherRunSummaries = checkRunSummaries.filter((summary) =>
-    !(summary.workflowName === trigger.workflowName && summary.jobName === trigger.jobName)
+    !(summary.isSameWorkflow && summary.jobName === trigger.jobName)
   );
   if (otherRunSummaries.length === 0) {
     throw new Error('No check runs found except wait-other-jobs itself');

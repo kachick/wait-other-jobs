@@ -28144,12 +28144,12 @@ var z = /* @__PURE__ */ Object.freeze({
 
 // src/github-api.ts
 var PaginatableOctokit = Octokit.plugin(paginateGraphQL);
-var ListItem = z.object({
+var FilterCondition = z.object({
   workflowFile: z.string().endsWith(".yml"),
   jobName: z.string().min(1).optional()
 });
-var List = z.array(ListItem);
-async function getCheckRunSummaries(token, params) {
+var FilterConditions = z.array(FilterCondition);
+async function getCheckRunSummaries(token, trigger) {
   const octokit = new PaginatableOctokit({ auth: token });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate(
     `
@@ -28195,9 +28195,9 @@ async function getCheckRunSummaries(token, params) {
     }
   `,
     {
-      owner: params.owner,
-      repo: params.repo,
-      commitSha: params.ref
+      owner: trigger.owner,
+      repo: trigger.repo,
+      commitSha: trigger.ref
     }
   );
   const checkSuiteNodes = checkSuites?.nodes?.flatMap((node) => node ? [node] : []);
@@ -28222,7 +28222,9 @@ async function getCheckRunSummaries(token, params) {
     }
     return runNodes.map((run2) => ({
       acceptable: run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || run2.conclusion === "NEUTRAL" && (checkSuite.conclusion === "SUCCESS" || checkSuite.conclusion === "SKIPPED"),
-      workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
+      workflowPath: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
+      // Another file can set same workflow name. So you should filter workfrows from runId or the filename
+      isSameWorkflow: checkSuite.workflowRun?.databaseId === trigger.runId,
       checkSuiteStatus: checkSuite.status,
       checkSuiteConclusion: checkSuite.conclusion,
       runDatabaseId: run2.databaseId,
@@ -28235,13 +28237,13 @@ async function getCheckRunSummaries(token, params) {
   });
   return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
 }
-async function fetchOtherRunStatus(token, params, trigger, waitList, skipList) {
+async function fetchOtherRunStatus(token, trigger, waitList, skipList) {
   if (waitList.length > 0 && skipList.length > 0) {
     throw new Error("Do not specify both wait-list and skip-list");
   }
-  const checkRunSummaries = await getCheckRunSummaries(token, params);
+  const checkRunSummaries = await getCheckRunSummaries(token, trigger);
   const otherRunSummaries = checkRunSummaries.filter(
-    (summary) => !(summary.workflowName === trigger.workflowName && summary.jobName === trigger.jobName)
+    (summary) => !(summary.isSameWorkflow && summary.jobName === trigger.jobName)
   );
   if (otherRunSummaries.length === 0) {
     throw new Error("No check runs found except wait-other-jobs itself");
@@ -28318,7 +28320,11 @@ async function run() {
   const {
     repo: { repo, owner },
     payload,
+    runId,
+    runNumber,
+    // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     workflow,
+    // On the otherhand, jobName should be unique in each workflow from YAML spec
     job,
     sha
   } = import_github.context;
@@ -28360,8 +28366,8 @@ async function run() {
     (0, import_core2.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
     10
   );
-  const waitList = List.parse(JSON.parse((0, import_core2.getInput)("wait-list", { required: true })));
-  const skipList = List.parse(JSON.parse((0, import_core2.getInput)("skip-list", { required: true })));
+  const waitList = FilterConditions.parse(JSON.parse((0, import_core2.getInput)("wait-list", { required: true })));
+  const skipList = FilterConditions.parse(JSON.parse((0, import_core2.getInput)("skip-list", { required: true })));
   if (waitList.length > 0 && skipList.length > 0) {
     (0, import_core2.error)("Do not specify both wait-list and skip-list");
     (0, import_core2.setFailed)("Specified both list");
@@ -28371,6 +28377,8 @@ async function run() {
   (0, import_core2.info)(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
+      runId,
+      runNumber,
       workflow,
       job,
       repositoryInfo,
@@ -28413,8 +28421,7 @@ async function run() {
     (0, import_core2.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
       githubToken,
-      { ...repositoryInfo, ref: commitSha },
-      { workflowName: workflow, jobName: job },
+      { ...repositoryInfo, ref: commitSha, runId, jobName: job },
       waitList,
       skipList
     );
