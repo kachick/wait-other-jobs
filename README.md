@@ -20,8 +20,8 @@ jobs:
     #   actions: read
     runs-on: ubuntu-latest
     steps:
-      - uses: kachick/wait-other-jobs@v2
-        # timeout-minutes: 15 # Recommended to be enabled with reasonable value
+      - uses: kachick/wait-other-jobs@v3.0.0
+        timeout-minutes: 15 # Recommended to be enabled with your appropriate value for fail-safe use
 ```
 
 You can change the token, polling interval, allow/deny list and turns early-exit as below.
