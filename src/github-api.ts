@@ -6,15 +6,24 @@ import { z } from 'zod';
 
 const PaginatableOctokit = Octokit.plugin(paginateGraphQL);
 
-const ListItem = z.object({
+const FilterCondition = z.object({
   workflowFile: z.string().endsWith('.yml'),
   jobName: (z.string().min(1)).optional(),
 });
-export const List = z.array(ListItem);
+export const FilterConditions = z.array(FilterCondition);
+
+interface Trigger {
+  owner: string;
+  repo: string;
+  ref: string;
+  runId: number;
+  jobName: string;
+}
 
 interface Summary {
   acceptable: boolean; // Set by us
   workflowPath: string; // Set by us
+  isSameWorkflow: boolean; // Set by us
 
   checkSuiteStatus: CheckSuite['status'];
   checkSuiteConclusion: CheckSuite['conclusion'];
@@ -30,7 +39,7 @@ interface Summary {
 
 export async function getCheckRunSummaries(
   token: string,
-  params: { owner: string; repo: string; ref: string; triggerRunId: number },
+  trigger: Trigger,
 ): Promise<Array<Summary>> {
   const octokit = new PaginatableOctokit({ auth: token });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate<
@@ -79,9 +88,9 @@ export async function getCheckRunSummaries(
     }
   `,
     {
-      owner: params.owner,
-      repo: params.repo,
-      commitSha: params.ref,
+      owner: trigger.owner,
+      repo: trigger.repo,
+      commitSha: trigger.ref,
     },
   );
 
@@ -93,10 +102,6 @@ export async function getCheckRunSummaries(
   const summaries = checkSuiteNodes.flatMap((checkSuite) => {
     const workflow = checkSuite.workflowRun?.workflow;
     if (!workflow) {
-      return [];
-    }
-
-    if (checkSuite.workflowRun?.databaseId === params.triggerRunId) {
       return [];
     }
 
@@ -118,7 +123,9 @@ export async function getCheckRunSummaries(
       acceptable: run.conclusion == 'SUCCESS' || run.conclusion === 'SKIPPED'
         || (run.conclusion === 'NEUTRAL'
           && (checkSuite.conclusion === 'SUCCESS' || checkSuite.conclusion === 'SKIPPED')),
-      workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
+      workflowPath: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
+      // Another file can set same workflow name. So you should filter workfrows from runId or the filename
+      isSameWorkflow: checkSuite.workflowRun?.databaseId === trigger.runId,
 
       checkSuiteStatus: checkSuite.status,
       checkSuiteConclusion: checkSuite.conclusion,
@@ -144,39 +151,46 @@ interface Report {
 
 export async function fetchOtherRunStatus(
   token: string,
-  params: Parameters<typeof getCheckRunSummaries>[1],
-  waitList: z.infer<typeof List>,
-  skipList: z.infer<typeof List>,
+  trigger: Trigger,
+  waitList: z.infer<typeof FilterConditions>,
+  skipList: z.infer<typeof FilterConditions>,
+  shouldSkipSameWorkflow: boolean,
 ): Promise<Report> {
   if (waitList.length > 0 && skipList.length > 0) {
     throw new Error('Do not specify both wait-list and skip-list');
   }
 
-  let checkRunSummaries = await getCheckRunSummaries(token, params);
+  const summaries = await getCheckRunSummaries(token, trigger);
+  const others = summaries.filter((summary) => !(summary.isSameWorkflow && (trigger.jobName === summary.jobName)));
+  let filtered = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
 
   if (waitList.length > 0) {
-    checkRunSummaries = checkRunSummaries.filter((summary) =>
+    filtered = filtered.filter((summary) =>
       waitList.some((target) =>
         target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
       )
     );
   }
   if (skipList.length > 0) {
-    checkRunSummaries = checkRunSummaries.filter((summary) =>
+    filtered = filtered.filter((summary) =>
       !skipList.some((target) =>
         target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
       )
     );
   }
 
-  const completedRuns = checkRunSummaries.filter((summary) => summary.runStatus === 'COMPLETED');
+  if (filtered.length === 0) {
+    throw new Error('No targets found except wait-other-jobs itself');
+  }
 
-  const progress: Report['progress'] = completedRuns.length === checkRunSummaries.length
+  const completed = filtered.filter((summary) => summary.runStatus === 'COMPLETED');
+
+  const progress: Report['progress'] = completed.length === filtered.length
     ? 'done'
     : 'in_progress';
-  const conclusion: Report['conclusion'] = completedRuns.every((summary) => summary.acceptable)
+  const conclusion: Report['conclusion'] = completed.every((summary) => summary.acceptable)
     ? 'acceptable'
     : 'bad';
 
-  return { progress, conclusion, summaries: checkRunSummaries };
+  return { progress, conclusion, summaries: filtered };
 }

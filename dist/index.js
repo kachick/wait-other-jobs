@@ -28144,12 +28144,12 @@ var z = /* @__PURE__ */ Object.freeze({
 
 // src/github-api.ts
 var PaginatableOctokit = Octokit.plugin(paginateGraphQL);
-var ListItem = z.object({
+var FilterCondition = z.object({
   workflowFile: z.string().endsWith(".yml"),
   jobName: z.string().min(1).optional()
 });
-var List = z.array(ListItem);
-async function getCheckRunSummaries(token, params) {
+var FilterConditions = z.array(FilterCondition);
+async function getCheckRunSummaries(token, trigger) {
   const octokit = new PaginatableOctokit({ auth: token });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate(
     `
@@ -28195,9 +28195,9 @@ async function getCheckRunSummaries(token, params) {
     }
   `,
     {
-      owner: params.owner,
-      repo: params.repo,
-      commitSha: params.ref
+      owner: trigger.owner,
+      repo: trigger.repo,
+      commitSha: trigger.ref
     }
   );
   const checkSuiteNodes = checkSuites?.nodes?.flatMap((node) => node ? [node] : []);
@@ -28207,9 +28207,6 @@ async function getCheckRunSummaries(token, params) {
   const summaries = checkSuiteNodes.flatMap((checkSuite) => {
     const workflow = checkSuite.workflowRun?.workflow;
     if (!workflow) {
-      return [];
-    }
-    if (checkSuite.workflowRun?.databaseId === params.triggerRunId) {
       return [];
     }
     const checkRuns = checkSuite?.checkRuns;
@@ -28225,7 +28222,9 @@ async function getCheckRunSummaries(token, params) {
     }
     return runNodes.map((run2) => ({
       acceptable: run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || run2.conclusion === "NEUTRAL" && (checkSuite.conclusion === "SUCCESS" || checkSuite.conclusion === "SKIPPED"),
-      workflowPath: relative(`/${params.owner}/${params.repo}/actions/workflows/`, workflow.resourcePath),
+      workflowPath: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
+      // Another file can set same workflow name. So you should filter workfrows from runId or the filename
+      isSameWorkflow: checkSuite.workflowRun?.databaseId === trigger.runId,
       checkSuiteStatus: checkSuite.status,
       checkSuiteConclusion: checkSuite.conclusion,
       runDatabaseId: run2.databaseId,
@@ -28238,29 +28237,34 @@ async function getCheckRunSummaries(token, params) {
   });
   return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
 }
-async function fetchOtherRunStatus(token, params, waitList, skipList) {
+async function fetchOtherRunStatus(token, trigger, waitList, skipList, shouldSkipSameWorkflow) {
   if (waitList.length > 0 && skipList.length > 0) {
     throw new Error("Do not specify both wait-list and skip-list");
   }
-  let checkRunSummaries = await getCheckRunSummaries(token, params);
+  const summaries = await getCheckRunSummaries(token, trigger);
+  const others = summaries.filter((summary) => !(summary.isSameWorkflow && trigger.jobName === summary.jobName));
+  let filtered = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
   if (waitList.length > 0) {
-    checkRunSummaries = checkRunSummaries.filter(
+    filtered = filtered.filter(
       (summary) => waitList.some(
         (target) => target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)
       )
     );
   }
   if (skipList.length > 0) {
-    checkRunSummaries = checkRunSummaries.filter(
+    filtered = filtered.filter(
       (summary) => !skipList.some(
         (target) => target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)
       )
     );
   }
-  const completedRuns = checkRunSummaries.filter((summary) => summary.runStatus === "COMPLETED");
-  const progress = completedRuns.length === checkRunSummaries.length ? "done" : "in_progress";
-  const conclusion = completedRuns.every((summary) => summary.acceptable) ? "acceptable" : "bad";
-  return { progress, conclusion, summaries: checkRunSummaries };
+  if (filtered.length === 0) {
+    throw new Error("No targets found except wait-other-jobs itself");
+  }
+  const completed = filtered.filter((summary) => summary.runStatus === "COMPLETED");
+  const progress = completed.length === filtered.length ? "done" : "in_progress";
+  const conclusion = completed.every((summary) => summary.acceptable) ? "acceptable" : "bad";
+  return { progress, conclusion, summaries: filtered };
 }
 
 // src/wait.ts
@@ -28315,6 +28319,11 @@ async function run() {
     repo: { repo, owner },
     payload,
     runId,
+    runNumber,
+    // Another file can set same workflow name. So you should filter workfrows from runId or the filename
+    workflow,
+    // On the otherhand, jobName should be unique in each workflow from YAML spec
+    job,
     sha
   } = import_github.context;
   const pr = payload.pull_request;
@@ -28355,18 +28364,22 @@ async function run() {
     (0, import_core2.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
     10
   );
-  const waitList = List.parse(JSON.parse((0, import_core2.getInput)("wait-list", { required: true })));
-  const skipList = List.parse(JSON.parse((0, import_core2.getInput)("skip-list", { required: true })));
+  const waitList = FilterConditions.parse(JSON.parse((0, import_core2.getInput)("wait-list", { required: true })));
+  const skipList = FilterConditions.parse(JSON.parse((0, import_core2.getInput)("skip-list", { required: true })));
   if (waitList.length > 0 && skipList.length > 0) {
     (0, import_core2.error)("Do not specify both wait-list and skip-list");
     (0, import_core2.setFailed)("Specified both list");
   }
   const isEarlyExit = (0, import_core2.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
+  const shouldSkipSameWorkflow = (0, import_core2.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core2.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   (0, import_core2.info)(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
       runId,
+      runNumber,
+      workflow,
+      job,
       repositoryInfo,
       waitSecondsBeforeFirstPolling,
       minIntervalSeconds,
@@ -28375,7 +28388,8 @@ async function run() {
       isEarlyExit,
       isDryRun,
       waitList,
-      skipList
+      skipList,
+      shouldSkipSameWorkflow
       // Of course, do NOT include tokens here.
     },
     null,
@@ -28407,9 +28421,10 @@ async function run() {
     (0, import_core2.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
       githubToken,
-      { ...repositoryInfo, ref: commitSha, triggerRunId: runId },
+      { ...repositoryInfo, ref: commitSha, runId, jobName: job },
       waitList,
-      skipList
+      skipList,
+      shouldSkipSameWorkflow
     );
     for (const summary of report.summaries) {
       const {

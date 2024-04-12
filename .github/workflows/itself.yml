@@ -16,8 +16,17 @@ on:
 # However PRs will have read permissions because this project is on a public repository
 permissions: {}
 
+# Do not enable `ACTIONS_STEP_DEBUG: true` for all steps, I also want to check actual logging
+
 jobs:
-  # Keep sequential to avoid infinite loop
+  default_logic:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      # Do NOT specify any options here to make sure zero config may work
+      - uses: ./
   exponential_backoff:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
@@ -25,31 +34,30 @@ jobs:
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - uses: ./
+        env:
+          ACTIONS_STEP_DEBUG: true
         continue-on-error: true
         with:
           retry-method: 'exponential_backoff'
-          min-interval-seconds: 5
+          # Set low intervals but stop faster. Returning false is an intentional only in this job
+          wait-seconds-before-first-polling: 2
+          min-interval-seconds: 2
           attempt-limits: 2
+          skip-same-workflow: 'true'
   equal_intervals:
-    needs: [exponential_backoff]
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - uses: ./
+        env:
+          ACTIONS_STEP_DEBUG: true
         with:
           retry-method: 'equal_intervals'
           min-interval-seconds: 10
           attempt-limits: 60
-  default_logic:
-    needs: [equal_intervals]
-    runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: ./
+          skip-same-workflow: 'true'
   wait-list:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
@@ -82,8 +90,12 @@ jobs:
           retry-method: 'equal_intervals'
           min-interval-seconds: 5
           attempt-limits: 30
+          skip-same-workflow: 'false' # Intentionally set false to test skip list also can cover this use case
           skip-list: |
             [
+              {
+                "workflowFile": "itself.yml"
+              },
               {
                 "workflowFile": "ci.yml"
               },

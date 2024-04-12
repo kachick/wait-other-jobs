@@ -9,7 +9,8 @@ I mainly use this action for below use-case when they should run after multiple 
 
 ## Auto merge
 
-Assume test jobs defined in another workflow.
+- Assume test jobs defined in another workflow
+- Assume 1 workflow file defines 2 jobs with this action, it needs to avoid deadloks with `skip-list` or `skip-same-workflow` option
 
 ```yaml
 name: Merge bot PR after CI
@@ -31,8 +32,10 @@ jobs:
         uses: dependabot/fetch-metadata@0fb21704c18a42ce5aa8d720ea4b912f5e6babef # v2.0.0
       - name: Wait other jobs
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
-        uses: kachick/wait-other-jobs@2f486e6edf4772ae8aa7f4776c8ba6b079aef33e # v2.0.4
+        uses: kachick/wait-other-jobs@v3.0.0
         timeout-minutes: 10
+        with:
+          skip-same-workflow: 'true'
       - name: Approve and merge
         if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash --delete-branch "$PR_URL"
@@ -45,8 +48,10 @@ jobs:
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       - name: Wait other jobs
-        uses: kachick/wait-other-jobs@2f486e6edf4772ae8aa7f4776c8ba6b079aef33e # v2.0.4
+        uses: kachick/wait-other-jobs@v3.0.0
         timeout-minutes: 10
+        with:
+          skip-same-workflow: 'true'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash --delete-branch "$PR_URL"
         env:

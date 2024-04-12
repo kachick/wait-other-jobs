@@ -35,6 +35,8 @@ jobs:
       - name: Wait other jobs
         uses: ./
         timeout-minutes: 10
+        with:
+          skip-same-workflow: 'true'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash --delete-branch "$PR_URL"
         env:
@@ -61,6 +63,7 @@ jobs:
         with:
           retry-method: 'equal_intervals'
           min-interval-seconds: '15'
+          skip-same-workflow: 'true'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash --delete-branch "$PR_URL"
         env:
@@ -78,6 +81,8 @@ jobs:
       - name: Wait other jobs
         uses: ./
         timeout-minutes: 20
+        with:
+          skip-same-workflow: 'true'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --delete-branch --squash "$PR_URL"
         env:
