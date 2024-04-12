@@ -19889,9 +19889,9 @@ var require_dist_node4 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@octokit+request@8.3.1/node_modules/@octokit/request/dist-node/index.js
+// node_modules/.pnpm/@octokit+request@8.4.0/node_modules/@octokit/request/dist-node/index.js
 var require_dist_node5 = __commonJS({
-  "node_modules/.pnpm/@octokit+request@8.3.1/node_modules/@octokit/request/dist-node/index.js"(exports, module) {
+  "node_modules/.pnpm/@octokit+request@8.4.0/node_modules/@octokit/request/dist-node/index.js"(exports, module) {
     "use strict";
     var __defProp2 = Object.defineProperty;
     var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
@@ -19917,7 +19917,7 @@ var require_dist_node5 = __commonJS({
     module.exports = __toCommonJS2(dist_src_exports);
     var import_endpoint2 = require_dist_node2();
     var import_universal_user_agent5 = require_dist_node();
-    var VERSION5 = "8.3.1";
+    var VERSION5 = "8.4.0";
     function isPlainObject3(value) {
       if (typeof value !== "object" || value === null)
         return false;
@@ -19934,7 +19934,7 @@ var require_dist_node5 = __commonJS({
       return response.arrayBuffer();
     }
     function fetchWrapper2(requestOptions) {
-      var _a, _b, _c;
+      var _a, _b, _c, _d;
       const log = requestOptions.request && requestOptions.request.log ? requestOptions.request.log : console;
       const parseSuccessResponseBody = ((_a = requestOptions.request) == null ? void 0 : _a.parseSuccessResponseBody) !== false;
       if (isPlainObject3(requestOptions.body) || Array.isArray(requestOptions.body)) {
@@ -19955,8 +19955,9 @@ var require_dist_node5 = __commonJS({
       return fetch(requestOptions.url, {
         method: requestOptions.method,
         body: requestOptions.body,
+        redirect: (_c = requestOptions.request) == null ? void 0 : _c.redirect,
         headers: requestOptions.headers,
-        signal: (_c = requestOptions.request) == null ? void 0 : _c.signal,
+        signal: (_d = requestOptions.request) == null ? void 0 : _d.signal,
         // duplex must be set if request.body is ReadableStream or Async Iterables.
         // See https://fetch.spec.whatwg.org/#dom-requestinit-duplex.
         ...requestOptions.body && { duplex: "half" }
@@ -23779,7 +23780,7 @@ var RequestError = class extends Error {
   }
 };
 
-// node_modules/.pnpm/@octokit+request@9.0.1/node_modules/@octokit/request/dist-bundle/index.js
+// node_modules/.pnpm/@octokit+request@9.1.0/node_modules/@octokit/request/dist-bundle/index.js
 var VERSION2 = "0.0.0-development";
 function isPlainObject2(value) {
   if (typeof value !== "object" || value === null)
@@ -23816,6 +23817,7 @@ function fetchWrapper(requestOptions) {
   return fetch(requestOptions.url, {
     method: requestOptions.method,
     body: requestOptions.body,
+    redirect: requestOptions.request?.redirect,
     // Header values must be `string`
     headers: Object.fromEntries(
       Object.entries(requestOptions.headers).map(([name, value]) => [
@@ -24114,10 +24116,10 @@ var createTokenAuth = function createTokenAuth2(token) {
   });
 };
 
-// node_modules/.pnpm/@octokit+core@6.1.1/node_modules/@octokit/core/dist-src/version.js
-var VERSION4 = "6.1.1";
+// node_modules/.pnpm/@octokit+core@6.1.2/node_modules/@octokit/core/dist-src/version.js
+var VERSION4 = "6.1.2";
 
-// node_modules/.pnpm/@octokit+core@6.1.1/node_modules/@octokit/core/dist-src/index.js
+// node_modules/.pnpm/@octokit+core@6.1.2/node_modules/@octokit/core/dist-src/index.js
 var noop = () => {
 };
 var consoleWarn = console.warn.bind(console);
@@ -24244,7 +24246,7 @@ var Octokit = class {
   auth;
 };
 
-// node_modules/.pnpm/@octokit+plugin-paginate-graphql@5.2.0_@octokit+core@6.1.1/node_modules/@octokit/plugin-paginate-graphql/dist-bundle/index.js
+// node_modules/.pnpm/@octokit+plugin-paginate-graphql@5.2.0_@octokit+core@6.1.2/node_modules/@octokit/plugin-paginate-graphql/dist-bundle/index.js
 var generateMessage = (path, cursorValue) => `The cursor at "${path.join(
   ","
 )}" did not change its value "${cursorValue}" after a page transition. Please make sure your that your query is set up correctly.`;
