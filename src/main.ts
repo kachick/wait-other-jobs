@@ -25,6 +25,8 @@ async function run(): Promise<void> {
     repo: { repo, owner },
     payload,
     runId,
+    workflow,
+    job,
     sha,
   } = context;
   const pr = payload.pull_request;
@@ -35,7 +37,10 @@ async function run(): Promise<void> {
       commitSha = prSha;
     } else {
       if (isDebug()) {
+        // Do not print secret even for debug code
         debug(JSON.stringify(pr, null, 2));
+        debug(JSON.stringify(context));
+        debug(JSON.stringify({ runId, workflow, job }));
       }
       error('github context has unexpected format: missing context.payload.pull_request.head.sha');
       setFailed('unexpected failure occurred');
