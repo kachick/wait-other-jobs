@@ -10,7 +10,7 @@ I mainly use this action for below use-case when they should run after multiple 
 ## Auto merge
 
 - Assume test jobs defined in another workflow
-- Assume 1 workflow file defines 2 jobs with this action, it needs to avoid deadloks with `skip-list` or `skip-same-workflow` option
+- Assume 1 workflow file defines 2 jobs with this action, it needs to avoid deadlocks with `skip-list` or `skip-same-workflow` option
 
 ```yaml
 name: Merge bot PR after CI
