@@ -24,7 +24,6 @@ async function run(): Promise<void> {
   const {
     repo: { repo, owner },
     payload,
-    runId,
     workflow,
     job,
     sha,
@@ -83,7 +82,6 @@ async function run(): Promise<void> {
   info(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
-      runId,
       workflow,
       job,
       repositoryInfo,
@@ -135,7 +133,8 @@ async function run(): Promise<void> {
 
     const report = await fetchOtherRunStatus(
       githubToken,
-      { ...repositoryInfo, ref: commitSha, triggerRunId: runId },
+      { ...repositoryInfo, ref: commitSha },
+      { workflowName: workflow, jobName: job },
       waitList,
       skipList,
     );

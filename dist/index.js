@@ -28213,9 +28213,6 @@ async function getCheckRunSummaries(token, params) {
     if (!workflow) {
       return [];
     }
-    if (checkSuite.workflowRun?.databaseId === params.triggerRunId) {
-      return [];
-    }
     const checkRuns = checkSuite?.checkRuns;
     if (!checkRuns) {
       throw new Error("no checkRuns");
@@ -28242,29 +28239,36 @@ async function getCheckRunSummaries(token, params) {
   });
   return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
 }
-async function fetchOtherRunStatus(token, params, waitList, skipList) {
+async function fetchOtherRunStatus(token, params, trigger, waitList, skipList) {
   if (waitList.length > 0 && skipList.length > 0) {
     throw new Error("Do not specify both wait-list and skip-list");
   }
-  let checkRunSummaries = await getCheckRunSummaries(token, params);
+  const checkRunSummaries = await getCheckRunSummaries(token, params);
+  const otherRunSummaries = checkRunSummaries.filter(
+    (summary) => !(summary.workflowName === trigger.workflowName && summary.jobName === trigger.jobName)
+  );
+  if (otherRunSummaries.length === 0) {
+    throw new Error("No check runs found except wait-other-jobs itself");
+  }
+  let filteredSummraries = otherRunSummaries;
   if (waitList.length > 0) {
-    checkRunSummaries = checkRunSummaries.filter(
+    filteredSummraries = filteredSummraries.filter(
       (summary) => waitList.some(
         (target) => target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)
       )
     );
   }
   if (skipList.length > 0) {
-    checkRunSummaries = checkRunSummaries.filter(
+    filteredSummraries = filteredSummraries.filter(
       (summary) => !skipList.some(
         (target) => target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)
       )
     );
   }
-  const completedRuns = checkRunSummaries.filter((summary) => summary.runStatus === "COMPLETED");
-  const progress = completedRuns.length === checkRunSummaries.length ? "done" : "in_progress";
+  const completedRuns = filteredSummraries.filter((summary) => summary.runStatus === "COMPLETED");
+  const progress = completedRuns.length === filteredSummraries.length ? "done" : "in_progress";
   const conclusion = completedRuns.every((summary) => summary.acceptable) ? "acceptable" : "bad";
-  return { progress, conclusion, summaries: checkRunSummaries };
+  return { progress, conclusion, summaries: filteredSummraries };
 }
 
 // src/wait.ts
@@ -28318,7 +28322,6 @@ async function run() {
   const {
     repo: { repo, owner },
     payload,
-    runId,
     workflow,
     job,
     sha
@@ -28373,7 +28376,6 @@ async function run() {
   (0, import_core3.info)(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
-      runId,
       workflow,
       job,
       repositoryInfo,
@@ -28416,7 +28418,8 @@ async function run() {
     (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
       githubToken,
-      { ...repositoryInfo, ref: commitSha, triggerRunId: runId },
+      { ...repositoryInfo, ref: commitSha },
+      { workflowName: workflow, jobName: job },
       waitList,
       skipList
     );
