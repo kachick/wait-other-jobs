@@ -38,7 +38,6 @@ async function run(): Promise<void> {
       if (isDebug()) {
         // Do not print secret even for debug code
         debug(JSON.stringify(pr, null, 2));
-        debug(JSON.stringify(context));
       }
       error('github context has unexpected format: missing context.payload.pull_request.head.sha');
       setFailed('unexpected failure occurred');

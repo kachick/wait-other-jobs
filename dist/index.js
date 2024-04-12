@@ -737,7 +737,7 @@ var require_tunnel = __commonJS({
         connectOptions.headers = connectOptions.headers || {};
         connectOptions.headers["Proxy-Authorization"] = "Basic " + new Buffer(connectOptions.proxyAuth).toString("base64");
       }
-      debug3("making CONNECT request");
+      debug2("making CONNECT request");
       var connectReq = self.request(connectOptions);
       connectReq.useChunkedEncodingByDefault = false;
       connectReq.once("response", onResponse);
@@ -757,7 +757,7 @@ var require_tunnel = __commonJS({
         connectReq.removeAllListeners();
         socket.removeAllListeners();
         if (res.statusCode !== 200) {
-          debug3(
+          debug2(
             "tunneling socket could not be established, statusCode=%d",
             res.statusCode
           );
@@ -769,7 +769,7 @@ var require_tunnel = __commonJS({
           return;
         }
         if (head.length > 0) {
-          debug3("got illegal response body from proxy");
+          debug2("got illegal response body from proxy");
           socket.destroy();
           var error2 = new Error("got illegal response body from proxy");
           error2.code = "ECONNRESET";
@@ -777,13 +777,13 @@ var require_tunnel = __commonJS({
           self.removeSocket(placeholder);
           return;
         }
-        debug3("tunneling connection has established");
+        debug2("tunneling connection has established");
         self.sockets[self.sockets.indexOf(placeholder)] = socket;
         return cb(socket);
       }
       function onError(cause) {
         connectReq.removeAllListeners();
-        debug3(
+        debug2(
           "tunneling socket could not be established, cause=%s\n",
           cause.message,
           cause.stack
@@ -845,9 +845,9 @@ var require_tunnel = __commonJS({
       }
       return target;
     }
-    var debug3;
+    var debug2;
     if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
-      debug3 = function() {
+      debug2 = function() {
         var args = Array.prototype.slice.call(arguments);
         if (typeof args[0] === "string") {
           args[0] = "TUNNEL: " + args[0];
@@ -857,10 +857,10 @@ var require_tunnel = __commonJS({
         console.error.apply(console, args);
       };
     } else {
-      debug3 = function() {
+      debug2 = function() {
       };
     }
-    exports.debug = debug3;
+    exports.debug = debug2;
   }
 });
 
@@ -18953,14 +18953,14 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       error2(message);
     }
     exports.setFailed = setFailed2;
-    function isDebug3() {
+    function isDebug2() {
       return process.env["RUNNER_DEBUG"] === "1";
     }
-    exports.isDebug = isDebug3;
-    function debug3(message) {
+    exports.isDebug = isDebug2;
+    function debug2(message) {
       command_1.issueCommand("debug", {}, message);
     }
-    exports.debug = debug3;
+    exports.debug = debug2;
     function error2(message, properties = {}) {
       command_1.issueCommand("error", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
@@ -23116,7 +23116,7 @@ var require_github = __commonJS({
 });
 
 // src/main.ts
-var import_core3 = __toESM(require_core(), 1);
+var import_core2 = __toESM(require_core(), 1);
 var import_github = __toESM(require_github(), 1);
 
 // node_modules/.pnpm/ansi-styles@6.2.1/node_modules/ansi-styles/index.js
@@ -28143,7 +28143,6 @@ var z = /* @__PURE__ */ Object.freeze({
 });
 
 // src/github-api.ts
-var import_core2 = __toESM(require_core(), 1);
 var PaginatableOctokit = Octokit.plugin(paginateGraphQL);
 var ListItem = z.object({
   workflowFile: z.string().endsWith(".yml"),
@@ -28206,9 +28205,6 @@ async function getCheckRunSummaries(token, params) {
     throw new Error("no checkSuiteNodes");
   }
   const summaries = checkSuiteNodes.flatMap((checkSuite) => {
-    if ((0, import_core2.isDebug)()) {
-      (0, import_core2.debug)(JSON.stringify(checkSuite));
-    }
     const workflow = checkSuite.workflowRun?.workflow;
     if (!workflow) {
       return [];
@@ -28318,7 +28314,7 @@ var errorMessage = (body) => `${ansi_styles_default.red.open}${body}${ansi_style
 var succeededMessage = (body) => `${ansi_styles_default.green.open}${body}${ansi_styles_default.green.close}`;
 var colorize = (body, ok) => ok ? succeededMessage(body) : errorMessage(body);
 async function run() {
-  (0, import_core3.startGroup)("Parameters");
+  (0, import_core2.startGroup)("Parameters");
   const {
     repo: { repo, owner },
     payload,
@@ -28333,12 +28329,11 @@ async function run() {
     if (typeof prSha === "string") {
       commitSha = prSha;
     } else {
-      if ((0, import_core3.isDebug)()) {
-        (0, import_core3.debug)(JSON.stringify(pr, null, 2));
-        (0, import_core3.debug)(JSON.stringify(import_github.context));
+      if ((0, import_core2.isDebug)()) {
+        (0, import_core2.debug)(JSON.stringify(pr, null, 2));
       }
-      (0, import_core3.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
-      (0, import_core3.setFailed)("unexpected failure occurred");
+      (0, import_core2.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
+      (0, import_core2.setFailed)("unexpected failure occurred");
       return;
     }
   }
@@ -28347,33 +28342,33 @@ async function run() {
     repo
   };
   const waitSecondsBeforeFirstPolling = parseInt(
-    (0, import_core3.getInput)("wait-seconds-before-first-polling", { required: true, trimWhitespace: true }),
+    (0, import_core2.getInput)("wait-seconds-before-first-polling", { required: true, trimWhitespace: true }),
     10
   );
   const minIntervalSeconds = parseInt(
-    (0, import_core3.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
+    (0, import_core2.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
     10
   );
-  const retryMethod = (0, import_core3.getInput)("retry-method", { required: true, trimWhitespace: true });
+  const retryMethod = (0, import_core2.getInput)("retry-method", { required: true, trimWhitespace: true });
   if (!isRetryMethod(retryMethod)) {
-    (0, import_core3.setFailed)(
+    (0, import_core2.setFailed)(
       `unknown parameter "${retryMethod}" is given. "retry-method" can take one of ${JSON.stringify(retryMethods)}`
     );
     return;
   }
   const attemptLimits = parseInt(
-    (0, import_core3.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
+    (0, import_core2.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
     10
   );
-  const waitList = List.parse(JSON.parse((0, import_core3.getInput)("wait-list", { required: true })));
-  const skipList = List.parse(JSON.parse((0, import_core3.getInput)("skip-list", { required: true })));
+  const waitList = List.parse(JSON.parse((0, import_core2.getInput)("wait-list", { required: true })));
+  const skipList = List.parse(JSON.parse((0, import_core2.getInput)("skip-list", { required: true })));
   if (waitList.length > 0 && skipList.length > 0) {
-    (0, import_core3.error)("Do not specify both wait-list and skip-list");
-    (0, import_core3.setFailed)("Specified both list");
+    (0, import_core2.error)("Do not specify both wait-list and skip-list");
+    (0, import_core2.setFailed)("Specified both list");
   }
-  const isEarlyExit = (0, import_core3.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
-  const isDryRun = (0, import_core3.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
-  (0, import_core3.info)(JSON.stringify(
+  const isEarlyExit = (0, import_core2.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
+  const isDryRun = (0, import_core2.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
+  (0, import_core2.info)(JSON.stringify(
     {
       triggeredCommitSha: commitSha,
       workflow,
@@ -28392,30 +28387,30 @@ async function run() {
     null,
     2
   ));
-  const githubToken = (0, import_core3.getInput)("github-token", { required: true, trimWhitespace: false });
-  (0, import_core3.setSecret)(githubToken);
+  const githubToken = (0, import_core2.getInput)("github-token", { required: true, trimWhitespace: false });
+  (0, import_core2.setSecret)(githubToken);
   let attempts = 0;
   let shouldStop = false;
-  (0, import_core3.endGroup)();
+  (0, import_core2.endGroup)();
   if (isDryRun) {
     return;
   }
   for (; ; ) {
     attempts += 1;
     if (attempts > attemptLimits) {
-      (0, import_core3.setFailed)(errorMessage(`reached to given attempt limits "${attemptLimits}"`));
+      (0, import_core2.setFailed)(errorMessage(`reached to given attempt limits "${attemptLimits}"`));
       break;
     }
     if (attempts === 1) {
       const initialMsec = waitSecondsBeforeFirstPolling * 1e3;
-      (0, import_core3.info)(`Wait ${readableDuration(initialMsec)} before first polling.`);
+      (0, import_core2.info)(`Wait ${readableDuration(initialMsec)} before first polling.`);
       await wait(initialMsec);
     } else {
       const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
-      (0, import_core3.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
+      (0, import_core2.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
       await wait(msec);
     }
-    (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
+    (0, import_core2.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const report = await fetchOtherRunStatus(
       githubToken,
       { ...repositoryInfo, ref: commitSha },
@@ -28435,37 +28430,37 @@ async function run() {
         checkRunUrl
       } = summary;
       const nullStr = "(null)";
-      (0, import_core3.info)(
+      (0, import_core2.info)(
         `${workflowPath}(${colorize(`${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`
       );
     }
-    if ((0, import_core3.isDebug)()) {
-      (0, import_core3.debug)(JSON.stringify(report, null, 2));
+    if ((0, import_core2.isDebug)()) {
+      (0, import_core2.debug)(JSON.stringify(report, null, 2));
     }
     const { progress, conclusion } = report;
     switch (progress) {
       case "in_progress": {
         if (conclusion === "bad" && isEarlyExit) {
           shouldStop = true;
-          (0, import_core3.setFailed)(errorMessage("some jobs failed"));
+          (0, import_core2.setFailed)(errorMessage("some jobs failed"));
         }
-        (0, import_core3.info)("some jobs still in progress");
+        (0, import_core2.info)("some jobs still in progress");
         break;
       }
       case "done": {
         shouldStop = true;
         switch (conclusion) {
           case "acceptable": {
-            (0, import_core3.info)(succeededMessage("all jobs passed"));
+            (0, import_core2.info)(succeededMessage("all jobs passed"));
             break;
           }
           case "bad": {
-            (0, import_core3.setFailed)(errorMessage("some jobs failed"));
+            (0, import_core2.setFailed)(errorMessage("some jobs failed"));
             break;
           }
           default: {
             const unexpectedConclusion = conclusion;
-            (0, import_core3.setFailed)(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
+            (0, import_core2.setFailed)(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
             break;
           }
         }
@@ -28474,11 +28469,11 @@ async function run() {
       default: {
         shouldStop = true;
         const unexpectedProgress = progress;
-        (0, import_core3.setFailed)(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
+        (0, import_core2.setFailed)(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
         break;
       }
     }
-    (0, import_core3.endGroup)();
+    (0, import_core2.endGroup)();
     if (shouldStop) {
       break;
     }
