@@ -9,8 +9,7 @@ I mainly use this action for below use-case when they should run after multiple 
 
 ## Auto merge
 
-- Assume test jobs defined in another workflow.
-- Assume it named as `.github/workflows/merge-bot-pr.yml`
+- Assume test jobs defined in another workflow
 - Assume 1 workflow file defines 2 jobs with this action, it needs to avoid deadloks with `skip-list` or `skip-same-workflow` option
 
 ```yaml
