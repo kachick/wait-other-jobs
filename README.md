@@ -35,8 +35,8 @@ with:
   early-exit: 'false' # default 'true'
   skip-same-workflow: 'true' # default 'false'
   # lists should be given with JSON formatted array, do not specify both wait-list and skip-list
-  #   - Each items should have "workflowFile" field and they can optinaly have "jobName" field
-  #   - If no jobName is specified, all of jobs in the workflow will be targeted
+  #   - Each item should have a "workflowFile" field, and they can optionally have a "jobName" field
+  #   - If no jobName is specified, all the jobs in the workflow will be targeted
   wait-list: |
     [
       {
