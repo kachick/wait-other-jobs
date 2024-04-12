@@ -24,9 +24,6 @@ jobs:
         # timeout-minutes: 15 # Recommended to be enabled with reasonable value
 ```
 
-If you are using this action in multiple jobs on the same repository, you should manually avoid deadlocks.\
-You can use the `skip-list` option that described below for this purpose.
-
 You can change the token, polling interval, allow/deny list and turns early-exit as below.
 
 ```yaml
@@ -89,11 +86,15 @@ See the [docs](docs/examples.md) for further detail.
 
 ## Limitations
 
-Judge OK or Bad with the checkRun state at the moment.\
-When some jobs will be triggered after this action with `needs: [distant-first]`, it might be unaccurate. (I didn't faced yet)
+- If you use this action in multiple jobs on the same repository, you should avoid deadlocks.\
+  The `skip-list` and `wait-list` options described above cover this use case.
 
-If any workflow starts many jobs as 100+, this action does not support it.\
-Because of nested paging in GraphQL makes complex. See [related docs](https://github.com/octokit/plugin-paginate-graphql.js/blob/a6b12e867466b0c583b002acd1cb1ed90b11841f/README.md#L184-L218) for further detail.
+- Judge OK or Bad with the checkRun state at the moment.\
+  When some jobs will be triggered after this action with `needs: [distant-first]`, it might be unaccurate.\
+  (I didn't see actual example yet)
+
+- If any workflow starts many jobs as 100+, this action does not support it.\
+  Because of nested paging in GraphQL makes complex. See [related docs](https://github.com/octokit/plugin-paginate-graphql.js/blob/a6b12e867466b0c583b002acd1cb1ed90b11841f/README.md#L184-L218) for further detail.
 
 ## License
 
