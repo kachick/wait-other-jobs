@@ -24,6 +24,9 @@ jobs:
         # timeout-minutes: 15 # Recommended to be enabled with reasonable value
 ```
 
+If you are using this action in multiple jobs on the same repository, you should manually avoid deadlocks.\
+You can use the `skip-list` option that described below for this purpose.
+
 You can change the token, polling interval, allow/deny list and turns early-exit as below.
 
 ```yaml

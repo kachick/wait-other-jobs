@@ -91,6 +91,9 @@ jobs:
           skip-list: |
             [
               {
+                "workflowFile": "itself.yml"
+              },
+              {
                 "workflowFile": "ci.yml"
               },
               {
