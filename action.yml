@@ -1,5 +1,5 @@
 name: 'wait-other-jobs'
-description: 'Wait finishes for other jobs in GitHub Actions. When they have been finished, this step exit 0 or 1.'
+description: 'Waits for all or specific other jobs, even if they are defined in other workflows'
 author: 'Kenichi Kamiya <kachick1@gmail.com>'
 branding:
   icon: 'check-circle'
