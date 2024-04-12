@@ -3,6 +3,7 @@ import { paginateGraphQL } from '@octokit/plugin-paginate-graphql';
 import { CheckSuite, Workflow, CheckRun, Commit } from '@octokit/graphql-schema';
 import { join, relative } from 'path';
 import { z } from 'zod';
+import { debug, isDebug } from '@actions/core';
 
 const PaginatableOctokit = Octokit.plugin(paginateGraphQL);
 
@@ -91,6 +92,9 @@ export async function getCheckRunSummaries(
   }
 
   const summaries = checkSuiteNodes.flatMap((checkSuite) => {
+    if (isDebug()) {
+      debug(JSON.stringify(checkSuite));
+    }
     const workflow = checkSuite.workflowRun?.workflow;
     if (!workflow) {
       return [];
