@@ -174,6 +174,10 @@ export async function fetchOtherRunStatus(
         target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
       )
     );
+
+    if (filtered.length === 0) {
+      throw new Error('No targets found except wait-other-jobs itself');
+    }
   }
   if (skipList.length > 0) {
     filtered = filtered.filter((summary) =>
@@ -181,10 +185,6 @@ export async function fetchOtherRunStatus(
         target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
       )
     );
-  }
-
-  if (filtered.length === 0) {
-    throw new Error('No targets found except wait-other-jobs itself');
   }
 
   const completed = filtered.filter((summary) => summary.runStatus === 'COMPLETED');
