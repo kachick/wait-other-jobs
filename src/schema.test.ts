@@ -1,16 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { Options } from './schema.ts';
-import { optional } from 'zod';
-import { wait } from './wait.ts';
 
 const defaultOptions = Object.freeze({
   isEarlyExit: true,
   attemptLimits: 1000,
   waitList: [],
   skipList: [],
-  waitSecondsBeforeFirstPolling: 15,
-  minIntervalSeconds: 10,
+  waitSecondsBeforeFirstPolling: 10,
+  minIntervalSeconds: 15,
   retryMethod: 'equal_intervals',
   shouldSkipSameWorkflow: false,
   isDryRun: false,
@@ -22,8 +20,8 @@ test('Options keep given values', () => {
     attemptLimits: 1000,
     waitList: [],
     skipList: [],
-    waitSecondsBeforeFirstPolling: 15,
-    minIntervalSeconds: 10,
+    waitSecondsBeforeFirstPolling: 10,
+    minIntervalSeconds: 15,
     retryMethod: 'equal_intervals',
     shouldSkipSameWorkflow: false,
     isDryRun: false,
