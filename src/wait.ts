@@ -1,13 +1,8 @@
 import { setTimeout } from 'timers/promises';
+import { RetryMethod } from './schema.ts';
 
 // Just aliasing to avoid misusing setTimeout between ES method and timers/promises version.
 export const wait = setTimeout;
-
-export const retryMethods = ['exponential_backoff', 'equal_intervals'] as const;
-type retryMethod = typeof retryMethods[number];
-export const isRetryMethod = (
-  method: string,
-): method is retryMethod => (([...retryMethods] as string[]).includes(method));
 
 // Taken from MDN
 // The maximum is exclusive and the minimum is inclusive
@@ -45,7 +40,7 @@ export function calcExponentialBackoffAndJitter(
   return ((minIntervalSeconds * (2 ** (attempts - 1))) * 1000) + jitterMilliseconds;
 }
 
-export function getIdleMilliseconds(method: retryMethod, minIntervalSeconds: number, attempts: number): number {
+export function getIdleMilliseconds(method: RetryMethod, minIntervalSeconds: number, attempts: number): number {
   switch (method) {
     case ('exponential_backoff'):
       return calcExponentialBackoffAndJitter(

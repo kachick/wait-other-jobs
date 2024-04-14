@@ -1,0 +1,72 @@
+import { debug, getInput, getBooleanInput, setSecret, setFailed, isDebug, error } from '@actions/core';
+import { context } from '@actions/github';
+
+import { Options, SkipFilterConditions, Trigger, WaitFilterConditions } from './schema.js';
+
+export function parseInput(): { trigger: Trigger; options: Options; githubToken: string } {
+  const {
+    repo: { repo, owner },
+    payload,
+    runId,
+    job,
+    sha,
+  } = context;
+  const pr = payload.pull_request;
+  let commitSha = sha;
+  if (pr) {
+    const { head: { sha: prSha = sha } } = pr;
+    if (typeof prSha === 'string') {
+      commitSha = prSha;
+    } else {
+      if (isDebug()) {
+        // Do not print secret even for debug code
+        debug(JSON.stringify(pr, null, 2));
+      }
+      error('github context has unexpected format: missing context.payload.pull_request.head.sha');
+    }
+  }
+
+  const waitSecondsBeforeFirstPolling = parseInt(
+    getInput('wait-seconds-before-first-polling', { required: true, trimWhitespace: true }),
+    10,
+  );
+  const minIntervalSeconds = parseInt(
+    getInput('min-interval-seconds', { required: true, trimWhitespace: true }),
+    10,
+  );
+  const retryMethod = getInput('retry-method', { required: true, trimWhitespace: true });
+  const attemptLimits = parseInt(
+    getInput('attempt-limits', { required: true, trimWhitespace: true }),
+    10,
+  );
+  const waitList = WaitFilterConditions.parse(JSON.parse(getInput('wait-list', { required: true })));
+  const skipList = SkipFilterConditions.parse(JSON.parse(getInput('skip-list', { required: true })));
+  // TODO: Moved to schema.ts
+  if (waitList.length > 0 && skipList.length > 0) {
+    error('Do not specify both wait-list and skip-list');
+    setFailed('Specified both list');
+  }
+  const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
+  const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
+  const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
+
+  const options = Options.parse({
+    waitSecondsBeforeFirstPolling,
+    minIntervalSeconds,
+    retryMethod,
+    attemptLimits,
+    waitList,
+    skipList,
+    isEarlyExit,
+    shouldSkipSameWorkflow,
+    isDryRun,
+  });
+
+  const trigger = { owner, repo, ref: commitSha, runId, jobName: job } as const satisfies Trigger;
+
+  // `getIDToken` does not fit for this purpose. It is provided for OIDC Token
+  const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
+  setSecret(githubToken);
+
+  return { trigger, options, githubToken };
+}

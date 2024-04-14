@@ -737,7 +737,7 @@ var require_tunnel = __commonJS({
         connectOptions.headers = connectOptions.headers || {};
         connectOptions.headers["Proxy-Authorization"] = "Basic " + new Buffer(connectOptions.proxyAuth).toString("base64");
       }
-      debug2("making CONNECT request");
+      debug3("making CONNECT request");
       var connectReq = self.request(connectOptions);
       connectReq.useChunkedEncodingByDefault = false;
       connectReq.once("response", onResponse);
@@ -757,7 +757,7 @@ var require_tunnel = __commonJS({
         connectReq.removeAllListeners();
         socket.removeAllListeners();
         if (res.statusCode !== 200) {
-          debug2(
+          debug3(
             "tunneling socket could not be established, statusCode=%d",
             res.statusCode
           );
@@ -769,7 +769,7 @@ var require_tunnel = __commonJS({
           return;
         }
         if (head.length > 0) {
-          debug2("got illegal response body from proxy");
+          debug3("got illegal response body from proxy");
           socket.destroy();
           var error2 = new Error("got illegal response body from proxy");
           error2.code = "ECONNRESET";
@@ -777,13 +777,13 @@ var require_tunnel = __commonJS({
           self.removeSocket(placeholder);
           return;
         }
-        debug2("tunneling connection has established");
+        debug3("tunneling connection has established");
         self.sockets[self.sockets.indexOf(placeholder)] = socket;
         return cb(socket);
       }
       function onError(cause) {
         connectReq.removeAllListeners();
-        debug2(
+        debug3(
           "tunneling socket could not be established, cause=%s\n",
           cause.message,
           cause.stack
@@ -845,9 +845,9 @@ var require_tunnel = __commonJS({
       }
       return target;
     }
-    var debug2;
+    var debug3;
     if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
-      debug2 = function() {
+      debug3 = function() {
         var args = Array.prototype.slice.call(arguments);
         if (typeof args[0] === "string") {
           args[0] = "TUNNEL: " + args[0];
@@ -857,10 +857,10 @@ var require_tunnel = __commonJS({
         console.error.apply(console, args);
       };
     } else {
-      debug2 = function() {
+      debug3 = function() {
       };
     }
-    exports.debug = debug2;
+    exports.debug = debug3;
   }
 });
 
@@ -18948,19 +18948,19 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issue("echo", enabled ? "on" : "off");
     }
     exports.setCommandEcho = setCommandEcho;
-    function setFailed2(message) {
+    function setFailed3(message) {
       process.exitCode = ExitCode.Failure;
       error2(message);
     }
-    exports.setFailed = setFailed2;
-    function isDebug2() {
+    exports.setFailed = setFailed3;
+    function isDebug3() {
       return process.env["RUNNER_DEBUG"] === "1";
     }
-    exports.isDebug = isDebug2;
-    function debug2(message) {
+    exports.isDebug = isDebug3;
+    function debug3(message) {
       command_1.issueCommand("debug", {}, message);
     }
-    exports.debug = debug2;
+    exports.debug = debug3;
     function error2(message, properties = {}) {
       command_1.issueCommand("error", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
@@ -23117,8 +23117,7 @@ var require_github = __commonJS({
 });
 
 // src/main.ts
-var import_core2 = __toESM(require_core(), 1);
-var import_github = __toESM(require_github(), 1);
+var import_core3 = __toESM(require_core(), 1);
 
 // node_modules/.pnpm/ansi-styles@6.2.1/node_modules/ansi-styles/index.js
 var ANSI_BACKGROUND_OFFSET = 10;
@@ -23305,6 +23304,10 @@ function assembleStyles() {
 }
 var ansiStyles = assembleStyles();
 var ansi_styles_default = ansiStyles;
+
+// src/input.ts
+var import_core = __toESM(require_core(), 1);
+var import_github = __toESM(require_github(), 1);
 
 // node_modules/.pnpm/zod@3.22.4/node_modules/zod/lib/index.mjs
 var util;
@@ -27050,47 +27053,78 @@ var WaitFilterCondition = FilterCondition.extend(
   { optional: z.boolean().optional().default(false).readonly() }
 ).readonly();
 var WaitFilterConditions = z.array(WaitFilterCondition).readonly();
+var retryMethods = z.enum(["exponential_backoff", "equal_intervals"]);
+var Options = z.object({
+  waitList: WaitFilterConditions,
+  skipList: SkipFilterConditions,
+  waitSecondsBeforeFirstPolling: z.number().min(0),
+  minIntervalSeconds: z.number().min(1),
+  retryMethod: retryMethods,
+  attemptLimits: z.number().min(1),
+  isEarlyExit: z.boolean(),
+  shouldSkipSameWorkflow: z.boolean(),
+  isDryRun: z.boolean()
+}).readonly();
 
-// src/wait.ts
-import { setTimeout as setTimeout2 } from "timers/promises";
-var wait = setTimeout2;
-var retryMethods = ["exponential_backoff", "equal_intervals"];
-var isRetryMethod = (method) => [...retryMethods].includes(method);
-function getRandomInt(min, max) {
-  const flooredMin = Math.ceil(min);
-  return Math.floor(Math.random() * (Math.floor(max) - flooredMin) + flooredMin);
-}
-function readableDuration(milliseconds) {
-  const msecToSec = 1e3;
-  const secToMin = 60;
-  const seconds = milliseconds / msecToSec;
-  const minutes = seconds / secToMin;
-  const { unit, value, precision } = minutes >= 1 ? { unit: "minutes", value: minutes, precision: 1 } : { unit: "seconds", value: seconds, precision: 0 };
-  const adjustor = 10 ** precision;
-  return `about ${(Math.round(value * adjustor) / adjustor).toFixed(
-    precision
-  )} ${unit}`;
-}
-var MIN_JITTER_MILLISECONDS = 1e3;
-var MAX_JITTER_MILLISECONDS = 7e3;
-function calcExponentialBackoffAndJitter(minIntervalSeconds, attempts) {
-  const jitterMilliseconds = getRandomInt(MIN_JITTER_MILLISECONDS, MAX_JITTER_MILLISECONDS);
-  return minIntervalSeconds * 2 ** (attempts - 1) * 1e3 + jitterMilliseconds;
-}
-function getIdleMilliseconds(method, minIntervalSeconds, attempts) {
-  switch (method) {
-    case "exponential_backoff":
-      return calcExponentialBackoffAndJitter(
-        minIntervalSeconds,
-        attempts
-      );
-    case "equal_intervals":
-      return minIntervalSeconds * 1e3;
-    default: {
-      const _exhaustiveCheck = method;
-      return minIntervalSeconds * 1e3;
+// src/input.ts
+function parseInput() {
+  const {
+    repo: { repo, owner },
+    payload,
+    runId,
+    job,
+    sha
+  } = import_github.context;
+  const pr = payload.pull_request;
+  let commitSha = sha;
+  if (pr) {
+    const { head: { sha: prSha = sha } } = pr;
+    if (typeof prSha === "string") {
+      commitSha = prSha;
+    } else {
+      if ((0, import_core.isDebug)()) {
+        (0, import_core.debug)(JSON.stringify(pr, null, 2));
+      }
+      (0, import_core.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
     }
   }
+  const waitSecondsBeforeFirstPolling = parseInt(
+    (0, import_core.getInput)("wait-seconds-before-first-polling", { required: true, trimWhitespace: true }),
+    10
+  );
+  const minIntervalSeconds = parseInt(
+    (0, import_core.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
+    10
+  );
+  const retryMethod = (0, import_core.getInput)("retry-method", { required: true, trimWhitespace: true });
+  const attemptLimits = parseInt(
+    (0, import_core.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
+    10
+  );
+  const waitList = WaitFilterConditions.parse(JSON.parse((0, import_core.getInput)("wait-list", { required: true })));
+  const skipList = SkipFilterConditions.parse(JSON.parse((0, import_core.getInput)("skip-list", { required: true })));
+  if (waitList.length > 0 && skipList.length > 0) {
+    (0, import_core.error)("Do not specify both wait-list and skip-list");
+    (0, import_core.setFailed)("Specified both list");
+  }
+  const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
+  const shouldSkipSameWorkflow = (0, import_core.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
+  const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
+  const options = Options.parse({
+    waitSecondsBeforeFirstPolling,
+    minIntervalSeconds,
+    retryMethod,
+    attemptLimits,
+    waitList,
+    skipList,
+    isEarlyExit,
+    shouldSkipSameWorkflow,
+    isDryRun
+  });
+  const trigger = { owner, repo, ref: commitSha, runId, jobName: job };
+  const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
+  (0, import_core.setSecret)(githubToken);
+  return { trigger, options, githubToken };
 }
 
 // node_modules/.pnpm/universal-user-agent@7.0.2/node_modules/universal-user-agent/index.js
@@ -28329,127 +28363,94 @@ function generateReport(checks, trigger, waitList, skipList, shouldSkipSameWorkf
   return { progress, conclusion, summaries: filtered };
 }
 
+// src/wait.ts
+import { setTimeout as setTimeout2 } from "timers/promises";
+var wait = setTimeout2;
+function getRandomInt(min, max) {
+  const flooredMin = Math.ceil(min);
+  return Math.floor(Math.random() * (Math.floor(max) - flooredMin) + flooredMin);
+}
+function readableDuration(milliseconds) {
+  const msecToSec = 1e3;
+  const secToMin = 60;
+  const seconds = milliseconds / msecToSec;
+  const minutes = seconds / secToMin;
+  const { unit, value, precision } = minutes >= 1 ? { unit: "minutes", value: minutes, precision: 1 } : { unit: "seconds", value: seconds, precision: 0 };
+  const adjustor = 10 ** precision;
+  return `about ${(Math.round(value * adjustor) / adjustor).toFixed(
+    precision
+  )} ${unit}`;
+}
+var MIN_JITTER_MILLISECONDS = 1e3;
+var MAX_JITTER_MILLISECONDS = 7e3;
+function calcExponentialBackoffAndJitter(minIntervalSeconds, attempts) {
+  const jitterMilliseconds = getRandomInt(MIN_JITTER_MILLISECONDS, MAX_JITTER_MILLISECONDS);
+  return minIntervalSeconds * 2 ** (attempts - 1) * 1e3 + jitterMilliseconds;
+}
+function getIdleMilliseconds(method, minIntervalSeconds, attempts) {
+  switch (method) {
+    case "exponential_backoff":
+      return calcExponentialBackoffAndJitter(
+        minIntervalSeconds,
+        attempts
+      );
+    case "equal_intervals":
+      return minIntervalSeconds * 1e3;
+    default: {
+      const _exhaustiveCheck = method;
+      return minIntervalSeconds * 1e3;
+    }
+  }
+}
+
 // src/main.ts
 var errorMessage = (body) => `${ansi_styles_default.red.open}${body}${ansi_styles_default.red.close}`;
 var succeededMessage = (body) => `${ansi_styles_default.green.open}${body}${ansi_styles_default.green.close}`;
 var colorize = (body, ok) => ok ? succeededMessage(body) : errorMessage(body);
 async function run() {
-  (0, import_core2.startGroup)("Parameters");
-  const {
-    repo: { repo, owner },
-    payload,
-    runId,
-    runNumber,
-    // Another file can set same workflow name. So you should filter workfrows from runId or the filename
-    workflow,
-    // On the otherhand, jobName should be unique in each workflow from YAML spec
-    job,
-    sha
-  } = import_github.context;
-  const pr = payload.pull_request;
-  let commitSha = sha;
-  if (pr) {
-    const { head: { sha: prSha = sha } } = pr;
-    if (typeof prSha === "string") {
-      commitSha = prSha;
-    } else {
-      if ((0, import_core2.isDebug)()) {
-        (0, import_core2.debug)(JSON.stringify(pr, null, 2));
-      }
-      (0, import_core2.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
-      (0, import_core2.setFailed)("unexpected failure occurred");
-      return;
-    }
-  }
-  const repositoryInfo = {
-    owner,
-    repo
-  };
-  const waitSecondsBeforeFirstPolling = parseInt(
-    (0, import_core2.getInput)("wait-seconds-before-first-polling", { required: true, trimWhitespace: true }),
-    10
-  );
-  const minIntervalSeconds = parseInt(
-    (0, import_core2.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
-    10
-  );
-  const retryMethod = (0, import_core2.getInput)("retry-method", { required: true, trimWhitespace: true });
-  if (!isRetryMethod(retryMethod)) {
-    (0, import_core2.setFailed)(
-      `unknown parameter "${retryMethod}" is given. "retry-method" can take one of ${JSON.stringify(retryMethods)}`
-    );
-    return;
-  }
-  const attemptLimits = parseInt(
-    (0, import_core2.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
-    10
-  );
-  const waitList = WaitFilterConditions.parse(JSON.parse((0, import_core2.getInput)("wait-list", { required: true })));
-  const skipList = SkipFilterConditions.parse(JSON.parse((0, import_core2.getInput)("skip-list", { required: true })));
-  if (waitList.length > 0 && skipList.length > 0) {
-    (0, import_core2.error)("Do not specify both wait-list and skip-list");
-    (0, import_core2.setFailed)("Specified both list");
-  }
-  const isEarlyExit = (0, import_core2.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
-  const shouldSkipSameWorkflow = (0, import_core2.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
-  const trigger = { ...repositoryInfo, ref: commitSha, runId, jobName: job };
-  const isDryRun = (0, import_core2.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
-  (0, import_core2.info)(JSON.stringify(
+  (0, import_core3.startGroup)("Parameters");
+  const { trigger, options, githubToken } = parseInput();
+  (0, import_core3.info)(JSON.stringify(
     {
-      triggeredCommitSha: commitSha,
-      runId,
-      runNumber,
-      workflow,
-      job,
-      repositoryInfo,
-      waitSecondsBeforeFirstPolling,
-      minIntervalSeconds,
-      retryMethod,
-      attemptLimits,
-      isEarlyExit,
-      isDryRun,
-      waitList,
-      skipList,
-      shouldSkipSameWorkflow
-      // Of course, do NOT include tokens here.
+      trigger,
+      options
+      // Do NOT include secrets
     },
     null,
     2
   ));
-  const githubToken = (0, import_core2.getInput)("github-token", { required: true, trimWhitespace: false });
-  (0, import_core2.setSecret)(githubToken);
+  (0, import_core3.endGroup)();
   let attempts = 0;
   let shouldStop = false;
-  (0, import_core2.endGroup)();
-  if (isDryRun) {
+  if (options.isDryRun) {
     return;
   }
   for (; ; ) {
     attempts += 1;
-    if (attempts > attemptLimits) {
-      (0, import_core2.setFailed)(errorMessage(`reached to given attempt limits "${attemptLimits}"`));
+    if (attempts > options.attemptLimits) {
+      (0, import_core3.setFailed)(errorMessage(`reached to given attempt limits "${options.attemptLimits}"`));
       break;
     }
     if (attempts === 1) {
-      const initialMsec = waitSecondsBeforeFirstPolling * 1e3;
-      (0, import_core2.info)(`Wait ${readableDuration(initialMsec)} before first polling.`);
+      const initialMsec = options.waitSecondsBeforeFirstPolling * 1e3;
+      (0, import_core3.info)(`Wait ${readableDuration(initialMsec)} before first polling.`);
       await wait(initialMsec);
     } else {
-      const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
-      (0, import_core2.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
+      const msec = getIdleMilliseconds(options.retryMethod, options.minIntervalSeconds, attempts);
+      (0, import_core3.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
       await wait(msec);
     }
-    (0, import_core2.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
+    (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const checks = await fetchChecks(githubToken, trigger);
-    if ((0, import_core2.isDebug)()) {
-      (0, import_core2.debug)(JSON.stringify(checks, null, 2));
+    if ((0, import_core3.isDebug)()) {
+      (0, import_core3.debug)(JSON.stringify(checks, null, 2));
     }
     const report = generateReport(
       checks,
       trigger,
-      waitList,
-      skipList,
-      shouldSkipSameWorkflow
+      options.waitList,
+      options.skipList,
+      options.shouldSkipSameWorkflow
     );
     for (const summary of report.summaries) {
       const {
@@ -28463,37 +28464,37 @@ async function run() {
         checkRunUrl
       } = summary;
       const nullStr = "(null)";
-      (0, import_core2.info)(
+      (0, import_core3.info)(
         `${workflowPath}(${colorize(`${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`
       );
     }
-    if ((0, import_core2.isDebug)()) {
-      (0, import_core2.debug)(JSON.stringify(report, null, 2));
+    if ((0, import_core3.isDebug)()) {
+      (0, import_core3.debug)(JSON.stringify(report, null, 2));
     }
     const { progress, conclusion } = report;
     switch (progress) {
       case "in_progress": {
-        if (conclusion === "bad" && isEarlyExit) {
+        if (conclusion === "bad" && options.isEarlyExit) {
           shouldStop = true;
-          (0, import_core2.setFailed)(errorMessage("some jobs failed"));
+          (0, import_core3.setFailed)(errorMessage("some jobs failed"));
         }
-        (0, import_core2.info)("some jobs still in progress");
+        (0, import_core3.info)("some jobs still in progress");
         break;
       }
       case "done": {
         shouldStop = true;
         switch (conclusion) {
           case "acceptable": {
-            (0, import_core2.info)(succeededMessage("all jobs passed"));
+            (0, import_core3.info)(succeededMessage("all jobs passed"));
             break;
           }
           case "bad": {
-            (0, import_core2.setFailed)(errorMessage("some jobs failed"));
+            (0, import_core3.setFailed)(errorMessage("some jobs failed"));
             break;
           }
           default: {
             const unexpectedConclusion = conclusion;
-            (0, import_core2.setFailed)(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
+            (0, import_core3.setFailed)(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
             break;
           }
         }
@@ -28502,11 +28503,11 @@ async function run() {
       default: {
         shouldStop = true;
         const unexpectedProgress = progress;
-        (0, import_core2.setFailed)(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
+        (0, import_core3.setFailed)(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
         break;
       }
     }
-    (0, import_core2.endGroup)();
+    (0, import_core3.endGroup)();
     if (shouldStop) {
       break;
     }
