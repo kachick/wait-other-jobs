@@ -77,6 +77,9 @@ jobs:
               {
                 "workflowFile": "merge-bot-pr.yml",
                 "jobName": "dependabot"
+              },
+              {
+                "workflowFile": "THERE_ARE_NO_FILES_AS_THIS.yml"
               }
             ]
   skip-list:
