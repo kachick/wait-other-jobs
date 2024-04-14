@@ -18948,11 +18948,11 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issue("echo", enabled ? "on" : "off");
     }
     exports.setCommandEcho = setCommandEcho;
-    function setFailed3(message) {
+    function setFailed2(message) {
       process.exitCode = ExitCode.Failure;
       error2(message);
     }
-    exports.setFailed = setFailed3;
+    exports.setFailed = setFailed2;
     function isDebug3() {
       return process.env["RUNNER_DEBUG"] === "1";
     }

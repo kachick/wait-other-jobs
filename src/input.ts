@@ -1,4 +1,4 @@
-import { debug, getInput, getBooleanInput, setSecret, setFailed, isDebug, error } from '@actions/core';
+import { debug, getInput, getBooleanInput, setSecret, isDebug, error } from '@actions/core';
 import { context } from '@actions/github';
 
 import { Options, SkipFilterConditions, Trigger, WaitFilterConditions } from './schema.js';
