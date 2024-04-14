@@ -1,47 +1,12 @@
 import { Octokit } from '@octokit/core';
 import { paginateGraphQL } from '@octokit/plugin-paginate-graphql';
-import { CheckSuite, Workflow, CheckRun, Commit } from '@octokit/graphql-schema';
+import { Commit } from '@octokit/graphql-schema';
 import { join, relative } from 'path';
-import { z } from 'zod';
+import { Summary, Trigger } from './schema.ts';
 
 const PaginatableOctokit = Octokit.plugin(paginateGraphQL);
 
-const FilterCondition = z.object({
-  workflowFile: z.string().endsWith('.yml'),
-  jobName: (z.string().min(1)).optional(),
-});
-const WaitFilterCondition = FilterCondition.extend(
-  { optional: z.boolean().optional().default(false) },
-);
-export const SkipFilterConditions = z.array(FilterCondition);
-export const WaitFilterConditions = z.array(WaitFilterCondition);
-
-interface Trigger {
-  owner: string;
-  repo: string;
-  ref: string;
-  runId: number;
-  jobName: string;
-}
-
-interface Summary {
-  acceptable: boolean; // Set by us
-  workflowPath: string; // Set by us
-  isSameWorkflow: boolean; // Set by us
-
-  checkSuiteStatus: CheckSuite['status'];
-  checkSuiteConclusion: CheckSuite['conclusion'];
-
-  workflowName: Workflow['name'];
-
-  runDatabaseId: CheckRun['databaseId'];
-  jobName: CheckRun['name'];
-  checkRunUrl: CheckRun['detailsUrl'];
-  runStatus: CheckRun['status'];
-  runConclusion: CheckRun['conclusion']; // null if status is in progress
-}
-
-export async function getCheckRunSummaries(
+export async function fetchCheckRuns(
   token: string,
   trigger: Trigger,
 ): Promise<Array<Summary>> {
@@ -144,67 +109,4 @@ export async function getCheckRunSummaries(
   });
 
   return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
-}
-
-// No need to keep as same as GitHub responses so We can change the definition.
-interface Report {
-  progress: 'in_progress' | 'done';
-  conclusion: 'acceptable' | 'bad';
-  summaries: Summary[];
-}
-
-export async function fetchOtherRunStatus(
-  token: string,
-  trigger: Trigger,
-  waitList: z.infer<typeof WaitFilterConditions>,
-  skipList: z.infer<typeof SkipFilterConditions>,
-  shouldSkipSameWorkflow: boolean,
-): Promise<Report> {
-  if (waitList.length > 0 && skipList.length > 0) {
-    throw new Error('Do not specify both wait-list and skip-list');
-  }
-
-  const summaries = await getCheckRunSummaries(token, trigger);
-  const others = summaries.filter((summary) => !(summary.isSameWorkflow && (trigger.jobName === summary.jobName)));
-  let filtered = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
-
-  if (waitList.length > 0) {
-    const seeker = waitList.map((condition) => ({ ...condition, found: false }));
-    filtered = filtered.filter((summary) =>
-      seeker.some((target) => {
-        if (
-          target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
-        ) {
-          target.found = true;
-          return true;
-        } else {
-          return false;
-        }
-      })
-    );
-
-    const unmatches = seeker.filter((result) => (!(result.found)) && (!(result.optional)));
-
-    if (unmatches.length > 0) {
-      throw new Error(`Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`);
-    }
-  }
-  if (skipList.length > 0) {
-    filtered = filtered.filter((summary) =>
-      !skipList.some((target) =>
-        target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
-      )
-    );
-  }
-
-  const completed = filtered.filter((summary) => summary.runStatus === 'COMPLETED');
-
-  const progress: Report['progress'] = completed.length === filtered.length
-    ? 'done'
-    : 'in_progress';
-  const conclusion: Report['conclusion'] = completed.every((summary) => summary.acceptable)
-    ? 'acceptable'
-    : 'bad';
-
-  return { progress, conclusion, summaries: filtered };
 }

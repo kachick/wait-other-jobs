@@ -16,8 +16,10 @@ const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.c
 const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
 const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
-import { SkipFilterConditions, WaitFilterConditions, fetchOtherRunStatus } from './github-api.js';
+import { SkipFilterConditions, Trigger, WaitFilterConditions } from './schema.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
+import { fetchCheckRuns } from './github-api.ts';
+import { generateReport } from './report.ts';
 
 async function run(): Promise<void> {
   startGroup('Parameters');
@@ -81,6 +83,7 @@ async function run(): Promise<void> {
   }
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
+  const trigger = { ...repositoryInfo, ref: commitSha, runId, jobName: job } as const satisfies Trigger;
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
 
   info(JSON.stringify(
@@ -137,16 +140,16 @@ async function run(): Promise<void> {
     }
 
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
-
-    const report = await fetchOtherRunStatus(
-      githubToken,
-      { ...repositoryInfo, ref: commitSha, runId, jobName: job },
+    const summaries = await fetchCheckRuns(githubToken, trigger);
+    const report = generateReport(
+      summaries,
+      trigger,
       waitList,
       skipList,
       shouldSkipSameWorkflow,
     );
 
-    for (const summary of report.summaries) {
+    for (const summary of report.filteredSummaries) {
       const {
         acceptable,
         checkSuiteStatus,
