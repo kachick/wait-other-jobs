@@ -1,7 +1,7 @@
 import { debug, getInput, getBooleanInput, setSecret, isDebug, error } from '@actions/core';
 import { context } from '@actions/github';
 
-import { Options, SkipFilterConditions, Trigger, WaitFilterConditions } from './schema.js';
+import { Options, Trigger } from './schema.js';
 
 export function parseInput(): { trigger: Trigger; options: Options; githubToken: string } {
   const {
@@ -39,8 +39,6 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     getInput('attempt-limits', { required: true, trimWhitespace: true }),
     10,
   );
-  const waitList = WaitFilterConditions.parse(JSON.parse(getInput('wait-list', { required: true })));
-  const skipList = SkipFilterConditions.parse(JSON.parse(getInput('skip-list', { required: true })));
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
@@ -50,8 +48,8 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     minIntervalSeconds,
     retryMethod,
     attemptLimits,
-    waitList,
-    skipList,
+    waitList: JSON.parse(getInput('wait-list', { required: true })),
+    skipList: JSON.parse(getInput('skip-list', { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun,

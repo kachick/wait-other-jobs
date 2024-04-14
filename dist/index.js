@@ -27048,15 +27048,13 @@ var FilterCondition = z.object({
   jobName: z.string().min(1).optional()
 });
 var SkipFilterCondition = FilterCondition.readonly();
-var SkipFilterConditions = z.array(SkipFilterCondition).readonly();
 var WaitFilterCondition = FilterCondition.extend(
   { optional: z.boolean().optional().default(false).readonly() }
 ).readonly();
-var WaitFilterConditions = z.array(WaitFilterCondition).readonly();
 var retryMethods = z.enum(["exponential_backoff", "equal_intervals"]);
 var Options = z.object({
-  waitList: WaitFilterConditions,
-  skipList: SkipFilterConditions,
+  waitList: z.array(WaitFilterCondition).readonly(),
+  skipList: z.array(SkipFilterCondition).readonly(),
   waitSecondsBeforeFirstPolling: z.number().min(0),
   minIntervalSeconds: z.number().min(1),
   retryMethod: retryMethods,
@@ -27104,8 +27102,6 @@ function parseInput() {
     (0, import_core.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
     10
   );
-  const waitList = WaitFilterConditions.parse(JSON.parse((0, import_core.getInput)("wait-list", { required: true })));
-  const skipList = SkipFilterConditions.parse(JSON.parse((0, import_core.getInput)("skip-list", { required: true })));
   const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
   const shouldSkipSameWorkflow = (0, import_core.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
@@ -27114,8 +27110,8 @@ function parseInput() {
     minIntervalSeconds,
     retryMethod,
     attemptLimits,
-    waitList,
-    skipList,
+    waitList: JSON.parse((0, import_core.getInput)("wait-list", { required: true })),
+    skipList: JSON.parse((0, import_core.getInput)("skip-list", { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun
@@ -28323,10 +28319,7 @@ function summarize(check, trigger) {
     runConclusion: run2.conclusion
   };
 }
-function generateReport(checks, trigger, waitList, skipList, shouldSkipSameWorkflow) {
-  if (waitList.length > 0 && skipList.length > 0) {
-    throw new Error("Do not specify both wait-list and skip-list");
-  }
+function generateReport(checks, trigger, { waitList, skipList, shouldSkipSameWorkflow }) {
   const summaries = checks.map((check) => summarize(check, trigger)).toSorted(
     (a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName))
   );
@@ -28447,9 +28440,7 @@ async function run() {
     const report = generateReport(
       checks,
       trigger,
-      options.waitList,
-      options.skipList,
-      options.shouldSkipSameWorkflow
+      options
     );
     for (const summary of report.summaries) {
       const {

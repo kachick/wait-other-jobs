@@ -25,23 +25,25 @@ test('wait-list', () => {
       ref: '760074f4f419b55cb864030c29ece58a689a42a2',
       jobName: 'wait-list',
     },
-    [
-      {
-        'workflowFile': 'lint.yml',
-        'optional': false,
-      },
-      {
-        'workflowFile': 'merge-bot-pr.yml',
-        'jobName': 'dependabot',
-        'optional': true,
-      },
-      {
-        'workflowFile': 'THERE_ARE_NO_FILES_AS_THIS.yml',
-        'optional': true,
-      },
-    ],
-    [],
-    false,
+    {
+      waitList: [
+        {
+          'workflowFile': 'lint.yml',
+          'optional': false,
+        },
+        {
+          'workflowFile': 'merge-bot-pr.yml',
+          'jobName': 'dependabot',
+          'optional': true,
+        },
+        {
+          'workflowFile': 'THERE_ARE_NO_FILES_AS_THIS.yml',
+          'optional': true,
+        },
+      ],
+      skipList: [],
+      shouldSkipSameWorkflow: false,
+    },
   );
 
   assert.deepStrictEqual({
@@ -98,23 +100,25 @@ test('skip-list', () => {
       ref: '760074f4f419b55cb864030c29ece58a689a42a2',
       jobName: 'skip-list',
     },
-    [],
-    [
-      {
-        'workflowFile': 'itself.yml',
-      },
-      {
-        'workflowFile': 'ci.yml',
-      },
-      {
-        'workflowFile': 'ci-nix.yml',
-      },
-      {
-        'workflowFile': 'merge-bot-pr.yml',
-        'jobName': 'dependabot',
-      },
-    ],
-    false,
+    {
+      waitList: [],
+      skipList: [
+        {
+          'workflowFile': 'itself.yml',
+        },
+        {
+          'workflowFile': 'ci.yml',
+        },
+        {
+          'workflowFile': 'ci-nix.yml',
+        },
+        {
+          'workflowFile': 'merge-bot-pr.yml',
+          'jobName': 'dependabot',
+        },
+      ],
+      shouldSkipSameWorkflow: false,
+    },
   );
 
   assert.deepEqual({

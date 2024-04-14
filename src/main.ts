@@ -54,9 +54,7 @@ async function run(): Promise<void> {
     const report = generateReport(
       checks,
       trigger,
-      options.waitList,
-      options.skipList,
-      options.shouldSkipSameWorkflow,
+      options,
     );
 
     for (const summary of report.summaries) {

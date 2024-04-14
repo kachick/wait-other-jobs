@@ -1,5 +1,5 @@
 import { CheckRun, CheckSuite } from '@octokit/graphql-schema';
-import { Check, SkipFilterConditions, Trigger, WaitFilterConditions } from './schema.js';
+import { Check, Options, Trigger } from './schema.js';
 import { join, relative } from 'path';
 
 interface Summary {
@@ -47,14 +47,8 @@ function summarize(check: Check, trigger: Trigger): Summary {
 export function generateReport(
   checks: readonly Check[],
   trigger: Trigger,
-  waitList: WaitFilterConditions,
-  skipList: SkipFilterConditions,
-  shouldSkipSameWorkflow: boolean,
+  { waitList, skipList, shouldSkipSameWorkflow }: Pick<Options, 'waitList' | 'skipList' | 'shouldSkipSameWorkflow'>,
 ): Report {
-  if (waitList.length > 0 && skipList.length > 0) {
-    throw new Error('Do not specify both wait-list and skip-list');
-  }
-
   const summaries = checks.map((check) => summarize(check, trigger)).toSorted((a, b) =>
     join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName))
   );
