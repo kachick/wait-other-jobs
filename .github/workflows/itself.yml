@@ -179,6 +179,9 @@ jobs:
         os:
           - ubuntu-latest
           - macos-14
+        attempt-limits:
+          - 3
+          - 7
     runs-on: ${{ matrix.os }}
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 10
@@ -190,7 +193,7 @@ jobs:
         with:
           retry-method: 'equal_intervals'
           min-interval-seconds: 10
-          attempt-limits: 10
+          attempt-limits: ${{ matrix.attempt-limits }}
           skip-same-workflow: 'false' # Intentionally set false to test skip list also can cover this use case
           # Should specify jobName to test details
           skip-list: |
