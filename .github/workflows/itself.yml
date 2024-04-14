@@ -152,7 +152,7 @@ jobs:
                 "jobName": "dependabot"
               }
             ]
-  with_matrix:
+  matrix_and_skip-same-workflow:
     strategy:
       fail-fast: false
       matrix:
@@ -172,3 +172,31 @@ jobs:
           min-interval-seconds: 10
           attempt-limits: 10
           skip-same-workflow: 'true'
+  matrix_and_skip-list:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-14
+    runs-on: ${{ matrix.os }}
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: ./
+        env:
+          ACTIONS_STEP_DEBUG: true
+        with:
+          retry-method: 'equal_intervals'
+          min-interval-seconds: 10
+          attempt-limits: 10
+          skip-same-workflow: 'false' # Intentionally set false to test skip list also can cover this use case
+          # Should specify jobName to test details
+          skip-list: |
+            [
+              {
+                "workflowFile": "itself.yml",
+                "jobName": "default_logic"
+              }
+            ]
