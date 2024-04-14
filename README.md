@@ -20,7 +20,7 @@ jobs:
     #   actions: read
     runs-on: ubuntu-latest
     steps:
-      - uses: kachick/wait-other-jobs@v3.0.0
+      - uses: kachick/wait-other-jobs@v3.1.0
         timeout-minutes: 15 # Recommended to be enabled with your appropriate value for fail-safe use
 ```
 

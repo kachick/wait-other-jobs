@@ -3,7 +3,10 @@
 This file only records notable changes. Not synchronized with all releases and tags.
 
 - main - not yet released
-  - Add option to disable validations for `wait-list` and not found the checkRun
+  - Nothing
+- v3.1.0
+  - Add option to disable validations for `wait-list` and missing checkRun: [#762](https://github.com/kachick/wait-other-jobs/pull/762)
+  - Refine inputs validations and the messages: [#766](https://github.com/kachick/wait-other-jobs/pull/766)
 - v3.0.0
   - Wait other jobs which defined in same workflow by default: [#754](https://github.com/kachick/wait-other-jobs/issues/754)\
     You can change this behavior with new option `skip-same-workflow: 'true'`
