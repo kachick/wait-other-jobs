@@ -62,4 +62,17 @@ test('Options reject invalid values', () => {
     name: 'ZodError',
     message: /invalid_type/,
   });
+
+  assert.throws(
+    () =>
+      Options.parse({
+        ...defaultOptions,
+        waitList: [{ workflowFile: 'ci.yml' }],
+        skipList: [{ workflowFile: 'release.yml' }],
+      }),
+    {
+      name: 'ZodError',
+      message: /Do not specify both wait-list and skip-list/,
+    },
+  );
 });

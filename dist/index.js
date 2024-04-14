@@ -27064,7 +27064,10 @@ var Options = z.object({
   isEarlyExit: z.boolean(),
   shouldSkipSameWorkflow: z.boolean(),
   isDryRun: z.boolean()
-}).readonly();
+}).readonly().refine(
+  ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
+  { message: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
+);
 
 // src/input.ts
 function parseInput() {
@@ -27103,10 +27106,6 @@ function parseInput() {
   );
   const waitList = WaitFilterConditions.parse(JSON.parse((0, import_core.getInput)("wait-list", { required: true })));
   const skipList = SkipFilterConditions.parse(JSON.parse((0, import_core.getInput)("skip-list", { required: true })));
-  if (waitList.length > 0 && skipList.length > 0) {
-    (0, import_core.error)("Do not specify both wait-list and skip-list");
-    (0, import_core.setFailed)("Specified both list");
-  }
   const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
   const shouldSkipSameWorkflow = (0, import_core.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });

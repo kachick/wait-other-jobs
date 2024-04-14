@@ -41,11 +41,6 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   );
   const waitList = WaitFilterConditions.parse(JSON.parse(getInput('wait-list', { required: true })));
   const skipList = SkipFilterConditions.parse(JSON.parse(getInput('skip-list', { required: true })));
-  // TODO: Moved to schema.ts
-  if (waitList.length > 0 && skipList.length > 0) {
-    error('Do not specify both wait-list and skip-list');
-    setFailed('Specified both list');
-  }
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });

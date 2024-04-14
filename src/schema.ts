@@ -15,10 +15,6 @@ const WaitFilterCondition = FilterCondition.extend(
 ).readonly();
 export const WaitFilterConditions = z.array(WaitFilterCondition).readonly();
 export type WaitFilterConditions = z.infer<typeof WaitFilterConditions>;
-// if (waitList.length > 0 && skipList.length > 0) {
-//   error('Do not specify both wait-list and skip-list');
-//   setFailed('Specified both list');
-// }
 
 const retryMethods = z.enum(['exponential_backoff', 'equal_intervals']);
 export type RetryMethod = z.infer<typeof retryMethods>;
@@ -35,7 +31,10 @@ export const Options = z.object({
   isEarlyExit: z.boolean(),
   shouldSkipSameWorkflow: z.boolean(),
   isDryRun: z.boolean(),
-}).readonly();
+}).readonly().refine(
+  ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
+  { message: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },
+);
 
 export type Options = z.infer<typeof Options>;
 
