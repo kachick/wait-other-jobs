@@ -18,7 +18,7 @@ const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : e
 
 import { SkipFilterConditions, Trigger, WaitFilterConditions } from './schema.js';
 import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
-import { fetchCheckRuns } from './github-api.ts';
+import { fetchChecks } from './github-api.ts';
 import { generateReport } from './report.ts';
 
 async function run(): Promise<void> {
@@ -140,16 +140,16 @@ async function run(): Promise<void> {
     }
 
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
-    const summaries = await fetchCheckRuns(githubToken, trigger);
+    const checks = await fetchChecks(githubToken, trigger);
     const report = generateReport(
-      summaries,
+      checks,
       trigger,
       waitList,
       skipList,
       shouldSkipSameWorkflow,
     );
 
-    for (const summary of report.filteredSummaries) {
+    for (const summary of report.summaries) {
       const {
         acceptable,
         checkSuiteStatus,

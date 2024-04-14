@@ -1,15 +1,14 @@
 import { Octokit } from '@octokit/core';
 import { paginateGraphQL } from '@octokit/plugin-paginate-graphql';
 import { Commit } from '@octokit/graphql-schema';
-import { join, relative } from 'path';
-import { Summary, Trigger } from './schema.ts';
+import { Check, Trigger } from './schema.ts';
 
 const PaginatableOctokit = Octokit.plugin(paginateGraphQL);
 
-export async function fetchCheckRuns(
+export async function fetchChecks(
   token: string,
   trigger: Trigger,
-): Promise<Array<Summary>> {
+): Promise<Check[]> {
   const octokit = new PaginatableOctokit({ auth: token });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate<
     { repository: { object: { checkSuites: Commit['checkSuites'] } } }
@@ -68,7 +67,7 @@ export async function fetchCheckRuns(
     throw new Error('no checkSuiteNodes');
   }
 
-  const summaries = checkSuiteNodes.flatMap((checkSuite) => {
+  return checkSuiteNodes.flatMap((checkSuite) => {
     const workflow = checkSuite.workflowRun?.workflow;
     if (!workflow) {
       return [];
@@ -83,30 +82,11 @@ export async function fetchCheckRuns(
       throw new Error('exceeded checkable runs limit');
     }
 
-    const runNodes = checkRuns.nodes?.flatMap((node) => node ? [node] : []);
-    if (!runNodes) {
+    const checkRunNodes = checkRuns.nodes?.flatMap((node) => node ? [node] : []);
+    if (!checkRunNodes) {
       throw new Error('no runNodes');
     }
 
-    return runNodes.map((run) => ({
-      acceptable: run.conclusion == 'SUCCESS' || run.conclusion === 'SKIPPED'
-        || (run.conclusion === 'NEUTRAL'
-          && (checkSuite.conclusion === 'SUCCESS' || checkSuite.conclusion === 'SKIPPED')),
-      workflowPath: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
-      // Another file can set same workflow name. So you should filter workfrows from runId or the filename
-      isSameWorkflow: checkSuite.workflowRun?.databaseId === trigger.runId,
-
-      checkSuiteStatus: checkSuite.status,
-      checkSuiteConclusion: checkSuite.conclusion,
-
-      runDatabaseId: run.databaseId,
-      workflowName: workflow.name,
-      jobName: run.name,
-      checkRunUrl: run.detailsUrl,
-      runStatus: run.status,
-      runConclusion: run.conclusion,
-    }));
+    return checkRunNodes.map((checkRun) => ({ checkRun, checkSuite, workflow }));
   });
-
-  return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
 }

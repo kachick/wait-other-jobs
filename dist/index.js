@@ -28196,9 +28196,8 @@ function paginateGraphQL(octokit) {
 }
 
 // src/github-api.ts
-import { join, relative } from "path";
 var PaginatableOctokit = Octokit.plugin(paginateGraphQL);
-async function fetchCheckRuns(token, trigger) {
+async function fetchChecks(token, trigger) {
   const octokit = new PaginatableOctokit({ auth: token });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate(
     `
@@ -28253,7 +28252,7 @@ async function fetchCheckRuns(token, trigger) {
   if (!checkSuiteNodes) {
     throw new Error("no checkSuiteNodes");
   }
-  const summaries = checkSuiteNodes.flatMap((checkSuite) => {
+  return checkSuiteNodes.flatMap((checkSuite) => {
     const workflow = checkSuite.workflowRun?.workflow;
     if (!workflow) {
       return [];
@@ -28265,33 +28264,39 @@ async function fetchCheckRuns(token, trigger) {
     if (checkRuns.totalCount > 100) {
       throw new Error("exceeded checkable runs limit");
     }
-    const runNodes = checkRuns.nodes?.flatMap((node) => node ? [node] : []);
-    if (!runNodes) {
+    const checkRunNodes = checkRuns.nodes?.flatMap((node) => node ? [node] : []);
+    if (!checkRunNodes) {
       throw new Error("no runNodes");
     }
-    return runNodes.map((run2) => ({
-      acceptable: run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || run2.conclusion === "NEUTRAL" && (checkSuite.conclusion === "SUCCESS" || checkSuite.conclusion === "SKIPPED"),
-      workflowPath: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
-      // Another file can set same workflow name. So you should filter workfrows from runId or the filename
-      isSameWorkflow: checkSuite.workflowRun?.databaseId === trigger.runId,
-      checkSuiteStatus: checkSuite.status,
-      checkSuiteConclusion: checkSuite.conclusion,
-      runDatabaseId: run2.databaseId,
-      workflowName: workflow.name,
-      jobName: run2.name,
-      checkRunUrl: run2.detailsUrl,
-      runStatus: run2.status,
-      runConclusion: run2.conclusion
-    }));
+    return checkRunNodes.map((checkRun) => ({ checkRun, checkSuite, workflow }));
   });
-  return summaries.toSorted((a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName)));
 }
 
 // src/report.ts
-function generateReport(summaries, trigger, waitList, skipList, shouldSkipSameWorkflow) {
+import { join, relative } from "path";
+function summarize(check, trigger) {
+  const { checkRun: run2, checkSuite: suite, workflow } = check;
+  return {
+    acceptable: run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || run2.conclusion === "NEUTRAL" && (suite.conclusion === "SUCCESS" || suite.conclusion === "SKIPPED"),
+    workflowPath: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
+    // Another file can set same workflow name. So you should filter workfrows from runId or the filename
+    isSameWorkflow: suite.workflowRun?.databaseId === trigger.runId,
+    checkSuiteStatus: suite.status,
+    checkSuiteConclusion: suite.conclusion,
+    runDatabaseId: run2.databaseId,
+    jobName: run2.name,
+    checkRunUrl: run2.detailsUrl,
+    runStatus: run2.status,
+    runConclusion: run2.conclusion
+  };
+}
+function generateReport(checks, trigger, waitList, skipList, shouldSkipSameWorkflow) {
   if (waitList.length > 0 && skipList.length > 0) {
     throw new Error("Do not specify both wait-list and skip-list");
   }
+  const summaries = checks.map((check) => summarize(check, trigger)).toSorted(
+    (a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName))
+  );
   const others = summaries.filter((summary) => !(summary.isSameWorkflow && trigger.jobName === summary.jobName));
   let filtered = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
   if (waitList.length > 0) {
@@ -28321,7 +28326,7 @@ function generateReport(summaries, trigger, waitList, skipList, shouldSkipSameWo
   const completed = filtered.filter((summary) => summary.runStatus === "COMPLETED");
   const progress = completed.length === filtered.length ? "done" : "in_progress";
   const conclusion = completed.every((summary) => summary.acceptable) ? "acceptable" : "bad";
-  return { progress, conclusion, filteredSummaries: filtered };
+  return { progress, conclusion, summaries: filtered };
 }
 
 // src/main.ts
@@ -28435,15 +28440,15 @@ async function run() {
       await wait(msec);
     }
     (0, import_core2.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
-    const summaries = await fetchCheckRuns(githubToken, trigger);
+    const checks = await fetchChecks(githubToken, trigger);
     const report = generateReport(
-      summaries,
+      checks,
       trigger,
       waitList,
       skipList,
       shouldSkipSameWorkflow
     );
-    for (const summary of report.filteredSummaries) {
+    for (const summary of report.summaries) {
       const {
         acceptable,
         checkSuiteStatus,

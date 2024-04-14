@@ -24,19 +24,8 @@ export interface Trigger {
   jobName: string;
 }
 
-export interface Summary {
-  acceptable: boolean; // Set by us
-  workflowPath: string; // Set by us
-  isSameWorkflow: boolean; // Set by us
-
-  checkSuiteStatus: CheckSuite['status'];
-  checkSuiteConclusion: CheckSuite['conclusion'];
-
-  workflowName: Workflow['name'];
-
-  runDatabaseId: CheckRun['databaseId'];
-  jobName: CheckRun['name'];
-  checkRunUrl: CheckRun['detailsUrl'];
-  runStatus: CheckRun['status'];
-  runConclusion: CheckRun['conclusion']; // null if status is in progress
+export interface Check {
+  checkRun: CheckRun;
+  checkSuite: CheckSuite;
+  workflow: Workflow;
 }
