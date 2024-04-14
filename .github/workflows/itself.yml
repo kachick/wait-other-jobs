@@ -42,7 +42,6 @@ jobs:
           retry-method: 'unknown_method'
           min-interval-seconds: '-1'
           attempt-limits: '0'
-          skip-same-workflow: '42'
           wait-list: |
             [
               {
