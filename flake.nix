@@ -43,6 +43,7 @@
               gh
               jq
               edge-pkgs.jnv
+              gitleaks
             ];
           };
 

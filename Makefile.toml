@@ -24,6 +24,7 @@ script = [
   "deno lint",
   "typos . .github .vscode",
   "actionlint",
+  "gitleaks detect",
 ]
 
 [tasks.test]
@@ -77,6 +78,7 @@ script = [
   "jq --version",
   "jnv --version",
   "pinact --version",
+  "gitleaks version",
 ]
 
 [tasks.check_no_git_diff]
