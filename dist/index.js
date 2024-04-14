@@ -28150,7 +28150,11 @@ var FilterCondition = z.object({
   workflowFile: z.string().endsWith(".yml"),
   jobName: z.string().min(1).optional()
 });
-var FilterConditions = z.array(FilterCondition);
+var WaitFilterCondition = FilterCondition.extend(
+  { optional: z.boolean().optional().default(false) }
+);
+var SkipFilterConditions = z.array(FilterCondition);
+var WaitFilterConditions = z.array(WaitFilterCondition);
 async function getCheckRunSummaries(token, trigger) {
   const octokit = new PaginatableOctokit({ auth: token });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate(
@@ -28247,11 +28251,21 @@ async function fetchOtherRunStatus(token, trigger, waitList, skipList, shouldSki
   const others = summaries.filter((summary) => !(summary.isSameWorkflow && trigger.jobName === summary.jobName));
   let filtered = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
   if (waitList.length > 0) {
+    const seeker = waitList.map((condition) => ({ ...condition, found: false }));
     filtered = filtered.filter(
-      (summary) => waitList.some(
-        (target) => target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)
-      )
+      (summary) => seeker.some((target) => {
+        if (target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)) {
+          target.found = true;
+          return true;
+        } else {
+          return false;
+        }
+      })
     );
+    const unmatches = seeker.filter((result) => !result.found && !result.optional);
+    if (unmatches.length > 0) {
+      throw new Error(`Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`);
+    }
   }
   if (skipList.length > 0) {
     filtered = filtered.filter(
@@ -28259,9 +28273,6 @@ async function fetchOtherRunStatus(token, trigger, waitList, skipList, shouldSki
         (target) => target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)
       )
     );
-  }
-  if (filtered.length === 0) {
-    throw new Error("No targets found except wait-other-jobs itself");
   }
   const completed = filtered.filter((summary) => summary.runStatus === "COMPLETED");
   const progress = completed.length === filtered.length ? "done" : "in_progress";
@@ -28366,8 +28377,8 @@ async function run() {
     (0, import_core2.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
     10
   );
-  const waitList = FilterConditions.parse(JSON.parse((0, import_core2.getInput)("wait-list", { required: true })));
-  const skipList = FilterConditions.parse(JSON.parse((0, import_core2.getInput)("skip-list", { required: true })));
+  const waitList = WaitFilterConditions.parse(JSON.parse((0, import_core2.getInput)("wait-list", { required: true })));
+  const skipList = SkipFilterConditions.parse(JSON.parse((0, import_core2.getInput)("skip-list", { required: true })));
   if (waitList.length > 0 && skipList.length > 0) {
     (0, import_core2.error)("Do not specify both wait-list and skip-list");
     (0, import_core2.setFailed)("Specified both list");

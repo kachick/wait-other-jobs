@@ -10,7 +10,11 @@ const FilterCondition = z.object({
   workflowFile: z.string().endsWith('.yml'),
   jobName: (z.string().min(1)).optional(),
 });
-export const FilterConditions = z.array(FilterCondition);
+const WaitFilterCondition = FilterCondition.extend(
+  { optional: z.boolean().optional().default(false) },
+);
+export const SkipFilterConditions = z.array(FilterCondition);
+export const WaitFilterConditions = z.array(WaitFilterCondition);
 
 interface Trigger {
   owner: string;
@@ -152,8 +156,8 @@ interface Report {
 export async function fetchOtherRunStatus(
   token: string,
   trigger: Trigger,
-  waitList: z.infer<typeof FilterConditions>,
-  skipList: z.infer<typeof FilterConditions>,
+  waitList: z.infer<typeof WaitFilterConditions>,
+  skipList: z.infer<typeof SkipFilterConditions>,
   shouldSkipSameWorkflow: boolean,
 ): Promise<Report> {
   if (waitList.length > 0 && skipList.length > 0) {
@@ -165,11 +169,25 @@ export async function fetchOtherRunStatus(
   let filtered = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
 
   if (waitList.length > 0) {
+    const seeker = waitList.map((condition) => ({ ...condition, found: false }));
     filtered = filtered.filter((summary) =>
-      waitList.some((target) =>
-        target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
-      )
+      seeker.some((target) => {
+        if (
+          target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
+        ) {
+          target.found = true;
+          return true;
+        } else {
+          return false;
+        }
+      })
     );
+
+    const unmatches = seeker.filter((result) => (!(result.found)) && (!(result.optional)));
+
+    if (unmatches.length > 0) {
+      throw new Error(`Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`);
+    }
   }
   if (skipList.length > 0) {
     filtered = filtered.filter((summary) =>
@@ -177,10 +195,6 @@ export async function fetchOtherRunStatus(
         target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
       )
     );
-  }
-
-  if (filtered.length === 0) {
-    throw new Error('No targets found except wait-other-jobs itself');
   }
 
   const completed = filtered.filter((summary) => summary.runStatus === 'COMPLETED');

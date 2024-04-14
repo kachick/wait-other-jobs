@@ -35,8 +35,10 @@ with:
   early-exit: 'false' # default 'true'
   skip-same-workflow: 'true' # default 'false'
   # lists should be given with JSON formatted array, do not specify both wait-list and skip-list
-  #   - Each item should have a "workflowFile" field, and they can optionally have a "jobName" field
-  #   - If no jobName is specified, all the jobs in the workflow will be targeted
+  #   - Each item should have a "workflowFile" field, and they can optionally have a "jobName" field.
+  #   - If no jobName is specified, all the jobs in the workflow will be targeted.
+  #   - wait-list: If the checkRun for the specified name is not found, this action raise errors by default.
+  #                You can disable this validation `optional: true`.
   wait-list: |
     [
       {
@@ -44,7 +46,8 @@ with:
         "jobName": "test"
       },
       {
-        "workflowFile": "release.yml"
+        "workflowFile": "release.yml",
+        "optional": true
       }
     ]
   skip-list: |
