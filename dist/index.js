@@ -28441,7 +28441,9 @@ async function run() {
     }
     (0, import_core2.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const checks = await fetchChecks(githubToken, trigger);
-    (0, import_core2.info)(JSON.stringify(checks, null, "	"));
+    if ((0, import_core2.isDebug)()) {
+      (0, import_core2.debug)(JSON.stringify(checks, null, 2));
+    }
     const report = generateReport(
       checks,
       trigger,
