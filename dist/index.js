@@ -28251,13 +28251,20 @@ async function fetchOtherRunStatus(token, trigger, waitList, skipList, shouldSki
   const others = summaries.filter((summary) => !(summary.isSameWorkflow && trigger.jobName === summary.jobName));
   let filtered = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
   if (waitList.length > 0) {
+    const seeker = waitList.map((condition) => ({ ...condition, found: false }));
     filtered = filtered.filter(
-      (summary) => waitList.some(
-        (target) => target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)
-      )
+      (summary) => seeker.some((target) => {
+        if (target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)) {
+          target.found = true;
+          return true;
+        } else {
+          return false;
+        }
+      })
     );
-    if (filtered.length === 0) {
-      throw new Error("No targets found except wait-other-jobs itself");
+    const unmatches = seeker.filter((result) => !result.found && !result.optional);
+    if (unmatches.length > 0) {
+      throw new Error(`Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`);
     }
   }
   if (skipList.length > 0) {
