@@ -27069,7 +27069,7 @@ var Options = z.object({
 // src/input.ts
 function parseInput() {
   const {
-    repo: { repo, owner },
+    repo,
     payload,
     runId,
     job,
@@ -27121,7 +27121,7 @@ function parseInput() {
     shouldSkipSameWorkflow,
     isDryRun
   });
-  const trigger = { owner, repo, ref: commitSha, runId, jobName: job };
+  const trigger = { ...repo, ref: commitSha, runId, jobName: job };
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core.setSecret)(githubToken);
   return { trigger, options, githubToken };

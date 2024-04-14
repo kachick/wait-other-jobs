@@ -5,7 +5,7 @@ import { Options, SkipFilterConditions, Trigger, WaitFilterConditions } from './
 
 export function parseInput(): { trigger: Trigger; options: Options; githubToken: string } {
   const {
-    repo: { repo, owner },
+    repo,
     payload,
     runId,
     job,
@@ -62,7 +62,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     isDryRun,
   });
 
-  const trigger = { owner, repo, ref: commitSha, runId, jobName: job } as const satisfies Trigger;
+  const trigger = { ...repo, ref: commitSha, runId, jobName: job } as const satisfies Trigger;
 
   // `getIDToken` does not fit for this purpose. It is provided for OIDC Token
   const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
