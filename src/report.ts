@@ -45,7 +45,7 @@ function summarize(check: Check, trigger: Trigger): Summary {
 }
 
 export function generateReport(
-  checks: Check[],
+  checks: readonly Check[],
   trigger: Trigger,
   waitList: WaitFilterConditions,
   skipList: SkipFilterConditions,

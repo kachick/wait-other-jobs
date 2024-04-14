@@ -141,6 +141,9 @@ async function run(): Promise<void> {
 
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
     const checks = await fetchChecks(githubToken, trigger);
+    if (isDebug()) {
+      debug(JSON.stringify(checks, null, 2));
+    }
     const report = generateReport(
       checks,
       trigger,
