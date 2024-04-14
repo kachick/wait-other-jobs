@@ -1,140 +1,47 @@
-import {
-  debug,
-  info,
-  getInput,
-  getBooleanInput,
-  setSecret,
-  setFailed,
-  isDebug,
-  startGroup,
-  endGroup,
-  error,
-} from '@actions/core';
-import { context } from '@actions/github';
+import { debug, info, setFailed, isDebug, startGroup, endGroup } from '@actions/core';
 import styles from 'ansi-styles';
 const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`);
 const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
 const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
 
-import { SkipFilterConditions, Trigger, WaitFilterConditions } from './schema.js';
-import { readableDuration, wait, isRetryMethod, retryMethods, getIdleMilliseconds } from './wait.js';
+import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
 import { generateReport } from './report.ts';
+import { readableDuration, wait, getIdleMilliseconds } from './wait.ts';
 
 async function run(): Promise<void> {
   startGroup('Parameters');
-  const {
-    repo: { repo, owner },
-    payload,
-    runId,
-    runNumber,
-    // Another file can set same workflow name. So you should filter workfrows from runId or the filename
-    workflow,
-    // On the otherhand, jobName should be unique in each workflow from YAML spec
-    job,
-    sha,
-  } = context;
-  const pr = payload.pull_request;
-  let commitSha = sha;
-  if (pr) {
-    const { head: { sha: prSha = sha } } = pr;
-    if (typeof prSha === 'string') {
-      commitSha = prSha;
-    } else {
-      if (isDebug()) {
-        // Do not print secret even for debug code
-        debug(JSON.stringify(pr, null, 2));
-      }
-      error('github context has unexpected format: missing context.payload.pull_request.head.sha');
-      setFailed('unexpected failure occurred');
-      return;
-    }
-  }
-
-  const repositoryInfo = {
-    owner,
-    repo,
-  } as const;
-
-  const waitSecondsBeforeFirstPolling = parseInt(
-    getInput('wait-seconds-before-first-polling', { required: true, trimWhitespace: true }),
-    10,
-  );
-  const minIntervalSeconds = parseInt(
-    getInput('min-interval-seconds', { required: true, trimWhitespace: true }),
-    10,
-  );
-  const retryMethod = getInput('retry-method', { required: true, trimWhitespace: true });
-  if (!isRetryMethod(retryMethod)) {
-    setFailed(
-      `unknown parameter "${retryMethod}" is given. "retry-method" can take one of ${JSON.stringify(retryMethods)}`,
-    );
-    return;
-  }
-  const attemptLimits = parseInt(
-    getInput('attempt-limits', { required: true, trimWhitespace: true }),
-    10,
-  );
-  const waitList = WaitFilterConditions.parse(JSON.parse(getInput('wait-list', { required: true })));
-  const skipList = SkipFilterConditions.parse(JSON.parse(getInput('skip-list', { required: true })));
-  if (waitList.length > 0 && skipList.length > 0) {
-    error('Do not specify both wait-list and skip-list');
-    setFailed('Specified both list');
-  }
-  const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
-  const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
-  const trigger = { ...repositoryInfo, ref: commitSha, runId, jobName: job } as const satisfies Trigger;
-  const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
-
+  const { trigger, options, githubToken } = parseInput();
   info(JSON.stringify(
     {
-      triggeredCommitSha: commitSha,
-      runId,
-      runNumber,
-      workflow,
-      job,
-      repositoryInfo,
-      waitSecondsBeforeFirstPolling,
-      minIntervalSeconds,
-      retryMethod,
-      attemptLimits,
-      isEarlyExit,
-      isDryRun,
-      waitList,
-      skipList,
-      shouldSkipSameWorkflow,
-      // Of course, do NOT include tokens here.
+      trigger,
+      options, // Do NOT include secrets
     },
     null,
     2,
   ));
-
-  // `getIDToken` does not fit for this purpose. It is provided for OIDC Token
-  const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
-  setSecret(githubToken);
+  endGroup();
 
   let attempts = 0;
   let shouldStop = false;
 
-  endGroup();
-
-  if (isDryRun) {
+  if (options.isDryRun) {
     return;
   }
 
   for (;;) {
     attempts += 1;
-    if (attempts > attemptLimits) {
-      setFailed(errorMessage(`reached to given attempt limits "${attemptLimits}"`));
+    if (attempts > options.attemptLimits) {
+      setFailed(errorMessage(`reached to given attempt limits "${options.attemptLimits}"`));
       break;
     }
 
     if (attempts === 1) {
-      const initialMsec = waitSecondsBeforeFirstPolling * 1000;
+      const initialMsec = options.waitSecondsBeforeFirstPolling * 1000;
       info(`Wait ${readableDuration(initialMsec)} before first polling.`);
       await wait(initialMsec);
     } else {
-      const msec = getIdleMilliseconds(retryMethod, minIntervalSeconds, attempts);
+      const msec = getIdleMilliseconds(options.retryMethod, options.minIntervalSeconds, attempts);
       info(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
       await wait(msec);
     }
@@ -147,9 +54,7 @@ async function run(): Promise<void> {
     const report = generateReport(
       checks,
       trigger,
-      waitList,
-      skipList,
-      shouldSkipSameWorkflow,
+      options,
     );
 
     for (const summary of report.summaries) {
@@ -180,7 +85,7 @@ async function run(): Promise<void> {
 
     switch (progress) {
       case 'in_progress': {
-        if (conclusion === 'bad' && isEarlyExit) {
+        if (conclusion === 'bad' && options.isEarlyExit) {
           shouldStop = true;
           setFailed(errorMessage('some jobs failed'));
         }

@@ -5,16 +5,32 @@ const FilterCondition = z.object({
   workflowFile: z.string().endsWith('.yml'),
   jobName: (z.string().min(1)).optional(),
 });
-
 const SkipFilterCondition = FilterCondition.readonly();
-export const SkipFilterConditions = z.array(SkipFilterCondition).readonly();
-export type SkipFilterConditions = z.infer<typeof SkipFilterConditions>;
-
 const WaitFilterCondition = FilterCondition.extend(
   { optional: z.boolean().optional().default(false).readonly() },
 ).readonly();
-export const WaitFilterConditions = z.array(WaitFilterCondition).readonly();
-export type WaitFilterConditions = z.infer<typeof WaitFilterConditions>;
+
+const retryMethods = z.enum(['exponential_backoff', 'equal_intervals']);
+export type RetryMethod = z.infer<typeof retryMethods>;
+
+// - Do not specify default values with zod. That is an action.yml role
+// - Do not include secrets here, for example githubToken. See https://github.com/colinhacks/zod/issues/1783
+export const Options = z.object({
+  waitList: z.array(WaitFilterCondition).readonly(),
+  skipList: z.array(SkipFilterCondition).readonly(),
+  waitSecondsBeforeFirstPolling: z.number().min(0),
+  minIntervalSeconds: z.number().min(1),
+  retryMethod: retryMethods,
+  attemptLimits: z.number().min(1),
+  isEarlyExit: z.boolean(),
+  shouldSkipSameWorkflow: z.boolean(),
+  isDryRun: z.boolean(),
+}).readonly().refine(
+  ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
+  { message: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },
+);
+
+export type Options = z.infer<typeof Options>;
 
 export interface Trigger {
   owner: string;

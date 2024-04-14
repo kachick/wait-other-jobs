@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       # Do NOT specify any options here to make sure zero config may work
       - uses: ./
-  exponential_backoff:
+  validation_example_basic_errors_allow_failure:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
@@ -36,10 +36,50 @@ jobs:
       - uses: ./
         env:
           ACTIONS_STEP_DEBUG: true
+        # Should allow failures in this job
+        continue-on-error: true
+        with:
+          retry-method: 'unknown_method'
+          min-interval-seconds: '-1'
+          attempt-limits: '0'
+  validation_example_combination_errors_allow_failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: ./
+        env:
+          ACTIONS_STEP_DEBUG: true
+        # Should allow failures in this job
+        continue-on-error: true
+        with:
+          wait-list: |
+            [
+              {
+                "workflowFile": "lint.yml"
+              }
+            ]
+          skip-list: |
+            [
+              {
+                "workflowFile": "release.yml"
+              }
+            ]
+  exponential_backoff_allow_failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: ./
+        env:
+          ACTIONS_STEP_DEBUG: true
+        # With the algorithm, this job takes long minutes to wait completed other jobs
+        # So set small limit to stop faster.
         continue-on-error: true
         with:
           retry-method: 'exponential_backoff'
-          # Set low intervals but stop faster. Returning false is an intentional only in this job
           wait-seconds-before-first-polling: 2
           min-interval-seconds: 2
           attempt-limits: 2
