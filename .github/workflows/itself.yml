@@ -172,7 +172,8 @@ jobs:
           min-interval-seconds: 10
           attempt-limits: 10
           skip-same-workflow: 'true'
-  matrix_and_skip-list:
+  # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
+  matrix_and_skip-list: # The <job_id> must start with a letter or _ and contain only alphanumeric characters, -, or _.
     strategy:
       fail-fast: false
       matrix:
@@ -183,6 +184,7 @@ jobs:
           - 3
           - 7
     runs-on: ${{ matrix.os }}
+    name: 'the_job_id_and_job_name_is_different' # Use jobs.<job_id>.name to set a name for the job, which is displayed in the GitHub UI.
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 10
     steps:

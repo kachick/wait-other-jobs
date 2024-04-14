@@ -1,0 +1,52 @@
+name: variants
+run-name: 'Used in Actions tab'
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/variants.yml'
+      - 'action.yml'
+      - 'dist/**'
+  pull_request:
+    paths:
+      - '.github/workflows/variants.yml'
+      - 'action.yml'
+      - 'dist/**'
+
+# Disable all permissions in workflow global as to setup clean room
+# However PRs will have read permissions because this project is on a public repository
+permissions: {}
+
+jobs:
+  # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
+  variants-matrix_and_skip-list: # The <job_id> must start with a letter or _ and contain only alphanumeric characters, -, or _.
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-14
+        attempt-limits:
+          - 3
+          - 7
+    runs-on: ${{ matrix.os }}
+    name: 'the_job_id_and_job_name_is_different' # Use jobs.<job_id>.name to set a name for the job, which is displayed in the GitHub UI.
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: ./
+        env:
+          ACTIONS_STEP_DEBUG: true
+        with:
+          retry-method: 'equal_intervals'
+          min-interval-seconds: 10
+          attempt-limits: ${{ matrix.attempt-limits }}
+          skip-same-workflow: 'false' # Intentionally set false to test skip list also can cover this use case
+          # Should specify jobName to test details
+          skip-list: |
+            [
+              {
+                "workflowFile": "itself.yml"
+              }
+            ]
