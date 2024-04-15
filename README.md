@@ -89,10 +89,32 @@ permissions:
 I'm using this action for auto-merging bot PRs and wait for deploy.\
 See the [docs](docs/examples.md) for further detail.
 
-## Limitations
+## Deadlocks
 
 - If you use this action in multiple jobs on the same repository, you should avoid deadlocks.\
   The `skip-list`, `wait-list` and `skip-same-workflow` options cover this use case.
+
+- If you changed job name from the default, you should specify with `skip-list` or use `skip-same-workflow`
+  ```yaml
+  jobs:
+    your_job: # This will be used default job name if you not specify below "name" field
+      name: "Changed at here"
+      runs-on: ubuntu-latest
+      steps:
+        - uses: kachick/wait-other-jobs@v3
+          with:
+            skip-list: |
+              [
+                {
+                  "workflowFile": "this_file_name_here.yml",
+                  "jobName": "Changed at here"
+                }
+              ]
+          timeout-minutes: 15
+  ```
+  Similar problems should be considered in matrix jobs. See [#761](https://github.com/kachick/wait-other-jobs/issues/761) for further detail
+
+## Limitations
 
 - Judge OK or Bad with the checkRun state at the moment.\
   When some jobs will be triggered after this action with `needs: [distant-first]`, it might be unaccurate.\
