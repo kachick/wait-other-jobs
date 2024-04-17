@@ -28462,11 +28462,12 @@ async function run() {
         runConclusion,
         jobName,
         workflowPath,
-        checkRunUrl
+        checkRunUrl,
+        eventName
       } = summary;
       const nullStr = "(null)";
       (0, import_core3.info)(
-        `${workflowPath}(${colorize(`${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`
+        `${workflowPath}(${colorize(`${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][eventName: ${eventName}][runURL: ${checkRunUrl}]`
       );
     }
     if ((0, import_core3.isDebug)()) {
