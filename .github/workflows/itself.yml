@@ -120,6 +120,10 @@ jobs:
                 "optional": true
               },
               {
+                "workflowFile": "multiple-event-triggers.yml",
+                "eventName": "${{ github.event_name }}"
+              },
+              {
                 "workflowFile": "THERE_ARE_NO_FILES_AS_THIS.yml",
                 "optional": true
               }

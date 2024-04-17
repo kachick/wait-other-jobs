@@ -1,0 +1,21 @@
+name: GH-771 - Multiple event triggers
+on:
+  push:
+    paths:
+      - '.github/workflows/multiple-event-triggers.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/multiple-event-triggers.yml'
+
+# Disable all permissions in workflow global as to setup clean room
+# However PRs will have read permissions because this project is on a public repository
+permissions: {}
+
+jobs:
+  should_be_wait_this_only_in_pull_request:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 5
+    steps:
+      - run: |
+          echo 'See https://github.com/kachick/wait-other-jobs/issues/771 for the detail'
