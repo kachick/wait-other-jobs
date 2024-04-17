@@ -4,6 +4,8 @@ This file only records notable changes. Not synchronized with all releases and t
 
 - main - not yet released
   - Nothing
+- v3.2.0
+  - Add option to specify eventTypes in `wait-list`: [#771](https://github.com/kachick/wait-other-jobs/issues/771)
 - v3.1.0
   - Add option to disable validations for `wait-list` and missing checkRun: [#762](https://github.com/kachick/wait-other-jobs/pull/762)
   - Refine inputs validations and the messages: [#766](https://github.com/kachick/wait-other-jobs/pull/766)
