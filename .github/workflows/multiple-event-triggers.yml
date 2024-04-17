@@ -3,9 +3,15 @@ on:
   push:
     paths:
       - '.github/workflows/multiple-event-triggers.yml'
+      - '.github/workflows/itself.yml'
+      - 'action.yml'
+      - 'dist/**'
   pull_request:
     paths:
       - '.github/workflows/multiple-event-triggers.yml'
+      - '.github/workflows/itself.yml'
+      - 'action.yml'
+      - 'dist/**'
 
 # Disable all permissions in workflow global as to setup clean room
 # However PRs will have read permissions because this project is on a public repository

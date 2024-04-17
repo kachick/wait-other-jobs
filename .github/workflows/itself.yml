@@ -4,11 +4,13 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/itself.yml'
+      - '.github/workflows/multiple-event-triggers.yml'
       - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
       - '.github/workflows/itself.yml'
+      - '.github/workflows/multiple-event-triggers.yml'
       - 'action.yml'
       - 'dist/**'
 
