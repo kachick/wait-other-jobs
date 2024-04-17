@@ -1,4 +1,4 @@
-import { CheckRun, CheckSuite } from '@octokit/graphql-schema';
+import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
 import { Check, Options, Trigger } from './schema.js';
 import { join, relative } from 'path';
 
@@ -6,6 +6,8 @@ interface Summary {
   acceptable: boolean;
   workflowPath: string;
   isSameWorkflow: boolean;
+
+  eventName: WorkflowRun['event'];
 
   checkSuiteStatus: CheckSuite['status'];
   checkSuiteConclusion: CheckSuite['conclusion'];
@@ -24,7 +26,7 @@ export interface Report {
 }
 
 function summarize(check: Check, trigger: Trigger): Summary {
-  const { checkRun: run, checkSuite: suite, workflow } = check;
+  const { checkRun: run, checkSuite: suite, workflow, workflowRun } = check;
   return {
     acceptable: run.conclusion == 'SUCCESS' || run.conclusion === 'SKIPPED'
       || (run.conclusion === 'NEUTRAL'
@@ -32,6 +34,8 @@ function summarize(check: Check, trigger: Trigger): Summary {
     workflowPath: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
     // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     isSameWorkflow: suite.workflowRun?.databaseId === trigger.runId,
+
+    eventName: workflowRun.event,
 
     checkSuiteStatus: suite.status,
     checkSuiteConclusion: suite.conclusion,
@@ -60,9 +64,10 @@ export function generateReport(
     const seeker = waitList.map((condition) => ({ ...condition, found: false }));
     filtered = filtered.filter((summary) =>
       seeker.some((target) => {
-        if (
-          target.workflowFile === summary.workflowPath && (target.jobName ? (target.jobName === summary.jobName) : true)
-        ) {
+        const isMatchPath = target.workflowFile === summary.workflowPath
+          && (target.jobName ? (target.jobName === summary.jobName) : true);
+        const isMatchEvent = target.eventName ? (target.eventName === summary.eventName) : true;
+        if (isMatchPath && isMatchEvent) {
           target.found = true;
           return true;
         } else {

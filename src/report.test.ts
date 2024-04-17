@@ -24,12 +24,14 @@ test('wait-list', () => {
       'runId': 8679817057,
       ref: '760074f4f419b55cb864030c29ece58a689a42a2',
       jobName: 'wait-list',
+      eventName: 'pull_request',
     },
     {
       waitList: [
         {
           'workflowFile': 'lint.yml',
           'optional': false,
+          'eventName': 'pull_request',
         },
         {
           'workflowFile': 'merge-bot-pr.yml',
@@ -61,6 +63,7 @@ test('wait-list', () => {
         runDatabaseId: 23799347237,
         runStatus: 'COMPLETED',
         workflowPath: 'lint.yml',
+        eventName: 'pull_request',
       },
       {
         acceptable: true,
@@ -73,6 +76,7 @@ test('wait-list', () => {
         runDatabaseId: 23799347295,
         runStatus: 'COMPLETED',
         workflowPath: 'lint.yml',
+        eventName: 'pull_request',
       },
       {
         acceptable: true,
@@ -85,6 +89,7 @@ test('wait-list', () => {
         runDatabaseId: 23799347394,
         runStatus: 'COMPLETED',
         workflowPath: 'merge-bot-pr.yml',
+        eventName: 'pull_request',
       },
     ],
   }, report);
@@ -99,6 +104,7 @@ test('skip-list', () => {
       'runId': 8679817057,
       ref: '760074f4f419b55cb864030c29ece58a689a42a2',
       jobName: 'skip-list',
+      eventName: 'pull_request',
     },
     {
       waitList: [],

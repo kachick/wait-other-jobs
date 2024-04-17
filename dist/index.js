@@ -27049,7 +27049,12 @@ var FilterCondition = z.object({
 });
 var SkipFilterCondition = FilterCondition.readonly();
 var WaitFilterCondition = FilterCondition.extend(
-  { optional: z.boolean().optional().default(false).readonly() }
+  {
+    optional: z.boolean().optional().default(false).readonly(),
+    // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
+    // - Intentionally omitted in skip-list, let me know if you have the use-case
+    eventName: z.string().min(1).optional()
+  }
 ).readonly();
 var retryMethods = z.enum(["exponential_backoff", "equal_intervals"]);
 var Options = z.object({
@@ -27074,7 +27079,8 @@ function parseInput() {
     payload,
     runId,
     job,
-    sha
+    sha,
+    eventName
   } = import_github.context;
   const pr = payload.pull_request;
   let commitSha = sha;
@@ -27116,7 +27122,7 @@ function parseInput() {
     shouldSkipSameWorkflow,
     isDryRun
   });
-  const trigger = { ...repo, ref: commitSha, runId, jobName: job };
+  const trigger = { ...repo, ref: commitSha, runId, jobName: job, eventName };
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core.setSecret)(githubToken);
   return { trigger, options, githubToken };
@@ -28245,6 +28251,7 @@ async function fetchChecks(token, trigger) {
                 conclusion
                 workflowRun {
                   databaseId
+                  event
                   workflow {
                     name
                     resourcePath
@@ -28282,10 +28289,11 @@ async function fetchChecks(token, trigger) {
     throw new Error("no checkSuiteNodes");
   }
   return checkSuiteNodes.flatMap((checkSuite) => {
-    const workflow = checkSuite.workflowRun?.workflow;
-    if (!workflow) {
+    const workflowRun = checkSuite.workflowRun;
+    if (!workflowRun) {
       return [];
     }
+    const workflow = workflowRun.workflow;
     const checkRuns = checkSuite?.checkRuns;
     if (!checkRuns) {
       throw new Error("no checkRuns");
@@ -28297,19 +28305,20 @@ async function fetchChecks(token, trigger) {
     if (!checkRunNodes) {
       throw new Error("no runNodes");
     }
-    return checkRunNodes.map((checkRun) => ({ checkRun, checkSuite, workflow }));
+    return checkRunNodes.map((checkRun) => ({ checkRun, checkSuite, workflow, workflowRun }));
   });
 }
 
 // src/report.ts
 import { join, relative } from "path";
 function summarize(check, trigger) {
-  const { checkRun: run2, checkSuite: suite, workflow } = check;
+  const { checkRun: run2, checkSuite: suite, workflow, workflowRun } = check;
   return {
     acceptable: run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || run2.conclusion === "NEUTRAL" && (suite.conclusion === "SUCCESS" || suite.conclusion === "SKIPPED"),
     workflowPath: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
     // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     isSameWorkflow: suite.workflowRun?.databaseId === trigger.runId,
+    eventName: workflowRun.event,
     checkSuiteStatus: suite.status,
     checkSuiteConclusion: suite.conclusion,
     runDatabaseId: run2.databaseId,
@@ -28329,7 +28338,9 @@ function generateReport(checks, trigger, { waitList, skipList, shouldSkipSameWor
     const seeker = waitList.map((condition) => ({ ...condition, found: false }));
     filtered = filtered.filter(
       (summary) => seeker.some((target) => {
-        if (target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)) {
+        const isMatchPath = target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true);
+        const isMatchEvent = target.eventName ? target.eventName === summary.eventName : true;
+        if (isMatchPath && isMatchEvent) {
           target.found = true;
           return true;
         } else {
@@ -28451,11 +28462,12 @@ async function run() {
         runConclusion,
         jobName,
         workflowPath,
-        checkRunUrl
+        checkRunUrl,
+        eventName
       } = summary;
       const nullStr = "(null)";
       (0, import_core3.info)(
-        `${workflowPath}(${colorize(`${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`
+        `${workflowPath}(${colorize(`${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][eventName: ${eventName}][runURL: ${checkRunUrl}]`
       );
     }
     if ((0, import_core3.isDebug)()) {

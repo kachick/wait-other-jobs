@@ -4,11 +4,13 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/itself.yml'
+      - '.github/workflows/multiple-event-triggers.yml'
       - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
       - '.github/workflows/itself.yml'
+      - '.github/workflows/multiple-event-triggers.yml'
       - 'action.yml'
       - 'dist/**'
 
@@ -118,6 +120,10 @@ jobs:
                 "workflowFile": "merge-bot-pr.yml",
                 "jobName": "dependabot",
                 "optional": true
+              },
+              {
+                "workflowFile": "multiple-event-triggers.yml",
+                "eventName": "${{ github.event_name }}"
               },
               {
                 "workflowFile": "THERE_ARE_NO_FILES_AS_THIS.yml",

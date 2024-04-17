@@ -10,6 +10,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     runId,
     job,
     sha,
+    eventName,
   } = context;
   const pr = payload.pull_request;
   let commitSha = sha;
@@ -55,7 +56,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     isDryRun,
   });
 
-  const trigger = { ...repo, ref: commitSha, runId, jobName: job } as const satisfies Trigger;
+  const trigger = { ...repo, ref: commitSha, runId, jobName: job, eventName } as const satisfies Trigger;
 
   // `getIDToken` does not fit for this purpose. It is provided for OIDC Token
   const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
