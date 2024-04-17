@@ -1,4 +1,4 @@
-import { CheckSuite, Workflow, CheckRun } from '@octokit/graphql-schema';
+import { CheckSuite, Workflow, CheckRun, WorkflowRun } from '@octokit/graphql-schema';
 import { z } from 'zod';
 
 const FilterCondition = z.object({
@@ -7,7 +7,12 @@ const FilterCondition = z.object({
 });
 const SkipFilterCondition = FilterCondition.readonly();
 const WaitFilterCondition = FilterCondition.extend(
-  { optional: z.boolean().optional().default(false).readonly() },
+  {
+    optional: z.boolean().optional().default(false).readonly(),
+    // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
+    // - Intentionally omitted in skip-list, let me know if you have the use-case
+    eventName: z.string().min(1).optional(),
+  },
 ).readonly();
 
 const retryMethods = z.enum(['exponential_backoff', 'equal_intervals']);
@@ -38,10 +43,12 @@ export interface Trigger {
   ref: string;
   runId: number;
   jobName: string;
+  eventName: string;
 }
 
 export interface Check {
   checkRun: CheckRun;
   checkSuite: CheckSuite;
   workflow: Workflow;
+  workflowRun: WorkflowRun;
 }

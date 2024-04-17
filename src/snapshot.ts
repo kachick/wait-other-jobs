@@ -1,6 +1,7 @@
 import { Check } from './schema.ts';
 
 // https://github.com/kachick/wait-other-jobs/actions/runs/8679817057/job/23799347421?pr=764
+// TODO: Update after #771
 export const snapshotChecks = Object.freeze([
   {
     'checkRun': {
@@ -9,6 +10,9 @@ export const snapshotChecks = Object.freeze([
       'status': 'IN_PROGRESS',
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817057/job/23799347220',
       'conclusion': null,
+    },
+    'workflowRun': {
+      'event': 'pull_request',
     },
     'checkSuite': {
       'status': 'IN_PROGRESS',
@@ -78,6 +82,9 @@ export const snapshotChecks = Object.freeze([
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817057/job/23799347290',
       'conclusion': null,
     },
+    'workflowRun': {
+      'event': 'pull_request',
+    },
     'checkSuite': {
       'status': 'IN_PROGRESS',
       'conclusion': null,
@@ -145,6 +152,9 @@ export const snapshotChecks = Object.freeze([
       'status': 'IN_PROGRESS',
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817057/job/23799347351',
       'conclusion': null,
+    },
+    'workflowRun': {
+      'event': 'pull_request',
     },
     'checkSuite': {
       'status': 'IN_PROGRESS',
@@ -214,6 +224,9 @@ export const snapshotChecks = Object.freeze([
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817057/job/23799347385',
       'conclusion': null,
     },
+    'workflowRun': {
+      'event': 'pull_request',
+    },
     'checkSuite': {
       'status': 'IN_PROGRESS',
       'conclusion': null,
@@ -281,6 +294,9 @@ export const snapshotChecks = Object.freeze([
       'status': 'IN_PROGRESS',
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817057/job/23799347421',
       'conclusion': null,
+    },
+    'workflowRun': {
+      'event': 'pull_request',
     },
     'checkSuite': {
       'status': 'IN_PROGRESS',
@@ -350,6 +366,9 @@ export const snapshotChecks = Object.freeze([
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817058/job/23799347237',
       'conclusion': 'SUCCESS',
     },
+    'workflowRun': {
+      'event': 'pull_request',
+    },
     'checkSuite': {
       'status': 'COMPLETED',
       'conclusion': 'SUCCESS',
@@ -397,6 +416,9 @@ export const snapshotChecks = Object.freeze([
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817058/job/23799347295',
       'conclusion': 'SUCCESS',
     },
+    'workflowRun': {
+      'event': 'pull_request',
+    },
     'checkSuite': {
       'status': 'COMPLETED',
       'conclusion': 'SUCCESS',
@@ -443,6 +465,9 @@ export const snapshotChecks = Object.freeze([
       'status': 'COMPLETED',
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817059/job/23799347238',
       'conclusion': 'NEUTRAL',
+    },
+    'workflowRun': {
+      'event': 'pull_request',
     },
     'checkSuite': {
       'status': 'COMPLETED',
@@ -505,6 +530,9 @@ export const snapshotChecks = Object.freeze([
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817059/job/23799347299',
       'conclusion': 'NEUTRAL',
     },
+    'workflowRun': {
+      'event': 'pull_request',
+    },
     'checkSuite': {
       'status': 'COMPLETED',
       'conclusion': 'SKIPPED',
@@ -565,6 +593,9 @@ export const snapshotChecks = Object.freeze([
       'status': 'COMPLETED',
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817059/job/23799347358',
       'conclusion': 'NEUTRAL',
+    },
+    'workflowRun': {
+      'event': 'pull_request',
     },
     'checkSuite': {
       'status': 'COMPLETED',
@@ -627,6 +658,9 @@ export const snapshotChecks = Object.freeze([
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817059/job/23799347394',
       'conclusion': 'NEUTRAL',
     },
+    'workflowRun': {
+      'event': 'pull_request',
+    },
     'checkSuite': {
       'status': 'COMPLETED',
       'conclusion': 'SKIPPED',
@@ -687,6 +721,9 @@ export const snapshotChecks = Object.freeze([
       'status': 'IN_PROGRESS',
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817060/job/23799347265',
       'conclusion': null,
+    },
+    'workflowRun': {
+      'event': 'pull_request',
     },
     'checkSuite': {
       'status': 'IN_PROGRESS',
@@ -749,6 +786,9 @@ export const snapshotChecks = Object.freeze([
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817060/job/23799347325',
       'conclusion': 'SUCCESS',
     },
+    'workflowRun': {
+      'event': 'pull_request',
+    },
     'checkSuite': {
       'status': 'IN_PROGRESS',
       'conclusion': null,
@@ -810,6 +850,9 @@ export const snapshotChecks = Object.freeze([
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817060/job/23799347378',
       'conclusion': null,
     },
+    'workflowRun': {
+      'event': 'pull_request',
+    },
     'checkSuite': {
       'status': 'IN_PROGRESS',
       'conclusion': null,
@@ -870,6 +913,9 @@ export const snapshotChecks = Object.freeze([
       'status': 'IN_PROGRESS',
       'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817060/job/23799347417',
       'conclusion': null,
+    },
+    'workflowRun': {
+      'event': 'pull_request',
     },
     'checkSuite': {
       'status': 'IN_PROGRESS',

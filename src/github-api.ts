@@ -29,6 +29,7 @@ export async function fetchChecks(
                 conclusion
                 workflowRun {
                   databaseId
+                  event
                   workflow {
                     name
                     resourcePath
@@ -68,10 +69,11 @@ export async function fetchChecks(
   }
 
   return checkSuiteNodes.flatMap((checkSuite) => {
-    const workflow = checkSuite.workflowRun?.workflow;
-    if (!workflow) {
+    const workflowRun = checkSuite.workflowRun;
+    if (!workflowRun) {
       return [];
     }
+    const workflow = workflowRun.workflow;
 
     const checkRuns = checkSuite?.checkRuns;
     if (!checkRuns) {
@@ -87,6 +89,6 @@ export async function fetchChecks(
       throw new Error('no runNodes');
     }
 
-    return checkRunNodes.map((checkRun) => ({ checkRun, checkSuite, workflow }));
+    return checkRunNodes.map((checkRun) => ({ checkRun, checkSuite, workflow, workflowRun }));
   });
 }
