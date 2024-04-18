@@ -76,7 +76,7 @@ Full list of the options
 | `skip-same-workflow`                | Skip jobs defined in the same workflow which using this action | `bool`   | `false`               |                                          |
 | `dry-run`                           | Avoid requests for tests                                       | `bool`   | `false`               |                                          |
 
-## Required GTHUB_TOKEN permissions
+## Required GITHUB_TOKEN permissions
 
 In public repositories, they are satisfied by default
 
