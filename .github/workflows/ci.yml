@@ -65,5 +65,5 @@ jobs:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - uses: denoland/setup-deno@041b854f97b325bd60e53e9dc2de9cb9f9ac0cba # v1.1.4
         with:
-          deno-version: '1.41.3' # selfup { "regex": "\\d[^']+", "script": "deno --version | head -n 1 | cut -d ' ' -f 2" }
+          deno-version: '1.42.3' # selfup { "regex": "\\d[^']+", "script": "deno --version | head -n 1 | cut -d ' ' -f 2" }
       - run: deno lint
