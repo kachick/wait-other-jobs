@@ -57,10 +57,6 @@
               text = ''
                 set -x
 
-                nix run github:kachick/selfup/v0.0.2 -- run --prefix='# selfup ' --skip-by='nix run' .github/ISSUE_TEMPLATE/*.yml && git add .github
-                git update-index -q --really-refresh
-                git diff-index --quiet HEAD || git commit -m 'Update latest versions in issue template' .github
-
                 node --version | sd '^v?' "" > .node-version && git add .node-version
                 git update-index -q --really-refresh
                 git diff-index --quiet HEAD || git commit -m 'Sync .node-version with nixpkgs' .node-version
