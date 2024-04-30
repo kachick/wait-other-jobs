@@ -15,11 +15,11 @@ dependencies:
     specifier: ^6.1.2
     version: 6.1.2
   '@octokit/graphql-schema':
-    specifier: ^15.12.0
-    version: 15.12.0
+    specifier: ^15.14.0
+    version: 15.14.0
   '@octokit/plugin-paginate-graphql':
-    specifier: ^5.2.0
-    version: 5.2.0(@octokit/core@6.1.2)
+    specifier: ^5.2.1
+    version: 5.2.1(@octokit/core@6.1.2)
   ansi-styles:
     specifier: ^6.2.1
     version: 6.2.1
@@ -543,8 +543,8 @@ packages:
       universal-user-agent: 6.0.1
     dev: false
 
-  /@octokit/graphql-schema@15.12.0:
-    resolution: {integrity: sha512-YiONgXzmQi4MVQBdJsCF7fgSAhnZySstDchw9bxkBYJRwNVwpwz7fjmOQVJbvIpqKtJ0vpZMgodZj3A3L9YwDw==}
+  /@octokit/graphql-schema@15.14.0:
+    resolution: {integrity: sha512-l3X8LUJoEiOUtNZd1DnUjL9J3vTAz7lOBrNp5vF4SumMkdpLcxvJ0Xital3gSZNkGg0iwblu4ixIzKffnOa37A==}
     dependencies:
       graphql: 16.8.1
       graphql-tag: 2.12.6(graphql@16.8.1)
@@ -576,8 +576,8 @@ packages:
     resolution: {integrity: sha512-1yN5m1IMNXthoBDUXFF97N1gHop04B3H8ws7wtOr8GgRyDO1gKALjwMHARNBoMBiB/2vEe/vxstrApcJZzQbnQ==}
     dev: false
 
-  /@octokit/plugin-paginate-graphql@5.2.0(@octokit/core@6.1.2):
-    resolution: {integrity: sha512-nrv3qH8gyLXxl6MdQMG8EV4+y5IfFCHQy+MxDk52flg6N9mMkTuTdMiedh9fccD3g/6X560jaQFJk88IBZqCtw==}
+  /@octokit/plugin-paginate-graphql@5.2.1(@octokit/core@6.1.2):
+    resolution: {integrity: sha512-FQp8osY1PmMzEKfqpZXEdO18HqjfMT/QYtck6NGb8W8L4H9/tn7lKyhgN+dgLxcKyRffi+XH0ZJc9IMHcprEZw==}
     engines: {node: '>= 18'}
     peerDependencies:
       '@octokit/core': '>=6'
