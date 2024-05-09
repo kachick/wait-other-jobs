@@ -14,6 +14,7 @@ description = "Run formatters with changes"
 script = [
   "dprint fmt",
   "typos . .github .vscode --write-changes",
+  "git ls-files '*.nix' | xargs nix fmt",
 ]
 
 [tasks.lint]
@@ -25,6 +26,7 @@ script = [
   "typos . .github .vscode",
   "actionlint",
   "gitleaks detect",
+  "git ls-files '*.nix' | xargs nixfmt --check",
 ]
 
 [tasks.test]
@@ -70,8 +72,7 @@ script = [
   "deno --version",
   "makers --version",
   "dprint --version",
-  # Returns NON 0, why...? :<
-  # "nixpkgs-fmt --version",
+  "nixfmt --version",
   "actionlint --version",
   "typos --version",
   "gh --version",
