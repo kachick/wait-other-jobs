@@ -1,7 +1,7 @@
 import { debug, getInput, getBooleanInput, setSecret, isDebug, error } from '@actions/core';
 import { context } from '@actions/github';
 
-import { Options, Trigger } from './schema.js';
+import { Options, Trigger } from './schema.ts';
 
 export function parseInput(): { trigger: Trigger; options: Options; githubToken: string } {
   const {

@@ -1,5 +1,5 @@
 import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
-import { Check, Options, Trigger } from './schema.js';
+import { Check, Options, Trigger } from './schema.ts';
 import { join, relative } from 'path';
 
 interface Summary {
