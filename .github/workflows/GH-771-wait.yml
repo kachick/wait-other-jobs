@@ -1,0 +1,39 @@
+name: GH-771 - Wait
+on:
+  push:
+    paths:
+      - '**GH-771**'
+      - 'action.yml'
+      - 'dist/**'
+  pull_request:
+    paths:
+      - '**GH-771**'
+      - 'action.yml'
+      - 'dist/**'
+
+# Disable all permissions in workflow global as to setup clean room
+# However PRs will have read permissions because this project is on a public repository
+permissions: {}
+
+jobs:
+  wait:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 5
+    steps:
+      - run: |
+          echo 'Triggered by ${{ github.event_name }} event'
+          echo 'See https://github.com/kachick/wait-other-jobs/issues/771 for the detail'
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: ./
+        with:
+          retry-method: 'equal_intervals'
+          min-interval-seconds: 5
+          attempt-limits: 30
+          wait-list: |
+            [
+              {
+                "workflowFile": "GH-771-targets.yml",
+                "eventName": "${{ github.event_name }}"
+              }
+            ]

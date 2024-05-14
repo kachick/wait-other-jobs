@@ -4,13 +4,13 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/itself.yml'
-      - '.github/workflows/multiple-event-triggers.yml'
+      - '.github/workflows/GH-771-echo.yml'
       - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
       - '.github/workflows/itself.yml'
-      - '.github/workflows/multiple-event-triggers.yml'
+      - '.github/workflows/GH-771-echo.yml'
       - 'action.yml'
       - 'dist/**'
   schedule:
@@ -128,29 +128,6 @@ jobs:
               },
               {
                 "workflowFile": "THERE_ARE_NO_FILES_AS_THIS.yml",
-                "optional": true
-              }
-            ]
-  GH-771-wait:
-    runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
-    timeout-minutes: 5
-    steps:
-      - run: |
-          echo 'Triggered by ${{ github.event_name }} event'
-          echo 'See https://github.com/kachick/wait-other-jobs/issues/771 for the detail'
-      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: ./
-        with:
-          retry-method: 'equal_intervals'
-          min-interval-seconds: 5
-          attempt-limits: 30
-          wait-list: |
-            [
-              {
-                "workflowFile": "multiple-event-triggers.yml",
-                "eventName": "${{ github.event_name }}",
-                "jobName": "echo",
                 "optional": true
               }
             ]

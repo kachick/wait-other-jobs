@@ -1,15 +1,13 @@
-name: GH-771 - Multiple event triggers
+name: GH-771 - Targets
 on:
   push:
     paths:
-      - '.github/workflows/multiple-event-triggers.yml'
-      - '.github/workflows/itself.yml'
+      - '**GH-771**'
       - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
-      - '.github/workflows/multiple-event-triggers.yml'
-      - '.github/workflows/itself.yml'
+      - '**GH-771**'
       - 'action.yml'
       - 'dist/**'
 
