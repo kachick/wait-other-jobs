@@ -13,6 +13,11 @@ on:
       - '.github/workflows/multiple-event-triggers.yml'
       - 'action.yml'
       - 'dist/**'
+  schedule:
+    # Every 10:50 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '50 1 * * 1'
+  workflow_dispatch:
 
 # Disable all permissions in workflow global as to setup clean room
 # However PRs will have read permissions because this project is on a public repository
