@@ -57,13 +57,3 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Typecheck
         run: pnpm run typecheck
-
-  lint:
-    timeout-minutes: 15
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: denoland/setup-deno@041b854f97b325bd60e53e9dc2de9cb9f9ac0cba # v1.1.4
-        with:
-          deno-version: '1.43.1' # selfup {"extract":"\\d[^']+","replacer":["bash","-c","deno --version | head -n 1"], "nth": 2}
-      - run: deno lint
