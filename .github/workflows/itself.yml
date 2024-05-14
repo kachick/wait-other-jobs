@@ -128,7 +128,9 @@ jobs:
               },
               {
                 "workflowFile": "multiple-event-triggers.yml",
-                "eventName": "${{ github.event_name }}"
+                "eventName": "${{ github.event_name }}",
+                "jobName": "echo",
+                "optional": true
               },
               {
                 "workflowFile": "THERE_ARE_NO_FILES_AS_THIS.yml",

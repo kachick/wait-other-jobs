@@ -18,7 +18,7 @@ on:
 permissions: {}
 
 jobs:
-  should_be_wait_this_only_in_pull_request:
+  echo:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
