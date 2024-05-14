@@ -21,6 +21,7 @@ jobs:
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
-      - run: |
+      - name: Print note
+        run: |
           echo 'Triggered by ${{ github.event_name }} event'
           echo 'See https://github.com/kachick/wait-other-jobs/issues/771 for the detail'
