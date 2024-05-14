@@ -1,15 +1,13 @@
-name: GH-771 - Multiple event triggers
+name: GH-771 - Targets
 on:
   push:
     paths:
-      - '.github/workflows/multiple-event-triggers.yml'
-      - '.github/workflows/itself.yml'
+      - '**GH-771**'
       - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
-      - '.github/workflows/multiple-event-triggers.yml'
-      - '.github/workflows/itself.yml'
+      - '**GH-771**'
       - 'action.yml'
       - 'dist/**'
 
@@ -18,11 +16,12 @@ on:
 permissions: {}
 
 jobs:
-  should_be_wait_this_only_in_pull_request:
+  echo:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
-      - run: |
+      - name: Print note
+        run: |
           echo 'Triggered by ${{ github.event_name }} event'
           echo 'See https://github.com/kachick/wait-other-jobs/issues/771 for the detail'
