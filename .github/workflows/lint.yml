@@ -1,4 +1,4 @@
-name: Linters
+name: 👕
 on:
   push:
     branches: [main]

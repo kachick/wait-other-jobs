@@ -1,4 +1,4 @@
-name: Update nixpkgs and CI dependencies
+name: 🤖🆙❄️
 on:
   pull_request:
     paths:
