@@ -45,7 +45,10 @@
               edge-pkgs.typos
 
               # Helper for writing and linting actions
-              edge-pkgs.actionlint
+              # NOTE: Do NOT add actionlint as a dependency
+              #   * It does not targets actions, it lints user side
+              #   * It assumes major actions in stable state, often made problems between versions
+              #   * Better solution is hinting with https://github.com/github/vscode-github-actions
               edge-pkgs.pinact
 
               # For fighting the GitHub API

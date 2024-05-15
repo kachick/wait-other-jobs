@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - '.github/dependabot.yml'
+      - '.github/workflows/ci-nix.yml'
       - 'LICENSE'
       - '.editorconfig'
       - 'README.md'

@@ -24,7 +24,6 @@ script = [
   "dprint check",
   "deno lint",
   "typos . .github .vscode",
-  "actionlint",
   "gitleaks detect",
   "git ls-files '*.nix' | xargs nixfmt --check",
 ]
@@ -73,7 +72,6 @@ script = [
   "makers --version",
   "dprint --version",
   "nixfmt --version",
-  "actionlint --version",
   "typos --version",
   "gh --version",
   "jq --version",
