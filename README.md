@@ -18,7 +18,7 @@ jobs:
     #   contents: read
     #   checks: read
     #   actions: read
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: kachick/wait-other-jobs@v3.2.0
         timeout-minutes: 15 # Recommended to be enabled with your appropriate value for fail-safe use
@@ -102,7 +102,7 @@ See the [docs](docs/examples.md) for further detail.
   jobs:
     your_job: # This will be used default job name if you not specify below "name" field
       name: "Changed at here"
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-24.04
       steps:
         - uses: kachick/wait-other-jobs@v3
           with:

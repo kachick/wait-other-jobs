@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   dependabot:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: Dependabot metadata
@@ -44,7 +44,7 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   renovate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       - name: Wait other jobs

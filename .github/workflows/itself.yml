@@ -27,7 +27,7 @@ permissions: {}
 
 jobs:
   default_logic:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 10
     steps:
@@ -35,7 +35,7 @@ jobs:
       # Do NOT specify any options here to make sure zero config may work
       - uses: ./
   validation_example_basic_errors_allow_failure:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
@@ -50,7 +50,7 @@ jobs:
           min-interval-seconds: '-1'
           attempt-limits: '0'
   validation_example_combination_errors_allow_failure:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
@@ -74,7 +74,7 @@ jobs:
               }
             ]
   exponential_backoff_allow_failure:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
@@ -92,7 +92,7 @@ jobs:
           attempt-limits: 2
           skip-same-workflow: 'true'
   equal_intervals:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 10
     steps:
@@ -106,7 +106,7 @@ jobs:
           attempt-limits: 60
           skip-same-workflow: 'true'
   wait-list:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
@@ -132,7 +132,7 @@ jobs:
               }
             ]
   skip-list:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
