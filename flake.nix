@@ -52,6 +52,7 @@
                 edge-pkgs.deno
                 edge-pkgs.dprint
                 edge-pkgs.typos
+                edge-pkgs.yamlfmt
 
                 # Helper for writing and linting actions
                 #
