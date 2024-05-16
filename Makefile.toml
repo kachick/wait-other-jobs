@@ -22,6 +22,7 @@ category = "Tools"
 description = "Run linters without changes"
 script = [
   "dprint check",
+  "yamlfmt -lint .",
   "deno lint",
   "typos . .github .vscode",
   "gitleaks detect",
@@ -71,6 +72,7 @@ script = [
   "deno --version",
   "makers --version",
   "dprint --version",
+  "yamlfmt -version",
   "nixfmt --version",
   "typos --version",
   "gh --version",
