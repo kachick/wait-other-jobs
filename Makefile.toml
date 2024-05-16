@@ -13,6 +13,7 @@ category = "Tools"
 description = "Run formatters with changes"
 script = [
   "dprint fmt",
+  "yamlfmt .",
   "git ls-files '*.nix' | xargs nix fmt",
 ]
 
