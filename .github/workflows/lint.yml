@@ -4,11 +4,9 @@ on:
     branches: [main]
     paths-ignore:
       - 'dist/**'
-      - 'pnpm-lock.yaml'
   pull_request:
     paths-ignore:
       - 'dist/**'
-      - 'pnpm-lock.yaml'
   workflow_dispatch:
 
 jobs:
