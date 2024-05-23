@@ -6,15 +6,10 @@
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      edge-nixpkgs,
-    }:
+    { self, nixpkgs }:
     let
       # Candidates: https://github.com/NixOS/nixpkgs/blob/release-23.11/lib/systems/flake-systems.nix
       forAllSystems = nixpkgs.lib.genAttrs [
@@ -26,12 +21,11 @@
       ];
     in
     {
-      formatter = forAllSystems (system: edge-nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
       devShells = forAllSystems (
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
         in
         {
           default =
@@ -42,17 +36,17 @@
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
                 nil
-                edge-pkgs.nixfmt-rfc-style
+                nixfmt-rfc-style
 
                 cargo-make
                 sd
 
-                edge-pkgs.nodejs_20
-                edge-pkgs.nodejs_20.pkgs.pnpm
-                edge-pkgs.deno
-                edge-pkgs.dprint
-                edge-pkgs.typos
-                edge-pkgs.yamlfmt
+                nodejs_20
+                nodejs_20.pkgs.pnpm
+                deno
+                dprint
+                typos
+                yamlfmt
 
                 # Helper for writing and linting actions
                 #
@@ -60,12 +54,12 @@
                 # - It does not target actions; it lints the user's side.
                 # - It assumes major actions in a stable state, often causing problems between versions.
                 # - Use https://github.com/github/vscode-github-actions for a better solution to get hints.
-                edge-pkgs.pinact
+                pinact
 
                 # For fighting the GitHub API
                 gh
                 jq
-                edge-pkgs.jnv
+                jnv
                 gitleaks
               ];
             };
@@ -76,7 +70,6 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
         in
         {
           bump-nix-dependencies = {
@@ -89,8 +82,8 @@
                   nix
                   git
                   sd
-                  edge-pkgs.nodejs_20
-                  edge-pkgs.nodejs_20.pkgs.pnpm
+                  nodejs_20
+                  nodejs_20.pkgs.pnpm
                 ];
                 # Why --really-refresh?: https://stackoverflow.com/q/34807971
                 text = ''
