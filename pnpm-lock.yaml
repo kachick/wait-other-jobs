@@ -15,8 +15,8 @@ dependencies:
     specifier: ^6.1.2
     version: 6.1.2
   '@octokit/graphql-schema':
-    specifier: ^15.17.0
-    version: 15.17.0
+    specifier: ^15.18.0
+    version: 15.18.0
   '@octokit/plugin-paginate-graphql':
     specifier: ^5.2.2
     version: 5.2.2(@octokit/core@6.1.2)
@@ -543,8 +543,8 @@ packages:
       universal-user-agent: 6.0.1
     dev: false
 
-  /@octokit/graphql-schema@15.17.0:
-    resolution: {integrity: sha512-YfDILnC5GTWJPQVnT8etOr0TV2VGWFUreJA8GedAdEG98IVZyPtzT9TbWulx/dINhvO1H2hVKiwuK4wzLx8wXQ==}
+  /@octokit/graphql-schema@15.18.0:
+    resolution: {integrity: sha512-XA2Qw0WrWs+0tvaVpXM4sLr9lGZAEQMyj1Ai4LhjRWtCZ1+bXegOLdY6P/Kx1UOPJ/4lrE2z/8RkOK6/5L1oTA==}
     dependencies:
       graphql: 16.8.1
       graphql-tag: 2.12.6(graphql@16.8.1)
