@@ -1,0 +1,96 @@
+name: GH-820 - Margin for wait-list
+on:
+  push:
+    paths:
+      - '**GH-820**'
+      - 'action.yml'
+      - 'dist/**'
+  pull_request:
+    paths:
+      - '**GH-820**'
+      - 'action.yml'
+      - 'dist/**'
+  workflow_dispatch:
+
+# Disable all permissions in workflow global as to setup clean room
+# However PRs will have read permissions because this project is on a public repository
+permissions: {}
+
+jobs:
+  quickstarter-success:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: echo ':)'
+  intermediate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: sleep 42
+  slowstarter-success:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    needs: [intermediate]
+    steps:
+      - run: echo ':)'
+  slowstarter-fail:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    needs: [intermediate]
+    continue-on-error: true
+    steps:
+      - run: |
+          echo ':<'
+          false
+  wait-success:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: ./
+        with:
+          retry-method: 'equal_intervals'
+          wait-seconds-before-first-polling: '0'
+          min-interval-seconds: '5'
+          attempt-limits: '100'
+          wait-list: |
+            [
+              {
+                "workflowFile": "GH-820-margin.yml",
+                "optional": false,
+                "eventName": "quickstarter-success"
+              },
+              {
+                "workflowFile": "GH-820-margin.yml",
+                "optional": false,
+                "eventName": "slowstarter-success",
+                "marginOfStartingSeconds": 60
+              }
+            ]
+  wait-fail:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: ./
+        continue-on-error: true
+        with:
+          retry-method: 'equal_intervals'
+          wait-seconds-before-first-polling: '0'
+          min-interval-seconds: '5'
+          attempt-limits: '100'
+          wait-list: |
+            [
+              {
+                "workflowFile": "GH-820-margin.yml",
+                "optional": false,
+                "eventName": "quickstarter-success"
+              },
+              {
+                "workflowFile": "GH-820-margin.yml",
+                "optional": false,
+                "eventName": "slowstarter-fail",
+                "marginOfStartingSeconds": 60
+              }
+            ]
+
