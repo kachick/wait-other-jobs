@@ -35,10 +35,10 @@ jobs:
     steps:
       - run: echo ':)'
   slowstarter-fail:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     needs: [intermediate]
-    continue-on-error: true
     steps:
       - run: |
           echo ':<'
@@ -69,12 +69,12 @@ jobs:
               }
             ]
   wait-fail:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - uses: ./
-        continue-on-error: true
         with:
           retry-method: 'equal_intervals'
           wait-seconds-before-first-polling: '0'
