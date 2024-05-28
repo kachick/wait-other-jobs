@@ -158,5 +158,8 @@ jobs:
               {
                 "workflowFile": "merge-bot-pr.yml",
                 "jobName": "dependabot"
+              },
+              {
+                "workflowFile": "GH-820-margin.yml"
               }
             ]
