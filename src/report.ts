@@ -81,7 +81,7 @@ export function generateReport(
     const unstarted = unmatches.filter((result) => elapsedMsec < result.marginOfStartingSeconds * 1000);
 
     if (unstarted.length > 0) {
-      return { progress: 'in_progress', conclusion: 'bad', summaries: filtered };
+      return { progress: 'in_progress', conclusion: 'acceptable', summaries: filtered };
     }
 
     if (unmatches.length > 0) {

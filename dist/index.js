@@ -28459,7 +28459,7 @@ function generateReport(checks, trigger, elapsedMsec, { waitList, skipList, shou
     const unmatches = seeker.filter((result) => !result.found && !result.optional);
     const unstarted = unmatches.filter((result) => elapsedMsec < result.marginOfStartingSeconds * 1e3);
     if (unstarted.length > 0) {
-      return { progress: "in_progress", conclusion: "bad", summaries: filtered };
+      return { progress: "in_progress", conclusion: "acceptable", summaries: filtered };
     }
     if (unmatches.length > 0) {
       throw new Error(`Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`);
