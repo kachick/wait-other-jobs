@@ -58,12 +58,12 @@ jobs:
               {
                 "workflowFile": "GH-820-margin.yml",
                 "optional": false,
-                "eventName": "quickstarter-success"
+                "jobName": "quickstarter-success"
               },
               {
                 "workflowFile": "GH-820-margin.yml",
                 "optional": false,
-                "eventName": "slowstarter-success",
+                "jobName": "slowstarter-success",
                 "marginOfStartingSeconds": 60
               }
             ]
@@ -84,12 +84,12 @@ jobs:
               {
                 "workflowFile": "GH-820-margin.yml",
                 "optional": false,
-                "eventName": "quickstarter-success"
+                "jobName": "quickstarter-success"
               },
               {
                 "workflowFile": "GH-820-margin.yml",
                 "optional": false,
-                "eventName": "slowstarter-fail",
+                "jobName": "slowstarter-fail",
                 "marginOfStartingSeconds": 60
               }
             ]
