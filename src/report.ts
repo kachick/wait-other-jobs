@@ -48,9 +48,6 @@ function summarize(check: Check, trigger: Trigger): Summary {
   };
 }
 
-function makeSeeker() {
-}
-
 export function generateReport(
   checks: readonly Check[],
   trigger: Trigger,

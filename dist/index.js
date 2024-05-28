@@ -27160,7 +27160,8 @@ var WaitFilterCondition = FilterCondition.extend(
     optional: z.boolean().optional().default(false).readonly(),
     // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
     // - Intentionally omitted in skip-list, let me know if you have the use-case
-    eventName: z.string().min(1).optional()
+    eventName: z.string().min(1).optional(),
+    marginOfStartingSeconds: z.number().min(0).optional().default(0)
   }
 ).readonly();
 var retryMethods = z.enum(["exponential_backoff", "equal_intervals"]);
@@ -28435,7 +28436,7 @@ function summarize(check, trigger) {
     runConclusion: run2.conclusion
   };
 }
-function generateReport(checks, trigger, { waitList, skipList, shouldSkipSameWorkflow }) {
+function generateReport(checks, trigger, elapsedMsec, { waitList, skipList, shouldSkipSameWorkflow }) {
   const summaries = checks.map((check) => summarize(check, trigger)).toSorted(
     (a, b) => join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName))
   );
@@ -28455,7 +28456,9 @@ function generateReport(checks, trigger, { waitList, skipList, shouldSkipSameWor
         }
       })
     );
-    const unmatches = seeker.filter((result) => !result.found && !result.optional);
+    const unmatches = seeker.filter(
+      (result) => !result.found && !result.optional && result.marginOfStartingSeconds * 1e3 < elapsedMsec
+    );
     if (unmatches.length > 0) {
       throw new Error(`Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`);
     }
@@ -28518,11 +28521,13 @@ var errorMessage = (body) => `${ansi_styles_default.red.open}${body}${ansi_style
 var succeededMessage = (body) => `${ansi_styles_default.green.open}${body}${ansi_styles_default.green.close}`;
 var colorize = (body, ok) => ok ? succeededMessage(body) : errorMessage(body);
 async function run() {
+  const startedAt = Date.now();
   (0, import_core3.startGroup)("Parameters");
   const { trigger, options, githubToken } = parseInput();
   (0, import_core3.info)(JSON.stringify(
     {
       trigger,
+      startedAt,
       options
       // Do NOT include secrets
     },
@@ -28552,12 +28557,14 @@ async function run() {
     }
     (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const checks = await fetchChecks(githubToken, trigger);
+    const elapsedMsec = Date.now() - startedAt;
     if ((0, import_core3.isDebug)()) {
       (0, import_core3.debug)(JSON.stringify(checks, null, 2));
     }
     const report = generateReport(
       checks,
       trigger,
+      elapsedMsec,
       options
     );
     for (const summary of report.summaries) {
