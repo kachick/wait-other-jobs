@@ -38,11 +38,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     needs: [intermediate]
+    continue-on-error: true
     steps:
       - run: |
           echo ':<'
           false
-        continue-on-error: true
   wait-success:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
