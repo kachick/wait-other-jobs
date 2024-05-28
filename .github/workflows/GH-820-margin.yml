@@ -50,7 +50,7 @@ jobs:
       - uses: ./
         with:
           retry-method: 'equal_intervals'
-          wait-seconds-before-first-polling: '0'
+          wait-seconds-before-first-polling: '10' # Keep small, but 0 will fail even if quickstarter
           min-interval-seconds: '5'
           attempt-limits: '100'
           wait-list: |
@@ -76,7 +76,7 @@ jobs:
         continue-on-error: true
         with:
           retry-method: 'equal_intervals'
-          wait-seconds-before-first-polling: '0'
+          wait-seconds-before-first-polling: '10' # Keep small, but 0 will fail even if quickstarter
           min-interval-seconds: '5'
           attempt-limits: '100'
           wait-list: |
