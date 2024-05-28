@@ -32,8 +32,15 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      # Do NOT specify any options here to make sure zero config may work
+      # Do NOT specify options except non omittable skip-list to make sure zero config may work
       - uses: ./
+        with:
+          skip-list: |
+            [
+              {
+                "workflowFile": "GH-820-margin.yml"
+              }
+            ]
   validation_example_basic_errors_allow_failure:
     runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
@@ -91,6 +98,12 @@ jobs:
           min-interval-seconds: 2
           attempt-limits: 2
           skip-same-workflow: 'true'
+          skip-list: |
+            [
+              {
+                "workflowFile": "GH-820-margin.yml"
+              }
+            ]
   equal_intervals:
     runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
@@ -105,6 +118,12 @@ jobs:
           min-interval-seconds: 10
           attempt-limits: 60
           skip-same-workflow: 'true'
+          skip-list: |
+            [
+              {
+                "workflowFile": "GH-820-margin.yml"
+              }
+            ]
   wait-list:
     runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
