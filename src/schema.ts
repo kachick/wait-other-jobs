@@ -12,6 +12,7 @@ const WaitFilterCondition = FilterCondition.extend(
     // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
     // - Intentionally omitted in skip-list, let me know if you have the use-case
     eventName: z.string().min(1).optional(),
+    marginOfStartingSeconds: z.number().min(0).optional().default(0),
   },
 ).readonly();
 

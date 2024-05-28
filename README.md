@@ -39,7 +39,7 @@ with:
   #   - If no jobName is specified, all the jobs in the workflow will be targeted.
   #   - wait-list: 
   #     - If the checkRun for the specified name is not found, this action raise errors by default.
-  #       You can disable this validation with `"optional": true`.
+  #       You can disable this validation with `"optional": true` or use the method written in "Timing" section
   #     - Wait for all event types by default, you can change with `"eventName": "EVENT_NAME_AS_push"`.
   wait-list: |
     [
@@ -117,11 +117,33 @@ See the [docs](docs/examples.md) for further detail.
   ```
   Similar problems should be considered in matrix jobs. See [#761](https://github.com/kachick/wait-other-jobs/issues/761) for further detail
 
-## Limitations
+## Timing
 
-- Judge OK or Bad with the checkRun state at the moment.\
-  When some jobs will be triggered after this action with `needs: [distant-first]`, it might be unaccurate.\
-  (I didn't see actual example yet)
+Judge whether the checkRun state is OK or bad at the moment.\
+When some jobs will be triggered after this action with `needs: [distant-first]`, it might be inaccurate.\
+Basically we set large `wait-seconds-before-first-polling` for this case.
+
+However, using a `wait-list` may avoid this problem.
+
+```yaml
+with:
+  wait-list: |
+    [
+      {
+        "workflowFile": "might_be_triggered_after_0-4_minutes.yml",
+        "optional": false,
+        "marginOfStartingSeconds": 300
+      }
+    ]
+```
+
+- No need to extend `wait-seconds-before-first-polling`
+- Disable `optional`, because it is needed to check
+- Specify `marginOfStartingSeconds` for it
+
+This action starts immediately but ignores the job missing in the first 5 minutes.
+
+## Limitations
 
 - If any workflow starts many jobs as 100+, this action does not support it.\
   Because of nested paging in GraphQL makes complex. See [related docs](https://github.com/octokit/plugin-paginate-graphql.js/blob/a6b12e867466b0c583b002acd1cb1ed90b11841f/README.md#L184-L218) for further detail.

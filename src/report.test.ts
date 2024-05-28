@@ -2,18 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert';
 import { snapshotChecks } from './snapshot.ts';
 import { generateReport } from './report.ts';
-
-// https://stackoverflow.com/a/56162151
-function pick<T extends object, U extends keyof T>(
-  obj: T,
-  paths: Array<U>,
-): Pick<T, U> {
-  const ret = Object.create({});
-  for (const k of paths) {
-    ret[k] = obj[k];
-  }
-  return ret;
-}
+import { pick } from './util.ts';
 
 test('wait-list', () => {
   const report = generateReport(
@@ -26,21 +15,25 @@ test('wait-list', () => {
       jobName: 'wait-list',
       eventName: 'pull_request',
     },
+    420000,
     {
       waitList: [
         {
           'workflowFile': 'lint.yml',
           'optional': false,
           'eventName': 'pull_request',
+          marginOfStartingSeconds: 0,
         },
         {
           'workflowFile': 'merge-bot-pr.yml',
           'jobName': 'dependabot',
           'optional': true,
+          marginOfStartingSeconds: 0,
         },
         {
           'workflowFile': 'THERE_ARE_NO_FILES_AS_THIS.yml',
           'optional': true,
+          marginOfStartingSeconds: 0,
         },
       ],
       skipList: [],
@@ -106,6 +99,7 @@ test('skip-list', () => {
       jobName: 'skip-list',
       eventName: 'pull_request',
     },
+    420000,
     {
       waitList: [],
       skipList: [

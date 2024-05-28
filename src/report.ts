@@ -48,9 +48,13 @@ function summarize(check: Check, trigger: Trigger): Summary {
   };
 }
 
+function makeSeeker() {
+}
+
 export function generateReport(
   checks: readonly Check[],
   trigger: Trigger,
+  elapsedMsec: number,
   { waitList, skipList, shouldSkipSameWorkflow }: Pick<Options, 'waitList' | 'skipList' | 'shouldSkipSameWorkflow'>,
 ): Report {
   const summaries = checks.map((check) => summarize(check, trigger)).toSorted((a, b) =>
@@ -76,7 +80,9 @@ export function generateReport(
       })
     );
 
-    const unmatches = seeker.filter((result) => (!(result.found)) && (!(result.optional)));
+    const unmatches = seeker.filter((result) =>
+      (!(result.found)) && (!(result.optional)) && (result.marginOfStartingSeconds * 1000 < elapsedMsec)
+    );
 
     if (unmatches.length > 0) {
       throw new Error(`Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`);
