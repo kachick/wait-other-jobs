@@ -38,7 +38,7 @@ jobs:
           skip-list: |
             [
               {
-                "workflowFile": "GH-820-margin.yml"
+                "workflowFile": "GH-820-graceperiod.yml"
               }
             ]
   validation_example_basic_errors_allow_failure:
@@ -101,7 +101,7 @@ jobs:
           skip-list: |
             [
               {
-                "workflowFile": "GH-820-margin.yml"
+                "workflowFile": "GH-820-graceperiod.yml"
               }
             ]
   equal_intervals:
@@ -121,7 +121,7 @@ jobs:
           skip-list: |
             [
               {
-                "workflowFile": "GH-820-margin.yml"
+                "workflowFile": "GH-820-graceperiod.yml"
               }
             ]
   wait-list:
@@ -179,6 +179,6 @@ jobs:
                 "jobName": "dependabot"
               },
               {
-                "workflowFile": "GH-820-margin.yml"
+                "workflowFile": "GH-820-graceperiod.yml"
               }
             ]

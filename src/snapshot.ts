@@ -990,7 +990,7 @@ export const checks92810686811WaitSuccessPolling1 = Object.freeze([
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
-          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
         },
       },
       'checkRuns': {
@@ -1033,14 +1033,14 @@ export const checks92810686811WaitSuccessPolling1 = Object.freeze([
     },
     'workflow': {
       'name': 'GH-820 - Margin for wait-list',
-      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
     },
     'workflowRun': {
       'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
-        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
       },
     },
   },
@@ -1060,7 +1060,7 @@ export const checks92810686811WaitSuccessPolling1 = Object.freeze([
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
-          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
         },
       },
       'checkRuns': {
@@ -1103,14 +1103,14 @@ export const checks92810686811WaitSuccessPolling1 = Object.freeze([
     },
     'workflow': {
       'name': 'GH-820 - Margin for wait-list',
-      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
     },
     'workflowRun': {
       'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
-        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
       },
     },
   },
@@ -1130,7 +1130,7 @@ export const checks92810686811WaitSuccessPolling1 = Object.freeze([
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
-          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
         },
       },
       'checkRuns': {
@@ -1173,14 +1173,14 @@ export const checks92810686811WaitSuccessPolling1 = Object.freeze([
     },
     'workflow': {
       'name': 'GH-820 - Margin for wait-list',
-      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
     },
     'workflowRun': {
       'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
-        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
       },
     },
   },
@@ -1200,7 +1200,7 @@ export const checks92810686811WaitSuccessPolling1 = Object.freeze([
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
-          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
         },
       },
       'checkRuns': {
@@ -1243,14 +1243,14 @@ export const checks92810686811WaitSuccessPolling1 = Object.freeze([
     },
     'workflow': {
       'name': 'GH-820 - Margin for wait-list',
-      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
     },
     'workflowRun': {
       'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
-        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
       },
     },
   },
@@ -1274,7 +1274,7 @@ export const checks92810686811WaitSuccessPolling7 = Object.freeze([
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
-          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
         },
       },
       'checkRuns': {
@@ -1331,14 +1331,14 @@ export const checks92810686811WaitSuccessPolling7 = Object.freeze([
     },
     'workflow': {
       'name': 'GH-820 - Margin for wait-list',
-      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
     },
     'workflowRun': {
       'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
-        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
       },
     },
   },
@@ -1358,7 +1358,7 @@ export const checks92810686811WaitSuccessPolling7 = Object.freeze([
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
-          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
         },
       },
       'checkRuns': {
@@ -1415,14 +1415,14 @@ export const checks92810686811WaitSuccessPolling7 = Object.freeze([
     },
     'workflow': {
       'name': 'GH-820 - Margin for wait-list',
-      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
     },
     'workflowRun': {
       'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
-        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
       },
     },
   },
@@ -1442,7 +1442,7 @@ export const checks92810686811WaitSuccessPolling7 = Object.freeze([
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
-          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
         },
       },
       'checkRuns': {
@@ -1499,14 +1499,14 @@ export const checks92810686811WaitSuccessPolling7 = Object.freeze([
     },
     'workflow': {
       'name': 'GH-820 - Margin for wait-list',
-      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
     },
     'workflowRun': {
       'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
-        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
       },
     },
   },
@@ -1526,7 +1526,7 @@ export const checks92810686811WaitSuccessPolling7 = Object.freeze([
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
-          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
         },
       },
       'checkRuns': {
@@ -1583,14 +1583,14 @@ export const checks92810686811WaitSuccessPolling7 = Object.freeze([
     },
     'workflow': {
       'name': 'GH-820 - Margin for wait-list',
-      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
     },
     'workflowRun': {
       'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
-        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
       },
     },
   },
@@ -1610,7 +1610,7 @@ export const checks92810686811WaitSuccessPolling7 = Object.freeze([
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
-          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
         },
       },
       'checkRuns': {
@@ -1667,14 +1667,14 @@ export const checks92810686811WaitSuccessPolling7 = Object.freeze([
     },
     'workflow': {
       'name': 'GH-820 - Margin for wait-list',
-      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
     },
     'workflowRun': {
       'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
-        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
       },
     },
   },
@@ -1694,7 +1694,7 @@ export const checks92810686811WaitSuccessPolling7 = Object.freeze([
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
-          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
         },
       },
       'checkRuns': {
@@ -1751,14 +1751,14 @@ export const checks92810686811WaitSuccessPolling7 = Object.freeze([
     },
     'workflow': {
       'name': 'GH-820 - Margin for wait-list',
-      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
     },
     'workflowRun': {
       'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
-        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
       },
     },
   },

@@ -64,13 +64,13 @@ test('wait-list have slowstarting job and set enough startupGracePeriod', () => 
     {
       'waitList': [
         {
-          'workflowFile': 'GH-820-margin.yml',
+          'workflowFile': 'GH-820-graceperiod.yml',
           'jobName': 'quickstarter-success',
           'optional': false,
           'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
         },
         {
-          'workflowFile': 'GH-820-margin.yml',
+          'workflowFile': 'GH-820-graceperiod.yml',
           'jobName': 'slowstarter-success',
           'optional': false,
           'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
@@ -85,7 +85,7 @@ test('wait-list have slowstarting job and set enough startupGracePeriod', () => 
     conclusion: 'acceptable',
     progress: 'in_progress',
     description:
-      'Some expected jobs were not started: [{"workflowFile":"GH-820-margin.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":"PT60S","found":false}]',
+      'Some expected jobs were not started: [{"workflowFile":"GH-820-graceperiod.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":"PT60S","found":false}]',
   }, omit<Report, 'summaries'>(report, ['summaries']));
 });
 
@@ -104,13 +104,13 @@ test('wait-list have slowstarting job and expired', () => {
     {
       'waitList': [
         {
-          'workflowFile': 'GH-820-margin.yml',
+          'workflowFile': 'GH-820-graceperiod.yml',
           'jobName': 'quickstarter-success',
           'optional': false,
           'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
         },
         {
-          'workflowFile': 'GH-820-margin.yml',
+          'workflowFile': 'GH-820-graceperiod.yml',
           'jobName': 'slowstarter-success',
           'optional': false,
           'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
@@ -125,7 +125,7 @@ test('wait-list have slowstarting job and expired', () => {
     conclusion: 'bad',
     progress: 'in_progress',
     description:
-      'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-margin.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":"PT60S","found":false}]',
+      'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-graceperiod.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":"PT60S","found":false}]',
   }, omit<Report, 'summaries'>(report, ['summaries']));
 });
 

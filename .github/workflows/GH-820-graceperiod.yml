@@ -57,12 +57,12 @@ jobs:
           wait-list: |
             [
               {
-                "workflowFile": "GH-820-margin.yml",
+                "workflowFile": "GH-820-graceperiod.yml",
                 "optional": false,
                 "jobName": "quickstarter-success"
               },
               {
-                "workflowFile": "GH-820-margin.yml",
+                "workflowFile": "GH-820-graceperiod.yml",
                 "optional": false,
                 "jobName": "slowstarter-success",
                 "startupGracePeriod": 60
@@ -83,12 +83,12 @@ jobs:
           wait-list: |
             [
               {
-                "workflowFile": "GH-820-margin.yml",
+                "workflowFile": "GH-820-graceperiod.yml",
                 "optional": false,
                 "jobName": "quickstarter-success"
               },
               {
-                "workflowFile": "GH-820-margin.yml",
+                "workflowFile": "GH-820-graceperiod.yml",
                 "optional": false,
                 "jobName": "slowstarter-fail",
                 "startupGracePeriod": 60
