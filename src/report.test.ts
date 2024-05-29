@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './snapshot.ts';
 import { Report, generateReport } from './report.ts';
 import { omit } from './util.ts';
+import { Temporal } from 'temporal-polyfill';
 
 test('wait-list', () => {
   const report = generateReport(
@@ -15,25 +16,25 @@ test('wait-list', () => {
       jobName: 'wait-list',
       eventName: 'pull_request',
     },
-    420000,
+    Temporal.Duration.from({ seconds: 420 }),
     {
       waitList: [
         {
           'workflowFile': 'lint.yml',
           'optional': false,
           'eventName': 'pull_request',
-          startupGracePeriod: 0,
+          startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
         },
         {
           'workflowFile': 'merge-bot-pr.yml',
           'jobName': 'dependabot',
           'optional': true,
-          startupGracePeriod: 0,
+          startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
         },
         {
           'workflowFile': 'THERE_ARE_NO_FILES_AS_THIS.yml',
           'optional': true,
-          startupGracePeriod: 0,
+          startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
         },
       ],
       skipList: [],
@@ -59,20 +60,20 @@ test('wait-list have slowstarting job and set enough startupGracePeriod', () => 
       jobName: 'wait-success',
       eventName: 'pull_request',
     },
-    986.9570700004697,
+    Temporal.Duration.from({ milliseconds: Math.ceil(986.9570700004697) }),
     {
       'waitList': [
         {
           'workflowFile': 'GH-820-margin.yml',
           'jobName': 'quickstarter-success',
           'optional': false,
-          'startupGracePeriod': 0,
+          'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
         },
         {
           'workflowFile': 'GH-820-margin.yml',
           'jobName': 'slowstarter-success',
           'optional': false,
-          'startupGracePeriod': 60,
+          'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
         },
       ],
       skipList: [],
@@ -84,7 +85,7 @@ test('wait-list have slowstarting job and set enough startupGracePeriod', () => 
     conclusion: 'acceptable',
     progress: 'in_progress',
     description:
-      'Some expected jobs were not started: [{"workflowFile":"GH-820-margin.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":60,"found":false}]',
+      'Some expected jobs were not started: [{"workflowFile":"GH-820-margin.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":"PT60S","found":false}]',
   }, omit<Report, 'summaries'>(report, ['summaries']));
 });
 
@@ -99,20 +100,20 @@ test('wait-list have slowstarting job and expired', () => {
       jobName: 'wait-success',
       eventName: 'pull_request',
     },
-    60 * 1000,
+    Temporal.Duration.from({ seconds: 60 }),
     {
       'waitList': [
         {
           'workflowFile': 'GH-820-margin.yml',
           'jobName': 'quickstarter-success',
           'optional': false,
-          'startupGracePeriod': 0,
+          'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
         },
         {
           'workflowFile': 'GH-820-margin.yml',
           'jobName': 'slowstarter-success',
           'optional': false,
-          'startupGracePeriod': 60,
+          'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
         },
       ],
       skipList: [],
@@ -124,7 +125,7 @@ test('wait-list have slowstarting job and expired', () => {
     conclusion: 'bad',
     progress: 'in_progress',
     description:
-      'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-margin.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":60,"found":false}]',
+      'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-margin.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":"PT60S","found":false}]',
   }, omit<Report, 'summaries'>(report, ['summaries']));
 });
 
@@ -139,7 +140,7 @@ test('skip-list', () => {
       jobName: 'skip-list',
       eventName: 'pull_request',
     },
-    420000,
+    Temporal.Duration.from({ seconds: 420 }),
     {
       waitList: [],
       skipList: [

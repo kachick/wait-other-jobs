@@ -8,6 +8,7 @@ import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
 import { generateReport } from './report.ts';
 import { readableDuration, wait, getIdleMilliseconds } from './wait.ts';
+import { Temporal } from 'temporal-polyfill';
 
 async function run(): Promise<void> {
   const startedAt = performance.now();
@@ -49,15 +50,16 @@ async function run(): Promise<void> {
     }
 
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
+    // Put getting elapsed time before of fetchChecks to keep accuracy of the purpose
+    const elapsed = Temporal.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
     const checks = await fetchChecks(githubToken, trigger);
-    const elapsedMsec = performance.now() - startedAt;
     if (isDebug()) {
-      debug(JSON.stringify({ label: 'rawdata', checks, elapsedMsec }, null, 2));
+      debug(JSON.stringify({ label: 'rawdata', checks, elapsedMsec: elapsed }, null, 2));
     }
     const report = generateReport(
       checks,
       trigger,
-      elapsedMsec,
+      elapsed,
       options,
     );
 

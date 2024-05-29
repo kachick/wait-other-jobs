@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { Options } from './schema.ts';
+import { Temporal } from 'temporal-polyfill';
 
 const defaultOptions = Object.freeze({
   isEarlyExit: true,
@@ -31,7 +32,11 @@ test('Options keep given values', () => {
 test('Options set some default values it cannot be defined in action.yml', () => {
   assert.deepStrictEqual({
     ...defaultOptions,
-    waitList: [{ workflowFile: 'ci.yml', optional: false, startupGracePeriod: 0 }],
+    waitList: [{
+      workflowFile: 'ci.yml',
+      optional: false,
+      startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+    }],
   }, Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }));
 });
 
@@ -72,5 +77,22 @@ test('Options reject invalid values', () => {
       name: 'ZodError',
       message: /Do not specify both wait-list and skip-list/,
     },
+  );
+});
+
+test('startupGracePeriod can be used as Temporal.Duration', () => {
+  assert.deepStrictEqual(
+    {
+      ...defaultOptions,
+      waitList: [{
+        workflowFile: 'ci.yml',
+        optional: false,
+        startupGracePeriod: Temporal.Duration.from({ seconds: 60 }),
+      }],
+    },
+    Options.parse({
+      ...defaultOptions,
+      waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: Temporal.Duration.from({ seconds: 60 }) }],
+    }),
   );
 });

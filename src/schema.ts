@@ -1,4 +1,5 @@
 import { CheckSuite, Workflow, CheckRun, WorkflowRun } from '@octokit/graphql-schema';
+import { Temporal } from 'temporal-polyfill';
 import { z } from 'zod';
 
 const FilterCondition = z.object({
@@ -12,7 +13,7 @@ const WaitFilterCondition = FilterCondition.extend(
     // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
     // - Intentionally omitted in skip-list, let me know if you have the use-case
     eventName: z.string().min(1).optional(),
-    startupGracePeriod: z.number().min(0).optional().default(0),
+    startupGracePeriod: z.instanceof(Temporal.Duration).optional().default(Temporal.Duration.from({ seconds: 10 })),
   },
 ).readonly();
 

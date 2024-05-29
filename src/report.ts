@@ -1,6 +1,7 @@
 import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
 import { Check, Options, Trigger } from './schema.ts';
 import { join, relative } from 'path';
+import { Temporal } from 'temporal-polyfill';
 
 interface Summary {
   acceptable: boolean;
@@ -59,7 +60,7 @@ function summarize(check: Check, trigger: Trigger): Summary {
 export function generateReport(
   checks: readonly Check[],
   trigger: Trigger,
-  elapsedMsec: number,
+  elapsed: Temporal.Duration,
   { waitList, skipList, shouldSkipSameWorkflow }: Pick<Options, 'waitList' | 'skipList' | 'shouldSkipSameWorkflow'>,
 ): Report {
   const summaries = checks.map((check) => summarize(check, trigger)).toSorted((a, b) =>
@@ -86,7 +87,7 @@ export function generateReport(
     );
 
     const unmatches = seeker.filter((result) => (!(result.found)) && (!(result.optional)));
-    const unstarted = unmatches.filter((result) => elapsedMsec < result.startupGracePeriod * 1000);
+    const unstarted = unmatches.filter((result) => Temporal.Duration.compare(elapsed, result.startupGracePeriod));
 
     if (unstarted.length > 0) {
       return {
