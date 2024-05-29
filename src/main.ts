@@ -92,12 +92,13 @@ async function run(): Promise<void> {
 
     switch (progress) {
       case 'in_progress': {
+        info('some jobs still in progress');
+
         if (conclusion === 'bad' && options.isEarlyExit) {
           shouldStop = true;
-          setFailed(errorMessage('some jobs failed'));
+          setFailed(errorMessage(report.description));
         }
 
-        info('some jobs still in progress');
         break;
       }
       case 'done': {
@@ -109,7 +110,7 @@ async function run(): Promise<void> {
             break;
           }
           case 'bad': {
-            setFailed(errorMessage('some jobs failed'));
+            setFailed(errorMessage(report.description));
             break;
           }
           default: {

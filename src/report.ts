@@ -19,11 +19,19 @@ interface Summary {
   runConclusion: CheckRun['conclusion']; // null if status is in progress
 }
 
-export interface Report {
-  progress: 'in_progress' | 'done';
-  conclusion: 'acceptable' | 'bad';
-  summaries: Summary[];
+interface Acceptable {
+  conclusion: 'acceptable';
 }
+
+interface Bad {
+  conclusion: 'bad';
+  description: string;
+}
+
+type Report = (Acceptable | Bad) & {
+  progress: 'in_progress' | 'done';
+  summaries: Summary[];
+};
 
 function summarize(check: Check, trigger: Trigger): Summary {
   const { checkRun: run, checkSuite: suite, workflow, workflowRun } = check;
@@ -85,7 +93,12 @@ export function generateReport(
     }
 
     if (unmatches.length > 0) {
-      throw new Error(`Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`);
+      return {
+        progress: 'in_progress',
+        conclusion: 'bad',
+        summaries: filtered,
+        description: `Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`,
+      };
     }
   }
   if (skipList.length > 0) {
@@ -105,5 +118,10 @@ export function generateReport(
     ? 'acceptable'
     : 'bad';
 
-  return { progress, conclusion, summaries: filtered };
+  return {
+    progress,
+    conclusion,
+    summaries: filtered,
+    description: conclusion === 'bad' ? 'some jobs failed' : '',
+  };
 }

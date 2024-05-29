@@ -2,7 +2,7 @@ import { Check } from './schema.ts';
 
 // https://github.com/kachick/wait-other-jobs/actions/runs/8679817057/job/23799347421?pr=764
 // TODO: Update after #771
-export const snapshot8679817057Checks = Object.freeze([
+export const checks8679817057 = Object.freeze([
   {
     'checkRun': {
       'databaseId': 23799347220,
@@ -972,189 +972,21 @@ export const snapshot8679817057Checks = Object.freeze([
   },
 ] as Check[]);
 
-// https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524640?pr=821
-export const snapshot9278726611Checks = Object.freeze([
+// https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476
+export const checks92810686811WaitSuccessPolling1 = Object.freeze([
   {
     'checkRun': {
-      'databaseId': 25535524118,
-      'name': 'quickstarter-success',
-      'status': 'COMPLETED',
-      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524118',
-      'conclusion': 'SUCCESS',
-    },
-    'checkSuite': {
-      'status': 'IN_PROGRESS',
-      'conclusion': null,
-      'workflowRun': {
-        'databaseId': 9278726611,
-        'event': 'pull_request',
-        'workflow': {
-          'name': 'GH-820 - Margin for wait-list',
-          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
-        },
-      },
-      'checkRuns': {
-        'totalCount': 6,
-        'pageInfo': {
-          'hasNextPage': false,
-          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIJUN0=',
-        },
-        'nodes': [
-          {
-            'databaseId': 25535524118,
-            'name': 'quickstarter-success',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524118',
-            'conclusion': 'SUCCESS',
-          },
-          {
-            'databaseId': 25535524288,
-            'name': 'wait-fail',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524288',
-            'conclusion': 'SKIPPED',
-          },
-          {
-            'databaseId': 25535524474,
-            'name': 'intermediate',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524474',
-            'conclusion': 'SUCCESS',
-          },
-          {
-            'databaseId': 25535524640,
-            'name': 'wait-success',
-            'status': 'IN_PROGRESS',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524640',
-            'conclusion': null,
-          },
-          {
-            'databaseId': 25535533162,
-            'name': 'slowstarter-fail',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533162',
-            'conclusion': 'SKIPPED',
-          },
-          {
-            'databaseId': 25535533277,
-            'name': 'slowstarter-success',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533277',
-            'conclusion': 'SUCCESS',
-          },
-        ],
-      },
-    },
-    'workflow': {
-      'name': 'GH-820 - Margin for wait-list',
-      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
-    },
-    'workflowRun': {
-      'databaseId': 9278726611,
-      'event': 'pull_request',
-      'workflow': {
-        'name': 'GH-820 - Margin for wait-list',
-        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
-      },
-    },
-  },
-  {
-    'checkRun': {
-      'databaseId': 25535524288,
-      'name': 'wait-fail',
-      'status': 'COMPLETED',
-      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524288',
-      'conclusion': 'SKIPPED',
-    },
-    'checkSuite': {
-      'status': 'IN_PROGRESS',
-      'conclusion': null,
-      'workflowRun': {
-        'databaseId': 9278726611,
-        'event': 'pull_request',
-        'workflow': {
-          'name': 'GH-820 - Margin for wait-list',
-          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
-        },
-      },
-      'checkRuns': {
-        'totalCount': 6,
-        'pageInfo': {
-          'hasNextPage': false,
-          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIJUN0=',
-        },
-        'nodes': [
-          {
-            'databaseId': 25535524118,
-            'name': 'quickstarter-success',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524118',
-            'conclusion': 'SUCCESS',
-          },
-          {
-            'databaseId': 25535524288,
-            'name': 'wait-fail',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524288',
-            'conclusion': 'SKIPPED',
-          },
-          {
-            'databaseId': 25535524474,
-            'name': 'intermediate',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524474',
-            'conclusion': 'SUCCESS',
-          },
-          {
-            'databaseId': 25535524640,
-            'name': 'wait-success',
-            'status': 'IN_PROGRESS',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524640',
-            'conclusion': null,
-          },
-          {
-            'databaseId': 25535533162,
-            'name': 'slowstarter-fail',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533162',
-            'conclusion': 'SKIPPED',
-          },
-          {
-            'databaseId': 25535533277,
-            'name': 'slowstarter-success',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533277',
-            'conclusion': 'SUCCESS',
-          },
-        ],
-      },
-    },
-    'workflow': {
-      'name': 'GH-820 - Margin for wait-list',
-      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
-    },
-    'workflowRun': {
-      'databaseId': 9278726611,
-      'event': 'pull_request',
-      'workflow': {
-        'name': 'GH-820 - Margin for wait-list',
-        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
-      },
-    },
-  },
-  {
-    'checkRun': {
-      'databaseId': 25535524474,
+      'databaseId': 25536443331,
       'name': 'intermediate',
-      'status': 'COMPLETED',
-      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524474',
-      'conclusion': 'SUCCESS',
+      'status': 'IN_PROGRESS',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+      'conclusion': null,
     },
     'checkSuite': {
-      'status': 'IN_PROGRESS',
+      'status': 'QUEUED',
       'conclusion': null,
       'workflowRun': {
-        'databaseId': 9278726611,
+        'databaseId': 9281068681,
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
@@ -1162,53 +994,39 @@ export const snapshot9278726611Checks = Object.freeze([
         },
       },
       'checkRuns': {
-        'totalCount': 6,
+        'totalCount': 4,
         'pageInfo': {
           'hasNextPage': false,
-          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIJUN0=',
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXNaM=',
         },
         'nodes': [
           {
-            'databaseId': 25535524118,
-            'name': 'quickstarter-success',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524118',
-            'conclusion': 'SUCCESS',
-          },
-          {
-            'databaseId': 25535524288,
-            'name': 'wait-fail',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524288',
-            'conclusion': 'SKIPPED',
-          },
-          {
-            'databaseId': 25535524474,
+            'databaseId': 25536443331,
             'name': 'intermediate',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524474',
-            'conclusion': 'SUCCESS',
-          },
-          {
-            'databaseId': 25535524640,
-            'name': 'wait-success',
             'status': 'IN_PROGRESS',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524640',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
             'conclusion': null,
           },
           {
-            'databaseId': 25535533162,
-            'name': 'slowstarter-fail',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533162',
-            'conclusion': 'SKIPPED',
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
           },
           {
-            'databaseId': 25535533277,
-            'name': 'slowstarter-success',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533277',
-            'conclusion': 'SUCCESS',
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'QUEUED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': null,
           },
         ],
       },
@@ -1218,7 +1036,7 @@ export const snapshot9278726611Checks = Object.freeze([
       'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
     },
     'workflowRun': {
-      'databaseId': 9278726611,
+      'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
@@ -1228,17 +1046,17 @@ export const snapshot9278726611Checks = Object.freeze([
   },
   {
     'checkRun': {
-      'databaseId': 25535524640,
+      'databaseId': 25536443476,
       'name': 'wait-success',
       'status': 'IN_PROGRESS',
-      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524640',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
       'conclusion': null,
     },
     'checkSuite': {
-      'status': 'IN_PROGRESS',
+      'status': 'QUEUED',
       'conclusion': null,
       'workflowRun': {
-        'databaseId': 9278726611,
+        'databaseId': 9281068681,
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
@@ -1246,53 +1064,39 @@ export const snapshot9278726611Checks = Object.freeze([
         },
       },
       'checkRuns': {
-        'totalCount': 6,
+        'totalCount': 4,
         'pageInfo': {
           'hasNextPage': false,
-          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIJUN0=',
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXNaM=',
         },
         'nodes': [
           {
-            'databaseId': 25535524118,
-            'name': 'quickstarter-success',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524118',
-            'conclusion': 'SUCCESS',
-          },
-          {
-            'databaseId': 25535524288,
-            'name': 'wait-fail',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524288',
-            'conclusion': 'SKIPPED',
-          },
-          {
-            'databaseId': 25535524474,
+            'databaseId': 25536443331,
             'name': 'intermediate',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524474',
-            'conclusion': 'SUCCESS',
-          },
-          {
-            'databaseId': 25535524640,
-            'name': 'wait-success',
             'status': 'IN_PROGRESS',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524640',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
             'conclusion': null,
           },
           {
-            'databaseId': 25535533162,
-            'name': 'slowstarter-fail',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533162',
-            'conclusion': 'SKIPPED',
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
           },
           {
-            'databaseId': 25535533277,
-            'name': 'slowstarter-success',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533277',
-            'conclusion': 'SUCCESS',
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'QUEUED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': null,
           },
         ],
       },
@@ -1302,7 +1106,7 @@ export const snapshot9278726611Checks = Object.freeze([
       'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
     },
     'workflowRun': {
-      'databaseId': 9278726611,
+      'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
@@ -1312,17 +1116,17 @@ export const snapshot9278726611Checks = Object.freeze([
   },
   {
     'checkRun': {
-      'databaseId': 25535533162,
-      'name': 'slowstarter-fail',
-      'status': 'COMPLETED',
-      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533162',
-      'conclusion': 'SKIPPED',
+      'databaseId': 25536443631,
+      'name': 'quickstarter-success',
+      'status': 'QUEUED',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+      'conclusion': null,
     },
     'checkSuite': {
-      'status': 'IN_PROGRESS',
+      'status': 'QUEUED',
       'conclusion': null,
       'workflowRun': {
-        'databaseId': 9278726611,
+        'databaseId': 9281068681,
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
@@ -1330,53 +1134,39 @@ export const snapshot9278726611Checks = Object.freeze([
         },
       },
       'checkRuns': {
-        'totalCount': 6,
+        'totalCount': 4,
         'pageInfo': {
           'hasNextPage': false,
-          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIJUN0=',
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXNaM=',
         },
         'nodes': [
           {
-            'databaseId': 25535524118,
-            'name': 'quickstarter-success',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524118',
-            'conclusion': 'SUCCESS',
-          },
-          {
-            'databaseId': 25535524288,
-            'name': 'wait-fail',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524288',
-            'conclusion': 'SKIPPED',
-          },
-          {
-            'databaseId': 25535524474,
+            'databaseId': 25536443331,
             'name': 'intermediate',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524474',
-            'conclusion': 'SUCCESS',
-          },
-          {
-            'databaseId': 25535524640,
-            'name': 'wait-success',
             'status': 'IN_PROGRESS',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524640',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
             'conclusion': null,
           },
           {
-            'databaseId': 25535533162,
-            'name': 'slowstarter-fail',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533162',
-            'conclusion': 'SKIPPED',
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
           },
           {
-            'databaseId': 25535533277,
-            'name': 'slowstarter-success',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533277',
-            'conclusion': 'SUCCESS',
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'QUEUED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': null,
           },
         ],
       },
@@ -1386,7 +1176,7 @@ export const snapshot9278726611Checks = Object.freeze([
       'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
     },
     'workflowRun': {
-      'databaseId': 9278726611,
+      'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',
@@ -1396,17 +1186,91 @@ export const snapshot9278726611Checks = Object.freeze([
   },
   {
     'checkRun': {
-      'databaseId': 25535533277,
-      'name': 'slowstarter-success',
+      'databaseId': 25536443811,
+      'name': 'wait-fail',
+      'status': 'IN_PROGRESS',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+      'conclusion': null,
+    },
+    'checkSuite': {
+      'status': 'QUEUED',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 4,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXNaM=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'QUEUED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': null,
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      },
+    },
+  },
+] as Check[]);
+
+// https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476
+export const checks92810686811WaitSuccessPolling7 = Object.freeze([
+  {
+    'checkRun': {
+      'databaseId': 25536443331,
+      'name': 'intermediate',
       'status': 'COMPLETED',
-      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533277',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
       'conclusion': 'SUCCESS',
     },
     'checkSuite': {
       'status': 'IN_PROGRESS',
       'conclusion': null,
       'workflowRun': {
-        'databaseId': 9278726611,
+        'databaseId': 9281068681,
         'event': 'pull_request',
         'workflow': {
           'name': 'GH-820 - Margin for wait-list',
@@ -1417,49 +1281,49 @@ export const snapshot9278726611Checks = Object.freeze([
         'totalCount': 6,
         'pageInfo': {
           'hasNextPage': false,
-          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIJUN0=',
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXZVU=',
         },
         'nodes': [
           {
-            'databaseId': 25535524118,
-            'name': 'quickstarter-success',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524118',
-            'conclusion': 'SUCCESS',
-          },
-          {
-            'databaseId': 25535524288,
-            'name': 'wait-fail',
-            'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524288',
-            'conclusion': 'SKIPPED',
-          },
-          {
-            'databaseId': 25535524474,
+            'databaseId': 25536443331,
             'name': 'intermediate',
             'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524474',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
             'conclusion': 'SUCCESS',
           },
           {
-            'databaseId': 25535524640,
+            'databaseId': 25536443476,
             'name': 'wait-success',
             'status': 'IN_PROGRESS',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535524640',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
             'conclusion': null,
           },
           {
-            'databaseId': 25535533162,
-            'name': 'slowstarter-fail',
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
             'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533162',
-            'conclusion': 'SKIPPED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': 'SUCCESS',
           },
           {
-            'databaseId': 25535533277,
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536455821,
+            'name': 'slowstarter-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536456021,
             'name': 'slowstarter-success',
             'status': 'COMPLETED',
-            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9278726611/job/25535533277',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
             'conclusion': 'SUCCESS',
           },
         ],
@@ -1470,7 +1334,427 @@ export const snapshot9278726611Checks = Object.freeze([
       'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
     },
     'workflowRun': {
-      'databaseId': 9278726611,
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536443476,
+      'name': 'wait-success',
+      'status': 'IN_PROGRESS',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+      'conclusion': null,
+    },
+    'checkSuite': {
+      'status': 'IN_PROGRESS',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 6,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXZVU=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536455821,
+            'name': 'slowstarter-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536456021,
+            'name': 'slowstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+            'conclusion': 'SUCCESS',
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536443631,
+      'name': 'quickstarter-success',
+      'status': 'COMPLETED',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+      'conclusion': 'SUCCESS',
+    },
+    'checkSuite': {
+      'status': 'IN_PROGRESS',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 6,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXZVU=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536455821,
+            'name': 'slowstarter-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536456021,
+            'name': 'slowstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+            'conclusion': 'SUCCESS',
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536443811,
+      'name': 'wait-fail',
+      'status': 'COMPLETED',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+      'conclusion': 'FAILURE',
+    },
+    'checkSuite': {
+      'status': 'IN_PROGRESS',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 6,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXZVU=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536455821,
+            'name': 'slowstarter-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536456021,
+            'name': 'slowstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+            'conclusion': 'SUCCESS',
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536455821,
+      'name': 'slowstarter-fail',
+      'status': 'COMPLETED',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+      'conclusion': 'FAILURE',
+    },
+    'checkSuite': {
+      'status': 'IN_PROGRESS',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 6,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXZVU=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536455821,
+            'name': 'slowstarter-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536456021,
+            'name': 'slowstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+            'conclusion': 'SUCCESS',
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536456021,
+      'name': 'slowstarter-success',
+      'status': 'COMPLETED',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+      'conclusion': 'SUCCESS',
+    },
+    'checkSuite': {
+      'status': 'IN_PROGRESS',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 6,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXZVU=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536455821,
+            'name': 'slowstarter-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536456021,
+            'name': 'slowstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+            'conclusion': 'SUCCESS',
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
       'event': 'pull_request',
       'workflow': {
         'name': 'GH-820 - Margin for wait-list',

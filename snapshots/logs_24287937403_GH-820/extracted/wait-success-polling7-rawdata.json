@@ -1,0 +1,2141 @@
+{
+  "label": "rawdata",
+  "checks": [
+    {
+      "checkRun": {
+        "databaseId": 25536410411,
+        "name": "gitleaks",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068413/job/25536410411",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068413,
+          "event": "push",
+          "workflow": {
+            "name": "💧",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/gitleaks.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 1,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWsys="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536410411,
+              "name": "gitleaks",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068413/job/25536410411",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "💧",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/gitleaks.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068413,
+        "event": "push",
+        "workflow": {
+          "name": "💧",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/gitleaks.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536411112,
+        "name": "build",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068677/job/25536411112",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068677,
+          "event": "pull_request",
+          "workflow": {
+            "name": "TypeScript",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/ci.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 3,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWukc="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411112,
+              "name": "build",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068677/job/25536411112",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536411611,
+              "name": "test",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068677/job/25536411611",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412231,
+              "name": "typecheck",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068677/job/25536412231",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "TypeScript",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/ci.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068677,
+        "event": "pull_request",
+        "workflow": {
+          "name": "TypeScript",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/ci.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536411611,
+        "name": "test",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068677/job/25536411611",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068677,
+          "event": "pull_request",
+          "workflow": {
+            "name": "TypeScript",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/ci.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 3,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWukc="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411112,
+              "name": "build",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068677/job/25536411112",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536411611,
+              "name": "test",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068677/job/25536411611",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412231,
+              "name": "typecheck",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068677/job/25536412231",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "TypeScript",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/ci.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068677,
+        "event": "pull_request",
+        "workflow": {
+          "name": "TypeScript",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/ci.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536412231,
+        "name": "typecheck",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068677/job/25536412231",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068677,
+          "event": "pull_request",
+          "workflow": {
+            "name": "TypeScript",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/ci.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 3,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWukc="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411112,
+              "name": "build",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068677/job/25536411112",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536411611,
+              "name": "test",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068677/job/25536411611",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412231,
+              "name": "typecheck",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068677/job/25536412231",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "TypeScript",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/ci.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068677,
+        "event": "pull_request",
+        "workflow": {
+          "name": "TypeScript",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/ci.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536410993,
+        "name": "typos",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536410993",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068676,
+          "event": "pull_request",
+          "workflow": {
+            "name": "👕",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/lint.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 4,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWvC0="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536410993,
+              "name": "typos",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536410993",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536411606,
+              "name": "dprint",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536411606",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412217,
+              "name": "deno_lint",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536412217",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412717,
+              "name": "yamlfmt",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536412717",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "👕",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/lint.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068676,
+        "event": "pull_request",
+        "workflow": {
+          "name": "👕",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/lint.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536411606,
+        "name": "dprint",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536411606",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068676,
+          "event": "pull_request",
+          "workflow": {
+            "name": "👕",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/lint.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 4,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWvC0="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536410993,
+              "name": "typos",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536410993",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536411606,
+              "name": "dprint",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536411606",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412217,
+              "name": "deno_lint",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536412217",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412717,
+              "name": "yamlfmt",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536412717",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "👕",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/lint.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068676,
+        "event": "pull_request",
+        "workflow": {
+          "name": "👕",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/lint.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536412217,
+        "name": "deno_lint",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536412217",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068676,
+          "event": "pull_request",
+          "workflow": {
+            "name": "👕",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/lint.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 4,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWvC0="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536410993,
+              "name": "typos",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536410993",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536411606,
+              "name": "dprint",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536411606",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412217,
+              "name": "deno_lint",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536412217",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412717,
+              "name": "yamlfmt",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536412717",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "👕",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/lint.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068676,
+        "event": "pull_request",
+        "workflow": {
+          "name": "👕",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/lint.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536412717,
+        "name": "yamlfmt",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536412717",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068676,
+          "event": "pull_request",
+          "workflow": {
+            "name": "👕",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/lint.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 4,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWvC0="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536410993,
+              "name": "typos",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536410993",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536411606,
+              "name": "dprint",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536411606",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412217,
+              "name": "deno_lint",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536412217",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412717,
+              "name": "yamlfmt",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068676/job/25536412717",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "👕",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/lint.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068676,
+        "event": "pull_request",
+        "workflow": {
+          "name": "👕",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/lint.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536411289,
+        "name": "gitleaks",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068678/job/25536411289",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068678,
+          "event": "pull_request",
+          "workflow": {
+            "name": "💧",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/gitleaks.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 1,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWtpk="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411289,
+              "name": "gitleaks",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068678/job/25536411289",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "💧",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/gitleaks.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068678,
+        "event": "pull_request",
+        "workflow": {
+          "name": "💧",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/gitleaks.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536443331,
+        "name": "intermediate",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "IN_PROGRESS",
+        "conclusion": null,
+        "workflowRun": {
+          "databaseId": 9281068681,
+          "event": "pull_request",
+          "workflow": {
+            "name": "GH-820 - Margin for wait-list",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 6,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIXZVU="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536443331,
+              "name": "intermediate",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536443476,
+              "name": "wait-success",
+              "status": "IN_PROGRESS",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476",
+              "conclusion": null
+            },
+            {
+              "databaseId": 25536443631,
+              "name": "quickstarter-success",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536443811,
+              "name": "wait-fail",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811",
+              "conclusion": "FAILURE"
+            },
+            {
+              "databaseId": 25536455821,
+              "name": "slowstarter-fail",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821",
+              "conclusion": "FAILURE"
+            },
+            {
+              "databaseId": 25536456021,
+              "name": "slowstarter-success",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "GH-820 - Margin for wait-list",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068681,
+        "event": "pull_request",
+        "workflow": {
+          "name": "GH-820 - Margin for wait-list",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536443476,
+        "name": "wait-success",
+        "status": "IN_PROGRESS",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476",
+        "conclusion": null
+      },
+      "checkSuite": {
+        "status": "IN_PROGRESS",
+        "conclusion": null,
+        "workflowRun": {
+          "databaseId": 9281068681,
+          "event": "pull_request",
+          "workflow": {
+            "name": "GH-820 - Margin for wait-list",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 6,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIXZVU="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536443331,
+              "name": "intermediate",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536443476,
+              "name": "wait-success",
+              "status": "IN_PROGRESS",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476",
+              "conclusion": null
+            },
+            {
+              "databaseId": 25536443631,
+              "name": "quickstarter-success",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536443811,
+              "name": "wait-fail",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811",
+              "conclusion": "FAILURE"
+            },
+            {
+              "databaseId": 25536455821,
+              "name": "slowstarter-fail",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821",
+              "conclusion": "FAILURE"
+            },
+            {
+              "databaseId": 25536456021,
+              "name": "slowstarter-success",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "GH-820 - Margin for wait-list",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068681,
+        "event": "pull_request",
+        "workflow": {
+          "name": "GH-820 - Margin for wait-list",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536443631,
+        "name": "quickstarter-success",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "IN_PROGRESS",
+        "conclusion": null,
+        "workflowRun": {
+          "databaseId": 9281068681,
+          "event": "pull_request",
+          "workflow": {
+            "name": "GH-820 - Margin for wait-list",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 6,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIXZVU="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536443331,
+              "name": "intermediate",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536443476,
+              "name": "wait-success",
+              "status": "IN_PROGRESS",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476",
+              "conclusion": null
+            },
+            {
+              "databaseId": 25536443631,
+              "name": "quickstarter-success",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536443811,
+              "name": "wait-fail",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811",
+              "conclusion": "FAILURE"
+            },
+            {
+              "databaseId": 25536455821,
+              "name": "slowstarter-fail",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821",
+              "conclusion": "FAILURE"
+            },
+            {
+              "databaseId": 25536456021,
+              "name": "slowstarter-success",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "GH-820 - Margin for wait-list",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068681,
+        "event": "pull_request",
+        "workflow": {
+          "name": "GH-820 - Margin for wait-list",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536443811,
+        "name": "wait-fail",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811",
+        "conclusion": "FAILURE"
+      },
+      "checkSuite": {
+        "status": "IN_PROGRESS",
+        "conclusion": null,
+        "workflowRun": {
+          "databaseId": 9281068681,
+          "event": "pull_request",
+          "workflow": {
+            "name": "GH-820 - Margin for wait-list",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 6,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIXZVU="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536443331,
+              "name": "intermediate",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536443476,
+              "name": "wait-success",
+              "status": "IN_PROGRESS",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476",
+              "conclusion": null
+            },
+            {
+              "databaseId": 25536443631,
+              "name": "quickstarter-success",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536443811,
+              "name": "wait-fail",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811",
+              "conclusion": "FAILURE"
+            },
+            {
+              "databaseId": 25536455821,
+              "name": "slowstarter-fail",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821",
+              "conclusion": "FAILURE"
+            },
+            {
+              "databaseId": 25536456021,
+              "name": "slowstarter-success",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "GH-820 - Margin for wait-list",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068681,
+        "event": "pull_request",
+        "workflow": {
+          "name": "GH-820 - Margin for wait-list",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536455821,
+        "name": "slowstarter-fail",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821",
+        "conclusion": "FAILURE"
+      },
+      "checkSuite": {
+        "status": "IN_PROGRESS",
+        "conclusion": null,
+        "workflowRun": {
+          "databaseId": 9281068681,
+          "event": "pull_request",
+          "workflow": {
+            "name": "GH-820 - Margin for wait-list",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 6,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIXZVU="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536443331,
+              "name": "intermediate",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536443476,
+              "name": "wait-success",
+              "status": "IN_PROGRESS",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476",
+              "conclusion": null
+            },
+            {
+              "databaseId": 25536443631,
+              "name": "quickstarter-success",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536443811,
+              "name": "wait-fail",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811",
+              "conclusion": "FAILURE"
+            },
+            {
+              "databaseId": 25536455821,
+              "name": "slowstarter-fail",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821",
+              "conclusion": "FAILURE"
+            },
+            {
+              "databaseId": 25536456021,
+              "name": "slowstarter-success",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "GH-820 - Margin for wait-list",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068681,
+        "event": "pull_request",
+        "workflow": {
+          "name": "GH-820 - Margin for wait-list",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536456021,
+        "name": "slowstarter-success",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "IN_PROGRESS",
+        "conclusion": null,
+        "workflowRun": {
+          "databaseId": 9281068681,
+          "event": "pull_request",
+          "workflow": {
+            "name": "GH-820 - Margin for wait-list",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 6,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIXZVU="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536443331,
+              "name": "intermediate",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536443476,
+              "name": "wait-success",
+              "status": "IN_PROGRESS",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476",
+              "conclusion": null
+            },
+            {
+              "databaseId": 25536443631,
+              "name": "quickstarter-success",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536443811,
+              "name": "wait-fail",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811",
+              "conclusion": "FAILURE"
+            },
+            {
+              "databaseId": 25536455821,
+              "name": "slowstarter-fail",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821",
+              "conclusion": "FAILURE"
+            },
+            {
+              "databaseId": 25536456021,
+              "name": "slowstarter-success",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "GH-820 - Margin for wait-list",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068681,
+        "event": "pull_request",
+        "workflow": {
+          "name": "GH-820 - Margin for wait-list",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-820-margin.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536411589,
+        "name": "judge-dependabot",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536411589",
+        "conclusion": "SKIPPED"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "workflowRun": {
+          "databaseId": 9281068680,
+          "event": "pull_request",
+          "workflow": {
+            "name": "🤖👌🤖",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/merge-bot-pr.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 4,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWvco="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411589,
+              "name": "judge-dependabot",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536411589",
+              "conclusion": "SKIPPED"
+            },
+            {
+              "databaseId": 25536412202,
+              "name": "renovate",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536412202",
+              "conclusion": "SKIPPED"
+            },
+            {
+              "databaseId": 25536412708,
+              "name": "selfup-runner",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536412708",
+              "conclusion": "SKIPPED"
+            },
+            {
+              "databaseId": 25536413130,
+              "name": "dependabot",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536413130",
+              "conclusion": "SKIPPED"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "🤖👌🤖",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/merge-bot-pr.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068680,
+        "event": "pull_request",
+        "workflow": {
+          "name": "🤖👌🤖",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/merge-bot-pr.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536412202,
+        "name": "renovate",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536412202",
+        "conclusion": "SKIPPED"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "workflowRun": {
+          "databaseId": 9281068680,
+          "event": "pull_request",
+          "workflow": {
+            "name": "🤖👌🤖",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/merge-bot-pr.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 4,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWvco="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411589,
+              "name": "judge-dependabot",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536411589",
+              "conclusion": "SKIPPED"
+            },
+            {
+              "databaseId": 25536412202,
+              "name": "renovate",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536412202",
+              "conclusion": "SKIPPED"
+            },
+            {
+              "databaseId": 25536412708,
+              "name": "selfup-runner",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536412708",
+              "conclusion": "SKIPPED"
+            },
+            {
+              "databaseId": 25536413130,
+              "name": "dependabot",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536413130",
+              "conclusion": "SKIPPED"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "🤖👌🤖",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/merge-bot-pr.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068680,
+        "event": "pull_request",
+        "workflow": {
+          "name": "🤖👌🤖",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/merge-bot-pr.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536412708,
+        "name": "selfup-runner",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536412708",
+        "conclusion": "SKIPPED"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "workflowRun": {
+          "databaseId": 9281068680,
+          "event": "pull_request",
+          "workflow": {
+            "name": "🤖👌🤖",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/merge-bot-pr.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 4,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWvco="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411589,
+              "name": "judge-dependabot",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536411589",
+              "conclusion": "SKIPPED"
+            },
+            {
+              "databaseId": 25536412202,
+              "name": "renovate",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536412202",
+              "conclusion": "SKIPPED"
+            },
+            {
+              "databaseId": 25536412708,
+              "name": "selfup-runner",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536412708",
+              "conclusion": "SKIPPED"
+            },
+            {
+              "databaseId": 25536413130,
+              "name": "dependabot",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536413130",
+              "conclusion": "SKIPPED"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "🤖👌🤖",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/merge-bot-pr.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068680,
+        "event": "pull_request",
+        "workflow": {
+          "name": "🤖👌🤖",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/merge-bot-pr.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536413130,
+        "name": "dependabot",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536413130",
+        "conclusion": "SKIPPED"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "workflowRun": {
+          "databaseId": 9281068680,
+          "event": "pull_request",
+          "workflow": {
+            "name": "🤖👌🤖",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/merge-bot-pr.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 4,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWvco="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411589,
+              "name": "judge-dependabot",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536411589",
+              "conclusion": "SKIPPED"
+            },
+            {
+              "databaseId": 25536412202,
+              "name": "renovate",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536412202",
+              "conclusion": "SKIPPED"
+            },
+            {
+              "databaseId": 25536412708,
+              "name": "selfup-runner",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536412708",
+              "conclusion": "SKIPPED"
+            },
+            {
+              "databaseId": 25536413130,
+              "name": "dependabot",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068680/job/25536413130",
+              "conclusion": "SKIPPED"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "🤖👌🤖",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/merge-bot-pr.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068680,
+        "event": "pull_request",
+        "workflow": {
+          "name": "🤖👌🤖",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/merge-bot-pr.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536411287,
+        "name": "echo",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068684/job/25536411287",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068684,
+          "event": "pull_request",
+          "workflow": {
+            "name": "GH-771 - Targets",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-771-targets.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 1,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWtpc="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411287,
+              "name": "echo",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068684/job/25536411287",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "GH-771 - Targets",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-771-targets.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068684,
+        "event": "pull_request",
+        "workflow": {
+          "name": "GH-771 - Targets",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-771-targets.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536411604,
+        "name": "wait",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068685/job/25536411604",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068685,
+          "event": "pull_request",
+          "workflow": {
+            "name": "GH-771 - Wait",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-771-wait.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 1,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWt9Q="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411604,
+              "name": "wait",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068685/job/25536411604",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "GH-771 - Wait",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-771-wait.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068685,
+        "event": "pull_request",
+        "workflow": {
+          "name": "GH-771 - Wait",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/GH-771-wait.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536411790,
+        "name": "default_logic",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536411790",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068686,
+          "event": "pull_request",
+          "workflow": {
+            "name": "Itself",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 7,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWwTE="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411790,
+              "name": "default_logic",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536411790",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412208,
+              "name": "equal_intervals",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412208",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412716,
+              "name": "exponential_backoff_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412716",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413112,
+              "name": "skip-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413112",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413531,
+              "name": "validation_example_basic_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413531",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413792,
+              "name": "validation_example_combination_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413792",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536414001,
+              "name": "wait-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536414001",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "Itself",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068686,
+        "event": "pull_request",
+        "workflow": {
+          "name": "Itself",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536412208,
+        "name": "equal_intervals",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412208",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068686,
+          "event": "pull_request",
+          "workflow": {
+            "name": "Itself",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 7,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWwTE="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411790,
+              "name": "default_logic",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536411790",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412208,
+              "name": "equal_intervals",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412208",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412716,
+              "name": "exponential_backoff_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412716",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413112,
+              "name": "skip-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413112",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413531,
+              "name": "validation_example_basic_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413531",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413792,
+              "name": "validation_example_combination_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413792",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536414001,
+              "name": "wait-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536414001",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "Itself",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068686,
+        "event": "pull_request",
+        "workflow": {
+          "name": "Itself",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536412716,
+        "name": "exponential_backoff_allow_failure",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412716",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068686,
+          "event": "pull_request",
+          "workflow": {
+            "name": "Itself",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 7,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWwTE="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411790,
+              "name": "default_logic",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536411790",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412208,
+              "name": "equal_intervals",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412208",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412716,
+              "name": "exponential_backoff_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412716",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413112,
+              "name": "skip-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413112",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413531,
+              "name": "validation_example_basic_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413531",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413792,
+              "name": "validation_example_combination_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413792",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536414001,
+              "name": "wait-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536414001",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "Itself",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068686,
+        "event": "pull_request",
+        "workflow": {
+          "name": "Itself",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536413112,
+        "name": "skip-list",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413112",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068686,
+          "event": "pull_request",
+          "workflow": {
+            "name": "Itself",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 7,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWwTE="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411790,
+              "name": "default_logic",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536411790",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412208,
+              "name": "equal_intervals",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412208",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412716,
+              "name": "exponential_backoff_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412716",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413112,
+              "name": "skip-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413112",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413531,
+              "name": "validation_example_basic_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413531",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413792,
+              "name": "validation_example_combination_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413792",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536414001,
+              "name": "wait-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536414001",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "Itself",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068686,
+        "event": "pull_request",
+        "workflow": {
+          "name": "Itself",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536413531,
+        "name": "validation_example_basic_errors_allow_failure",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413531",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068686,
+          "event": "pull_request",
+          "workflow": {
+            "name": "Itself",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 7,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWwTE="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411790,
+              "name": "default_logic",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536411790",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412208,
+              "name": "equal_intervals",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412208",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412716,
+              "name": "exponential_backoff_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412716",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413112,
+              "name": "skip-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413112",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413531,
+              "name": "validation_example_basic_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413531",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413792,
+              "name": "validation_example_combination_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413792",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536414001,
+              "name": "wait-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536414001",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "Itself",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068686,
+        "event": "pull_request",
+        "workflow": {
+          "name": "Itself",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536413792,
+        "name": "validation_example_combination_errors_allow_failure",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413792",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068686,
+          "event": "pull_request",
+          "workflow": {
+            "name": "Itself",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 7,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWwTE="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411790,
+              "name": "default_logic",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536411790",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412208,
+              "name": "equal_intervals",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412208",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412716,
+              "name": "exponential_backoff_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412716",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413112,
+              "name": "skip-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413112",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413531,
+              "name": "validation_example_basic_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413531",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413792,
+              "name": "validation_example_combination_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413792",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536414001,
+              "name": "wait-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536414001",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "Itself",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068686,
+        "event": "pull_request",
+        "workflow": {
+          "name": "Itself",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536414001,
+        "name": "wait-list",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536414001",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068686,
+          "event": "pull_request",
+          "workflow": {
+            "name": "Itself",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 7,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWwTE="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411790,
+              "name": "default_logic",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536411790",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412208,
+              "name": "equal_intervals",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412208",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536412716,
+              "name": "exponential_backoff_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536412716",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413112,
+              "name": "skip-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413112",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413531,
+              "name": "validation_example_basic_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413531",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536413792,
+              "name": "validation_example_combination_errors_allow_failure",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536413792",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "databaseId": 25536414001,
+              "name": "wait-list",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068686/job/25536414001",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "Itself",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068686,
+        "event": "pull_request",
+        "workflow": {
+          "name": "Itself",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/itself.yml"
+        }
+      }
+    },
+    {
+      "checkRun": {
+        "databaseId": 25536411358,
+        "name": "dependency-review",
+        "status": "COMPLETED",
+        "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068690/job/25536411358",
+        "conclusion": "SUCCESS"
+      },
+      "checkSuite": {
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "workflowRun": {
+          "databaseId": 9281068690,
+          "event": "pull_request",
+          "workflow": {
+            "name": "💂➕",
+            "resourcePath": "/kachick/wait-other-jobs/actions/workflows/dependency-review.yml"
+          }
+        },
+        "checkRuns": {
+          "totalCount": 1,
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHPAAAABfIWtt4="
+          },
+          "nodes": [
+            {
+              "databaseId": 25536411358,
+              "name": "dependency-review",
+              "status": "COMPLETED",
+              "detailsUrl": "https://github.com/kachick/wait-other-jobs/actions/runs/9281068690/job/25536411358",
+              "conclusion": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "workflow": {
+        "name": "💂➕",
+        "resourcePath": "/kachick/wait-other-jobs/actions/workflows/dependency-review.yml"
+      },
+      "workflowRun": {
+        "databaseId": 9281068690,
+        "event": "pull_request",
+        "workflow": {
+          "name": "💂➕",
+          "resourcePath": "/kachick/wait-other-jobs/actions/workflows/dependency-review.yml"
+        }
+      }
+    }
+  ],
+  "elapsedMsec": 33880.05268900003
+}

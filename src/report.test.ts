@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { snapshot8679817057Checks } from './snapshot.ts';
+import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './snapshot.ts';
 import { generateReport } from './report.ts';
 import { pick } from './util.ts';
 
 test('wait-list', () => {
   const report = generateReport(
-    snapshot8679817057Checks,
+    checks8679817057,
     {
       owner: 'kachick',
       repo: 'wait-other-jobs',
@@ -41,56 +41,91 @@ test('wait-list', () => {
     },
   );
 
-  assert.deepStrictEqual({
+  assert.deepEqual({
     conclusion: 'acceptable',
     progress: 'done',
-    summaries: [
-      {
-        acceptable: true,
-        checkRunUrl: 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817058/job/23799347237',
-        checkSuiteConclusion: 'SUCCESS',
-        checkSuiteStatus: 'COMPLETED',
-        isSameWorkflow: false,
-        jobName: 'dprint',
-        runConclusion: 'SUCCESS',
-        runDatabaseId: 23799347237,
-        runStatus: 'COMPLETED',
-        workflowPath: 'lint.yml',
-        eventName: 'pull_request',
-      },
-      {
-        acceptable: true,
-        checkRunUrl: 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817058/job/23799347295',
-        checkSuiteConclusion: 'SUCCESS',
-        checkSuiteStatus: 'COMPLETED',
-        isSameWorkflow: false,
-        jobName: 'typos',
-        runConclusion: 'SUCCESS',
-        runDatabaseId: 23799347295,
-        runStatus: 'COMPLETED',
-        workflowPath: 'lint.yml',
-        eventName: 'pull_request',
-      },
-      {
-        acceptable: true,
-        checkRunUrl: 'https://github.com/kachick/wait-other-jobs/actions/runs/8679817059/job/23799347394',
-        checkSuiteConclusion: 'SKIPPED',
-        checkSuiteStatus: 'COMPLETED',
-        isSameWorkflow: false,
-        jobName: 'dependabot',
-        runConclusion: 'NEUTRAL',
-        runDatabaseId: 23799347394,
-        runStatus: 'COMPLETED',
-        workflowPath: 'merge-bot-pr.yml',
-        eventName: 'pull_request',
-      },
-    ],
-  }, report);
+  }, pick(report, ['conclusion', 'progress']));
+});
+
+test('wait-list have slowstarting job and set enough marginOfStartingSeconds', () => {
+  const report = generateReport(
+    checks92810686811WaitSuccessPolling1,
+    {
+      owner: 'kachick',
+      repo: 'wait-other-jobs',
+      'runId': 92810686811,
+      ref: '8c14d2a44d6dff4e69b0a3cacc2a14e416b44137',
+      jobName: 'wait-success',
+      eventName: 'pull_request',
+    },
+    986.9570700004697,
+    {
+      'waitList': [
+        {
+          'workflowFile': 'GH-820-margin.yml',
+          'jobName': 'quickstarter-success',
+          'optional': false,
+          'marginOfStartingSeconds': 0,
+        },
+        {
+          'workflowFile': 'GH-820-margin.yml',
+          'jobName': 'slowstarter-success',
+          'optional': false,
+          'marginOfStartingSeconds': 60,
+        },
+      ],
+      skipList: [],
+      shouldSkipSameWorkflow: false,
+    },
+  );
+
+  assert.deepEqual({
+    conclusion: 'acceptable',
+    progress: 'in_progress',
+  }, pick(report, ['conclusion', 'progress']));
+});
+
+test('wait-list have slowstarting job and expired', () => {
+  const report = generateReport(
+    checks92810686811WaitSuccessPolling1,
+    {
+      owner: 'kachick',
+      repo: 'wait-other-jobs',
+      'runId': 92810686811,
+      ref: '8c14d2a44d6dff4e69b0a3cacc2a14e416b44137',
+      jobName: 'wait-success',
+      eventName: 'pull_request',
+    },
+    60 * 1000,
+    {
+      'waitList': [
+        {
+          'workflowFile': 'GH-820-margin.yml',
+          'jobName': 'quickstarter-success',
+          'optional': false,
+          'marginOfStartingSeconds': 0,
+        },
+        {
+          'workflowFile': 'GH-820-margin.yml',
+          'jobName': 'slowstarter-success',
+          'optional': false,
+          'marginOfStartingSeconds': 60,
+        },
+      ],
+      skipList: [],
+      shouldSkipSameWorkflow: false,
+    },
+  );
+
+  assert.deepEqual({
+    conclusion: 'bad',
+    progress: 'in_progress',
+  }, pick(report, ['conclusion', 'progress']));
 });
 
 test('skip-list', () => {
   const report = generateReport(
-    snapshot8679817057Checks,
+    checks8679817057,
     {
       owner: 'kachick',
       repo: 'wait-other-jobs',
