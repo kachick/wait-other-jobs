@@ -21,7 +21,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     } else {
       if (isDebug()) {
         // Do not print secret even for debug code
-        debug(JSON.stringify(pr, null, 2));
+        debug(JSON.stringify({ label: 'PullRequestContext', pr }, null, 2));
       }
       error('github context has unexpected format: missing context.payload.pull_request.head.sha');
     }

@@ -52,7 +52,7 @@ async function run(): Promise<void> {
     const checks = await fetchChecks(githubToken, trigger);
     const elapsedMsec = performance.now() - startedAt;
     if (isDebug()) {
-      debug(JSON.stringify(checks, null, 2));
+      debug(JSON.stringify({ label: 'rawdata', checks, elapsedMsec }, null, 2));
     }
     const report = generateReport(
       checks,
@@ -85,7 +85,7 @@ async function run(): Promise<void> {
     }
 
     if (isDebug()) {
-      debug(JSON.stringify(report, null, 2));
+      debug(JSON.stringify({ label: 'filtered', report }, null, 2));
     }
 
     const { progress, conclusion } = report;

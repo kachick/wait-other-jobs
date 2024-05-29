@@ -27198,7 +27198,7 @@ function parseInput() {
       commitSha = prSha;
     } else {
       if ((0, import_core.isDebug)()) {
-        (0, import_core.debug)(JSON.stringify(pr, null, 2));
+        (0, import_core.debug)(JSON.stringify({ label: "PullRequestContext", pr }, null, 2));
       }
       (0, import_core.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
     }
@@ -28561,7 +28561,7 @@ async function run() {
     const checks = await fetchChecks(githubToken, trigger);
     const elapsedMsec = performance.now() - startedAt;
     if ((0, import_core3.isDebug)()) {
-      (0, import_core3.debug)(JSON.stringify(checks, null, 2));
+      (0, import_core3.debug)(JSON.stringify({ label: "rawdata", checks, elapsedMsec }, null, 2));
     }
     const report = generateReport(
       checks,
@@ -28587,7 +28587,7 @@ async function run() {
       );
     }
     if ((0, import_core3.isDebug)()) {
-      (0, import_core3.debug)(JSON.stringify(report, null, 2));
+      (0, import_core3.debug)(JSON.stringify({ label: "filtered", report }, null, 2));
     }
     const { progress, conclusion } = report;
     switch (progress) {

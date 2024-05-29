@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { snapshotChecks } from './snapshot.ts';
+import { snapshot8679817057Checks } from './snapshot.ts';
 import { generateReport } from './report.ts';
 import { pick } from './util.ts';
 
 test('wait-list', () => {
   const report = generateReport(
-    snapshotChecks,
+    snapshot8679817057Checks,
     {
       owner: 'kachick',
       repo: 'wait-other-jobs',
@@ -90,7 +90,7 @@ test('wait-list', () => {
 
 test('skip-list', () => {
   const report = generateReport(
-    snapshotChecks,
+    snapshot8679817057Checks,
     {
       owner: 'kachick',
       repo: 'wait-other-jobs',
