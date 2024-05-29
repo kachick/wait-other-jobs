@@ -31033,6 +31033,33 @@ var z2 = /* @__PURE__ */ Object.freeze({
 });
 
 // src/schema.ts
+var MyDurationLike = z2.object({
+  years: z2.number().optional(),
+  months: z2.number().optional(),
+  weeks: z2.number().optional(),
+  days: z2.number().optional(),
+  hours: z2.number().optional(),
+  minutes: z2.number().optional(),
+  seconds: z2.number().optional(),
+  milliseconds: z2.number().optional(),
+  microseconds: z2.number().optional(),
+  nanoseconds: z2.number().optional()
+}).strict().readonly();
+var Durationable = z2.union([z2.string().duration(), MyDurationLike]);
+function isDurationLike(my) {
+  for (const [_2, value] of Object.entries(my)) {
+    if (value === void 0) {
+      return false;
+    }
+  }
+  return true;
+}
+function getDuration(durationable) {
+  if (typeof durationable === "string" || isDurationLike(durationable)) {
+    return mr.Duration.from(durationable);
+  }
+  throw new Error("unexpected value is specified in durations");
+}
 var FilterCondition = z2.object({
   workflowFile: z2.string().endsWith(".yml"),
   jobName: z2.string().min(1).optional()
@@ -31044,7 +31071,7 @@ var WaitFilterCondition = FilterCondition.extend(
     // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
     // - Intentionally omitted in skip-list, let me know if you have the use-case
     eventName: z2.string().min(1).optional(),
-    startupGracePeriod: z2.instanceof(mr.Duration).optional().default(mr.Duration.from({ seconds: 10 }))
+    startupGracePeriod: Durationable.default({ seconds: 10 })
   }
 ).readonly();
 var retryMethods = z2.enum(["exponential_backoff", "equal_intervals"]);
@@ -32340,7 +32367,9 @@ function generateReport(checks, trigger, elapsed, { waitList, skipList, shouldSk
       })
     );
     const unmatches = seeker.filter((result) => !result.found && !result.optional);
-    const unstarted = unmatches.filter((result) => mr.Duration.compare(elapsed, result.startupGracePeriod));
+    const unstarted = unmatches.filter(
+      (result) => mr.Duration.compare(elapsed, getDuration(result.startupGracePeriod))
+    );
     if (unstarted.length > 0) {
       return {
         conclusion: "acceptable",

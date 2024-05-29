@@ -1,5 +1,5 @@
 import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
-import { Check, Options, Trigger } from './schema.ts';
+import { Check, Options, Trigger, getDuration } from './schema.ts';
 import { join, relative } from 'path';
 import { Temporal } from 'temporal-polyfill';
 
@@ -87,7 +87,9 @@ export function generateReport(
     );
 
     const unmatches = seeker.filter((result) => (!(result.found)) && (!(result.optional)));
-    const unstarted = unmatches.filter((result) => Temporal.Duration.compare(elapsed, result.startupGracePeriod));
+    const unstarted = unmatches.filter((result) =>
+      Temporal.Duration.compare(elapsed, getDuration(result.startupGracePeriod))
+    );
 
     if (unstarted.length > 0) {
       return {

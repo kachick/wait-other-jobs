@@ -65,7 +65,7 @@ jobs:
                 "workflowFile": "GH-820-graceperiod.yml",
                 "optional": false,
                 "jobName": "slowstarter-success",
-                "startupGracePeriod": 60
+                "startupGracePeriod": { "seconds": 60 }
               }
             ]
   wait-fail:
@@ -91,7 +91,7 @@ jobs:
                 "workflowFile": "GH-820-graceperiod.yml",
                 "optional": false,
                 "jobName": "slowstarter-fail",
-                "startupGracePeriod": 60
+                "startupGracePeriod": { "seconds": 60 }
               }
             ]
 

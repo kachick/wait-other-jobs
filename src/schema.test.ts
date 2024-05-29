@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { Options } from './schema.ts';
-import { Temporal } from 'temporal-polyfill';
 
 const defaultOptions = Object.freeze({
   isEarlyExit: true,
@@ -35,7 +34,7 @@ test('Options set some default values it cannot be defined in action.yml', () =>
     waitList: [{
       workflowFile: 'ci.yml',
       optional: false,
-      startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+      startupGracePeriod: { seconds: 10 },
     }],
   }, Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }));
 });
@@ -87,12 +86,39 @@ test('startupGracePeriod can be used as Temporal.Duration', () => {
       waitList: [{
         workflowFile: 'ci.yml',
         optional: false,
-        startupGracePeriod: Temporal.Duration.from({ seconds: 60 }),
+        startupGracePeriod: { minutes: 5 },
       }],
     },
     Options.parse({
       ...defaultOptions,
-      waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: Temporal.Duration.from({ seconds: 60 }) }],
+      waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { minutes: 5 } }],
     }),
+  );
+
+  assert.deepStrictEqual(
+    {
+      ...defaultOptions,
+      waitList: [{
+        workflowFile: 'ci.yml',
+        optional: false,
+        startupGracePeriod: 'PT1M42S',
+      }],
+    },
+    Options.parse({
+      ...defaultOptions,
+      waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: 'PT1M42S' }],
+    }),
+  );
+
+  assert.throws(
+    () =>
+      Options.parse({
+        ...defaultOptions,
+        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { min: 5 } }],
+      }),
+    {
+      name: 'ZodError',
+      message: /unrecognized_key/,
+    },
   );
 });

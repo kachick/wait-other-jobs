@@ -132,16 +132,20 @@ with:
       {
         "workflowFile": "might_be_triggered_after_0-4_minutes.yml",
         "optional": false,
-        "startupGracePeriod": { minutes: 5 }
+        "startupGracePeriod": { "minutes": 5 }
       }
     ]
 ```
 
+This action starts immediately but ignores the job missing in the first 5 minutes.
+
 - No need to extend `wait-seconds-before-first-polling`
 - Disable `optional`, because it is needed to check
-- Set enough value for `startupGracePeriod` for this purpose. It will be parsed by [Temporal.Duration.from()](https://github.com/tc39/proposal-temporal)
-
-This action starts immediately but ignores the job missing in the first 5 minutes.
+- Set enough value for `startupGracePeriod` for this purpose.\
+  It should be parsible with [Temporal.Duration.from()](https://github.com/tc39/proposal-temporal)\
+  e.g
+  - `"PT1M"` # ISO8601 duration format
+  - `{ "seconds": 300 }`
 
 ## Limitations
 

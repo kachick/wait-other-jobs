@@ -257,7 +257,7 @@
     "workflowFile": "GH-820-graceperiod.yml",
     "optional": false,
     "jobName": "slowstarter-success",
-    "startupGracePeriod": 60
+    "startupGracePeriod": { "seconds": 60 }
   }
 ]
 
@@ -286,13 +286,13 @@
 2024-05-29T06:06:36.2419267Z         "workflowFile": "GH-820-graceperiod.yml",
 2024-05-29T06:06:36.2420325Z         "jobName": "quickstarter-success",
 2024-05-29T06:06:36.2421253Z         "optional": false,
-2024-05-29T06:06:36.2422017Z         "startupGracePeriod": 0
+2024-05-29T06:06:36.2422017Z         "startupGracePeriod": { "seconds": 0 }
 2024-05-29T06:06:36.2422849Z       },
 2024-05-29T06:06:36.2423324Z       {
 2024-05-29T06:06:36.2423984Z         "workflowFile": "GH-820-graceperiod.yml",
 2024-05-29T06:06:36.2424758Z         "jobName": "slowstarter-success",
 2024-05-29T06:06:36.2425265Z         "optional": false,
-2024-05-29T06:06:36.2425704Z         "startupGracePeriod": 60
+2024-05-29T06:06:36.2425704Z         "startupGracePeriod": { "seconds": 60 }
 2024-05-29T06:06:36.2426154Z       }
 2024-05-29T06:06:36.2426407Z     ],
 2024-05-29T06:06:36.2426667Z     "skipList": [],
