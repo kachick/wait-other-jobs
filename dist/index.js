@@ -32401,7 +32401,7 @@ function generateReport(checks, trigger, elapsed, { waitList, skipList, shouldSk
     progress,
     conclusion,
     summaries: filtered,
-    description: conclusion === "bad" ? "some jobs failed" : "all jobs passed"
+    description: conclusion === "bad" ? "some jobs failed" : progress === "in_progress" ? "some jobs still in progress" : "all jobs passed"
   };
 }
 
@@ -32519,10 +32519,11 @@ async function run() {
     const { progress, conclusion, description } = report;
     switch (progress) {
       case "in_progress": {
-        (0, import_core3.info)("some jobs still in progress");
         if (conclusion === "bad" && options.isEarlyExit) {
           shouldStop = true;
           (0, import_core3.setFailed)(errorMessage(description));
+        } else {
+          (0, import_core3.info)(description);
         }
         break;
       }

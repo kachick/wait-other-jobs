@@ -94,11 +94,11 @@ async function run(): Promise<void> {
 
     switch (progress) {
       case 'in_progress': {
-        info('some jobs still in progress');
-
         if (conclusion === 'bad' && options.isEarlyExit) {
           shouldStop = true;
           setFailed(errorMessage(description));
+        } else {
+          info(description);
         }
 
         break;

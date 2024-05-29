@@ -130,6 +130,8 @@ export function generateReport(
     progress,
     conclusion,
     summaries: filtered,
-    description: conclusion === 'bad' ? 'some jobs failed' : 'all jobs passed',
+    description: conclusion === 'bad'
+      ? 'some jobs failed'
+      : (progress === 'in_progress' ? 'some jobs still in progress' : 'all jobs passed'),
   };
 }
