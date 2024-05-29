@@ -79,46 +79,52 @@ test('Options reject invalid values', () => {
   );
 });
 
-test('startupGracePeriod can be used as Temporal.Duration', () => {
-  assert.deepStrictEqual(
-    {
-      ...defaultOptions,
-      waitList: [{
-        workflowFile: 'ci.yml',
-        optional: false,
-        startupGracePeriod: { minutes: 5 },
-      }],
-    },
-    Options.parse({
-      ...defaultOptions,
-      waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { minutes: 5 } }],
-    }),
-  );
-
-  assert.deepStrictEqual(
-    {
-      ...defaultOptions,
-      waitList: [{
-        workflowFile: 'ci.yml',
-        optional: false,
-        startupGracePeriod: 'PT1M42S',
-      }],
-    },
-    Options.parse({
-      ...defaultOptions,
-      waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: 'PT1M42S' }],
-    }),
-  );
-
-  assert.throws(
-    () =>
+test('wait-list have startupGracePeriod', async (t) => {
+  await t.test('it accepts DurationLike objects', (_t) => {
+    assert.deepStrictEqual(
+      {
+        ...defaultOptions,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          optional: false,
+          startupGracePeriod: { minutes: 5 },
+        }],
+      },
       Options.parse({
         ...defaultOptions,
-        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { min: 5 } }],
+        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { minutes: 5 } }],
       }),
-    {
-      name: 'ZodError',
-      message: /unrecognized_key/,
-    },
-  );
+    );
+  });
+
+  await t.test('it raises an error if given an unexpected keys', (_t) => {
+    assert.throws(
+      () =>
+        Options.parse({
+          ...defaultOptions,
+          waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { min: 5 } }],
+        }),
+      {
+        name: 'ZodError',
+        message: /unrecognized_key/,
+      },
+    );
+  });
+
+  await t.test('it parses ISO 8601 duration format', (_t) => {
+    assert.deepStrictEqual(
+      {
+        ...defaultOptions,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          optional: false,
+          startupGracePeriod: 'PT1M42S',
+        }],
+      },
+      Options.parse({
+        ...defaultOptions,
+        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: 'PT1M42S' }],
+      }),
+    );
+  });
 });
