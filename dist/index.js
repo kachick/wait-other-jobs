@@ -28462,7 +28462,12 @@ function generateReport(checks, trigger, elapsedMsec, { waitList, skipList, shou
       return { progress: "in_progress", conclusion: "acceptable", summaries: filtered };
     }
     if (unmatches.length > 0) {
-      throw new Error(`Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`);
+      return {
+        progress: "in_progress",
+        conclusion: "bad",
+        summaries: filtered,
+        description: `Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`
+      };
     }
   }
   if (skipList.length > 0) {
@@ -28475,7 +28480,12 @@ function generateReport(checks, trigger, elapsedMsec, { waitList, skipList, shou
   const completed = filtered.filter((summary) => summary.runStatus === "COMPLETED");
   const progress = completed.length === filtered.length ? "done" : "in_progress";
   const conclusion = completed.every((summary) => summary.acceptable) ? "acceptable" : "bad";
-  return { progress, conclusion, summaries: filtered };
+  return {
+    progress,
+    conclusion,
+    summaries: filtered,
+    description: conclusion === "bad" ? "some jobs failed" : ""
+  };
 }
 
 // src/wait.ts
@@ -28592,11 +28602,11 @@ async function run() {
     const { progress, conclusion } = report;
     switch (progress) {
       case "in_progress": {
+        (0, import_core3.info)("some jobs still in progress");
         if (conclusion === "bad" && options.isEarlyExit) {
           shouldStop = true;
-          (0, import_core3.setFailed)(errorMessage("some jobs failed"));
+          (0, import_core3.setFailed)(errorMessage(report.description));
         }
-        (0, import_core3.info)("some jobs still in progress");
         break;
       }
       case "done": {
@@ -28607,7 +28617,7 @@ async function run() {
             break;
           }
           case "bad": {
-            (0, import_core3.setFailed)(errorMessage("some jobs failed"));
+            (0, import_core3.setFailed)(errorMessage(report.description));
             break;
           }
           default: {
