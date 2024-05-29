@@ -89,7 +89,47 @@ test('wait-list have slowstarting job and set enough startupGracePeriod', () => 
   }, omit<Report, 'summaries'>(report, ['summaries']));
 });
 
-test('wait-list have slowstarting job and expired', () => {
+test('slowstarting job has been expired to the GracePeriod', () => {
+  const report = generateReport(
+    checks92810686811WaitSuccessPolling1,
+    {
+      owner: 'kachick',
+      repo: 'wait-other-jobs',
+      'runId': 92810686811,
+      ref: '8c14d2a44d6dff4e69b0a3cacc2a14e416b44137',
+      jobName: 'wait-success',
+      eventName: 'pull_request',
+    },
+    Temporal.Duration.from({ seconds: 60, milliseconds: 1 }),
+    {
+      'waitList': [
+        {
+          'workflowFile': 'GH-820-graceperiod.yml',
+          'jobName': 'quickstarter-success',
+          'optional': false,
+          'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
+        },
+        {
+          'workflowFile': 'GH-820-graceperiod.yml',
+          'jobName': 'slowstarter-success',
+          'optional': false,
+          'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
+        },
+      ],
+      skipList: [],
+      shouldSkipSameWorkflow: false,
+    },
+  );
+
+  assert.deepEqual({
+    conclusion: 'bad',
+    progress: 'in_progress',
+    description:
+      'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-graceperiod.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":"PT60S","found":false}]',
+  }, omit<Report, 'summaries'>(report, ['summaries']));
+});
+
+test('GracePeriod judges as expired for same durations', () => {
   const report = generateReport(
     checks92810686811WaitSuccessPolling1,
     {

@@ -32368,7 +32368,7 @@ function generateReport(checks, trigger, elapsed, { waitList, skipList, shouldSk
     );
     const unmatches = seeker.filter((result) => !result.found && !result.optional);
     const unstarted = unmatches.filter(
-      (result) => mr.Duration.compare(elapsed, getDuration(result.startupGracePeriod))
+      (result) => mr.Duration.compare(elapsed, getDuration(result.startupGracePeriod)) === -1
     );
     if (unstarted.length > 0) {
       return {
