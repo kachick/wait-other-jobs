@@ -54,7 +54,7 @@ async function run(): Promise<void> {
     const elapsed = Temporal.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
     const checks = await fetchChecks(githubToken, trigger);
     if (isDebug()) {
-      debug(JSON.stringify({ label: 'rawdata', checks, elapsedMsec: elapsed }, null, 2));
+      debug(JSON.stringify({ label: 'rawdata', checks, elapsed }, null, 2));
     }
     const report = generateReport(
       checks,
