@@ -28523,7 +28523,7 @@ var errorMessage = (body) => `${ansi_styles_default.red.open}${body}${ansi_style
 var succeededMessage = (body) => `${ansi_styles_default.green.open}${body}${ansi_styles_default.green.close}`;
 var colorize = (body, ok) => ok ? succeededMessage(body) : errorMessage(body);
 async function run() {
-  const startedAt = Date.now();
+  const startedAt = performance.now();
   (0, import_core3.startGroup)("Parameters");
   const { trigger, options, githubToken } = parseInput();
   (0, import_core3.info)(JSON.stringify(
@@ -28559,7 +28559,7 @@ async function run() {
     }
     (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const checks = await fetchChecks(githubToken, trigger);
-    const elapsedMsec = Date.now() - startedAt;
+    const elapsedMsec = performance.now() - startedAt;
     if ((0, import_core3.isDebug)()) {
       (0, import_core3.debug)(JSON.stringify(checks, null, 2));
     }

@@ -10,7 +10,7 @@ import { generateReport } from './report.ts';
 import { readableDuration, wait, getIdleMilliseconds } from './wait.ts';
 
 async function run(): Promise<void> {
-  const startedAt = Date.now();
+  const startedAt = performance.now();
   startGroup('Parameters');
   const { trigger, options, githubToken } = parseInput();
   info(JSON.stringify(
@@ -50,7 +50,7 @@ async function run(): Promise<void> {
 
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
     const checks = await fetchChecks(githubToken, trigger);
-    const elapsedMsec = Date.now() - startedAt;
+    const elapsedMsec = performance.now() - startedAt;
     if (isDebug()) {
       debug(JSON.stringify(checks, null, 2));
     }
