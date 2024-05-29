@@ -88,7 +88,7 @@ async function run(): Promise<void> {
       debug(JSON.stringify({ label: 'filtered', report }, null, 2));
     }
 
-    const { progress, conclusion } = report;
+    const { progress, conclusion, description } = report;
 
     switch (progress) {
       case 'in_progress': {
@@ -96,7 +96,7 @@ async function run(): Promise<void> {
 
         if (conclusion === 'bad' && options.isEarlyExit) {
           shouldStop = true;
-          setFailed(errorMessage(report.description));
+          setFailed(errorMessage(description));
         }
 
         break;
@@ -106,11 +106,11 @@ async function run(): Promise<void> {
 
         switch (conclusion) {
           case 'acceptable': {
-            info(succeededMessage('all jobs passed'));
+            info(succeededMessage(description));
             break;
           }
           case 'bad': {
-            setFailed(errorMessage(report.description));
+            setFailed(errorMessage(description));
             break;
           }
           default: {

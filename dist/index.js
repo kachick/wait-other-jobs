@@ -28459,12 +28459,17 @@ function generateReport(checks, trigger, elapsedMsec, { waitList, skipList, shou
     const unmatches = seeker.filter((result) => !result.found && !result.optional);
     const unstarted = unmatches.filter((result) => elapsedMsec < result.marginOfStartingSeconds * 1e3);
     if (unstarted.length > 0) {
-      return { progress: "in_progress", conclusion: "acceptable", summaries: filtered };
+      return {
+        conclusion: "acceptable",
+        progress: "in_progress",
+        summaries: filtered,
+        description: `Some expected jobs were not started: ${JSON.stringify(unstarted)}`
+      };
     }
     if (unmatches.length > 0) {
       return {
-        progress: "in_progress",
         conclusion: "bad",
+        progress: "in_progress",
         summaries: filtered,
         description: `Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`
       };
@@ -28484,7 +28489,7 @@ function generateReport(checks, trigger, elapsedMsec, { waitList, skipList, shou
     progress,
     conclusion,
     summaries: filtered,
-    description: conclusion === "bad" ? "some jobs failed" : ""
+    description: conclusion === "bad" ? "some jobs failed" : "all jobs passed"
   };
 }
 
@@ -28599,13 +28604,13 @@ async function run() {
     if ((0, import_core3.isDebug)()) {
       (0, import_core3.debug)(JSON.stringify({ label: "filtered", report }, null, 2));
     }
-    const { progress, conclusion } = report;
+    const { progress, conclusion, description } = report;
     switch (progress) {
       case "in_progress": {
         (0, import_core3.info)("some jobs still in progress");
         if (conclusion === "bad" && options.isEarlyExit) {
           shouldStop = true;
-          (0, import_core3.setFailed)(errorMessage(report.description));
+          (0, import_core3.setFailed)(errorMessage(description));
         }
         break;
       }
@@ -28613,11 +28618,11 @@ async function run() {
         shouldStop = true;
         switch (conclusion) {
           case "acceptable": {
-            (0, import_core3.info)(succeededMessage("all jobs passed"));
+            (0, import_core3.info)(succeededMessage(description));
             break;
           }
           case "bad": {
-            (0, import_core3.setFailed)(errorMessage(report.description));
+            (0, import_core3.setFailed)(errorMessage(description));
             break;
           }
           default: {

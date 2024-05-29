@@ -1,11 +1,21 @@
-// https://stackoverflow.com/a/56162151
 export function pick<T extends object, U extends keyof T>(
-  obj: T,
-  paths: Array<U>,
+  base: Readonly<T>,
+  keys: Readonly<U[]>,
 ): Pick<T, U> {
-  const ret = Object.create({});
-  for (const k of paths) {
-    ret[k] = obj[k];
+  const result = {} as Pick<T, U>;
+  for (const key of keys) {
+    result[key] = base[key];
   }
-  return ret;
+  return result;
+}
+
+export function omit<T extends object, U extends keyof T>(
+  base: Readonly<T>,
+  keys: Readonly<U[]>,
+): Omit<T, U> {
+  const result = { ...base };
+  for (const key of keys) {
+    delete result[key];
+  }
+  return result;
 }

@@ -25,11 +25,11 @@ interface Acceptable {
 
 interface Bad {
   conclusion: 'bad';
-  description: string;
 }
 
-type Report = (Acceptable | Bad) & {
+export type Report = (Acceptable | Bad) & {
   progress: 'in_progress' | 'done';
+  description: string;
   summaries: Summary[];
 };
 
@@ -89,13 +89,18 @@ export function generateReport(
     const unstarted = unmatches.filter((result) => elapsedMsec < result.marginOfStartingSeconds * 1000);
 
     if (unstarted.length > 0) {
-      return { progress: 'in_progress', conclusion: 'acceptable', summaries: filtered };
+      return {
+        conclusion: 'acceptable',
+        progress: 'in_progress',
+        summaries: filtered,
+        description: `Some expected jobs were not started: ${JSON.stringify(unstarted)}`,
+      };
     }
 
     if (unmatches.length > 0) {
       return {
-        progress: 'in_progress',
         conclusion: 'bad',
+        progress: 'in_progress',
         summaries: filtered,
         description: `Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`,
       };
@@ -122,6 +127,6 @@ export function generateReport(
     progress,
     conclusion,
     summaries: filtered,
-    description: conclusion === 'bad' ? 'some jobs failed' : '',
+    description: conclusion === 'bad' ? 'some jobs failed' : 'all jobs passed',
   };
 }

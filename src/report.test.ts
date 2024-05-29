@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './snapshot.ts';
-import { generateReport } from './report.ts';
-import { pick } from './util.ts';
+import { Report, generateReport } from './report.ts';
+import { omit } from './util.ts';
 
 test('wait-list', () => {
   const report = generateReport(
@@ -44,7 +44,8 @@ test('wait-list', () => {
   assert.deepEqual({
     conclusion: 'acceptable',
     progress: 'done',
-  }, pick(report, ['conclusion', 'progress']));
+    description: 'all jobs passed',
+  }, omit<Report, 'summaries'>(report, ['summaries']));
 });
 
 test('wait-list have slowstarting job and set enough marginOfStartingSeconds', () => {
@@ -82,7 +83,9 @@ test('wait-list have slowstarting job and set enough marginOfStartingSeconds', (
   assert.deepEqual({
     conclusion: 'acceptable',
     progress: 'in_progress',
-  }, pick(report, ['conclusion', 'progress']));
+    description:
+      'Some expected jobs were not started: [{"workflowFile":"GH-820-margin.yml","jobName":"slowstarter-success","optional":false,"marginOfStartingSeconds":60,"found":false}]',
+  }, omit<Report, 'summaries'>(report, ['summaries']));
 });
 
 test('wait-list have slowstarting job and expired', () => {
@@ -120,7 +123,9 @@ test('wait-list have slowstarting job and expired', () => {
   assert.deepEqual({
     conclusion: 'bad',
     progress: 'in_progress',
-  }, pick(report, ['conclusion', 'progress']));
+    description:
+      'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-margin.yml","jobName":"slowstarter-success","optional":false,"marginOfStartingSeconds":60,"found":false}]',
+  }, omit<Report, 'summaries'>(report, ['summaries']));
 });
 
 test('skip-list', () => {
@@ -159,36 +164,6 @@ test('skip-list', () => {
   assert.deepEqual({
     conclusion: 'acceptable',
     progress: 'done',
-    summaries: [
-      {
-        acceptable: true,
-        jobName: 'dprint',
-        workflowPath: 'lint.yml',
-      },
-      {
-        acceptable: true,
-        jobName: 'typos',
-        workflowPath: 'lint.yml',
-      },
-      {
-        acceptable: true,
-        jobName: 'judge-dependabot',
-        workflowPath: 'merge-bot-pr.yml',
-      },
-      {
-        acceptable: true,
-        jobName: 'renovate',
-        workflowPath: 'merge-bot-pr.yml',
-      },
-      {
-        acceptable: true,
-        jobName: 'selfup-runner',
-        workflowPath: 'merge-bot-pr.yml',
-      },
-    ],
-  }, {
-    conclusion: 'acceptable',
-    progress: 'done',
-    summaries: report.summaries.map((summary) => pick(summary, ['workflowPath', 'jobName', 'acceptable'])),
-  });
+    description: 'all jobs passed',
+  }, omit<Report, 'summaries'>(report, ['summaries']));
 });
