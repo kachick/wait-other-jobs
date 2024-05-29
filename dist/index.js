@@ -32484,8 +32484,8 @@ async function run() {
       (0, import_core3.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
       await wait(msec);
     }
-    (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}`);
     const elapsed = mr.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
+    (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()} => ${elapsed.toString()}`);
     const checks = await fetchChecks(githubToken, trigger);
     if ((0, import_core3.isDebug)()) {
       (0, import_core3.debug)(JSON.stringify({ label: "rawdata", checks, elapsed }, null, 2));

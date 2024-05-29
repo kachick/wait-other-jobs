@@ -49,9 +49,9 @@ async function run(): Promise<void> {
       await wait(msec);
     }
 
-    startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}`);
     // Put getting elapsed time before of fetchChecks to keep accuracy of the purpose
     const elapsed = Temporal.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
+    startGroup(`Polling ${attempts}: ${(new Date()).toISOString()} => ${elapsed.toString()}`);
     const checks = await fetchChecks(githubToken, trigger);
     if (isDebug()) {
       debug(JSON.stringify({ label: 'rawdata', checks, elapsed }, null, 2));
