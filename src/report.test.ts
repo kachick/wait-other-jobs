@@ -24,18 +24,18 @@ test('wait-list', async (t) => {
             'workflowFile': 'lint.yml',
             'optional': false,
             'eventName': 'pull_request',
-            startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+            startupGracePeriod: { seconds: 10 },
           },
           {
             'workflowFile': 'merge-bot-pr.yml',
             'jobName': 'dependabot',
             'optional': true,
-            startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+            startupGracePeriod: { seconds: 10 },
           },
           {
             'workflowFile': 'THERE_ARE_NO_FILES_AS_THIS.yml',
             'optional': true,
-            startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+            startupGracePeriod: { seconds: 10 },
           },
         ],
         skipList: [],
@@ -68,13 +68,13 @@ test('wait-list', async (t) => {
             'workflowFile': 'GH-820-graceperiod.yml',
             'jobName': 'quickstarter-success',
             'optional': false,
-            'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
+            'startupGracePeriod': { seconds: 10 },
           },
           {
             'workflowFile': 'GH-820-graceperiod.yml',
             'jobName': 'slowstarter-success',
             'optional': false,
-            'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
+            'startupGracePeriod': { seconds: 60 },
           },
         ],
         skipList: [],
@@ -86,7 +86,7 @@ test('wait-list', async (t) => {
       conclusion: 'acceptable',
       progress: 'in_progress',
       description:
-        'Some expected jobs were not started: [{"workflowFile":"GH-820-graceperiod.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":"PT60S","found":false}]',
+        'Some expected jobs were not started: [{"workflowFile":"GH-820-graceperiod.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":{"seconds":60},"found":false}]',
     }, omit<Report, 'summaries'>(report, ['summaries']));
   });
 
@@ -108,13 +108,13 @@ test('wait-list', async (t) => {
             'workflowFile': 'GH-820-graceperiod.yml',
             'jobName': 'quickstarter-success',
             'optional': false,
-            'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
+            'startupGracePeriod': { seconds: 10 },
           },
           {
             'workflowFile': 'GH-820-graceperiod.yml',
             'jobName': 'slowstarter-success',
             'optional': false,
-            'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
+            'startupGracePeriod': { seconds: 60 },
           },
         ],
         skipList: [],
@@ -126,7 +126,7 @@ test('wait-list', async (t) => {
       conclusion: 'bad',
       progress: 'in_progress',
       description:
-        'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-graceperiod.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":"PT60S","found":false}]',
+        'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-graceperiod.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":{"seconds":60},"found":false}]',
     }, omit<Report, 'summaries'>(report, ['summaries']));
   });
 
@@ -148,13 +148,13 @@ test('wait-list', async (t) => {
             'workflowFile': 'GH-820-graceperiod.yml',
             'jobName': 'quickstarter-success',
             'optional': false,
-            'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
+            'startupGracePeriod': { seconds: 10 },
           },
           {
             'workflowFile': 'GH-820-graceperiod.yml',
             'jobName': 'slowstarter-success',
             'optional': false,
-            'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
+            'startupGracePeriod': { seconds: 60 },
           },
         ],
         skipList: [],
@@ -166,7 +166,7 @@ test('wait-list', async (t) => {
       conclusion: 'bad',
       progress: 'in_progress',
       description:
-        'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-graceperiod.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":"PT60S","found":false}]',
+        'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-graceperiod.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":{"seconds":60},"found":false}]',
     }, omit<Report, 'summaries'>(report, ['summaries']));
   });
 });
