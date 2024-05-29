@@ -1,4 +1,4 @@
-name: GH-820 - Margin for wait-list
+name: GH-820 - Grace Period
 on:
   push:
     branches: [main]
