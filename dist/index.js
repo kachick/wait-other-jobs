@@ -27161,7 +27161,7 @@ var WaitFilterCondition = FilterCondition.extend(
     // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
     // - Intentionally omitted in skip-list, let me know if you have the use-case
     eventName: z.string().min(1).optional(),
-    marginOfStartingSeconds: z.number().min(0).optional().default(0)
+    startupGracePeriod: z.number().min(0).optional().default(0)
   }
 ).readonly();
 var retryMethods = z.enum(["exponential_backoff", "equal_intervals"]);
@@ -28457,7 +28457,7 @@ function generateReport(checks, trigger, elapsedMsec, { waitList, skipList, shou
       })
     );
     const unmatches = seeker.filter((result) => !result.found && !result.optional);
-    const unstarted = unmatches.filter((result) => elapsedMsec < result.marginOfStartingSeconds * 1e3);
+    const unstarted = unmatches.filter((result) => elapsedMsec < result.startupGracePeriod * 1e3);
     if (unstarted.length > 0) {
       return {
         conclusion: "acceptable",

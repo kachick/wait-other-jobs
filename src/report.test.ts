@@ -22,18 +22,18 @@ test('wait-list', () => {
           'workflowFile': 'lint.yml',
           'optional': false,
           'eventName': 'pull_request',
-          marginOfStartingSeconds: 0,
+          startupGracePeriod: 0,
         },
         {
           'workflowFile': 'merge-bot-pr.yml',
           'jobName': 'dependabot',
           'optional': true,
-          marginOfStartingSeconds: 0,
+          startupGracePeriod: 0,
         },
         {
           'workflowFile': 'THERE_ARE_NO_FILES_AS_THIS.yml',
           'optional': true,
-          marginOfStartingSeconds: 0,
+          startupGracePeriod: 0,
         },
       ],
       skipList: [],
@@ -48,7 +48,7 @@ test('wait-list', () => {
   }, omit<Report, 'summaries'>(report, ['summaries']));
 });
 
-test('wait-list have slowstarting job and set enough marginOfStartingSeconds', () => {
+test('wait-list have slowstarting job and set enough startupGracePeriod', () => {
   const report = generateReport(
     checks92810686811WaitSuccessPolling1,
     {
@@ -66,13 +66,13 @@ test('wait-list have slowstarting job and set enough marginOfStartingSeconds', (
           'workflowFile': 'GH-820-margin.yml',
           'jobName': 'quickstarter-success',
           'optional': false,
-          'marginOfStartingSeconds': 0,
+          'startupGracePeriod': 0,
         },
         {
           'workflowFile': 'GH-820-margin.yml',
           'jobName': 'slowstarter-success',
           'optional': false,
-          'marginOfStartingSeconds': 60,
+          'startupGracePeriod': 60,
         },
       ],
       skipList: [],
@@ -84,7 +84,7 @@ test('wait-list have slowstarting job and set enough marginOfStartingSeconds', (
     conclusion: 'acceptable',
     progress: 'in_progress',
     description:
-      'Some expected jobs were not started: [{"workflowFile":"GH-820-margin.yml","jobName":"slowstarter-success","optional":false,"marginOfStartingSeconds":60,"found":false}]',
+      'Some expected jobs were not started: [{"workflowFile":"GH-820-margin.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":60,"found":false}]',
   }, omit<Report, 'summaries'>(report, ['summaries']));
 });
 
@@ -106,13 +106,13 @@ test('wait-list have slowstarting job and expired', () => {
           'workflowFile': 'GH-820-margin.yml',
           'jobName': 'quickstarter-success',
           'optional': false,
-          'marginOfStartingSeconds': 0,
+          'startupGracePeriod': 0,
         },
         {
           'workflowFile': 'GH-820-margin.yml',
           'jobName': 'slowstarter-success',
           'optional': false,
-          'marginOfStartingSeconds': 60,
+          'startupGracePeriod': 60,
         },
       ],
       skipList: [],
@@ -124,7 +124,7 @@ test('wait-list have slowstarting job and expired', () => {
     conclusion: 'bad',
     progress: 'in_progress',
     description:
-      'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-margin.yml","jobName":"slowstarter-success","optional":false,"marginOfStartingSeconds":60,"found":false}]',
+      'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-margin.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":60,"found":false}]',
   }, omit<Report, 'summaries'>(report, ['summaries']));
 });
 

@@ -93,7 +93,7 @@
 2024-05-29T06:06:35.3760888Z ##[debug]lfs = false
 2024-05-29T06:06:35.3761825Z ##[debug]submodules = false
 2024-05-29T06:06:35.3762875Z ##[debug]recursive submodules = false
-2024-05-29T06:06:35.3764007Z ##[debug]GitHub Host URL = 
+2024-05-29T06:06:35.3764007Z ##[debug]GitHub Host URL =
 2024-05-29T06:06:35.3767024Z ::add-matcher::/home/runner/work/_actions/actions/checkout/9bb56186c3b09b4f86b1c65136769dd318469633/dist/problem-matcher.json
 2024-05-29T06:06:35.3883006Z ##[debug]Added matchers: 'checkout-git'. Problem matchers scan action output for known warning or error strings and report these inline.
 2024-05-29T06:06:35.3896148Z Syncing repository: kachick/wait-other-jobs
@@ -184,22 +184,22 @@
 2024-05-29T06:06:35.7059636Z ##[group]Checking out the ref
 2024-05-29T06:06:35.7061236Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/821/merge
 2024-05-29T06:06:35.7182460Z Note: switching to 'refs/remotes/pull/821/merge'.
-2024-05-29T06:06:35.7184676Z 
+2024-05-29T06:06:35.7184676Z
 2024-05-29T06:06:35.7185553Z You are in 'detached HEAD' state. You can look around, make experimental
 2024-05-29T06:06:35.7187356Z changes and commit them, and you can discard any commits you make in this
 2024-05-29T06:06:35.7188771Z state without impacting any branches by switching back to a branch.
-2024-05-29T06:06:35.7189601Z 
+2024-05-29T06:06:35.7189601Z
 2024-05-29T06:06:35.7190564Z If you want to create a new branch to retain commits you create, you may
 2024-05-29T06:06:35.7192228Z do so (now or later) by using -c with the switch command. Example:
-2024-05-29T06:06:35.7193015Z 
+2024-05-29T06:06:35.7193015Z
 2024-05-29T06:06:35.7193431Z   git switch -c <new-branch-name>
-2024-05-29T06:06:35.7194030Z 
+2024-05-29T06:06:35.7194030Z
 2024-05-29T06:06:35.7194359Z Or undo this operation with:
-2024-05-29T06:06:35.7194977Z 
+2024-05-29T06:06:35.7194977Z
 2024-05-29T06:06:35.7195303Z   git switch -
-2024-05-29T06:06:35.7195690Z 
+2024-05-29T06:06:35.7195690Z
 2024-05-29T06:06:35.7196546Z Turn off this advice by setting config variable advice.detachedHead to false
-2024-05-29T06:06:35.7197527Z 
+2024-05-29T06:06:35.7197527Z
 2024-05-29T06:06:35.7198455Z HEAD is now at 78b7ef8 Merge 8c14d2a44d6dff4e69b0a3cacc2a14e416b44137 into b259df766bd107422afc2c77e234f800a02c4f36
 2024-05-29T06:06:35.7200454Z ##[debug]0
 2024-05-29T06:06:35.7201424Z ##[debug]
@@ -257,7 +257,7 @@
     "workflowFile": "GH-820-margin.yml",
     "optional": false,
     "jobName": "slowstarter-fail",
-    "marginOfStartingSeconds": 60
+    "startupGracePeriod": 60
   }
 ]
 
@@ -286,13 +286,13 @@
 2024-05-29T06:06:35.8564634Z         "workflowFile": "GH-820-margin.yml",
 2024-05-29T06:06:35.8565092Z         "jobName": "quickstarter-success",
 2024-05-29T06:06:35.8565473Z         "optional": false,
-2024-05-29T06:06:35.8566011Z         "marginOfStartingSeconds": 0
+2024-05-29T06:06:35.8566011Z         "startupGracePeriod": 0
 2024-05-29T06:06:35.8566406Z       },
 2024-05-29T06:06:35.8566650Z       {
 2024-05-29T06:06:35.8567004Z         "workflowFile": "GH-820-margin.yml",
 2024-05-29T06:06:35.8567471Z         "jobName": "slowstarter-fail",
 2024-05-29T06:06:35.8567843Z         "optional": false,
-2024-05-29T06:06:35.8568162Z         "marginOfStartingSeconds": 60
+2024-05-29T06:06:35.8568162Z         "startupGracePeriod": 60
 2024-05-29T06:06:35.8568510Z       }
 2024-05-29T06:06:35.8568750Z     ],
 2024-05-29T06:06:35.8568987Z     "skipList": [],

@@ -86,7 +86,7 @@ export function generateReport(
     );
 
     const unmatches = seeker.filter((result) => (!(result.found)) && (!(result.optional)));
-    const unstarted = unmatches.filter((result) => elapsedMsec < result.marginOfStartingSeconds * 1000);
+    const unstarted = unmatches.filter((result) => elapsedMsec < result.startupGracePeriod * 1000);
 
     if (unstarted.length > 0) {
       return {

@@ -31,7 +31,7 @@ test('Options keep given values', () => {
 test('Options set some default values it cannot be defined in action.yml', () => {
   assert.deepStrictEqual({
     ...defaultOptions,
-    waitList: [{ workflowFile: 'ci.yml', optional: false, marginOfStartingSeconds: 0 }],
+    waitList: [{ workflowFile: 'ci.yml', optional: false, startupGracePeriod: 0 }],
   }, Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }));
 });
 

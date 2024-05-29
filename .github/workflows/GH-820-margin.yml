@@ -65,7 +65,7 @@ jobs:
                 "workflowFile": "GH-820-margin.yml",
                 "optional": false,
                 "jobName": "slowstarter-success",
-                "marginOfStartingSeconds": 60
+                "startupGracePeriod": 60
               }
             ]
   wait-fail:
@@ -91,7 +91,7 @@ jobs:
                 "workflowFile": "GH-820-margin.yml",
                 "optional": false,
                 "jobName": "slowstarter-fail",
-                "marginOfStartingSeconds": 60
+                "startupGracePeriod": 60
               }
             ]
 

@@ -132,14 +132,14 @@ with:
       {
         "workflowFile": "might_be_triggered_after_0-4_minutes.yml",
         "optional": false,
-        "marginOfStartingSeconds": 300
+        "startupGracePeriod": 300
       }
     ]
 ```
 
 - No need to extend `wait-seconds-before-first-polling`
 - Disable `optional`, because it is needed to check
-- Specify `marginOfStartingSeconds` for it
+- Specify `startupGracePeriod` for it
 
 This action starts immediately but ignores the job missing in the first 5 minutes.
 
