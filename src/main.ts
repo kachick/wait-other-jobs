@@ -6,7 +6,7 @@ const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : e
 
 import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
-import { generateReport } from './report.ts';
+import { generateReport, getSummaries } from './report.ts';
 import { readableDuration, wait, getIdleMilliseconds } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
 
@@ -57,7 +57,7 @@ async function run(): Promise<void> {
       debug(JSON.stringify({ label: 'rawdata', checks, elapsed }, null, 2));
     }
     const report = generateReport(
-      checks,
+      getSummaries(checks, trigger),
       trigger,
       elapsed,
       options,

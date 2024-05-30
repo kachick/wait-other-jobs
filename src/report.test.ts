@@ -1,22 +1,23 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './snapshot.ts';
-import { Report, generateReport } from './report.ts';
+import { Report, generateReport, getSummaries } from './report.ts';
 import { omit } from './util.ts';
 import { Temporal } from 'temporal-polyfill';
 
 test('wait-list', async (t) => {
   await t.test('basics', (_t) => {
+    const trigger = {
+      owner: 'kachick',
+      repo: 'wait-other-jobs',
+      'runId': 8679817057,
+      ref: '760074f4f419b55cb864030c29ece58a689a42a2',
+      jobName: 'wait-list',
+      eventName: 'pull_request',
+    };
     const report = generateReport(
-      checks8679817057,
-      {
-        owner: 'kachick',
-        repo: 'wait-other-jobs',
-        'runId': 8679817057,
-        ref: '760074f4f419b55cb864030c29ece58a689a42a2',
-        jobName: 'wait-list',
-        eventName: 'pull_request',
-      },
+      getSummaries(checks8679817057, trigger),
+      trigger,
       Temporal.Duration.from({ seconds: 420 }),
       {
         waitList: [
@@ -61,7 +62,7 @@ test('wait-list', async (t) => {
     });
     await t.test('required slowstarting job and set enough grace period', (_t) => {
       const report = generateReport(
-        checks92810686811WaitSuccessPolling1,
+        getSummaries(checks92810686811WaitSuccessPolling1, trigger),
         trigger,
         Temporal.Duration.from({ milliseconds: Math.ceil(986.9570700004697) }),
         {
@@ -94,7 +95,7 @@ test('wait-list', async (t) => {
 
     await t.test('slowstarting job has been expired to the given period', (_t) => {
       const report = generateReport(
-        checks92810686811WaitSuccessPolling1,
+        getSummaries(checks92810686811WaitSuccessPolling1, trigger),
         trigger,
         Temporal.Duration.from({ seconds: 60, milliseconds: 1 }),
         {
@@ -127,7 +128,7 @@ test('wait-list', async (t) => {
 
     await t.test('judges as expired for same durations', (_t) => {
       const report = generateReport(
-        checks92810686811WaitSuccessPolling1,
+        getSummaries(checks92810686811WaitSuccessPolling1, trigger),
         trigger,
         Temporal.Duration.from({ seconds: 60 }),
         {
@@ -161,16 +162,17 @@ test('wait-list', async (t) => {
 });
 
 test('skip-list', () => {
+  const trigger = {
+    owner: 'kachick',
+    repo: 'wait-other-jobs',
+    'runId': 8679817057,
+    ref: '760074f4f419b55cb864030c29ece58a689a42a2',
+    jobName: 'skip-list',
+    eventName: 'pull_request',
+  };
   const report = generateReport(
-    checks8679817057,
-    {
-      owner: 'kachick',
-      repo: 'wait-other-jobs',
-      'runId': 8679817057,
-      ref: '760074f4f419b55cb864030c29ece58a689a42a2',
-      jobName: 'skip-list',
-      eventName: 'pull_request',
-    },
+    getSummaries(checks8679817057, trigger),
+    trigger,
     Temporal.Duration.from({ seconds: 420 }),
     {
       waitList: [],

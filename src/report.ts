@@ -20,20 +20,6 @@ interface Summary {
   runConclusion: CheckRun['conclusion']; // null if status is in progress
 }
 
-interface Acceptable {
-  conclusion: 'acceptable';
-}
-
-interface Bad {
-  conclusion: 'bad';
-}
-
-export type Report = (Acceptable | Bad) & {
-  progress: 'in_progress' | 'done';
-  description: string;
-  summaries: Summary[];
-};
-
 function summarize(check: Check, trigger: Trigger): Summary {
   const { checkRun: run, checkSuite: suite, workflow, workflowRun } = check;
   return {
@@ -57,16 +43,32 @@ function summarize(check: Check, trigger: Trigger): Summary {
   };
 }
 
+export function getSummaries(checks: readonly Check[], trigger: Trigger): Summary[] {
+  return checks.map((check) => summarize(check, trigger)).toSorted((a, b) =>
+    join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName))
+  );
+}
+
+interface Acceptable {
+  conclusion: 'acceptable';
+}
+
+interface Bad {
+  conclusion: 'bad';
+}
+
+export type Report = (Acceptable | Bad) & {
+  progress: 'in_progress' | 'done';
+  description: string;
+  summaries: Summary[];
+};
+
 export function generateReport(
-  checks: readonly Check[],
+  summaries: readonly Summary[],
   trigger: Trigger,
   elapsed: Temporal.Duration,
   { waitList, skipList, shouldSkipSameWorkflow }: Pick<Options, 'waitList' | 'skipList' | 'shouldSkipSameWorkflow'>,
 ): Report {
-  const summaries = checks.map((check) => summarize(check, trigger)).toSorted((a, b) =>
-    join(a.workflowPath, a.jobName).localeCompare(join(b.workflowPath, b.jobName))
-  );
-
   const others = summaries.filter((summary) => !(summary.isSameWorkflow && (trigger.jobName === summary.jobName)));
   let filtered = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
 

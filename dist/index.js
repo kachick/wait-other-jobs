@@ -32346,10 +32346,12 @@ function summarize(check, trigger) {
     runConclusion: run2.conclusion
   };
 }
-function generateReport(checks, trigger, elapsed, { waitList, skipList, shouldSkipSameWorkflow }) {
-  const summaries = checks.map((check) => summarize(check, trigger)).toSorted(
+function getSummaries(checks, trigger) {
+  return checks.map((check) => summarize(check, trigger)).toSorted(
     (a2, b2) => join(a2.workflowPath, a2.jobName).localeCompare(join(b2.workflowPath, b2.jobName))
   );
+}
+function generateReport(summaries, trigger, elapsed, { waitList, skipList, shouldSkipSameWorkflow }) {
   const others = summaries.filter((summary) => !(summary.isSameWorkflow && trigger.jobName === summary.jobName));
   let filtered = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
   if (waitList.length > 0) {
@@ -32491,7 +32493,7 @@ async function run() {
       (0, import_core3.debug)(JSON.stringify({ label: "rawdata", checks, elapsed }, null, 2));
     }
     const report = generateReport(
-      checks,
+      getSummaries(checks, trigger),
       trigger,
       elapsed,
       options
