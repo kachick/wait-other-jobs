@@ -25,7 +25,7 @@ const exampleSummary = Object.freeze(
   } satisfies Summary,
 );
 
-test.skip('wait-list', async (t) => {
+test('wait-list', async (t) => {
   await t.test('basics', (_t) => {
     const trigger = {
       owner: 'kachick',
@@ -64,15 +64,10 @@ test.skip('wait-list', async (t) => {
       },
     );
 
-    assert.deepEqual(omit<Report, 'summaries'>(report, ['summaries']), {
-      conclusion: 'acceptable',
-      logs: [
-        {
-          message: 'all jobs passed',
-          severity: 'notice',
-        },
-      ],
-      progress: 'done',
+    assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+      done: true,
+      logs: [],
+      ok: true,
     });
   });
 
@@ -110,8 +105,8 @@ test.skip('wait-list', async (t) => {
         },
       );
 
-      assert.deepEqual(omit<Report, 'summaries'>(report, ['summaries']), {
-        conclusion: 'acceptable',
+      assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+        done: false,
         logs: [
           {
             message: 'some jobs still in progress',
@@ -133,7 +128,7 @@ test.skip('wait-list', async (t) => {
             severity: 'warning',
           },
         ],
-        progress: 'in_progress',
+        ok: true,
       });
     });
 
@@ -162,8 +157,8 @@ test.skip('wait-list', async (t) => {
         },
       );
 
-      assert.deepEqual(omit<Report, 'summaries'>(report, ['summaries']), {
-        conclusion: 'bad',
+      assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+        done: false,
         logs: [
           {
             message: 'some jobs still in progress',
@@ -185,7 +180,7 @@ test.skip('wait-list', async (t) => {
             severity: 'error',
           },
         ],
-        progress: 'in_progress',
+        ok: false,
       });
     });
 
@@ -214,8 +209,8 @@ test.skip('wait-list', async (t) => {
         },
       );
 
-      assert.deepEqual(omit<Report, 'summaries'>(report, ['summaries']), {
-        conclusion: 'bad',
+      assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+        done: false,
         logs: [
           {
             message: 'some jobs still in progress',
@@ -237,7 +232,7 @@ test.skip('wait-list', async (t) => {
             severity: 'error',
           },
         ],
-        progress: 'in_progress',
+        ok: false,
       });
     });
 
@@ -284,8 +279,8 @@ test.skip('wait-list', async (t) => {
         },
       );
 
-      assert.deepEqual(omit<Report, 'summaries'>(report, ['summaries']), {
-        conclusion: 'bad',
+      assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+        done: false,
         logs: [
           {
             message: 'some jobs failed',
@@ -307,13 +302,13 @@ test.skip('wait-list', async (t) => {
             severity: 'warning',
           },
         ],
-        progress: 'in_progress',
+        ok: false,
       });
     });
   });
 });
 
-test.skip('skip-list', () => {
+test('skip-list', () => {
   const trigger = {
     owner: 'kachick',
     repo: 'wait-other-jobs',
@@ -347,14 +342,9 @@ test.skip('skip-list', () => {
     },
   );
 
-  assert.deepEqual(omit<Report, 'summaries'>(report, ['summaries']), {
-    conclusion: 'acceptable',
-    logs: [
-      {
-        message: 'all jobs passed',
-        severity: 'notice',
-      },
-    ],
-    progress: 'done',
+  assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+    done: true,
+    logs: [],
+    ok: true,
   });
 });
