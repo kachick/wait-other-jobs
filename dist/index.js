@@ -32577,8 +32577,17 @@ async function run() {
       (0, import_core3.info)(colorize(severity, message));
       resource && (0, import_core3.info)(JSON.stringify(resource, null, 2));
     }
-    if (done || !ok) {
+    if (done) {
       shouldStop = true;
+    }
+    if (!ok) {
+      if (!done && !options.isEarlyExit) {
+        (0, import_core3.info)(
+          colorize("warning", "found bad conditions, but will continue rest pollings because of disabled early-exit")
+        );
+      } else {
+        shouldStop = true;
+      }
     }
     (0, import_core3.endGroup)();
     if (shouldStop) {

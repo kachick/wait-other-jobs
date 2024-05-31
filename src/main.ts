@@ -113,8 +113,17 @@ async function run(): Promise<void> {
       resource && info(JSON.stringify(resource, null, 2));
     }
 
-    if (done || !ok) {
+    if (done) {
       shouldStop = true;
+    }
+    if (!ok) {
+      if (!done && !options.isEarlyExit) {
+        info(
+          colorize('warning', 'found bad conditions, but will continue rest pollings because of disabled early-exit'),
+        );
+      } else {
+        shouldStop = true;
+      }
     }
 
     endGroup();
