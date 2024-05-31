@@ -1,9 +1,28 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './snapshot.ts';
-import { Report, generateReport, getSummaries } from './report.ts';
+import { Report, Summary, generateReport, getSummaries } from './report.ts';
 import { omit } from './util.ts';
 import { Temporal } from 'temporal-polyfill';
+
+const exampleSummary = Object.freeze(
+  {
+    acceptable: false,
+    workflowBasename: '.github/workflows/example.yml',
+    isSameWorkflow: false,
+
+    eventName: 'pull_request',
+
+    checkSuiteStatus: 'IN_PROGRESS',
+    checkSuiteConclusion: 'FAILURE',
+
+    runDatabaseId: 42,
+    jobName: 'An example job',
+    checkRunUrl: 'https://example.com',
+    runStatus: 'IN_PROGRESS',
+    runConclusion: 'FAILURE',
+  } satisfies Summary,
+);
 
 test('wait-list', async (t) => {
   await t.test('basics', (_t) => {
@@ -44,11 +63,16 @@ test('wait-list', async (t) => {
       },
     );
 
-    assert.deepEqual({
+    assert.deepEqual(omit<Report, 'summaries'>(report, ['summaries']), {
       conclusion: 'acceptable',
+      logs: [
+        {
+          message: 'all jobs passed',
+          severity: 'info',
+        },
+      ],
       progress: 'done',
-      description: 'all jobs passed',
-    }, omit<Report, 'summaries'>(report, ['summaries']));
+    });
   });
 
   await t.test('startupGracePeriod', async (t) => {
@@ -85,12 +109,31 @@ test('wait-list', async (t) => {
         },
       );
 
-      assert.deepEqual({
+      assert.deepEqual(omit<Report, 'summaries'>(report, ['summaries']), {
         conclusion: 'acceptable',
+        logs: [
+          {
+            message: 'some jobs still in progress',
+            severity: 'info',
+          },
+          {
+            message: 'Some expected jobs were not started',
+            resource: [
+              {
+                found: false,
+                jobName: 'slowstarter-success',
+                optional: false,
+                startupGracePeriod: {
+                  seconds: 60,
+                },
+                workflowFile: 'GH-820-graceperiod.yml',
+              },
+            ],
+            severity: 'warning',
+          },
+        ],
         progress: 'in_progress',
-        description:
-          'Some expected jobs were not started: [{"workflowFile":"GH-820-graceperiod.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":{"seconds":60},"found":false}]',
-      }, omit<Report, 'summaries'>(report, ['summaries']));
+      });
     });
 
     await t.test('slowstarting job has been expired to the given period', (_t) => {
@@ -118,12 +161,31 @@ test('wait-list', async (t) => {
         },
       );
 
-      assert.deepEqual({
+      assert.deepEqual(omit<Report, 'summaries'>(report, ['summaries']), {
         conclusion: 'bad',
+        logs: [
+          {
+            message: 'some jobs still in progress',
+            severity: 'info',
+          },
+          {
+            message: 'Failed to meet some runs on your specified wait-list',
+            resource: [
+              {
+                found: false,
+                jobName: 'slowstarter-success',
+                optional: false,
+                startupGracePeriod: {
+                  seconds: 60,
+                },
+                workflowFile: 'GH-820-graceperiod.yml',
+              },
+            ],
+            severity: 'error',
+          },
+        ],
         progress: 'in_progress',
-        description:
-          'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-graceperiod.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":{"seconds":60},"found":false}]',
-      }, omit<Report, 'summaries'>(report, ['summaries']));
+      });
     });
 
     await t.test('judges as expired for same durations', (_t) => {
@@ -151,12 +213,101 @@ test('wait-list', async (t) => {
         },
       );
 
-      assert.deepEqual({
+      assert.deepEqual(omit<Report, 'summaries'>(report, ['summaries']), {
         conclusion: 'bad',
+        logs: [
+          {
+            message: 'some jobs still in progress',
+            severity: 'info',
+          },
+          {
+            message: 'Failed to meet some runs on your specified wait-list',
+            resource: [
+              {
+                found: false,
+                jobName: 'slowstarter-success',
+                optional: false,
+                startupGracePeriod: {
+                  seconds: 60,
+                },
+                workflowFile: 'GH-820-graceperiod.yml',
+              },
+            ],
+            severity: 'error',
+          },
+        ],
         progress: 'in_progress',
-        description:
-          'Failed to meet some runs on your specified wait-list: [{"workflowFile":"GH-820-graceperiod.yml","jobName":"slowstarter-success","optional":false,"startupGracePeriod":{"seconds":60},"found":false}]',
-      }, omit<Report, 'summaries'>(report, ['summaries']));
+      });
+    });
+
+    await t.test('mark bad for failures even if several runs are still in progress', (_t) => {
+      const report = generateReport(
+        [{
+          ...exampleSummary,
+          acceptable: true,
+          runStatus: 'COMPLETED',
+          workflowBasename: 'ci.yml',
+          jobName: 'quickstarter-success',
+        }, {
+          ...exampleSummary,
+          acceptable: false,
+          runStatus: 'COMPLETED',
+          workflowBasename: 'ci.yml',
+          jobName: 'quickstarter-fail',
+        }],
+        trigger,
+        Temporal.Duration.from({ minutes: 2 }),
+        {
+          'waitList': [
+            {
+              'workflowFile': 'ci.yml',
+              'jobName': 'quickstarter-success',
+              'optional': false,
+              'startupGracePeriod': { minutes: 5 },
+            },
+            {
+              'workflowFile': 'ci.yml',
+              'jobName': 'quickstarter-fail',
+              'optional': false,
+              'startupGracePeriod': { minutes: 5 },
+            },
+            {
+              'workflowFile': 'ci.yml',
+              'jobName': 'slowstarter-missing',
+              'optional': false,
+              'startupGracePeriod': { minutes: 5 },
+            },
+          ],
+          skipList: [],
+          shouldSkipSameWorkflow: false,
+        },
+      );
+
+      assert.deepEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+        conclusion: 'bad',
+        logs: [
+          {
+            message: 'some jobs failed',
+            severity: 'error',
+          },
+          {
+            message: 'Some expected jobs were not started',
+            resource: [
+              {
+                found: false,
+                jobName: 'slowstarter-missing',
+                optional: false,
+                startupGracePeriod: {
+                  minutes: 5,
+                },
+                workflowFile: 'ci.yml',
+              },
+            ],
+            severity: 'warning',
+          },
+        ],
+        progress: 'in_progress',
+      });
     });
   });
 });
@@ -195,9 +346,14 @@ test('skip-list', () => {
     },
   );
 
-  assert.deepEqual({
+  assert.deepEqual(omit<Report, 'summaries'>(report, ['summaries']), {
     conclusion: 'acceptable',
+    logs: [
+      {
+        message: 'all jobs passed',
+        severity: 'info',
+      },
+    ],
     progress: 'done',
-    description: 'all jobs passed',
-  }, omit<Report, 'summaries'>(report, ['summaries']));
+  });
 });

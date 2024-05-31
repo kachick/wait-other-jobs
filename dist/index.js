@@ -27484,15 +27484,15 @@ var makeIssue = (params) => {
       message: issueData.message
     };
   }
-  let errorMessage2 = "";
+  let errorMessage = "";
   const maps = errorMaps.filter((m2) => !!m2).slice().reverse();
   for (const map of maps) {
-    errorMessage2 = map(fullIssue, { data, defaultError: errorMessage2 }).message;
+    errorMessage = map(fullIssue, { data, defaultError: errorMessage }).message;
   }
   return {
     ...issueData,
     path: fullPath,
-    message: errorMessage2
+    message: errorMessage
   };
 };
 var EMPTY_PATH = [];
@@ -31074,10 +31074,12 @@ var WaitFilterCondition = FilterCondition.extend(
     startupGracePeriod: Durationable.default({ seconds: 10 })
   }
 ).readonly();
+var WaitList = z2.array(WaitFilterCondition).readonly();
+var SkipList = z2.array(SkipFilterCondition).readonly();
 var retryMethods = z2.enum(["exponential_backoff", "equal_intervals"]);
 var Options = z2.object({
-  waitList: z2.array(WaitFilterCondition).readonly(),
-  skipList: z2.array(SkipFilterCondition).readonly(),
+  waitList: WaitList,
+  skipList: SkipList,
   waitSecondsBeforeFirstPolling: z2.number().min(0),
   minIntervalSeconds: z2.number().min(1),
   retryMethod: retryMethods,
@@ -32333,7 +32335,7 @@ function summarize(check, trigger) {
   const { checkRun: run2, checkSuite: suite, workflow, workflowRun } = check;
   return {
     acceptable: run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || run2.conclusion === "NEUTRAL" && (suite.conclusion === "SUCCESS" || suite.conclusion === "SKIPPED"),
-    workflowPath: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
+    workflowBasename: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
     // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     isSameWorkflow: suite.workflowRun?.databaseId === trigger.runId,
     eventName: workflowRun.event,
@@ -32348,63 +32350,92 @@ function summarize(check, trigger) {
 }
 function getSummaries(checks, trigger) {
   return checks.map((check) => summarize(check, trigger)).toSorted(
-    (a2, b2) => join(a2.workflowPath, a2.jobName).localeCompare(join(b2.workflowPath, b2.jobName))
+    (a2, b2) => join(a2.workflowBasename, a2.jobName).localeCompare(join(b2.workflowBasename, b2.jobName))
   );
 }
-function generateReport(summaries, trigger, elapsed, { waitList, skipList, shouldSkipSameWorkflow }) {
-  const others = summaries.filter((summary) => !(summary.isSameWorkflow && trigger.jobName === summary.jobName));
-  let filtered = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
-  if (waitList.length > 0) {
-    const seeker = waitList.map((condition) => ({ ...condition, found: false }));
-    filtered = filtered.filter(
-      (summary) => seeker.some((target) => {
-        const isMatchPath = target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true);
-        const isMatchEvent = target.eventName ? target.eventName === summary.eventName : true;
-        if (isMatchPath && isMatchEvent) {
-          target.found = true;
-          return true;
-        } else {
-          return false;
-        }
-      })
-    );
-    const unmatches = seeker.filter((result) => !result.found && !result.optional);
-    const unstarted = unmatches.filter(
-      (result) => mr.Duration.compare(elapsed, getDuration(result.startupGracePeriod)) === -1
-    );
-    if (unstarted.length > 0) {
-      return {
-        conclusion: "acceptable",
-        progress: "in_progress",
-        summaries: filtered,
-        description: `Some expected jobs were not started: ${JSON.stringify(unstarted)}`
-      };
-    }
-    if (unmatches.length > 0) {
-      return {
-        conclusion: "bad",
-        progress: "in_progress",
-        summaries: filtered,
-        description: `Failed to meet some runs on your specified wait-list: ${JSON.stringify(unmatches)}`
-      };
-    }
-  }
-  if (skipList.length > 0) {
-    filtered = filtered.filter(
-      (summary) => !skipList.some(
-        (target) => target.workflowFile === summary.workflowPath && (target.jobName ? target.jobName === summary.jobName : true)
-      )
-    );
-  }
-  const completed = filtered.filter((summary) => summary.runStatus === "COMPLETED");
-  const progress = completed.length === filtered.length ? "done" : "in_progress";
+function seekWaitList(summaries, waitList, elapsed) {
+  const seeker = waitList.map((condition) => ({ ...condition, found: false }));
+  const filtered = summaries.filter(
+    (summary) => seeker.some((target) => {
+      const isMatchPath = target.workflowFile === summary.workflowBasename && (target.jobName ? target.jobName === summary.jobName : true);
+      const isMatchEvent = target.eventName ? target.eventName === summary.eventName : true;
+      if (isMatchPath && isMatchEvent) {
+        target.found = true;
+        return true;
+      } else {
+        return false;
+      }
+    })
+  );
+  const unmatches = seeker.filter((result) => !result.found && !result.optional);
+  const unstarted = unmatches.filter(
+    (result) => mr.Duration.compare(elapsed, getDuration(result.startupGracePeriod)) === -1
+  );
+  return { filtered, unmatches, unstarted };
+}
+function judge(targets) {
+  const completed = targets.filter((summary) => summary.runStatus === "COMPLETED");
+  const progress = completed.length === targets.length ? "done" : "in_progress";
   const conclusion = completed.every((summary) => summary.acceptable) ? "acceptable" : "bad";
+  const logs = [];
+  if (conclusion === "bad") {
+    logs.push({
+      severity: "error",
+      message: "some jobs failed"
+    });
+  }
+  if (progress === "in_progress") {
+    logs.push({
+      severity: "info",
+      message: "some jobs still in progress"
+    });
+  } else {
+    if (conclusion === "acceptable") {
+      logs.push({
+        severity: "info",
+        message: "all jobs passed"
+      });
+    }
+  }
   return {
     progress,
     conclusion,
-    summaries: filtered,
-    description: conclusion === "bad" ? "some jobs failed" : progress === "in_progress" ? "some jobs still in progress" : "all jobs passed"
+    logs
   };
+}
+function generateReport(summaries, trigger, elapsed, { waitList, skipList, shouldSkipSameWorkflow }) {
+  const others = summaries.filter((summary) => !(summary.isSameWorkflow && trigger.jobName === summary.jobName));
+  const targets = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
+  if (waitList.length > 0) {
+    const { filtered, unmatches, unstarted } = seekWaitList(targets, waitList, elapsed);
+    let { conclusion, progress, logs } = judge(filtered);
+    logs = [...logs];
+    if (unstarted.length > 0) {
+      progress = "in_progress";
+      logs.push({
+        severity: "warning",
+        message: "Some expected jobs were not started",
+        resource: unstarted
+      });
+    } else if (unmatches.length > 0) {
+      conclusion = "bad";
+      logs.push({
+        severity: "error",
+        message: "Failed to meet some runs on your specified wait-list",
+        resource: unmatches
+      });
+    }
+    return { conclusion, progress, summaries: filtered, logs };
+  }
+  if (skipList.length > 0) {
+    const filtered = targets.filter(
+      (summary) => !skipList.some(
+        (target) => target.workflowFile === summary.workflowBasename && (target.jobName ? target.jobName === summary.jobName : true)
+      )
+    );
+    return { ...judge(filtered), summaries: filtered };
+  }
+  return { ...judge(targets), summaries: targets };
 }
 
 // src/wait.ts
@@ -32448,9 +32479,26 @@ function getIdleMilliseconds(method, minIntervalSeconds, attempts) {
 }
 
 // src/main.ts
-var errorMessage = (body) => `${ansi_styles_default.red.open}${body}${ansi_styles_default.red.close}`;
-var succeededMessage = (body) => `${ansi_styles_default.green.open}${body}${ansi_styles_default.green.close}`;
-var colorize = (body, ok) => ok ? succeededMessage(body) : errorMessage(body);
+function colorize(severity, message) {
+  switch (severity) {
+    case "error": {
+      return `${ansi_styles_default.red.open}${message}${ansi_styles_default.red.close}`;
+    }
+    case "warning": {
+      return `${ansi_styles_default.yellow.open}${message}${ansi_styles_default.yellow.close}`;
+    }
+    case "notice": {
+      return `${ansi_styles_default.green.open}${message}${ansi_styles_default.green.close}`;
+    }
+    case "info": {
+      return message;
+    }
+    default: {
+      const _unexpectedSeverity = severity;
+      return message;
+    }
+  }
+}
 async function run() {
   const startedAt = performance.now();
   (0, import_core3.startGroup)("Parameters");
@@ -32474,7 +32522,7 @@ async function run() {
   for (; ; ) {
     attempts += 1;
     if (attempts > options.attemptLimits) {
-      (0, import_core3.setFailed)(errorMessage(`reached to given attempt limits "${options.attemptLimits}"`));
+      (0, import_core3.setFailed)(colorize("error", `reached to given attempt limits "${options.attemptLimits}"`));
       break;
     }
     if (attempts === 1) {
@@ -32506,54 +32554,28 @@ async function run() {
         runStatus,
         runConclusion,
         jobName,
-        workflowPath,
+        workflowBasename,
         checkRunUrl,
         eventName
       } = summary;
       const nullStr = "(null)";
       (0, import_core3.info)(
-        `${workflowPath}(${colorize(`${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][eventName: ${eventName}][runURL: ${checkRunUrl}]`
+        `${workflowBasename}(${colorize(acceptable ? "notice" : "error", `${jobName}`)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][eventName: ${eventName}][runURL: ${checkRunUrl}]`
       );
     }
     if ((0, import_core3.isDebug)()) {
       (0, import_core3.debug)(JSON.stringify({ label: "filtered", report }, null, 2));
     }
-    const { progress, conclusion, description } = report;
-    switch (progress) {
-      case "in_progress": {
-        if (conclusion === "bad" && options.isEarlyExit) {
-          shouldStop = true;
-          (0, import_core3.setFailed)(errorMessage(description));
-        } else {
-          (0, import_core3.info)(description);
-        }
-        break;
-      }
-      case "done": {
-        shouldStop = true;
-        switch (conclusion) {
-          case "acceptable": {
-            (0, import_core3.info)(succeededMessage(description));
-            break;
-          }
-          case "bad": {
-            (0, import_core3.setFailed)(errorMessage(description));
-            break;
-          }
-          default: {
-            const unexpectedConclusion = conclusion;
-            (0, import_core3.setFailed)(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
-            break;
-          }
-        }
-        break;
-      }
-      default: {
-        shouldStop = true;
-        const unexpectedProgress = progress;
-        (0, import_core3.setFailed)(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
-        break;
-      }
+    const { progress, conclusion, logs } = report;
+    for (const { severity, message, resource } of logs) {
+      (0, import_core3.info)(colorize(severity, [message, resource ?? JSON.stringify(resource, null, 2)].join("\n")));
+    }
+    if (progress === "done") {
+      shouldStop = true;
+    }
+    if (conclusion !== "acceptable") {
+      shouldStop = true;
+      (0, import_core3.setFailed)(colorize("error", "failed to wait for success"));
     }
     (0, import_core3.endGroup)();
     if (shouldStop) {

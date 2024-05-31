@@ -71,6 +71,9 @@ const WaitFilterCondition = FilterCondition.extend(
     startupGracePeriod: Durationable.default({ seconds: 10 }),
   },
 ).readonly();
+const WaitList = z.array(WaitFilterCondition).readonly();
+const SkipList = z.array(SkipFilterCondition).readonly();
+export type WaitList = z.infer<typeof WaitList>;
 
 const retryMethods = z.enum(['exponential_backoff', 'equal_intervals']);
 export type RetryMethod = z.infer<typeof retryMethods>;
@@ -78,8 +81,8 @@ export type RetryMethod = z.infer<typeof retryMethods>;
 // - Do not specify default values with zod. That is an action.yml role
 // - Do not include secrets here, for example githubToken. See https://github.com/colinhacks/zod/issues/1783
 export const Options = z.object({
-  waitList: z.array(WaitFilterCondition).readonly(),
-  skipList: z.array(SkipFilterCondition).readonly(),
+  waitList: WaitList,
+  skipList: SkipList,
   waitSecondsBeforeFirstPolling: z.number().min(0),
   minIntervalSeconds: z.number().min(1),
   retryMethod: retryMethods,

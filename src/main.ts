@@ -1,12 +1,30 @@
 import { debug, info, setFailed, isDebug, startGroup, endGroup } from '@actions/core';
 import styles from 'ansi-styles';
-const errorMessage = (body: string) => (`${styles.red.open}${body}${styles.red.close}`);
-const succeededMessage = (body: string) => (`${styles.green.open}${body}${styles.green.close}`);
-const colorize = (body: string, ok: boolean) => (ok ? succeededMessage(body) : errorMessage(body));
+
+function colorize(severity: Severity, message: string): string {
+  switch (severity) {
+    case 'error': {
+      return `${styles.red.open}${message}${styles.red.close}`;
+    }
+    case 'warning': {
+      return `${styles.yellow.open}${message}${styles.yellow.close}`;
+    }
+    case 'notice': {
+      return `${styles.green.open}${message}${styles.green.close}`;
+    }
+    case 'info': {
+      return message;
+    }
+    default: {
+      const _unexpectedSeverity: never = severity;
+      return message;
+    }
+  }
+}
 
 import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
-import { generateReport, getSummaries } from './report.ts';
+import { Severity, generateReport, getSummaries } from './report.ts';
 import { readableDuration, wait, getIdleMilliseconds } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
 
@@ -35,7 +53,7 @@ async function run(): Promise<void> {
   for (;;) {
     attempts += 1;
     if (attempts > options.attemptLimits) {
-      setFailed(errorMessage(`reached to given attempt limits "${options.attemptLimits}"`));
+      setFailed(colorize('error', `reached to given attempt limits "${options.attemptLimits}"`));
       break;
     }
 
@@ -71,14 +89,16 @@ async function run(): Promise<void> {
         runStatus,
         runConclusion,
         jobName,
-        workflowPath,
+        workflowBasename,
         checkRunUrl,
         eventName,
       } = summary;
       const nullStr = '(null)';
 
       info(
-        `${workflowPath}(${colorize(`${jobName}`, acceptable)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${
+        `${workflowBasename}(${
+          colorize(acceptable ? 'notice' : 'error', `${jobName}`)
+        }): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${
           checkSuiteConclusion ?? nullStr
         }][runStatus: ${runStatus}][runConclusion: ${
           runConclusion ?? nullStr
@@ -90,45 +110,19 @@ async function run(): Promise<void> {
       debug(JSON.stringify({ label: 'filtered', report }, null, 2));
     }
 
-    const { progress, conclusion, description } = report;
+    const { progress, conclusion, logs } = report;
 
-    switch (progress) {
-      case 'in_progress': {
-        if (conclusion === 'bad' && options.isEarlyExit) {
-          shouldStop = true;
-          setFailed(errorMessage(description));
-        } else {
-          info(description);
-        }
+    for (const { severity, message, resource } of logs) {
+      info(colorize(severity, [message, resource ?? JSON.stringify(resource, null, 2)].join('\n')));
+    }
 
-        break;
-      }
-      case 'done': {
-        shouldStop = true;
+    if (progress === 'done') {
+      shouldStop = true;
+    }
 
-        switch (conclusion) {
-          case 'acceptable': {
-            info(succeededMessage(description));
-            break;
-          }
-          case 'bad': {
-            setFailed(errorMessage(description));
-            break;
-          }
-          default: {
-            const unexpectedConclusion: never = conclusion;
-            setFailed(errorMessage(`got unexpected conclusion: ${unexpectedConclusion}`));
-            break;
-          }
-        }
-        break;
-      }
-      default: {
-        shouldStop = true;
-        const unexpectedProgress: never = progress;
-        setFailed(errorMessage(`got unexpected progress: ${unexpectedProgress}`));
-        break;
-      }
+    if (conclusion !== 'acceptable') {
+      shouldStop = true;
+      setFailed(colorize('error', 'failed to wait for success'));
     }
 
     endGroup();
