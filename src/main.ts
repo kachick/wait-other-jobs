@@ -110,25 +110,26 @@ async function run(): Promise<void> {
       debug(JSON.stringify({ label: 'filtered', report }, null, 2));
     }
 
-    const { progress, conclusion, logs } = report;
+    const { ok, done, logs } = report;
 
     for (const { severity, message, resource } of logs) {
       info(colorize(severity, message));
       resource && info(JSON.stringify(resource, null, 2));
     }
 
-    if (progress === 'done') {
+    if (done || !ok) {
       shouldStop = true;
-    }
-
-    if (conclusion !== 'acceptable') {
-      shouldStop = true;
-      setFailed(colorize('error', 'failed to wait for success'));
     }
 
     endGroup();
 
     if (shouldStop) {
+      if (ok) {
+        info(colorize('notice', 'all jobs passed'));
+      } else {
+        setFailed(colorize('error', 'failed to wait for success'));
+      }
+
       break;
     }
   }

@@ -32373,33 +32373,26 @@ function seekWaitList(summaries, waitList, elapsed) {
   );
   return { filtered, unmatches, unstarted };
 }
-function judge(targets) {
-  const completed = targets.filter((summary) => summary.runStatus === "COMPLETED");
-  const progress = completed.length === targets.length ? "done" : "in_progress";
-  const conclusion = completed.every((summary) => summary.acceptable) ? "acceptable" : "bad";
+function judge(summaries) {
+  const completed = summaries.filter((summary) => summary.runStatus === "COMPLETED");
+  const done = completed.length === summaries.length;
+  const ok = completed.every((summary) => summary.acceptable);
   const logs = [];
-  if (conclusion === "bad") {
+  if (!ok) {
     logs.push({
       severity: "error",
       message: "some jobs failed"
     });
   }
-  if (progress === "in_progress") {
+  if (!done) {
     logs.push({
       severity: "info",
       message: "some jobs still in progress"
     });
-  } else {
-    if (conclusion === "acceptable") {
-      logs.push({
-        severity: "notice",
-        message: "all jobs passed"
-      });
-    }
   }
   return {
-    progress,
-    conclusion,
+    done,
+    ok,
     logs
   };
 }
@@ -32408,24 +32401,37 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, shoul
   const targets = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
   if (waitList.length > 0) {
     const { filtered, unmatches, unstarted } = seekWaitList(targets, waitList, elapsed);
-    let { conclusion, progress, logs } = judge(filtered);
-    logs = [...logs];
+    const { ok, done, logs } = judge(filtered);
+    const defaultReport = Object.freeze(
+      {
+        ok,
+        done,
+        summaries: filtered,
+        logs
+      }
+    );
     if (unstarted.length > 0) {
-      progress = "in_progress";
-      logs.push({
-        severity: "warning",
-        message: "Some expected jobs were not started",
-        resource: unstarted
-      });
+      return {
+        ...defaultReport,
+        done: false,
+        logs: [...logs, {
+          severity: "warning",
+          message: "Some expected jobs were not started",
+          resource: unstarted
+        }]
+      };
     } else if (unmatches.length > 0) {
-      conclusion = "bad";
-      logs.push({
-        severity: "error",
-        message: "Failed to meet some runs on your specified wait-list",
-        resource: unmatches
-      });
+      return {
+        ...defaultReport,
+        ok: false,
+        logs: [...logs, {
+          severity: "error",
+          message: "Failed to meet some runs on your specified wait-list",
+          resource: unmatches
+        }]
+      };
     }
-    return { conclusion, progress, summaries: filtered, logs };
+    return defaultReport;
   }
   if (skipList.length > 0) {
     const filtered = targets.filter(
@@ -32566,20 +32572,21 @@ async function run() {
     if ((0, import_core3.isDebug)()) {
       (0, import_core3.debug)(JSON.stringify({ label: "filtered", report }, null, 2));
     }
-    const { progress, conclusion, logs } = report;
+    const { ok, done, logs } = report;
     for (const { severity, message, resource } of logs) {
       (0, import_core3.info)(colorize(severity, message));
       resource && (0, import_core3.info)(JSON.stringify(resource, null, 2));
     }
-    if (progress === "done") {
+    if (done || !ok) {
       shouldStop = true;
-    }
-    if (conclusion !== "acceptable") {
-      shouldStop = true;
-      (0, import_core3.setFailed)(colorize("error", "failed to wait for success"));
     }
     (0, import_core3.endGroup)();
     if (shouldStop) {
+      if (ok) {
+        (0, import_core3.info)(colorize("notice", "all jobs passed"));
+      } else {
+        (0, import_core3.setFailed)(colorize("error", "failed to wait for success"));
+      }
       break;
     }
   }

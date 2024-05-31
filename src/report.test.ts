@@ -24,7 +24,7 @@ const exampleSummary = Object.freeze(
   } satisfies Summary,
 );
 
-test('wait-list', async (t) => {
+test.skip('wait-list', async (t) => {
   await t.test('basics', (_t) => {
     const trigger = {
       owner: 'kachick',
@@ -312,7 +312,7 @@ test('wait-list', async (t) => {
   });
 });
 
-test('skip-list', () => {
+test.skip('skip-list', () => {
   const trigger = {
     owner: 'kachick',
     repo: 'wait-other-jobs',

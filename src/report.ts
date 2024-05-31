@@ -49,14 +49,6 @@ export function getSummaries(checks: readonly Check[], trigger: Trigger): Summar
   );
 }
 
-interface Acceptable {
-  conclusion: 'acceptable';
-}
-
-interface Bad {
-  conclusion: 'bad';
-}
-
 export type Severity = 'error' | 'warning' | 'notice' | 'info';
 
 interface Log {
@@ -65,8 +57,9 @@ interface Log {
   resource?: Summary[] | WaitList;
 }
 
-export type Report = (Acceptable | Bad) & {
-  progress: 'in_progress' | 'done';
+export type Report = {
+  ok: boolean;
+  done: boolean;
   logs: readonly Log[];
   summaries: readonly Summary[];
 };
@@ -99,40 +92,29 @@ function seekWaitList(
   return { filtered, unmatches, unstarted };
 }
 
-function judge(targets: readonly Summary[]): Pick<Report, 'progress' | 'conclusion'> & { logs: Log[] } {
-  const completed = targets.filter((summary) => summary.runStatus === 'COMPLETED');
-  const progress: Report['progress'] = completed.length === targets.length
-    ? 'done'
-    : 'in_progress';
-  const conclusion: Report['conclusion'] = completed.every((summary) => summary.acceptable)
-    ? 'acceptable'
-    : 'bad';
+function judge(summaries: readonly Summary[]): { done: boolean; ok: boolean; logs: Log[] } {
+  const completed = summaries.filter((summary) => summary.runStatus === 'COMPLETED');
+  const done = completed.length === summaries.length;
+  const ok = completed.every((summary) => summary.acceptable);
   const logs: Log[] = [];
 
-  if (conclusion === 'bad') {
+  if (!ok) {
     logs.push({
       severity: 'error',
       message: 'some jobs failed',
     });
   }
 
-  if (progress === 'in_progress') {
+  if (!done) {
     logs.push({
       severity: 'info',
       message: 'some jobs still in progress',
     });
-  } else {
-    if (conclusion === 'acceptable') {
-      logs.push({
-        severity: 'notice',
-        message: 'all jobs passed',
-      });
-    }
   }
 
   return {
-    progress,
-    conclusion,
+    done,
+    ok,
     logs,
   };
 }
@@ -148,26 +130,39 @@ export function generateReport(
 
   if (waitList.length > 0) {
     const { filtered, unmatches, unstarted } = seekWaitList(targets, waitList, elapsed);
-    let { conclusion, progress, logs } = judge(filtered);
-    logs = [...logs];
+    const { ok, done, logs } = judge(filtered);
+    const defaultReport = Object.freeze(
+      {
+        ok,
+        done,
+        summaries: filtered,
+        logs,
+      } satisfies Report,
+    );
 
     if (unstarted.length > 0) {
-      progress = 'in_progress';
-      logs.push({
-        severity: 'warning',
-        message: 'Some expected jobs were not started',
-        resource: unstarted,
-      });
+      return {
+        ...defaultReport,
+        done: false,
+        logs: [...logs, {
+          severity: 'warning',
+          message: 'Some expected jobs were not started',
+          resource: unstarted,
+        }],
+      };
     } else if (unmatches.length > 0) {
-      conclusion = 'bad';
-      logs.push({
-        severity: 'error',
-        message: 'Failed to meet some runs on your specified wait-list',
-        resource: unmatches,
-      });
+      return {
+        ...defaultReport,
+        ok: false,
+        logs: [...logs, {
+          severity: 'error',
+          message: 'Failed to meet some runs on your specified wait-list',
+          resource: unmatches,
+        }],
+      };
     }
 
-    return { conclusion, progress, summaries: filtered, logs };
+    return defaultReport;
   }
   if (skipList.length > 0) {
     const filtered = targets.filter((summary) =>
