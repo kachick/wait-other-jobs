@@ -114,7 +114,7 @@ async function run(): Promise<void> {
 
     for (const { severity, message, resource } of logs) {
       info(colorize(severity, message));
-      info(JSON.stringify(resource, null, 2));
+      resource && info(JSON.stringify(resource, null, 2));
     }
 
     if (progress === 'done') {
