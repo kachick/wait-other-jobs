@@ -127,7 +127,7 @@ async function run(): Promise<void> {
       if (ok) {
         info(colorize('notice', 'all jobs passed'));
       } else {
-        setFailed(colorize('error', 'failed to wait for success'));
+        setFailed(colorize('error', 'failed to wait for job success'));
       }
 
       break;

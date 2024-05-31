@@ -32585,7 +32585,7 @@ async function run() {
       if (ok) {
         (0, import_core3.info)(colorize("notice", "all jobs passed"));
       } else {
-        (0, import_core3.setFailed)(colorize("error", "failed to wait for success"));
+        (0, import_core3.setFailed)(colorize("error", "failed to wait for job success"));
       }
       break;
     }
