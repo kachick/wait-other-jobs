@@ -68,7 +68,7 @@ test('wait-list', async (t) => {
       logs: [
         {
           message: 'all jobs passed',
-          severity: 'info',
+          severity: 'notice',
         },
       ],
       progress: 'done',
@@ -351,7 +351,7 @@ test('skip-list', () => {
     logs: [
       {
         message: 'all jobs passed',
-        severity: 'info',
+        severity: 'notice',
       },
     ],
     progress: 'done',

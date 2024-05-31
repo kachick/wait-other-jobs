@@ -32392,7 +32392,7 @@ function judge(targets) {
   } else {
     if (conclusion === "acceptable") {
       logs.push({
-        severity: "info",
+        severity: "notice",
         message: "all jobs passed"
       });
     }

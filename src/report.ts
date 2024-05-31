@@ -124,7 +124,7 @@ function judge(targets: readonly Summary[]): Pick<Report, 'progress' | 'conclusi
   } else {
     if (conclusion === 'acceptable') {
       logs.push({
-        severity: 'info',
+        severity: 'notice',
         message: 'all jobs passed',
       });
     }
