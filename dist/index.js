@@ -32333,8 +32333,10 @@ async function fetchChecks(token, trigger) {
 import { join, relative } from "path";
 function summarize(check, trigger) {
   const { checkRun: run2, checkSuite: suite, workflow, workflowRun } = check;
+  const acceptable = run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || run2.conclusion === "NEUTRAL" && (suite.conclusion === "SUCCESS" || suite.conclusion === "SKIPPED");
   return {
-    acceptable: run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || run2.conclusion === "NEUTRAL" && (suite.conclusion === "SUCCESS" || suite.conclusion === "SKIPPED"),
+    acceptable,
+    severity: acceptable ? run2.status === "COMPLETED" ? "notice" : "warning" : "error",
     workflowBasename: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
     // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     isSameWorkflow: suite.workflowRun?.databaseId === trigger.runId,
@@ -32554,19 +32556,17 @@ async function run() {
     );
     for (const summary of report.summaries) {
       const {
-        acceptable,
-        checkSuiteStatus,
-        checkSuiteConclusion,
         runStatus,
         runConclusion,
         jobName,
         workflowBasename,
         checkRunUrl,
-        eventName
+        eventName,
+        severity
       } = summary;
       const nullStr = "(null)";
       (0, import_core3.info)(
-        `${workflowBasename}(${colorize(acceptable ? "notice" : "error", `${jobName}`)}): [suiteStatus: ${checkSuiteStatus}][suiteConclusion: ${checkSuiteConclusion ?? nullStr}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][eventName: ${eventName}][runURL: ${checkRunUrl}]`
+        `${workflowBasename}(${colorize(severity, jobName)}): [eventName: ${eventName}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`
       );
     }
     if ((0, import_core3.isDebug)()) {

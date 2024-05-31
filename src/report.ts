@@ -5,6 +5,7 @@ import { Temporal } from 'temporal-polyfill';
 
 export interface Summary {
   acceptable: boolean;
+  severity: Severity;
   workflowBasename: string;
   isSameWorkflow: boolean;
 
@@ -22,10 +23,13 @@ export interface Summary {
 
 function summarize(check: Check, trigger: Trigger): Summary {
   const { checkRun: run, checkSuite: suite, workflow, workflowRun } = check;
+  const acceptable = (run.conclusion == 'SUCCESS')
+    || (run.conclusion === 'SKIPPED')
+    || (run.conclusion === 'NEUTRAL' && (suite.conclusion === 'SUCCESS' || suite.conclusion === 'SKIPPED'));
+
   return {
-    acceptable: run.conclusion == 'SUCCESS' || run.conclusion === 'SKIPPED'
-      || (run.conclusion === 'NEUTRAL'
-        && (suite.conclusion === 'SUCCESS' || suite.conclusion === 'SKIPPED')),
+    acceptable,
+    severity: acceptable ? (run.status === 'COMPLETED' ? 'notice' : 'warning') : 'error',
     workflowBasename: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
     // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     isSameWorkflow: suite.workflowRun?.databaseId === trigger.runId,

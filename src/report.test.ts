@@ -21,6 +21,7 @@ const exampleSummary = Object.freeze(
     checkRunUrl: 'https://example.com',
     runStatus: 'IN_PROGRESS',
     runConclusion: 'FAILURE',
+    severity: 'error',
   } satisfies Summary,
 );
 
