@@ -32395,7 +32395,6 @@ function seekWaitList(summaries, waitList, elapsed) {
   return { filtered, unmatches, unstarted };
 }
 function judge(summaries) {
-  /* @__PURE__ */ new Map();
   const summariesByCompleted = groupBy(summaries, (summary) => summary.runStatus === "COMPLETED");
   const completed = summariesByCompleted.get(true) || [];
   const incompleted = summariesByCompleted.get(false) || [];

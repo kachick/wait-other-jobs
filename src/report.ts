@@ -98,7 +98,6 @@ function seekWaitList(
 }
 
 function judge(summaries: readonly Summary[]): { done: boolean; ok: boolean; logs: Log[] } {
-  new Map();
   const summariesByCompleted = groupBy(summaries, (summary) => summary.runStatus === 'COMPLETED');
   const completed = summariesByCompleted.get(true) || [];
   const incompleted = summariesByCompleted.get(false) || [];
