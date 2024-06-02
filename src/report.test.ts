@@ -149,10 +149,11 @@ test('wait-list', async (t) => {
     });
 
     await t.test('slowstarting job has been expired to the given period', (_t) => {
+      const grace = Temporal.Duration.from({ seconds: 60 });
       const report = generateReport(
         getSummaries(checks92810686811WaitSuccessPolling1, trigger),
         trigger,
-        Temporal.Duration.from({ seconds: 60, milliseconds: 1 }),
+        grace.add({ milliseconds: 1 }),
         {
           'waitList': [
             {
@@ -165,7 +166,7 @@ test('wait-list', async (t) => {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'slowstarter-success',
               'optional': false,
-              'startupGracePeriod': { seconds: 60 },
+              'startupGracePeriod': grace.toString(),
             },
           ],
           skipList: [],
@@ -203,9 +204,7 @@ test('wait-list', async (t) => {
                 found: false,
                 jobName: 'slowstarter-success',
                 optional: false,
-                startupGracePeriod: {
-                  seconds: 60,
-                },
+                startupGracePeriod: 'PT60S',
                 workflowFile: 'GH-820-graceperiod.yml',
               },
             ],
