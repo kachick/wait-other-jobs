@@ -93,9 +93,7 @@ function seekWaitList(
   );
 
   const unmatches = seeker.filter((result) => (!(result.found)) && (!(result.optional)));
-  const unstarted = unmatches.filter((result) =>
-    Temporal.Duration.compare(elapsed, getDuration(result.startupGracePeriod)) === -1
-  );
+  const unstarted = unmatches.filter((result) => Temporal.Duration.compare(elapsed, result.startupGracePeriod) === -1);
 
   return { filtered, unmatches, unstarted };
 }

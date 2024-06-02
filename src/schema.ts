@@ -36,8 +36,8 @@ type MyDurationLike = z.infer<typeof MyDurationLike>;
 
 // IETF does not define duration formats in their RFCs, but in RFC 3399 refers ISO 8601 duration formats.
 // https://www.ietf.org/rfc/rfc3339.txt
-const Durationable = z.union([z.string().duration(), MyDurationLike]);
-type Dirationable = z.infer<typeof Durationable>;
+export const Durationable = z.union([z.string().duration(), MyDurationLike]).transform((item) => getDuration(item));
+// type Dirationable = z.infer<typeof Durationable>;
 
 // workaround for https://github.com/colinhacks/zod/issues/635
 function isDurationLike(my: MyDurationLike): my is DurationLike {
@@ -51,7 +51,7 @@ function isDurationLike(my: MyDurationLike): my is DurationLike {
 }
 
 // workaround for https://github.com/colinhacks/zod/issues/635
-export function getDuration(durationable: Dirationable): Temporal.Duration {
+export function getDuration(durationable: string | MyDurationLike): Temporal.Duration {
   if (typeof durationable === 'string' || isDurationLike(durationable)) {
     return Temporal.Duration.from(durationable);
   }
@@ -74,7 +74,7 @@ const WaitFilterCondition = FilterCondition.extend(
 
     // Do not raise validation errors for the reasonability of value range.
     // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
-    startupGracePeriod: Durationable.default({ seconds: 10 }),
+    startupGracePeriod: Durationable.default(Temporal.Duration.from({ seconds: 10 })),
   },
 ).readonly();
 const WaitList = z.array(WaitFilterCondition).readonly();

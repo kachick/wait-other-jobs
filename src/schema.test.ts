@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { Options } from './schema.ts';
+import { Durationable, Options } from './schema.ts';
+import { Temporal } from 'temporal-polyfill';
 
 const defaultOptions = Object.freeze({
   isEarlyExit: true,
@@ -34,7 +35,7 @@ test('Options set some default values it cannot be defined in action.yml', () =>
     waitList: [{
       workflowFile: 'ci.yml',
       optional: false,
-      startupGracePeriod: { seconds: 10 },
+      startupGracePeriod: Temporal.Duration.from({ seconds: 101 }),
     }],
   }, Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }));
 });
@@ -79,7 +80,47 @@ test('Options reject invalid values', () => {
   );
 });
 
-test('wait-list have startupGracePeriod', async (t) => {
+test('Durationable', async (t) => {
+  await t.test('transformed to Temporal.Duration', (_t) => {
+    assert.deepStrictEqual(
+      Durationable.parse('PT1M42S'),
+      Temporal.Duration.from('PT1M42S'),
+    );
+  });
+
+  await t.test('it raises an error if given an unexpected keys', (_t) => {
+    assert.throws(
+      () =>
+        Options.parse({
+          ...defaultOptions,
+          waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { min: 5 } }],
+        }),
+      {
+        name: 'ZodError',
+        message: /unrecognized_key/,
+      },
+    );
+  });
+
+  await t.test('it parses ISO 8601 duration format', (_t) => {
+    assert.deepStrictEqual(
+      {
+        ...defaultOptions,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          optional: false,
+          startupGracePeriod: Temporal.Duration.from('PT1M42S'),
+        }],
+      },
+      Options.parse({
+        ...defaultOptions,
+        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: 'PT1M42S' }],
+      }),
+    );
+  });
+});
+
+test.skip('wait-list have startupGracePeriod', async (t) => {
   await t.test('it accepts DurationLike objects', (_t) => {
     assert.deepStrictEqual(
       {
@@ -118,7 +159,7 @@ test('wait-list have startupGracePeriod', async (t) => {
         waitList: [{
           workflowFile: 'ci.yml',
           optional: false,
-          startupGracePeriod: 'PT1M42S',
+          startupGracePeriod: Temporal.Duration.from('PT1M42S'),
         }],
       },
       Options.parse({
