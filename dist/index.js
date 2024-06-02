@@ -32339,7 +32339,9 @@ function groupBy(items, callback) {
     const key = callback(item);
     if (map.has(key)) {
       const itemsForKey = map.get(key);
-      itemsForKey.push(item);
+      if (itemsForKey) {
+        itemsForKey.push(item);
+      }
     } else {
       map.set(key, [item]);
     }
