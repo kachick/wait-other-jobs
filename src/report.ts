@@ -2,6 +2,7 @@ import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
 import { Check, Options, Trigger, WaitList, getDuration } from './schema.ts';
 import { join, relative } from 'path';
 import { Temporal } from 'temporal-polyfill';
+import { groupBy } from './util.ts';
 
 export interface Summary {
   acceptable: boolean;
@@ -97,15 +98,20 @@ function seekWaitList(
 }
 
 function judge(summaries: readonly Summary[]): { done: boolean; ok: boolean; logs: Log[] } {
-  const completed = summaries.filter((summary) => summary.runStatus === 'COMPLETED');
-  const done = completed.length === summaries.length;
-  const ok = completed.every((summary) => summary.acceptable);
+  new Map();
+  const summariesByCompleted = groupBy(summaries, (summary) => summary.runStatus === 'COMPLETED');
+  const completed = summariesByCompleted.get(true) || [];
+  const incompleted = summariesByCompleted.get(false) || [];
+  const done = incompleted.length === 0;
+  const failures = completed.filter((summary) => !summary.acceptable);
+  const ok = failures.length === 0;
   const logs: Log[] = [];
 
   if (!ok) {
     logs.push({
       severity: 'error',
       message: 'some jobs failed',
+      resource: failures,
     });
   }
 
@@ -113,6 +119,7 @@ function judge(summaries: readonly Summary[]): { done: boolean; ok: boolean; log
     logs.push({
       severity: 'info',
       message: 'some jobs still in progress',
+      resource: incompleted,
     });
   }
 

@@ -32331,6 +32331,23 @@ async function fetchChecks(token, trigger) {
 
 // src/report.ts
 import { join, relative } from "path";
+
+// src/util.ts
+function groupBy(items, callback) {
+  const map = /* @__PURE__ */ new Map();
+  for (const item of items) {
+    const key = callback(item);
+    if (map.has(key)) {
+      const itemsForKey = map.get(key);
+      itemsForKey.push(item);
+    } else {
+      map.set(key, [item]);
+    }
+  }
+  return map;
+}
+
+// src/report.ts
 function summarize(check, trigger) {
   const { checkRun: run2, checkSuite: suite, workflow, workflowRun } = check;
   const acceptable = run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || run2.conclusion === "NEUTRAL" && (suite.conclusion === "SUCCESS" || suite.conclusion === "SKIPPED");
@@ -32376,20 +32393,26 @@ function seekWaitList(summaries, waitList, elapsed) {
   return { filtered, unmatches, unstarted };
 }
 function judge(summaries) {
-  const completed = summaries.filter((summary) => summary.runStatus === "COMPLETED");
-  const done = completed.length === summaries.length;
-  const ok = completed.every((summary) => summary.acceptable);
+  /* @__PURE__ */ new Map();
+  const summariesByCompleted = groupBy(summaries, (summary) => summary.runStatus === "COMPLETED");
+  const completed = summariesByCompleted.get(true) || [];
+  const incompleted = summariesByCompleted.get(false) || [];
+  const done = incompleted.length === 0;
+  const failures = completed.filter((summary) => !summary.acceptable);
+  const ok = failures.length === 0;
   const logs = [];
   if (!ok) {
     logs.push({
       severity: "error",
-      message: "some jobs failed"
+      message: "some jobs failed",
+      resource: failures
     });
   }
   if (!done) {
     logs.push({
       severity: "info",
-      message: "some jobs still in progress"
+      message: "some jobs still in progress",
+      resource: incompleted
     });
   }
   return {

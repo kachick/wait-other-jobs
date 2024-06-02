@@ -111,6 +111,22 @@ test('wait-list', async (t) => {
           {
             message: 'some jobs still in progress',
             severity: 'info',
+            resource: [
+              {
+                acceptable: false,
+                checkRunUrl: 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+                checkSuiteConclusion: null,
+                checkSuiteStatus: 'QUEUED',
+                eventName: 'pull_request',
+                isSameWorkflow: false,
+                jobName: 'quickstarter-success',
+                runConclusion: null,
+                runDatabaseId: 25536443631,
+                runStatus: 'QUEUED',
+                severity: 'error',
+                workflowBasename: 'GH-820-graceperiod.yml',
+              },
+            ],
           },
           {
             message: 'Some expected jobs were not started',
@@ -163,6 +179,22 @@ test('wait-list', async (t) => {
           {
             message: 'some jobs still in progress',
             severity: 'info',
+            resource: [
+              {
+                acceptable: false,
+                checkRunUrl: 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+                checkSuiteConclusion: null,
+                checkSuiteStatus: 'QUEUED',
+                eventName: 'pull_request',
+                isSameWorkflow: false,
+                jobName: 'quickstarter-success',
+                runConclusion: null,
+                runDatabaseId: 25536443631,
+                runStatus: 'QUEUED',
+                severity: 'error',
+                workflowBasename: 'GH-820-graceperiod.yml',
+              },
+            ],
           },
           {
             message: 'Failed to meet some runs on your specified wait-list',
@@ -215,6 +247,22 @@ test('wait-list', async (t) => {
           {
             message: 'some jobs still in progress',
             severity: 'info',
+            resource: [
+              {
+                acceptable: false,
+                checkRunUrl: 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+                checkSuiteConclusion: null,
+                checkSuiteStatus: 'QUEUED',
+                eventName: 'pull_request',
+                isSameWorkflow: false,
+                jobName: 'quickstarter-success',
+                runConclusion: null,
+                runDatabaseId: 25536443631,
+                runStatus: 'QUEUED',
+                severity: 'error',
+                workflowBasename: 'GH-820-graceperiod.yml',
+              },
+            ],
           },
           {
             message: 'Failed to meet some runs on your specified wait-list',
@@ -285,6 +333,22 @@ test('wait-list', async (t) => {
           {
             message: 'some jobs failed',
             severity: 'error',
+            resource: [
+              {
+                acceptable: false,
+                checkRunUrl: 'https://example.com',
+                checkSuiteConclusion: 'FAILURE',
+                checkSuiteStatus: 'IN_PROGRESS',
+                eventName: 'pull_request',
+                isSameWorkflow: false,
+                jobName: 'quickstarter-fail',
+                runConclusion: 'FAILURE',
+                runDatabaseId: 42,
+                runStatus: 'COMPLETED',
+                severity: 'error',
+                workflowBasename: 'ci.yml',
+              },
+            ],
           },
           {
             message: 'Some expected jobs were not started',
