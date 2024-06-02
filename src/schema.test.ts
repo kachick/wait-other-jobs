@@ -1,7 +1,7 @@
 import test from 'node:test';
 import { strictEqual, deepStrictEqual, throws } from 'node:assert';
 import { Durationable, Options } from './schema.ts';
-import { Temporal } from '@js-temporal/polyfill';
+import { Temporal } from 'temporal-polyfill';
 
 function assertEualDuration(a: Temporal.Duration, b: Temporal.Duration) {
   strictEqual(

@@ -26,7 +26,7 @@ import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
 import { Severity, generateReport, getSummaries } from './report.ts';
 import { readableDuration, wait, getIdleMilliseconds } from './wait.ts';
-import { Temporal } from '@js-temporal/polyfill';
+import { Temporal } from 'temporal-polyfill';
 
 async function run(): Promise<void> {
   const startedAt = performance.now();

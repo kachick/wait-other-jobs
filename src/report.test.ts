@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './snapshot.ts';
 import { Report, Summary, generateReport, getSummaries } from './report.ts';
 import { omit } from './util.ts';
-import { Temporal } from '@js-temporal/polyfill';
+import { Temporal } from 'temporal-polyfill';
 
 const exampleSummary = Object.freeze(
   {
