@@ -29,7 +29,6 @@
     "@octokit/graphql-schema": "^15.18.0",
     "@octokit/plugin-paginate-graphql": "^5.2.2",
     "ansi-styles": "^6.2.1",
-    "temporal-polyfill": "^0.2.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
