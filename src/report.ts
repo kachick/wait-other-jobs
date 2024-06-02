@@ -1,5 +1,5 @@
 import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
-import { Check, Options, Trigger, WaitList, getDuration } from './schema.ts';
+import { Check, Options, Trigger, WaitList } from './schema.ts';
 import { join, relative } from 'path';
 import { Temporal } from 'temporal-polyfill';
 import { groupBy } from './util.ts';
@@ -93,9 +93,7 @@ function seekWaitList(
   );
 
   const unmatches = seeker.filter((result) => (!(result.found)) && (!(result.optional)));
-  const unstarted = unmatches.filter((result) =>
-    Temporal.Duration.compare(elapsed, getDuration(result.startupGracePeriod)) === -1
-  );
+  const unstarted = unmatches.filter((result) => Temporal.Duration.compare(elapsed, result.startupGracePeriod) === -1);
 
   return { filtered, unmatches, unstarted };
 }
