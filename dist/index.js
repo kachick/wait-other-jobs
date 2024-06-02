@@ -32350,10 +32350,12 @@ function groupBy(items, callback) {
 // src/report.ts
 function summarize(check, trigger) {
   const { checkRun: run2, checkSuite: suite, workflow, workflowRun } = check;
-  const acceptable = run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || run2.conclusion === "NEUTRAL" && (suite.conclusion === "SUCCESS" || suite.conclusion === "SKIPPED");
+  const isCompleted = run2.status === "COMPLETED";
+  const isAcceptable = run2.conclusion == "SUCCESS" || run2.conclusion === "SKIPPED" || run2.conclusion === "NEUTRAL" && (suite.conclusion === "SUCCESS" || suite.conclusion === "SKIPPED");
   return {
-    acceptable,
-    severity: acceptable ? run2.status === "COMPLETED" ? "notice" : "warning" : "error",
+    isAcceptable,
+    isCompleted,
+    severity: isCompleted ? isAcceptable ? "notice" : "error" : "warning",
     workflowBasename: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
     // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     isSameWorkflow: suite.workflowRun?.databaseId === trigger.runId,
@@ -32393,11 +32395,11 @@ function seekWaitList(summaries, waitList, elapsed) {
   return { filtered, unmatches, unstarted };
 }
 function judge(summaries) {
-  const summariesByCompleted = groupBy(summaries, (summary) => summary.runStatus === "COMPLETED");
+  const summariesByCompleted = groupBy(summaries, (summary) => summary.isCompleted);
   const completed = summariesByCompleted.get(true) || [];
   const incompleted = summariesByCompleted.get(false) || [];
   const done = incompleted.length === 0;
-  const failures = completed.filter((summary) => !summary.acceptable);
+  const failures = completed.filter((summary) => !summary.isAcceptable);
   const ok = failures.length === 0;
   const logs = [];
   if (!ok) {

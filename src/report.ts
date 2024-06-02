@@ -33,7 +33,7 @@ function summarize(check: Check, trigger: Trigger): Summary {
   return {
     isAcceptable,
     isCompleted,
-    severity: isAcceptable ? (run.status === 'COMPLETED' ? 'notice' : 'warning') : 'error',
+    severity: isCompleted ? (isAcceptable ? 'notice' : 'error') : 'warning',
     workflowBasename: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
     // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     isSameWorkflow: suite.workflowRun?.databaseId === trigger.runId,
