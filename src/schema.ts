@@ -37,7 +37,6 @@ type MyDurationLike = z.infer<typeof MyDurationLike>;
 // IETF does not define duration formats in their RFCs, but in RFC 3399 refers ISO 8601 duration formats.
 // https://www.ietf.org/rfc/rfc3339.txt
 export const Durationable = z.union([z.string().duration(), MyDurationLike]).transform((item) => getDuration(item));
-// type Dirationable = z.infer<typeof Durationable>;
 
 // workaround for https://github.com/colinhacks/zod/issues/635
 function isDurationLike(my: MyDurationLike): my is DurationLike {

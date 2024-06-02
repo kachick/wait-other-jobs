@@ -40,6 +40,6 @@ export function groupBy<T, K>(items: ReadonlyArray<T>, callback: (item: T) => K)
   return map;
 }
 
-export function jsonEqual(actual: unknown, expected: any) {
+export function jsonEqual(actual: unknown, expected: unknown) {
   deepStrictEqual(JSON.parse(JSON.stringify(actual)), expected);
 }

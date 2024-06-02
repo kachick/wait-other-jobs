@@ -31041,7 +31041,7 @@ var MyDurationLike = z2.object({
   microseconds: z2.number().optional(),
   nanoseconds: z2.number().optional()
 }).strict().readonly();
-var Durationable = z2.union([z2.string().duration(), MyDurationLike]);
+var Durationable = z2.union([z2.string().duration(), MyDurationLike]).transform((item) => getDuration(item));
 function isDurationLike(my) {
   for (const [_2, value] of Object.entries(my)) {
     if (value === void 0) {
@@ -31069,7 +31069,7 @@ var WaitFilterCondition = FilterCondition.extend(
     eventName: z2.string().min(1).optional(),
     // Do not raise validation errors for the reasonability of value range.
     // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
-    startupGracePeriod: Durationable.default({ seconds: 10 })
+    startupGracePeriod: Durationable.default(mr.Duration.from({ seconds: 10 }))
   }
 ).readonly();
 var WaitList = z2.array(WaitFilterCondition).readonly();
@@ -32389,9 +32389,7 @@ function seekWaitList(summaries, waitList, elapsed) {
     })
   );
   const unmatches = seeker.filter((result) => !result.found && !result.optional);
-  const unstarted = unmatches.filter(
-    (result) => mr.Duration.compare(elapsed, getDuration(result.startupGracePeriod)) === -1
-  );
+  const unstarted = unmatches.filter((result) => mr.Duration.compare(elapsed, result.startupGracePeriod) === -1);
   return { filtered, unmatches, unstarted };
 }
 function judge(summaries) {
