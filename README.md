@@ -39,7 +39,7 @@ with:
   #   - If no jobName is specified, all the jobs in the workflow will be targeted.
   #   - wait-list: 
   #     - If the checkRun for the specified name is not found, this action raise errors by default.
-  #       You can disable this validation with `"optional": true` or use the method written in "Timing" section
+  #       You can disable this validation with `"optional": true` or use the `startupGracePeriod` that described in following section
   #     - Wait for all event types by default, you can change with `"eventName": "EVENT_NAME_AS_push"`.
   wait-list: |
     [
@@ -117,13 +117,12 @@ See the [docs](docs/examples.md) for further detail.
   ```
   Similar problems should be considered in matrix jobs. See [#761](https://github.com/kachick/wait-other-jobs/issues/761) for further detail
 
-## Timing
+## Startup grace period
 
-Judge whether the checkRun state is OK or bad at the moment.\
-When some jobs will be triggered after this action with `needs: [distant-first]`, it might be inaccurate.\
-Basically we set large `wait-seconds-before-first-polling` for this case.
+Judge whether the checkRun state at the moment.\
+When some jobs are triggered late after this action, we need to use the following configurations.
 
-However, using a `wait-list` may avoid this problem.
+An example of using a `wait-list`.
 
 ```yaml
 with:
@@ -145,7 +144,9 @@ This action starts immediately but ignores the job missing in the first 5 minute
   It should be parsible with [Temporal.Duration.from()](https://github.com/tc39/proposal-temporal)\
   e.g
   - `"PT1M"` # ISO8601 duration format
-  - `{ "seconds": 300 }`
+  - `{ "minutes": 3, "seconds": 20 }` # key-value for each unit
+
+If not using wait-list, this pattern should be considered in your `wait-seconds-before-first-polling`.
 
 ## Limitations
 
