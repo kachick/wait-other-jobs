@@ -117,7 +117,7 @@ See the [docs](docs/examples.md) for further detail.
   ```
   Similar problems should be considered in matrix jobs. See [#761](https://github.com/kachick/wait-other-jobs/issues/761) for further detail
 
-## Startup grace period
+## Startup grace period - Since v3.3.0
 
 Judge whether the checkRun state at the moment.\
 When some jobs are triggered late after this action, we need to use the following configurations.
