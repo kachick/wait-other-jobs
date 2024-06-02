@@ -65,9 +65,13 @@ const SkipFilterCondition = FilterCondition.readonly();
 const WaitFilterCondition = FilterCondition.extend(
   {
     optional: z.boolean().optional().default(false).readonly(),
+
     // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
     // - Intentionally omitted in skip-list, let me know if you have the use-case
     eventName: z.string().min(1).optional(),
+
+    // Do not raise validation errors for the reasonability of value range.
+    // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
     startupGracePeriod: Durationable.default({ seconds: 10 }),
   },
 ).readonly();
