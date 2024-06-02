@@ -12,7 +12,7 @@ How to use in testing code
 
 ```bash
 mkdir -p tmp
-cat ./snapshots/logs_24287937403_GH-820/1_wait-success.txt | sd '^(\S+ ##\[debug\])(.+)' '$2' > ./tmp/trimmed_prefix-wait-success.txt
+cat ./snapshots/run-9281068681/1_wait-success.txt | sd '^(\S+ ##\[debug\])(.+)' '$2' > ./tmp/trimmed_prefix-wait-success.txt
 
 # Manually extract JSON array with `"label": "rawdata"` as `./tmp/wait-success-polling1-rawdata.json`
 
