@@ -1,5 +1,5 @@
 import { CheckSuite, Workflow, CheckRun, WorkflowRun } from '@octokit/graphql-schema';
-import { Temporal } from 'temporal-polyfill';
+import { Temporal } from '@js-temporal/polyfill';
 import { z } from 'zod';
 
 // https://github.com/tc39/proposal-temporal/blob/26e4cebe3c49f56932c1d5064fec9993e981823a/polyfill/index.d.ts#L493-L504

@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './snapshot.ts';
 import { Report, Summary, generateReport, getSummaries } from './report.ts';
 import { omit } from './util.ts';
-import { Temporal } from 'temporal-polyfill';
+import { Temporal } from '@js-temporal/polyfill';
 
 const exampleSummary = Object.freeze(
   {
@@ -46,18 +46,18 @@ test('wait-list', async (t) => {
             'workflowFile': 'lint.yml',
             'optional': false,
             'eventName': 'pull_request',
-            startupGracePeriod: { seconds: 10 },
+            startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
           {
             'workflowFile': 'merge-bot-pr.yml',
             'jobName': 'dependabot',
             'optional': true,
-            startupGracePeriod: { seconds: 10 },
+            startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
           {
             'workflowFile': 'THERE_ARE_NO_FILES_AS_THIS.yml',
             'optional': true,
-            startupGracePeriod: { seconds: 10 },
+            startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
         ],
         skipList: [],
@@ -92,13 +92,13 @@ test('wait-list', async (t) => {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'quickstarter-success',
               'optional': false,
-              'startupGracePeriod': { seconds: 10 },
+              'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
             },
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'slowstarter-success',
               'optional': false,
-              'startupGracePeriod': { seconds: 60 },
+              'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
             },
           ],
           skipList: [],
@@ -137,9 +137,9 @@ test('wait-list', async (t) => {
                 found: false,
                 jobName: 'slowstarter-success',
                 optional: false,
-                startupGracePeriod: {
+                startupGracePeriod: Temporal.Duration.from({
                   seconds: 60,
-                },
+                }),
                 workflowFile: 'GH-820-graceperiod.yml',
               },
             ],
@@ -162,13 +162,13 @@ test('wait-list', async (t) => {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'quickstarter-success',
               'optional': false,
-              'startupGracePeriod': { seconds: 10 },
+              'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
             },
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'slowstarter-success',
               'optional': false,
-              'startupGracePeriod': grace.toString(),
+              'startupGracePeriod': grace,
             },
           ],
           skipList: [],
@@ -207,7 +207,7 @@ test('wait-list', async (t) => {
                 found: false,
                 jobName: 'slowstarter-success',
                 optional: false,
-                startupGracePeriod: 'PT60S',
+                startupGracePeriod: Temporal.Duration.from('PT60S'),
                 workflowFile: 'GH-820-graceperiod.yml',
               },
             ],
@@ -229,13 +229,13 @@ test('wait-list', async (t) => {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'quickstarter-success',
               'optional': false,
-              'startupGracePeriod': { seconds: 10 },
+              'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
             },
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'slowstarter-success',
               'optional': false,
-              'startupGracePeriod': { seconds: 60 },
+              'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
             },
           ],
           skipList: [],
@@ -274,9 +274,9 @@ test('wait-list', async (t) => {
                 found: false,
                 jobName: 'slowstarter-success',
                 optional: false,
-                startupGracePeriod: {
+                startupGracePeriod: Temporal.Duration.from({
                   seconds: 60,
-                },
+                }),
                 workflowFile: 'GH-820-graceperiod.yml',
               },
             ],
@@ -312,19 +312,19 @@ test('wait-list', async (t) => {
               'workflowFile': 'ci.yml',
               'jobName': 'quickstarter-success',
               'optional': false,
-              'startupGracePeriod': { minutes: 5 },
+              'startupGracePeriod': Temporal.Duration.from({ minutes: 5 }),
             },
             {
               'workflowFile': 'ci.yml',
               'jobName': 'quickstarter-fail',
               'optional': false,
-              'startupGracePeriod': { minutes: 5 },
+              'startupGracePeriod': Temporal.Duration.from({ minutes: 5 }),
             },
             {
               'workflowFile': 'ci.yml',
               'jobName': 'slowstarter-missing',
               'optional': false,
-              'startupGracePeriod': { minutes: 5 },
+              'startupGracePeriod': Temporal.Duration.from({ minutes: 5 }),
             },
           ],
           skipList: [],
@@ -363,9 +363,9 @@ test('wait-list', async (t) => {
                 found: false,
                 jobName: 'slowstarter-missing',
                 optional: false,
-                startupGracePeriod: {
+                startupGracePeriod: Temporal.Duration.from({
                   minutes: 5,
-                },
+                }),
                 workflowFile: 'ci.yml',
               },
             ],

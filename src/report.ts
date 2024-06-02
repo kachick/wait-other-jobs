@@ -1,7 +1,7 @@
 import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
 import { Check, Options, Trigger, WaitList, getDuration } from './schema.ts';
 import { join, relative } from 'path';
-import { Temporal } from 'temporal-polyfill';
+import { Temporal } from '@js-temporal/polyfill';
 import { groupBy } from './util.ts';
 
 export interface Summary {
