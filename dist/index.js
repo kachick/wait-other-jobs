@@ -32598,7 +32598,9 @@ async function run() {
     const { ok, done, logs } = report;
     for (const { severity, message, resource } of logs) {
       (0, import_core3.info)(colorize(severity, message));
-      resource && (0, import_core3.info)(JSON.stringify(resource, null, 2));
+      if (severity != "info" && resource) {
+        (0, import_core3.info)(JSON.stringify(resource, null, 2));
+      }
     }
     if (done) {
       shouldStop = true;
