@@ -5,7 +5,8 @@ import { Temporal } from 'temporal-polyfill';
 import { groupBy } from './util.ts';
 
 export interface Summary {
-  acceptable: boolean;
+  isAcceptable: boolean;
+  isCompleted: boolean;
   severity: Severity;
   workflowBasename: string;
   isSameWorkflow: boolean;
@@ -24,13 +25,15 @@ export interface Summary {
 
 function summarize(check: Check, trigger: Trigger): Summary {
   const { checkRun: run, checkSuite: suite, workflow, workflowRun } = check;
-  const acceptable = (run.conclusion == 'SUCCESS')
+  const isCompleted = run.status === 'COMPLETED';
+  const isAcceptable = (run.conclusion == 'SUCCESS')
     || (run.conclusion === 'SKIPPED')
     || (run.conclusion === 'NEUTRAL' && (suite.conclusion === 'SUCCESS' || suite.conclusion === 'SKIPPED'));
 
   return {
-    acceptable,
-    severity: acceptable ? (run.status === 'COMPLETED' ? 'notice' : 'warning') : 'error',
+    isAcceptable,
+    isCompleted,
+    severity: isAcceptable ? (run.status === 'COMPLETED' ? 'notice' : 'warning') : 'error',
     workflowBasename: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
     // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     isSameWorkflow: suite.workflowRun?.databaseId === trigger.runId,
@@ -98,11 +101,11 @@ function seekWaitList(
 }
 
 function judge(summaries: readonly Summary[]): { done: boolean; ok: boolean; logs: Log[] } {
-  const summariesByCompleted = groupBy(summaries, (summary) => summary.runStatus === 'COMPLETED');
+  const summariesByCompleted = groupBy(summaries, (summary) => summary.isCompleted);
   const completed = summariesByCompleted.get(true) || [];
   const incompleted = summariesByCompleted.get(false) || [];
   const done = incompleted.length === 0;
-  const failures = completed.filter((summary) => !summary.acceptable);
+  const failures = completed.filter((summary) => !summary.isAcceptable);
   const ok = failures.length === 0;
   const logs: Log[] = [];
 

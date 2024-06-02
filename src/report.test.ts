@@ -7,7 +7,8 @@ import { Temporal } from 'temporal-polyfill';
 
 const exampleSummary = Object.freeze(
   {
-    acceptable: false,
+    isAcceptable: false,
+    isCompleted: false,
     workflowBasename: '.github/workflows/example.yml',
     isSameWorkflow: false,
 
@@ -113,7 +114,8 @@ test('wait-list', async (t) => {
             severity: 'info',
             resource: [
               {
-                acceptable: false,
+                isAcceptable: false,
+                isCompleted: false,
                 checkRunUrl: 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
                 checkSuiteConclusion: null,
                 checkSuiteStatus: 'QUEUED',
@@ -182,7 +184,8 @@ test('wait-list', async (t) => {
             severity: 'info',
             resource: [
               {
-                acceptable: false,
+                isAcceptable: false,
+                isCompleted: false,
                 checkRunUrl: 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
                 checkSuiteConclusion: null,
                 checkSuiteStatus: 'QUEUED',
@@ -248,7 +251,8 @@ test('wait-list', async (t) => {
             severity: 'info',
             resource: [
               {
-                acceptable: false,
+                isAcceptable: false,
+                isCompleted: false,
                 checkRunUrl: 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
                 checkSuiteConclusion: null,
                 checkSuiteStatus: 'QUEUED',
@@ -287,13 +291,15 @@ test('wait-list', async (t) => {
       const report = generateReport(
         [{
           ...exampleSummary,
-          acceptable: true,
+          isAcceptable: true,
+          isCompleted: true,
           runStatus: 'COMPLETED',
           workflowBasename: 'ci.yml',
           jobName: 'quickstarter-success',
         }, {
           ...exampleSummary,
-          acceptable: false,
+          isAcceptable: false,
+          isCompleted: true,
           runStatus: 'COMPLETED',
           workflowBasename: 'ci.yml',
           jobName: 'quickstarter-fail',
@@ -334,7 +340,8 @@ test('wait-list', async (t) => {
             severity: 'error',
             resource: [
               {
-                acceptable: false,
+                isAcceptable: false,
+                isCompleted: true,
                 checkRunUrl: 'https://example.com',
                 checkSuiteConclusion: 'FAILURE',
                 checkSuiteStatus: 'IN_PROGRESS',
