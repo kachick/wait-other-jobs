@@ -3,7 +3,7 @@ import { strictEqual, deepStrictEqual, throws } from 'node:assert';
 import { Durationable, Options } from './schema.ts';
 import { Temporal } from 'temporal-polyfill';
 
-function assertEualDuration(a: Temporal.Duration, b: Temporal.Duration) {
+function equalDuration(a: Temporal.Duration, b: Temporal.Duration) {
   strictEqual(
     Temporal.Duration.compare(a, b),
     0,
@@ -107,7 +107,8 @@ test('Options reject invalid values', () => {
 
 test('Durationable', async (t) => {
   await t.test('transformed to Temporal.Duration', (_t) => {
-    assertEualDuration(Durationable.parse('PT1M42S'), Temporal.Duration.from({ seconds: 102 }));
+    equalDuration(Durationable.parse('PT1M42S'), Temporal.Duration.from({ seconds: 102 }));
+    equalDuration(Durationable.parse({ minutes: 1, seconds: 42 }), Temporal.Duration.from({ seconds: 102 }));
   });
 
   await t.test('it raises an error if given an unexpected keys', (_t) => {

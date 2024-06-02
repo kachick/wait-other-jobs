@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert';
 import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './snapshot.ts';
 import { Report, Summary, generateReport, getSummaries } from './report.ts';
-import { omit } from './util.ts';
+import { jsonEqual, omit } from './util.ts';
 import { Temporal } from 'temporal-polyfill';
 
 const exampleSummary = Object.freeze(
@@ -106,48 +106,49 @@ test('wait-list', async (t) => {
         },
       );
 
-      assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
-        done: false,
-        logs: [
-          {
-            message: 'some jobs still in progress',
-            severity: 'info',
-            resource: [
-              {
-                isAcceptable: false,
-                isCompleted: false,
-                checkRunUrl: 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
-                checkSuiteConclusion: null,
-                checkSuiteStatus: 'QUEUED',
-                eventName: 'pull_request',
-                isSameWorkflow: false,
-                jobName: 'quickstarter-success',
-                runConclusion: null,
-                runDatabaseId: 25536443631,
-                runStatus: 'QUEUED',
-                severity: 'warning',
-                workflowBasename: 'GH-820-graceperiod.yml',
-              },
-            ],
-          },
-          {
-            message: 'Some expected jobs were not started',
-            resource: [
-              {
-                found: false,
-                jobName: 'slowstarter-success',
-                optional: false,
-                startupGracePeriod: Temporal.Duration.from({
-                  seconds: 60,
-                }),
-                workflowFile: 'GH-820-graceperiod.yml',
-              },
-            ],
-            severity: 'warning',
-          },
-        ],
-        ok: true,
-      });
+      jsonEqual(
+        omit<Report, 'summaries'>(report, ['summaries']),
+        {
+          done: false,
+          logs: [
+            {
+              message: 'some jobs still in progress',
+              severity: 'info',
+              resource: [
+                {
+                  isAcceptable: false,
+                  isCompleted: false,
+                  checkRunUrl: 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+                  checkSuiteConclusion: null,
+                  checkSuiteStatus: 'QUEUED',
+                  eventName: 'pull_request',
+                  isSameWorkflow: false,
+                  jobName: 'quickstarter-success',
+                  runConclusion: null,
+                  runDatabaseId: 25536443631,
+                  runStatus: 'QUEUED',
+                  severity: 'warning',
+                  workflowBasename: 'GH-820-graceperiod.yml',
+                },
+              ],
+            },
+            {
+              message: 'Some expected jobs were not started',
+              resource: [
+                {
+                  found: false,
+                  jobName: 'slowstarter-success',
+                  optional: false,
+                  startupGracePeriod: 'PT60S',
+                  workflowFile: 'GH-820-graceperiod.yml',
+                },
+              ],
+              severity: 'warning',
+            },
+          ],
+          ok: true,
+        },
+      );
     });
 
     await t.test('slowstarting job has been expired to the given period', (_t) => {
@@ -176,7 +177,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+      jsonEqual(omit<Report, 'summaries'>(report, ['summaries']), {
         done: false,
         logs: [
           {
@@ -207,7 +208,7 @@ test('wait-list', async (t) => {
                 found: false,
                 jobName: 'slowstarter-success',
                 optional: false,
-                startupGracePeriod: Temporal.Duration.from('PT60S'),
+                startupGracePeriod: 'PT60S',
                 workflowFile: 'GH-820-graceperiod.yml',
               },
             ],
@@ -243,7 +244,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+      jsonEqual(omit<Report, 'summaries'>(report, ['summaries']), {
         done: false,
         logs: [
           {
@@ -274,9 +275,7 @@ test('wait-list', async (t) => {
                 found: false,
                 jobName: 'slowstarter-success',
                 optional: false,
-                startupGracePeriod: Temporal.Duration.from({
-                  seconds: 60,
-                }),
+                startupGracePeriod: 'PT60S',
                 workflowFile: 'GH-820-graceperiod.yml',
               },
             ],
@@ -332,7 +331,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+      jsonEqual(omit<Report, 'summaries'>(report, ['summaries']), {
         done: false,
         logs: [
           {
@@ -363,9 +362,7 @@ test('wait-list', async (t) => {
                 found: false,
                 jobName: 'slowstarter-missing',
                 optional: false,
-                startupGracePeriod: Temporal.Duration.from({
-                  minutes: 5,
-                }),
+                startupGracePeriod: 'PT5M',
                 workflowFile: 'ci.yml',
               },
             ],
