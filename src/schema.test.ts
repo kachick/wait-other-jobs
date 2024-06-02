@@ -31,7 +31,11 @@ test('Options keep given values', () => {
 test('Options set some default values it cannot be defined in action.yml', () => {
   assert.deepStrictEqual({
     ...defaultOptions,
-    waitList: [{ workflowFile: 'ci.yml', optional: false }],
+    waitList: [{
+      workflowFile: 'ci.yml',
+      optional: false,
+      startupGracePeriod: { seconds: 10 },
+    }],
   }, Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }));
 });
 
@@ -73,4 +77,54 @@ test('Options reject invalid values', () => {
       message: /Do not specify both wait-list and skip-list/,
     },
   );
+});
+
+test('wait-list have startupGracePeriod', async (t) => {
+  await t.test('it accepts DurationLike objects', (_t) => {
+    assert.deepStrictEqual(
+      {
+        ...defaultOptions,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          optional: false,
+          startupGracePeriod: { minutes: 5 },
+        }],
+      },
+      Options.parse({
+        ...defaultOptions,
+        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { minutes: 5 } }],
+      }),
+    );
+  });
+
+  await t.test('it raises an error if given an unexpected keys', (_t) => {
+    assert.throws(
+      () =>
+        Options.parse({
+          ...defaultOptions,
+          waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { min: 5 } }],
+        }),
+      {
+        name: 'ZodError',
+        message: /unrecognized_key/,
+      },
+    );
+  });
+
+  await t.test('it parses ISO 8601 duration format', (_t) => {
+    assert.deepStrictEqual(
+      {
+        ...defaultOptions,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          optional: false,
+          startupGracePeriod: 'PT1M42S',
+        }],
+      },
+      Options.parse({
+        ...defaultOptions,
+        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: 'PT1M42S' }],
+      }),
+    );
+  });
 });

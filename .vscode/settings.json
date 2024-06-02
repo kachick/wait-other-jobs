@@ -19,5 +19,10 @@
       }
     }
   },
+  "search.exclude": {
+    "dist/**": true,
+    "node_modules/**": true,
+    ".direnv/**": true
+  },
   "deno.enable": false
 }

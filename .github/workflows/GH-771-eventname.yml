@@ -1,4 +1,4 @@
-name: GH-771 - Wait
+name: GH-771 - Event Name
 on:
   push:
     paths:
@@ -16,6 +16,15 @@ on:
 permissions: {}
 
 jobs:
+  echo:
+    runs-on: ubuntu-24.04
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
+    timeout-minutes: 5
+    steps:
+      - name: Print note
+        run: |
+          echo 'Triggered by ${{ github.event_name }} event'
+          echo 'See https://github.com/kachick/wait-other-jobs/issues/771 for the detail'
   wait:
     runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
@@ -30,10 +39,12 @@ jobs:
           retry-method: 'equal_intervals'
           min-interval-seconds: 5
           attempt-limits: 30
+          skip-same-workflow: 'false'
           wait-list: |
             [
               {
-                "workflowFile": "GH-771-targets.yml",
+                "workflowFile": "GH-771-eventname.yml",
+                "jobName": "echo",
                 "eventName": "${{ github.event_name }}"
               }
             ]

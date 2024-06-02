@@ -1,0 +1,97 @@
+name: GH-820 - Grace Period
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**GH-820**'
+      - 'action.yml'
+      - 'dist/**'
+  pull_request:
+    paths:
+      - '**GH-820**'
+      - 'action.yml'
+      - 'dist/**'
+  workflow_dispatch:
+
+# Disable all permissions in workflow global as to setup clean room
+# However PRs will have read permissions because this project is on a public repository
+permissions: {}
+
+jobs:
+  quickstarter-success:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: echo ':)'
+  intermediate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: sleep 15
+  slowstarter-success:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    needs: [intermediate]
+    steps:
+      - run: echo ':)'
+  slowstarter-fail:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    needs: [intermediate]
+    steps:
+      - run: |
+          echo ':<'
+          false
+  wait-success:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: ./
+        with:
+          retry-method: 'equal_intervals'
+          wait-seconds-before-first-polling: '0'
+          min-interval-seconds: '5'
+          attempt-limits: '100'
+          wait-list: |
+            [
+              {
+                "workflowFile": "GH-820-graceperiod.yml",
+                "optional": false,
+                "jobName": "quickstarter-success"
+              },
+              {
+                "workflowFile": "GH-820-graceperiod.yml",
+                "optional": false,
+                "jobName": "slowstarter-success",
+                "startupGracePeriod": { "seconds": 60 }
+              }
+            ]
+  wait-fail:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: ./
+        with:
+          retry-method: 'equal_intervals'
+          wait-seconds-before-first-polling: '0'
+          min-interval-seconds: '5'
+          attempt-limits: '100'
+          wait-list: |
+            [
+              {
+                "workflowFile": "GH-820-graceperiod.yml",
+                "optional": false,
+                "jobName": "quickstarter-success"
+              },
+              {
+                "workflowFile": "GH-820-graceperiod.yml",
+                "optional": false,
+                "jobName": "slowstarter-fail",
+                "startupGracePeriod": { "seconds": 60 }
+              }
+            ]
+

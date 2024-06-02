@@ -39,7 +39,7 @@ with:
   #   - If no jobName is specified, all the jobs in the workflow will be targeted.
   #   - wait-list: 
   #     - If the checkRun for the specified name is not found, this action raise errors by default.
-  #       You can disable this validation with `"optional": true`.
+  #       You can disable this validation with `"optional": true` or use the `startupGracePeriod` that described in following section
   #     - Wait for all event types by default, you can change with `"eventName": "EVENT_NAME_AS_push"`.
   wait-list: |
     [
@@ -117,11 +117,38 @@ See the [docs](docs/examples.md) for further detail.
   ```
   Similar problems should be considered in matrix jobs. See [#761](https://github.com/kachick/wait-other-jobs/issues/761) for further detail
 
-## Limitations
+## Startup grace period - Since v3.3.0
 
-- Judge OK or Bad with the checkRun state at the moment.\
-  When some jobs will be triggered after this action with `needs: [distant-first]`, it might be unaccurate.\
-  (I didn't see actual example yet)
+Judge whether the checkRun state at the moment.\
+When some jobs are triggered late after this action, we need to use the following configurations.
+
+An example of using a `wait-list`.
+
+```yaml
+with:
+  wait-list: |
+    [
+      {
+        "workflowFile": "might_be_triggered_after_0-4_minutes.yml",
+        "optional": false,
+        "startupGracePeriod": { "minutes": 5 }
+      }
+    ]
+```
+
+This action starts immediately but ignores the job missing in the first 5 minutes.
+
+- No need to extend `wait-seconds-before-first-polling`
+- Disable `optional`, because it is needed to check
+- Set enough value for `startupGracePeriod` for this purpose.\
+  It should be parsible with [Temporal.Duration.from()](https://github.com/tc39/proposal-temporal)\
+  e.g
+  - `"PT1M"` # ISO8601 duration format
+  - `{ "minutes": 3, "seconds": 20 }` # key-value for each unit
+
+If not using wait-list, this pattern should be considered in your `wait-seconds-before-first-polling`.
+
+## Limitations
 
 - If any workflow starts many jobs as 100+, this action does not support it.\
   Because of nested paging in GraphQL makes complex. See [related docs](https://github.com/octokit/plugin-paginate-graphql.js/blob/a6b12e867466b0c583b002acd1cb1ed90b11841f/README.md#L184-L218) for further detail.

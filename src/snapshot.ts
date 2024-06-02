@@ -2,7 +2,7 @@ import { Check } from './schema.ts';
 
 // https://github.com/kachick/wait-other-jobs/actions/runs/8679817057/job/23799347421?pr=764
 // TODO: Update after #771
-export const snapshotChecks = Object.freeze([
+export const checks8679817057 = Object.freeze([
   {
     'checkRun': {
       'databaseId': 23799347220,
@@ -968,6 +968,798 @@ export const snapshotChecks = Object.freeze([
     'workflow': {
       'name': 'CI',
       'resourcePath': '/kachick/wait-other-jobs/actions/workflows/ci.yml',
+    },
+  },
+] as Check[]);
+
+// https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476
+export const checks92810686811WaitSuccessPolling1 = Object.freeze([
+  {
+    'checkRun': {
+      'databaseId': 25536443331,
+      'name': 'intermediate',
+      'status': 'IN_PROGRESS',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+      'conclusion': null,
+    },
+    'checkSuite': {
+      'status': 'QUEUED',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 4,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXNaM=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'QUEUED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': null,
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536443476,
+      'name': 'wait-success',
+      'status': 'IN_PROGRESS',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+      'conclusion': null,
+    },
+    'checkSuite': {
+      'status': 'QUEUED',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 4,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXNaM=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'QUEUED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': null,
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536443631,
+      'name': 'quickstarter-success',
+      'status': 'QUEUED',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+      'conclusion': null,
+    },
+    'checkSuite': {
+      'status': 'QUEUED',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 4,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXNaM=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'QUEUED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': null,
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536443811,
+      'name': 'wait-fail',
+      'status': 'IN_PROGRESS',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+      'conclusion': null,
+    },
+    'checkSuite': {
+      'status': 'QUEUED',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 4,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXNaM=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'QUEUED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': null,
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+      },
+    },
+  },
+] as Check[]);
+
+// https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476
+export const checks92810686811WaitSuccessPolling7 = Object.freeze([
+  {
+    'checkRun': {
+      'databaseId': 25536443331,
+      'name': 'intermediate',
+      'status': 'COMPLETED',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+      'conclusion': 'SUCCESS',
+    },
+    'checkSuite': {
+      'status': 'IN_PROGRESS',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 6,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXZVU=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536455821,
+            'name': 'slowstarter-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536456021,
+            'name': 'slowstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+            'conclusion': 'SUCCESS',
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536443476,
+      'name': 'wait-success',
+      'status': 'IN_PROGRESS',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+      'conclusion': null,
+    },
+    'checkSuite': {
+      'status': 'IN_PROGRESS',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 6,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXZVU=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536455821,
+            'name': 'slowstarter-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536456021,
+            'name': 'slowstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+            'conclusion': 'SUCCESS',
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536443631,
+      'name': 'quickstarter-success',
+      'status': 'COMPLETED',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+      'conclusion': 'SUCCESS',
+    },
+    'checkSuite': {
+      'status': 'IN_PROGRESS',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 6,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXZVU=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536455821,
+            'name': 'slowstarter-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536456021,
+            'name': 'slowstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+            'conclusion': 'SUCCESS',
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536443811,
+      'name': 'wait-fail',
+      'status': 'COMPLETED',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+      'conclusion': 'FAILURE',
+    },
+    'checkSuite': {
+      'status': 'IN_PROGRESS',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 6,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXZVU=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536455821,
+            'name': 'slowstarter-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536456021,
+            'name': 'slowstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+            'conclusion': 'SUCCESS',
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536455821,
+      'name': 'slowstarter-fail',
+      'status': 'COMPLETED',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+      'conclusion': 'FAILURE',
+    },
+    'checkSuite': {
+      'status': 'IN_PROGRESS',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 6,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXZVU=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536455821,
+            'name': 'slowstarter-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536456021,
+            'name': 'slowstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+            'conclusion': 'SUCCESS',
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+      },
+    },
+  },
+  {
+    'checkRun': {
+      'databaseId': 25536456021,
+      'name': 'slowstarter-success',
+      'status': 'COMPLETED',
+      'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+      'conclusion': 'SUCCESS',
+    },
+    'checkSuite': {
+      'status': 'IN_PROGRESS',
+      'conclusion': null,
+      'workflowRun': {
+        'databaseId': 9281068681,
+        'event': 'pull_request',
+        'workflow': {
+          'name': 'GH-820 - Margin for wait-list',
+          'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+        },
+      },
+      'checkRuns': {
+        'totalCount': 6,
+        'pageInfo': {
+          'hasNextPage': false,
+          'endCursor': 'Y3Vyc29yOnYyOpHPAAAABfIXZVU=',
+        },
+        'nodes': [
+          {
+            'databaseId': 25536443331,
+            'name': 'intermediate',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443331',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443476,
+            'name': 'wait-success',
+            'status': 'IN_PROGRESS',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443476',
+            'conclusion': null,
+          },
+          {
+            'databaseId': 25536443631,
+            'name': 'quickstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443631',
+            'conclusion': 'SUCCESS',
+          },
+          {
+            'databaseId': 25536443811,
+            'name': 'wait-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536443811',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536455821,
+            'name': 'slowstarter-fail',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536455821',
+            'conclusion': 'FAILURE',
+          },
+          {
+            'databaseId': 25536456021,
+            'name': 'slowstarter-success',
+            'status': 'COMPLETED',
+            'detailsUrl': 'https://github.com/kachick/wait-other-jobs/actions/runs/9281068681/job/25536456021',
+            'conclusion': 'SUCCESS',
+          },
+        ],
+      },
+    },
+    'workflow': {
+      'name': 'GH-820 - Margin for wait-list',
+      'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+    },
+    'workflowRun': {
+      'databaseId': 9281068681,
+      'event': 'pull_request',
+      'workflow': {
+        'name': 'GH-820 - Margin for wait-list',
+        'resourcePath': '/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml',
+      },
     },
   },
 ] as Check[]);
