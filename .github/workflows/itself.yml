@@ -4,13 +4,11 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/itself.yml'
-      - '.github/workflows/GH-771-echo.yml'
       - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
       - '.github/workflows/itself.yml'
-      - '.github/workflows/GH-771-echo.yml'
       - 'action.yml'
       - 'dist/**'
   schedule:
