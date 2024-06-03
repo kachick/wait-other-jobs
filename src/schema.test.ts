@@ -2,6 +2,7 @@ import test from 'node:test';
 import { strictEqual, deepStrictEqual, throws } from 'node:assert';
 import { Durationable, Options } from './schema.ts';
 import { Temporal } from 'temporal-polyfill';
+import { jsonEqual } from './util.ts';
 
 function equalDuration(a: Temporal.Duration, b: Temporal.Duration) {
   strictEqual(
@@ -209,6 +210,42 @@ test('wait-list have startupGracePeriod', async (t) => {
       {
         name: 'ZodError',
         message: /A shorter startupGracePeriod waiting for the first poll does not make sense/,
+      },
+    );
+  });
+
+  await t.test('but does not raises errors if given value is as same as default to keep backward compatibility', (_t) => {
+    jsonEqual(
+      Options.parse({
+        ...defaultOptions,
+        waitSecondsBeforeFirstPolling: 42,
+        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { seconds: 10 } }],
+      }),
+      {
+        ...defaultOptions,
+        waitSecondsBeforeFirstPolling: 42,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          optional: false,
+          startupGracePeriod: 'PT10S',
+        }],
+      },
+    );
+
+    jsonEqual(
+      Options.parse({
+        ...defaultOptions,
+        waitSecondsBeforeFirstPolling: 42,
+        waitList: [{ workflowFile: 'ci.yml' }],
+      }),
+      {
+        ...defaultOptions,
+        waitSecondsBeforeFirstPolling: 42,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          optional: false,
+          startupGracePeriod: 'PT10S',
+        }],
       },
     );
   });

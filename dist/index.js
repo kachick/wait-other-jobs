@@ -31042,6 +31042,7 @@ var MyDurationLike = z2.object({
   nanoseconds: z2.number().optional()
 }).strict().readonly();
 var Durationable = z2.union([z2.string().duration(), MyDurationLike]).transform((item) => getDuration(item));
+var defaultGrace = mr.Duration.from({ seconds: 10 });
 function isDurationLike(my) {
   for (const [_2, value] of Object.entries(my)) {
     if (value === void 0) {
@@ -31069,7 +31070,7 @@ var WaitFilterCondition = FilterCondition.extend(
     eventName: z2.string().min(1).optional(),
     // Do not raise validation errors for the reasonability of max value.
     // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
-    startupGracePeriod: Durationable.default(mr.Duration.from({ seconds: 10 }))
+    startupGracePeriod: Durationable.default(defaultGrace)
   }
 ).readonly();
 var WaitList = z2.array(WaitFilterCondition).readonly();
@@ -31090,10 +31091,10 @@ var Options = z2.object({
   { message: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
 ).refine(
   ({ waitSecondsBeforeFirstPolling, waitList }) => waitList.every(
-    (item) => mr.Duration.compare(
+    (item) => !(mr.Duration.compare(
       { seconds: waitSecondsBeforeFirstPolling },
       item.startupGracePeriod
-    ) < 1
+    ) > 0 && mr.Duration.compare(item.startupGracePeriod, defaultGrace) !== 0)
   ),
   {
     message: "A shorter startupGracePeriod waiting for the first poll does not make sense",

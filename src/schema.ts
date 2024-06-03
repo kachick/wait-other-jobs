@@ -37,6 +37,7 @@ type MyDurationLike = z.infer<typeof MyDurationLike>;
 // IETF does not define duration formats in their RFCs, but in RFC 3399 refers ISO 8601 duration formats.
 // https://www.ietf.org/rfc/rfc3339.txt
 export const Durationable = z.union([z.string().duration(), MyDurationLike]).transform((item) => getDuration(item));
+const defaultGrace = Temporal.Duration.from({ seconds: 10 });
 
 // workaround for https://github.com/colinhacks/zod/issues/635
 function isDurationLike(my: MyDurationLike): my is DurationLike {
@@ -73,7 +74,7 @@ const WaitFilterCondition = FilterCondition.extend(
 
     // Do not raise validation errors for the reasonability of max value.
     // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
-    startupGracePeriod: Durationable.default(Temporal.Duration.from({ seconds: 10 })),
+    startupGracePeriod: Durationable.default(defaultGrace),
   },
 ).readonly();
 const WaitList = z.array(WaitFilterCondition).readonly();
@@ -102,10 +103,11 @@ export const Options = z.object({
   ({ waitSecondsBeforeFirstPolling, waitList }) =>
     waitList.every(
       (item) =>
-        Temporal.Duration.compare(
-          { seconds: waitSecondsBeforeFirstPolling },
-          item.startupGracePeriod,
-        ) < 1,
+        !(Temporal.Duration.compare(
+              { seconds: waitSecondsBeforeFirstPolling },
+              item.startupGracePeriod,
+            ) > 0
+          && Temporal.Duration.compare(item.startupGracePeriod, defaultGrace) !== 0),
     ),
   {
     message: 'A shorter startupGracePeriod waiting for the first poll does not make sense',
