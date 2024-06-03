@@ -2,7 +2,6 @@ import test from 'node:test';
 import { strictEqual, deepStrictEqual, throws } from 'node:assert';
 import { Durationable, Options } from './schema.ts';
 import { Temporal } from 'temporal-polyfill';
-import { jsonEqual } from './util.ts';
 
 function equalDuration(a: Temporal.Duration, b: Temporal.Duration) {
   strictEqual(
@@ -56,14 +55,17 @@ test('Options keep given values', () => {
 });
 
 test('Options set some default values it cannot be defined in action.yml', () => {
-  deepStrictEqual({
-    ...defaultOptions,
-    waitList: [{
-      workflowFile: 'ci.yml',
-      optional: false,
-      startupGracePeriod: Temporal.Duration.from({ seconds: 101 }),
-    }],
-  }, Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }));
+  assertEqualOptions(
+    Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }),
+    {
+      ...defaultOptions,
+      waitList: [{
+        workflowFile: 'ci.yml',
+        optional: false,
+        startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+      }],
+    },
+  );
 });
 
 test('Options reject invalid values', () => {
@@ -135,7 +137,11 @@ test('Durationable', async (t) => {
 
 test('wait-list have startupGracePeriod', async (t) => {
   await t.test('it accepts DurationLike objects', (_t) => {
-    deepStrictEqual(
+    assertEqualOptions(
+      Options.parse({
+        ...defaultOptions,
+        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: Temporal.Duration.from({ minutes: 5 }) }],
+      }),
       {
         ...defaultOptions,
         waitList: [{
@@ -144,10 +150,6 @@ test('wait-list have startupGracePeriod', async (t) => {
           startupGracePeriod: Temporal.Duration.from({ minutes: 5 }),
         }],
       },
-      Options.parse({
-        ...defaultOptions,
-        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: Temporal.Duration.from({ minutes: 5 }) }],
-      }),
     );
   });
 
@@ -215,7 +217,7 @@ test('wait-list have startupGracePeriod', async (t) => {
   });
 
   await t.test('but does not raises errors if given value is as same as default to keep backward compatibility', (_t) => {
-    jsonEqual(
+    assertEqualOptions(
       Options.parse({
         ...defaultOptions,
         waitSecondsBeforeFirstPolling: 42,
@@ -227,12 +229,12 @@ test('wait-list have startupGracePeriod', async (t) => {
         waitList: [{
           workflowFile: 'ci.yml',
           optional: false,
-          startupGracePeriod: 'PT10S',
+          startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
         }],
       },
     );
 
-    jsonEqual(
+    assertEqualOptions(
       Options.parse({
         ...defaultOptions,
         waitSecondsBeforeFirstPolling: 42,
@@ -244,7 +246,7 @@ test('wait-list have startupGracePeriod', async (t) => {
         waitList: [{
           workflowFile: 'ci.yml',
           optional: false,
-          startupGracePeriod: 'PT10S',
+          startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
         }],
       },
     );
