@@ -1,32 +1,8 @@
 import test from 'node:test';
-import { strictEqual, deepStrictEqual, throws } from 'node:assert';
+import { deepStrictEqual, throws } from 'node:assert';
 import { Durationable, Options } from './schema.ts';
 import { Temporal } from 'temporal-polyfill';
-
-function equalDuration(a: Temporal.Duration, b: Temporal.Duration) {
-  strictEqual(
-    Temporal.Duration.compare(a, b),
-    0,
-  );
-}
-
-function makeComparableOptions(options: Options): Options {
-  return {
-    ...options,
-    waitList: options.waitList.map((w) => ({
-      ...w,
-      // Do not use .toJSON(), it does not normalize `seconds: 102` to `PT1M42S`, returns `PT102S`
-      startupGracePeriodNano: w.startupGracePeriod.total('nanoseconds'),
-    })),
-  };
-}
-
-// Providing to get better result and diff in cases which have Temporal.Duration
-//   - Object.is() returns `false` even for same total, because they are not idencial
-//   - deepStrictEqual returns `true` even for different total because of no properties :<
-function assertEqualOptions(actual: Options, expected: Options) {
-  deepStrictEqual(makeComparableOptions(actual), makeComparableOptions(expected));
-}
+import { durationEqual, optionsEqual } from './assert.ts';
 
 const defaultOptions = Object.freeze({
   isEarlyExit: true,
@@ -55,7 +31,7 @@ test('Options keep given values', () => {
 });
 
 test('Options set some default values it cannot be defined in action.yml', () => {
-  assertEqualOptions(
+  optionsEqual(
     Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }),
     {
       ...defaultOptions,
@@ -110,8 +86,8 @@ test('Options reject invalid values', () => {
 
 test('Durationable', async (t) => {
   await t.test('transformed to Temporal.Duration', (_t) => {
-    equalDuration(Durationable.parse('PT1M42S'), Temporal.Duration.from({ seconds: 102 }));
-    equalDuration(Durationable.parse({ minutes: 1, seconds: 42 }), Temporal.Duration.from({ seconds: 102 }));
+    durationEqual(Durationable.parse('PT1M42S'), Temporal.Duration.from({ seconds: 102 }));
+    durationEqual(Durationable.parse({ minutes: 1, seconds: 42 }), Temporal.Duration.from({ seconds: 102 }));
   });
 
   await t.test('it raises an error if given an invalid formats', (_t) => {
@@ -137,7 +113,7 @@ test('Durationable', async (t) => {
 
 test('wait-list have startupGracePeriod', async (t) => {
   await t.test('it accepts DurationLike objects', (_t) => {
-    assertEqualOptions(
+    optionsEqual(
       Options.parse({
         ...defaultOptions,
         waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: Temporal.Duration.from({ minutes: 5 }) }],
@@ -185,7 +161,7 @@ test('wait-list have startupGracePeriod', async (t) => {
   });
 
   await t.test('it parses ISO 8601 duration format', (_t) => {
-    assertEqualOptions(
+    optionsEqual(
       Options.parse({
         ...defaultOptions,
         waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: 'PT1M42S' }],
@@ -217,7 +193,7 @@ test('wait-list have startupGracePeriod', async (t) => {
   });
 
   await t.test('but does not raises errors if given value is as same as default to keep backward compatibility', (_t) => {
-    assertEqualOptions(
+    optionsEqual(
       Options.parse({
         ...defaultOptions,
         waitSecondsBeforeFirstPolling: 42,
@@ -234,7 +210,7 @@ test('wait-list have startupGracePeriod', async (t) => {
       },
     );
 
-    assertEqualOptions(
+    optionsEqual(
       Options.parse({
         ...defaultOptions,
         waitSecondsBeforeFirstPolling: 42,
