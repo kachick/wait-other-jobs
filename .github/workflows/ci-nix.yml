@@ -26,8 +26,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: DeterminateSystems/nix-installer-action@8cdf194da984e4f12b2f8c36d1fa107c1dd67f5c # v11
-      - uses: DeterminateSystems/magic-nix-cache-action@87e8236f46702ab0ce5a058b605a173ec88d618e # v6
+      - uses: DeterminateSystems/nix-installer-action@7993355175c2765e5733dae74f3e0786fe0e5c4f # v12
+      - uses: DeterminateSystems/magic-nix-cache-action@b46e247b898aa56e6d2d2e728dc6df6c84fdb738 # v7
       - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
       - run: nix develop --command makers setup
       - name: Log current versions
