@@ -32366,6 +32366,14 @@ function groupBy(items, callback) {
 }
 
 // src/report.ts
+function readableDuration(duration) {
+  const { minutes, seconds } = duration.round({ largestUnit: "minutes" });
+  const eachUnit = [`${seconds} seconds`];
+  if (minutes > 0) {
+    eachUnit.unshift(`${minutes} minutes`);
+  }
+  return `about ${eachUnit.join(" ")}`;
+}
 function summarize(check, trigger) {
   const { checkRun: run2, checkSuite: suite, workflow, workflowRun } = check;
   const isCompleted = run2.status === "COMPLETED";
@@ -32495,14 +32503,6 @@ function wait(interval) {
 function getRandomInt(min, max) {
   const flooredMin = Math.ceil(min);
   return Math.floor(Math.random() * (Math.floor(max) - flooredMin) + flooredMin);
-}
-function readableDuration(duration) {
-  const { minutes, seconds } = duration.round({ largestUnit: "minutes" });
-  const eachUnit = [`${seconds} seconds`];
-  if (minutes > 0) {
-    eachUnit.unshift(`${minutes} minutes`);
-  }
-  return `about ${eachUnit.join(" ")}`;
 }
 var MIN_JITTER_MILLISECONDS = 1e3;
 var MAX_JITTER_MILLISECONDS = 7e3;

@@ -1,7 +1,6 @@
 import {
   wait,
   calcExponentialBackoffAndJitter,
-  readableDuration,
   MIN_JITTER_MILLISECONDS,
   MAX_JITTER_MILLISECONDS,
   getInterval,
@@ -39,11 +38,6 @@ test('interval will be like a cheap exponential backoff', () => {
     calcExponentialBackoffAndJitter(leastInterval, 5).total('milliseconds') >= (1600000 + MIN_JITTER_MILLISECONDS),
   );
   assert(calcExponentialBackoffAndJitter(leastInterval, 5).total('milliseconds') < (1600000 + MAX_JITTER_MILLISECONDS));
-});
-
-test('readableDuration', () => {
-  assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 454356 })), 'about 7 minutes 34 seconds');
-  assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 32100 })), 'about 32 seconds');
 });
 
 test('getInterval returns different value with the given method', () => {

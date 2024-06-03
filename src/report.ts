@@ -4,6 +4,15 @@ import { join, relative } from 'path';
 import { Temporal } from 'temporal-polyfill';
 import { groupBy } from './util.ts';
 
+export function readableDuration(duration: Temporal.Duration): string {
+  const { minutes, seconds } = duration.round({ largestUnit: 'minutes' });
+  const eachUnit = [`${seconds} seconds`];
+  if (minutes > 0) {
+    eachUnit.unshift(`${minutes} minutes`);
+  }
+  return `about ${eachUnit.join(' ')}`;
+}
+
 export interface Summary {
   isAcceptable: boolean;
   isCompleted: boolean;

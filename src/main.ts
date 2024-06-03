@@ -24,8 +24,8 @@ function colorize(severity: Severity, message: string): string {
 
 import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
-import { Severity, generateReport, getSummaries } from './report.ts';
-import { readableDuration, getInterval, wait } from './wait.ts';
+import { Severity, generateReport, getSummaries, readableDuration } from './report.ts';
+import { getInterval, wait } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
 
 async function run(): Promise<void> {

@@ -1,10 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './snapshot.ts';
-import { Report, Summary, generateReport, getSummaries } from './report.ts';
+import { Report, Summary, generateReport, getSummaries, readableDuration } from './report.ts';
 import { omit } from './util.ts';
 import { Temporal } from 'temporal-polyfill';
 import { jsonEqual } from './assert.ts';
+
+test('readableDuration', () => {
+  assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 454356 })), 'about 7 minutes 34 seconds');
+  assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 32100 })), 'about 32 seconds');
+});
 
 const exampleSummary = Object.freeze(
   {

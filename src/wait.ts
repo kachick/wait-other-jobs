@@ -15,15 +15,6 @@ function getRandomInt(min: number, max: number) {
   return Math.floor((Math.random() * (Math.floor(max) - flooredMin)) + flooredMin);
 }
 
-export function readableDuration(duration: Temporal.Duration): string {
-  const { minutes, seconds } = duration.round({ largestUnit: 'minutes' });
-  const eachUnit = [`${seconds} seconds`];
-  if (minutes > 0) {
-    eachUnit.unshift(`${minutes} minutes`);
-  }
-  return `about ${eachUnit.join(' ')}`;
-}
-
 export const MIN_JITTER_MILLISECONDS = 1000;
 export const MAX_JITTER_MILLISECONDS = 7000;
 
