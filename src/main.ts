@@ -24,8 +24,8 @@ function colorize(severity: Severity, message: string): string {
 
 import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
-import { Severity, generateReport, getSummaries } from './report.ts';
-import { readableDuration, wait, getIdleMilliseconds } from './wait.ts';
+import { Severity, generateReport, getSummaries, readableDuration } from './report.ts';
+import { getInterval, wait } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
 
 async function run(): Promise<void> {
@@ -58,18 +58,17 @@ async function run(): Promise<void> {
     }
 
     if (attempts === 1) {
-      const initialMsec = options.waitSecondsBeforeFirstPolling * 1000;
-      info(`Wait ${readableDuration(initialMsec)} before first polling.`);
-      await wait(initialMsec);
+      info(`Wait ${readableDuration(options.initialDuration)} before first polling.`);
+      await wait(options.initialDuration);
     } else {
-      const msec = getIdleMilliseconds(options.retryMethod, options.minIntervalSeconds, attempts);
-      info(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
-      await wait(msec);
+      const interval = getInterval(options.retryMethod, options.leastInterval, attempts);
+      info(`Wait ${readableDuration(interval)} before next polling to reduce API calls.`);
+      await wait(interval);
     }
 
     // Put getting elapsed time before of fetchChecks to keep accuracy of the purpose
     const elapsed = Temporal.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
-    startGroup(`Polling ${attempts}: ${(new Date()).toISOString()}(${elapsed.toString()}) ~`);
+    startGroup(`Polling ${attempts}: ${(new Date()).toISOString()} # total elapsed ${readableDuration(elapsed)})`);
     const checks = await fetchChecks(githubToken, trigger);
     if (isDebug()) {
       debug(JSON.stringify({ label: 'rawdata', checks, elapsed }, null, 2));

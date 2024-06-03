@@ -1,7 +1,7 @@
 import { debug, getInput, getBooleanInput, setSecret, isDebug, error } from '@actions/core';
 import { context } from '@actions/github';
 
-import { Options, Trigger } from './schema.ts';
+import { Durationable, Options, Trigger } from './schema.ts';
 
 export function parseInput(): { trigger: Trigger; options: Options; githubToken: string } {
   const {
@@ -45,8 +45,8 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
 
   const options = Options.parse({
-    waitSecondsBeforeFirstPolling,
-    minIntervalSeconds,
+    initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
+    leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
     attemptLimits,
     waitList: JSON.parse(getInput('wait-list', { required: true })),

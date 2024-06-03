@@ -31042,6 +31042,12 @@ var MyDurationLike = z2.object({
   nanoseconds: z2.number().optional()
 }).strict().readonly();
 var Durationable = z2.union([z2.string().duration(), MyDurationLike]).transform((item) => getDuration(item));
+var Duration = z2.instanceof(mr.Duration).refine(
+  (d2) => mr.Duration.compare(d2, { seconds: 0 }) > 0,
+  {
+    message: "Too short interval for pollings"
+  }
+);
 var defaultGrace = mr.Duration.from({ seconds: 10 });
 function isDurationLike(my) {
   for (const [_2, value] of Object.entries(my)) {
@@ -31053,7 +31059,7 @@ function isDurationLike(my) {
 }
 function getDuration(durationable) {
   if (typeof durationable === "string" || isDurationLike(durationable)) {
-    return mr.Duration.from(durationable);
+    return Duration.parse(mr.Duration.from(durationable));
   }
   throw new Error("unexpected value is specified in durations");
 }
@@ -31079,26 +31085,26 @@ var retryMethods = z2.enum(["exponential_backoff", "equal_intervals"]);
 var Options = z2.object({
   waitList: WaitList,
   skipList: SkipList,
-  waitSecondsBeforeFirstPolling: z2.number().min(0),
-  minIntervalSeconds: z2.number().min(1),
+  initialDuration: Duration,
+  leastInterval: Duration,
   retryMethod: retryMethods,
   attemptLimits: z2.number().min(1),
   isEarlyExit: z2.boolean(),
   shouldSkipSameWorkflow: z2.boolean(),
   isDryRun: z2.boolean()
-}).readonly().refine(
+}).strict().readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { message: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
 ).refine(
-  ({ waitSecondsBeforeFirstPolling, waitList }) => waitList.every(
+  ({ initialDuration, waitList }) => waitList.every(
     (item) => !(mr.Duration.compare(
-      { seconds: waitSecondsBeforeFirstPolling },
+      initialDuration,
       item.startupGracePeriod
     ) > 0 && mr.Duration.compare(item.startupGracePeriod, defaultGrace) !== 0)
   ),
   {
     message: "A shorter startupGracePeriod waiting for the first poll does not make sense",
-    path: ["waitSecondsBeforeFirstPolling", "waitList"]
+    path: ["initialDuration", "waitList"]
   }
 );
 
@@ -31142,8 +31148,8 @@ function parseInput() {
   const shouldSkipSameWorkflow = (0, import_core.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const options = Options.parse({
-    waitSecondsBeforeFirstPolling,
-    minIntervalSeconds,
+    initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
+    leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
     attemptLimits,
     waitList: JSON.parse((0, import_core.getInput)("wait-list", { required: true })),
@@ -32360,6 +32366,17 @@ function groupBy(items, callback) {
 }
 
 // src/report.ts
+function readableDuration(duration) {
+  const { hours, minutes, seconds } = duration.round({ largestUnit: "hours" });
+  const eachUnit = [`${seconds} seconds`];
+  if (minutes > 0) {
+    eachUnit.unshift(`${minutes} minutes`);
+  }
+  if (hours > 0) {
+    eachUnit.unshift(`${hours} hours`);
+  }
+  return `about ${eachUnit.join(" ")}`;
+}
 function summarize(check, trigger) {
   const { checkRun: run2, checkSuite: suite, workflow, workflowRun } = check;
   const isCompleted = run2.status === "COMPLETED";
@@ -32482,40 +32499,34 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, shoul
 
 // src/wait.ts
 import { setTimeout as setTimeout2 } from "timers/promises";
-var wait = setTimeout2;
+var waitPrimitive = setTimeout2;
+function wait(interval) {
+  return waitPrimitive(interval.total("milliseconds"));
+}
 function getRandomInt(min, max) {
   const flooredMin = Math.ceil(min);
   return Math.floor(Math.random() * (Math.floor(max) - flooredMin) + flooredMin);
 }
-function readableDuration(milliseconds) {
-  const msecToSec = 1e3;
-  const secToMin = 60;
-  const seconds = milliseconds / msecToSec;
-  const minutes = seconds / secToMin;
-  const { unit, value, precision } = minutes >= 1 ? { unit: "minutes", value: minutes, precision: 1 } : { unit: "seconds", value: seconds, precision: 0 };
-  const adjustor = 10 ** precision;
-  return `about ${(Math.round(value * adjustor) / adjustor).toFixed(
-    precision
-  )} ${unit}`;
-}
 var MIN_JITTER_MILLISECONDS = 1e3;
 var MAX_JITTER_MILLISECONDS = 7e3;
-function calcExponentialBackoffAndJitter(minIntervalSeconds, attempts) {
+function calcExponentialBackoffAndJitter(leastInterval, attempts) {
   const jitterMilliseconds = getRandomInt(MIN_JITTER_MILLISECONDS, MAX_JITTER_MILLISECONDS);
-  return minIntervalSeconds * 2 ** (attempts - 1) * 1e3 + jitterMilliseconds;
+  return mr.Duration.from({
+    milliseconds: leastInterval.total("milliseconds") * 2 ** (attempts - 1) + jitterMilliseconds
+  });
 }
-function getIdleMilliseconds(method, minIntervalSeconds, attempts) {
+function getInterval(method, leastInterval, attempts) {
   switch (method) {
     case "exponential_backoff":
       return calcExponentialBackoffAndJitter(
-        minIntervalSeconds,
+        leastInterval,
         attempts
       );
     case "equal_intervals":
-      return minIntervalSeconds * 1e3;
+      return leastInterval;
     default: {
       const _exhaustiveCheck = method;
-      return minIntervalSeconds * 1e3;
+      return leastInterval;
     }
   }
 }
@@ -32568,16 +32579,15 @@ async function run() {
       break;
     }
     if (attempts === 1) {
-      const initialMsec = options.waitSecondsBeforeFirstPolling * 1e3;
-      (0, import_core3.info)(`Wait ${readableDuration(initialMsec)} before first polling.`);
-      await wait(initialMsec);
+      (0, import_core3.info)(`Wait ${readableDuration(options.initialDuration)} before first polling.`);
+      await wait(options.initialDuration);
     } else {
-      const msec = getIdleMilliseconds(options.retryMethod, options.minIntervalSeconds, attempts);
-      (0, import_core3.info)(`Wait ${readableDuration(msec)} before next polling to reduce API calls.`);
-      await wait(msec);
+      const interval = getInterval(options.retryMethod, options.leastInterval, attempts);
+      (0, import_core3.info)(`Wait ${readableDuration(interval)} before next polling to reduce API calls.`);
+      await wait(interval);
     }
     const elapsed = mr.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
-    (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()}(${elapsed.toString()}) ~`);
+    (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()} # total elapsed ${readableDuration(elapsed)})`);
     const checks = await fetchChecks(githubToken, trigger);
     if ((0, import_core3.isDebug)()) {
       (0, import_core3.debug)(JSON.stringify({ label: "rawdata", checks, elapsed }, null, 2));

@@ -1,8 +1,12 @@
 import { setTimeout } from 'timers/promises';
 import { RetryMethod } from './schema.ts';
+import { Temporal } from 'temporal-polyfill';
 
 // Just aliasing to avoid misusing setTimeout between ES method and timers/promises version.
-export const wait = setTimeout;
+export const waitPrimitive = setTimeout;
+export function wait(interval: Temporal.Duration) {
+  return waitPrimitive(interval.total('milliseconds'));
+}
 
 // Taken from MDN
 // The maximum is exclusive and the minimum is inclusive
@@ -11,47 +15,35 @@ function getRandomInt(min: number, max: number) {
   return Math.floor((Math.random() * (Math.floor(max) - flooredMin)) + flooredMin);
 }
 
-// 454356 milliseconds => 7.5725999999999996 minutes => about 7.6 minutes
-export function readableDuration(milliseconds: number): string {
-  const msecToSec = 1000;
-  const secToMin = 60;
-
-  const seconds = milliseconds / msecToSec;
-  const minutes = seconds / secToMin;
-  const { unit, value, precision }: { unit: string; value: number; precision: number } = minutes >= 1
-    ? { unit: 'minutes', value: minutes, precision: 1 }
-    : { unit: 'seconds', value: seconds, precision: 0 };
-  const adjustor = 10 ** precision;
-  return `about ${
-    (Math.round(value * adjustor) / adjustor).toFixed(
-      precision,
-    )
-  } ${unit}`;
-}
-
 export const MIN_JITTER_MILLISECONDS = 1000;
 export const MAX_JITTER_MILLISECONDS = 7000;
 
 export function calcExponentialBackoffAndJitter(
-  minIntervalSeconds: number,
+  leastInterval: Temporal.Duration,
   attempts: number,
-): number {
+): Temporal.Duration {
   const jitterMilliseconds = getRandomInt(MIN_JITTER_MILLISECONDS, MAX_JITTER_MILLISECONDS);
-  return ((minIntervalSeconds * (2 ** (attempts - 1))) * 1000) + jitterMilliseconds;
+  return Temporal.Duration.from({
+    milliseconds: (leastInterval.total('milliseconds') * (2 ** (attempts - 1))) + jitterMilliseconds,
+  });
 }
 
-export function getIdleMilliseconds(method: RetryMethod, minIntervalSeconds: number, attempts: number): number {
+export function getInterval(
+  method: RetryMethod,
+  leastInterval: Temporal.Duration,
+  attempts: number,
+): Temporal.Duration {
   switch (method) {
     case ('exponential_backoff'):
       return calcExponentialBackoffAndJitter(
-        minIntervalSeconds,
+        leastInterval,
         attempts,
       );
     case ('equal_intervals'):
-      return minIntervalSeconds * 1000;
+      return leastInterval;
     default: {
       const _exhaustiveCheck: never = method;
-      return minIntervalSeconds * 1000;
+      return leastInterval;
     }
   }
 }

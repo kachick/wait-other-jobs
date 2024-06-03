@@ -51,7 +51,7 @@ jobs:
       - uses: ./
         with:
           retry-method: 'equal_intervals'
-          wait-seconds-before-first-polling: '0'
+          wait-seconds-before-first-polling: '1'
           min-interval-seconds: '5'
           attempt-limits: '100'
           wait-list: |
@@ -77,7 +77,7 @@ jobs:
       - uses: ./
         with:
           retry-method: 'equal_intervals'
-          wait-seconds-before-first-polling: '0'
+          wait-seconds-before-first-polling: '1'
           min-interval-seconds: '5'
           attempt-limits: '100'
           wait-list: |
