@@ -31148,8 +31148,8 @@ function parseInput() {
   const shouldSkipSameWorkflow = (0, import_core.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const options = Options.parse({
-    initialDuration: Duration.parse({ seconds: waitSecondsBeforeFirstPolling }),
-    leastInterval: Duration.parse({ seconds: minIntervalSeconds }),
+    initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
+    leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
     attemptLimits,
     waitList: JSON.parse((0, import_core.getInput)("wait-list", { required: true })),
