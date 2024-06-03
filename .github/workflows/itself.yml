@@ -191,6 +191,7 @@ jobs:
           echo "$DEBUG_PR_CONTEXT" > ./outputs/pr.json
           echo "$DEBUG_CHECKS_CONTEXT" > ./outputs/checks.json
           echo "$DEBUG_REPORT_CONTEXT" > ./outputs/report.json
+          ls -alh ./outputs
       - name: Upload logs as an artifact
         if: runner.debug
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
