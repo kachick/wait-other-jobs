@@ -183,12 +183,12 @@ jobs:
             ]
       - name: 'Copy the output results to files'
         env:
-          DEBUG_PR_CONTEXT: '${{ steps.wait.outputs.pr }}'
+          DEBUG_PR_CONTEXT: '${{ steps.wait.outputs.pr-context }}'
           DEBUG_CHECKS_CONTEXT: '${{ steps.wait.outputs.checks }}'
           DEBUG_REPORT_CONTEXT: '${{ steps.wait.outputs.report }}'
         run: |
           mkdir outputs
-          echo "$DEBUG_PR_CONTEXT" > ./outputs/pr.json
+          echo "$DEBUG_PR_CONTEXT" > ./outputs/pr-context.json
           echo "$DEBUG_CHECKS_CONTEXT" > ./outputs/checks.json
           echo "$DEBUG_REPORT_CONTEXT" > ./outputs/report.json
           ls -alh ./outputs
