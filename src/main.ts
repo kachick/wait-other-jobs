@@ -1,4 +1,4 @@
-import { debug, info, setFailed, isDebug, startGroup, endGroup } from '@actions/core';
+import { info, setFailed, isDebug, startGroup, endGroup, setOutput } from '@actions/core';
 import styles from 'ansi-styles';
 
 function colorize(severity: Severity, message: string): string {
@@ -71,7 +71,7 @@ async function run(): Promise<void> {
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()} # total elapsed ${readableDuration(elapsed)}`);
     const checks = await fetchChecks(githubToken, trigger);
     if (isDebug()) {
-      debug(JSON.stringify({ label: 'rawdata', checks, elapsed }, null, 2));
+      setOutput('checks', JSON.stringify(checks, null, 2));
     }
     const report = generateReport(
       getSummaries(checks, trigger),
@@ -102,7 +102,7 @@ async function run(): Promise<void> {
     }
 
     if (isDebug()) {
-      debug(JSON.stringify({ label: 'filtered', report }, null, 2));
+      setOutput('report', JSON.stringify(report, null, 2));
     }
 
     const { ok, done, logs } = report;

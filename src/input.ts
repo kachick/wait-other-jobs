@@ -1,4 +1,4 @@
-import { debug, getInput, getBooleanInput, setSecret, isDebug, error } from '@actions/core';
+import { getInput, getBooleanInput, setSecret, isDebug, error, setOutput } from '@actions/core';
 import { context } from '@actions/github';
 
 import { Durationable, Options, Trigger } from './schema.ts';
@@ -21,7 +21,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     } else {
       if (isDebug()) {
         // Do not print secret even for debug code
-        debug(JSON.stringify({ label: 'PullRequestContext', pr }, null, 2));
+        setOutput('pr-context', JSON.stringify(pr, null, 2));
       }
       error('github context has unexpected format: missing context.payload.pull_request.head.sha');
     }

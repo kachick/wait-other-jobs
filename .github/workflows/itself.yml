@@ -32,6 +32,7 @@ jobs:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       # Do NOT specify options except non omittable skip-list to make sure zero config may work
       - uses: ./
+        id: wait
         with:
           skip-list: |
             [
@@ -39,6 +40,22 @@ jobs:
                 "workflowFile": "GH-820-graceperiod.yml"
               }
             ]
+      - name:
+        env:
+          DEBUG_PR_CONTEXT: '${{ steps.wait.outputs.pr }}'
+          DEBUG_CHECKS_CONTEXT: '${{ steps.wait.outputs.checks }}'
+          DEBUG_REPORT_CONTEXT: '${{ steps.wait.outputs.report }}'
+        run: |
+          mkdir outputs
+          echo "$DEBUG_PR_CONTEXT" > ./outputs/pr.json
+          echo "DEBUG_CHECKS_CONTEXT" > ./outputs/checks.json
+          echo "DEBUG_REPORT_CONTEXT" > ./outputs/report.json
+      - name: Upload logs as an artifact
+        if: runner.debug
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        with:
+          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}'
+          path: ./outputs
   validation_example_basic_errors_allow_failure:
     runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
