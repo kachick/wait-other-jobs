@@ -1,5 +1,5 @@
 import test from 'node:test';
-import { deepStrictEqual, throws } from 'node:assert';
+import { throws } from 'node:assert';
 import { Durationable, Options } from './schema.ts';
 import { Temporal } from 'temporal-polyfill';
 import { durationEqual, optionsEqual } from './assert.ts';
@@ -9,21 +9,21 @@ const defaultOptions = Object.freeze({
   attemptLimits: 1000,
   waitList: [],
   skipList: [],
-  waitSecondsBeforeFirstPolling: 10,
-  minIntervalSeconds: 15,
+  initialDuration: Temporal.Duration.from({ seconds: 10 }),
+  leastInterval: Temporal.Duration.from({ seconds: 15 }),
   retryMethod: 'equal_intervals',
   shouldSkipSameWorkflow: false,
   isDryRun: false,
 });
 
 test('Options keep given values', () => {
-  deepStrictEqual({
+  optionsEqual({
     isEarlyExit: true,
     attemptLimits: 1000,
     waitList: [],
     skipList: [],
-    waitSecondsBeforeFirstPolling: 10,
-    minIntervalSeconds: 15,
+    initialDuration: Temporal.Duration.from({ seconds: 10 }),
+    leastInterval: Temporal.Duration.from({ seconds: 15 }),
     retryMethod: 'equal_intervals',
     shouldSkipSameWorkflow: false,
     isDryRun: false,
@@ -45,9 +45,9 @@ test('Options set some default values it cannot be defined in action.yml', () =>
 });
 
 test('Options reject invalid values', () => {
-  throws(() => Options.parse({ ...defaultOptions, minIntervalSeconds: 0 }), {
+  throws(() => Options.parse({ ...defaultOptions, leastInterval: Temporal.Duration.from({ seconds: 0 }) }), {
     name: 'ZodError',
-    message: /too_small/,
+    message: /Too short interval for pollings/,
   });
 
   throws(() => Options.parse({ ...defaultOptions, attemptLimits: 0 }), {
@@ -182,7 +182,7 @@ test('wait-list have startupGracePeriod', async (t) => {
       () =>
         Options.parse({
           ...defaultOptions,
-          waitSecondsBeforeFirstPolling: 41,
+          initialDuration: Temporal.Duration.from({ seconds: 41 }),
           waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { seconds: 40 } }],
         }),
       {
@@ -196,12 +196,12 @@ test('wait-list have startupGracePeriod', async (t) => {
     optionsEqual(
       Options.parse({
         ...defaultOptions,
-        waitSecondsBeforeFirstPolling: 42,
+        initialDuration: Temporal.Duration.from({ seconds: 42 }),
         waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { seconds: 10 } }],
       }),
       {
         ...defaultOptions,
-        waitSecondsBeforeFirstPolling: 42,
+        initialDuration: Temporal.Duration.from({ seconds: 42 }),
         waitList: [{
           workflowFile: 'ci.yml',
           optional: false,
@@ -213,12 +213,12 @@ test('wait-list have startupGracePeriod', async (t) => {
     optionsEqual(
       Options.parse({
         ...defaultOptions,
-        waitSecondsBeforeFirstPolling: 42,
+        initialDuration: Temporal.Duration.from({ seconds: 42 }),
         waitList: [{ workflowFile: 'ci.yml' }],
       }),
       {
         ...defaultOptions,
-        waitSecondsBeforeFirstPolling: 42,
+        initialDuration: Temporal.Duration.from({ seconds: 42 }),
         waitList: [{
           workflowFile: 'ci.yml',
           optional: false,

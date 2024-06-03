@@ -37,6 +37,13 @@ type MyDurationLike = z.infer<typeof MyDurationLike>;
 // IETF does not define duration formats in their RFCs, but in RFC 3399 refers ISO 8601 duration formats.
 // https://www.ietf.org/rfc/rfc3339.txt
 export const Durationable = z.union([z.string().duration(), MyDurationLike]).transform((item) => getDuration(item));
+export const Duration = z.instanceof(Temporal.Duration).refine(
+  (d) => Temporal.Duration.compare(d, { seconds: 0 }) > 0,
+  {
+    message: 'Too short interval for pollings',
+  },
+);
+type Duration = z.infer<typeof Duration>;
 const defaultGrace = Temporal.Duration.from({ seconds: 10 });
 
 // workaround for https://github.com/colinhacks/zod/issues/635
@@ -51,9 +58,9 @@ function isDurationLike(my: MyDurationLike): my is DurationLike {
 }
 
 // workaround for https://github.com/colinhacks/zod/issues/635
-export function getDuration(durationable: string | MyDurationLike): Temporal.Duration {
+export function getDuration(durationable: string | MyDurationLike): Duration {
   if (typeof durationable === 'string' || isDurationLike(durationable)) {
-    return Temporal.Duration.from(durationable);
+    return Duration.parse(Temporal.Duration.from(durationable));
   }
 
   throw new Error('unexpected value is specified in durations');
@@ -89,29 +96,29 @@ export type RetryMethod = z.infer<typeof retryMethods>;
 export const Options = z.object({
   waitList: WaitList,
   skipList: SkipList,
-  waitSecondsBeforeFirstPolling: z.number().min(0),
-  minIntervalSeconds: z.number().min(1),
+  initialDuration: Duration,
+  leastInterval: Duration,
   retryMethod: retryMethods,
   attemptLimits: z.number().min(1),
   isEarlyExit: z.boolean(),
   shouldSkipSameWorkflow: z.boolean(),
   isDryRun: z.boolean(),
-}).readonly().refine(
+}).strict().readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { message: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },
 ).refine(
-  ({ waitSecondsBeforeFirstPolling, waitList }) =>
+  ({ initialDuration, waitList }) =>
     waitList.every(
       (item) =>
         !(Temporal.Duration.compare(
-              { seconds: waitSecondsBeforeFirstPolling },
+              initialDuration,
               item.startupGracePeriod,
             ) > 0
           && Temporal.Duration.compare(item.startupGracePeriod, defaultGrace) !== 0),
     ),
   {
     message: 'A shorter startupGracePeriod waiting for the first poll does not make sense',
-    path: ['waitSecondsBeforeFirstPolling', 'waitList'],
+    path: ['initialDuration', 'waitList'],
   },
 );
 
