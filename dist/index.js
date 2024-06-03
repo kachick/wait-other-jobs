@@ -31064,7 +31064,7 @@ var FilterCondition = z2.object({
 var SkipFilterCondition = FilterCondition.readonly();
 var WaitFilterCondition = FilterCondition.extend(
   {
-    optional: z2.boolean().optional().default(false).readonly(),
+    optional: z2.boolean().default(false).readonly(),
     // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
     // - Intentionally omitted in skip-list, let me know if you have the use-case
     eventName: z2.string().min(1).optional(),

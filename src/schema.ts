@@ -66,7 +66,7 @@ const FilterCondition = z.object({
 const SkipFilterCondition = FilterCondition.readonly();
 const WaitFilterCondition = FilterCondition.extend(
   {
-    optional: z.boolean().optional().default(false).readonly(),
+    optional: z.boolean().default(false).readonly(),
 
     // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
     // - Intentionally omitted in skip-list, let me know if you have the use-case
