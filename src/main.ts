@@ -58,7 +58,7 @@ async function run(): Promise<void> {
     }
 
     if (attempts === 1) {
-      info(`Wait ${options.initialDuration.toString()} before first polling.`);
+      info(`Wait ${readableDuration(options.initialDuration)} before first polling.`);
       await wait(options.initialDuration);
     } else {
       const interval = getInterval(options.retryMethod, options.leastInterval, attempts);

@@ -32576,7 +32576,7 @@ async function run() {
       break;
     }
     if (attempts === 1) {
-      (0, import_core3.info)(`Wait ${options.initialDuration.toString()} before first polling.`);
+      (0, import_core3.info)(`Wait ${readableDuration(options.initialDuration)} before first polling.`);
       await wait(options.initialDuration);
     } else {
       const interval = getInterval(options.retryMethod, options.leastInterval, attempts);
