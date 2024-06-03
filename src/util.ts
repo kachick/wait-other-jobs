@@ -25,7 +25,7 @@ export function groupBy<T, K>(items: ReadonlyArray<T>, callback: (item: T) => K)
   const map = new Map<K, Array<T>>();
   for (const item of items) {
     const key = callback(item);
-    // Do not omit has() with get(), `udefined` might be a key
+    // Do not omit has() with get(), `undefined` might be a key
     if (map.has(key)) {
       const itemsForKey = map.get(key);
       if (itemsForKey) {
