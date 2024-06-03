@@ -181,7 +181,7 @@ jobs:
                 "workflowFile": "GH-820-graceperiod.yml"
               }
             ]
-      - name:
+      - name: 'Copy the output results to files'
         env:
           DEBUG_PR_CONTEXT: '${{ steps.wait.outputs.pr }}'
           DEBUG_CHECKS_CONTEXT: '${{ steps.wait.outputs.checks }}'
