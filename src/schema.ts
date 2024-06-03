@@ -71,7 +71,7 @@ const WaitFilterCondition = FilterCondition.extend(
     // - Intentionally omitted in skip-list, let me know if you have the use-case
     eventName: z.string().min(1).optional(),
 
-    // Do not raise validation errors for the reasonability of value range.
+    // Do not raise validation errors for the reasonability of max value.
     // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
     startupGracePeriod: Durationable.default(Temporal.Duration.from({ seconds: 10 })),
   },
@@ -98,6 +98,19 @@ export const Options = z.object({
 }).readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { message: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },
+).refine(
+  ({ waitSecondsBeforeFirstPolling, waitList }) =>
+    waitList.every(
+      (item) =>
+        Temporal.Duration.compare(
+          { seconds: waitSecondsBeforeFirstPolling },
+          item.startupGracePeriod,
+        ) < 1,
+    ),
+  {
+    message: 'A shorter startupGracePeriod waiting for the first poll does not make sense',
+    path: ['waitSecondsBeforeFirstPolling', 'waitList'],
+  },
 );
 
 export type Options = z.infer<typeof Options>;
