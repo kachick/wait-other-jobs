@@ -32367,10 +32367,13 @@ function groupBy(items, callback) {
 
 // src/report.ts
 function readableDuration(duration) {
-  const { minutes, seconds } = duration.round({ largestUnit: "minutes" });
+  const { hours, minutes, seconds } = duration.round({ largestUnit: "hours" });
   const eachUnit = [`${seconds} seconds`];
   if (minutes > 0) {
     eachUnit.unshift(`${minutes} minutes`);
+  }
+  if (hours > 0) {
+    eachUnit.unshift(`${hours} hours`);
   }
   return `about ${eachUnit.join(" ")}`;
 }

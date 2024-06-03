@@ -9,6 +9,10 @@ import { jsonEqual } from './assert.ts';
 test('readableDuration', () => {
   assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 454356 })), 'about 7 minutes 34 seconds');
   assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 32100 })), 'about 32 seconds');
+  assert.strictEqual(
+    readableDuration(Temporal.Duration.from({ hours: 4, minutes: 100, seconds: 79 })),
+    'about 5 hours 41 minutes 19 seconds',
+  );
 });
 
 const exampleSummary = Object.freeze(
