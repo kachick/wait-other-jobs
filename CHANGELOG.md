@@ -4,6 +4,7 @@ This file only records notable changes. Not synchronized with all releases and t
 
 - main - not yet released
   - Add `startupGracePeriod` option in wait-list: [#820](https://github.com/kachick/wait-other-jobs/issues/820)
+  - Restrict `wait-seconds-before-first-polling` if it is too short as zero or shorter than `startupGracePeriod`
 - v3.2.0
   - Add `eventName` option in wait-list: [#771](https://github.com/kachick/wait-other-jobs/issues/771)
 - v3.1.0
