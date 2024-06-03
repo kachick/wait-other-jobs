@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert';
 import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './snapshot.ts';
 import { Report, Summary, generateReport, getSummaries } from './report.ts';
-import { jsonEqual, omit } from './util.ts';
+import { omit } from './util.ts';
 import { Temporal } from 'temporal-polyfill';
+import { jsonEqual } from './assert.ts';
 
 const exampleSummary = Object.freeze(
   {

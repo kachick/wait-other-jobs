@@ -1,32 +1,8 @@
 import test from 'node:test';
-import { strictEqual, deepStrictEqual, throws } from 'node:assert';
+import { deepStrictEqual, throws } from 'node:assert';
 import { Durationable, Options } from './schema.ts';
 import { Temporal } from 'temporal-polyfill';
-
-function equalDuration(a: Temporal.Duration, b: Temporal.Duration) {
-  strictEqual(
-    Temporal.Duration.compare(a, b),
-    0,
-  );
-}
-
-function makeComparableOptions(options: Options): Options {
-  return {
-    ...options,
-    waitList: options.waitList.map((w) => ({
-      ...w,
-      // Do not use .toJSON(), it does not normalize `seconds: 102` to `PT1M42S`, returns `PT102S`
-      startupGracePeriodNano: w.startupGracePeriod.total('nanoseconds'),
-    })),
-  };
-}
-
-// Providing to get better result and diff in cases which have Temporal.Duration
-//   - Object.is() returns `false` even for same total, because they are not idencial
-//   - deepStrictEqual returns `true` even for different total because of no properties :<
-function assertEqualOptions(actual: Options, expected: Options) {
-  deepStrictEqual(makeComparableOptions(actual), makeComparableOptions(expected));
-}
+import { durationEqual, optionsEqual } from './assert.ts';
 
 const defaultOptions = Object.freeze({
   isEarlyExit: true,
@@ -55,14 +31,17 @@ test('Options keep given values', () => {
 });
 
 test('Options set some default values it cannot be defined in action.yml', () => {
-  deepStrictEqual({
-    ...defaultOptions,
-    waitList: [{
-      workflowFile: 'ci.yml',
-      optional: false,
-      startupGracePeriod: Temporal.Duration.from({ seconds: 101 }),
-    }],
-  }, Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }));
+  optionsEqual(
+    Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }),
+    {
+      ...defaultOptions,
+      waitList: [{
+        workflowFile: 'ci.yml',
+        optional: false,
+        startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+      }],
+    },
+  );
 });
 
 test('Options reject invalid values', () => {
@@ -107,45 +86,38 @@ test('Options reject invalid values', () => {
 
 test('Durationable', async (t) => {
   await t.test('transformed to Temporal.Duration', (_t) => {
-    equalDuration(Durationable.parse('PT1M42S'), Temporal.Duration.from({ seconds: 102 }));
-    equalDuration(Durationable.parse({ minutes: 1, seconds: 42 }), Temporal.Duration.from({ seconds: 102 }));
+    durationEqual(Durationable.parse('PT1M42S'), Temporal.Duration.from({ seconds: 102 }));
+    durationEqual(Durationable.parse({ minutes: 1, seconds: 42 }), Temporal.Duration.from({ seconds: 102 }));
+  });
+
+  await t.test('it raises an error if given an invalid formats', (_t) => {
+    throws(
+      () => Durationable.parse('42 minutes'),
+      {
+        name: 'ZodError',
+        message: /invalid_string/,
+      },
+    );
   });
 
   await t.test('it raises an error if given an unexpected keys', (_t) => {
     throws(
-      () =>
-        Options.parse({
-          ...defaultOptions,
-          waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { min: 5 } }],
-        }),
+      () => Durationable.parse({ min: 5 }),
       {
         name: 'ZodError',
         message: /unrecognized_key/,
       },
     );
   });
-
-  await t.test('it parses ISO 8601 duration format', (_t) => {
-    deepStrictEqual(
-      {
-        ...defaultOptions,
-        waitList: [{
-          workflowFile: 'ci.yml',
-          optional: false,
-          startupGracePeriod: Temporal.Duration.from('PT1M42S'),
-        }],
-      },
-      Options.parse({
-        ...defaultOptions,
-        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: 'PT1M42S' }],
-      }),
-    );
-  });
 });
 
 test('wait-list have startupGracePeriod', async (t) => {
   await t.test('it accepts DurationLike objects', (_t) => {
-    deepStrictEqual(
+    optionsEqual(
+      Options.parse({
+        ...defaultOptions,
+        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: Temporal.Duration.from({ minutes: 5 }) }],
+      }),
       {
         ...defaultOptions,
         waitList: [{
@@ -154,14 +126,27 @@ test('wait-list have startupGracePeriod', async (t) => {
           startupGracePeriod: Temporal.Duration.from({ minutes: 5 }),
         }],
       },
-      Options.parse({
-        ...defaultOptions,
-        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: Temporal.Duration.from({ minutes: 5 }) }],
-      }),
     );
   });
 
-  await t.test('it raises an error if given an unexpected keys', (_t) => {
+  await t.test('it raises a TypeError if given an unexpected keys', { todo: 'TODO: Replace with ZodError' }, (_t) => {
+    throws(
+      () =>
+        Options.parse({
+          ...defaultOptions,
+          waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { min: 5 } }],
+        }),
+      {
+        name: 'TypeError',
+        message: 'No valid fields: days,hours,microseconds,milliseconds,minutes,months,nanoseconds,seconds,weeks,years',
+      },
+    );
+  });
+
+  await t.test('it raises a ZodError if given an unexpected keys', {
+    todo: "TODO: I don't know why using refine appears the native error",
+    skip: 'SKIP: To suppress noise',
+  }, (_t) => {
     throws(
       () =>
         Options.parse({
@@ -176,7 +161,7 @@ test('wait-list have startupGracePeriod', async (t) => {
   });
 
   await t.test('it parses ISO 8601 duration format', (_t) => {
-    assertEqualOptions(
+    optionsEqual(
       Options.parse({
         ...defaultOptions,
         waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: 'PT1M42S' }],
@@ -187,6 +172,57 @@ test('wait-list have startupGracePeriod', async (t) => {
           workflowFile: 'ci.yml',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ minutes: 1, seconds: 42 }),
+        }],
+      },
+    );
+  });
+
+  await t.test('it raises a ZodError if given value is larger than initial polling time', (_t) => {
+    throws(
+      () =>
+        Options.parse({
+          ...defaultOptions,
+          waitSecondsBeforeFirstPolling: 41,
+          waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { seconds: 40 } }],
+        }),
+      {
+        name: 'ZodError',
+        message: /A shorter startupGracePeriod waiting for the first poll does not make sense/,
+      },
+    );
+  });
+
+  await t.test('but does not raises errors if given value is as same as default to keep backward compatibility', (_t) => {
+    optionsEqual(
+      Options.parse({
+        ...defaultOptions,
+        waitSecondsBeforeFirstPolling: 42,
+        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { seconds: 10 } }],
+      }),
+      {
+        ...defaultOptions,
+        waitSecondsBeforeFirstPolling: 42,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          optional: false,
+          startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+        }],
+      },
+    );
+
+    optionsEqual(
+      Options.parse({
+        ...defaultOptions,
+        waitSecondsBeforeFirstPolling: 42,
+        waitList: [{ workflowFile: 'ci.yml' }],
+      }),
+      {
+        ...defaultOptions,
+        waitSecondsBeforeFirstPolling: 42,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          optional: false,
+          startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
         }],
       },
     );

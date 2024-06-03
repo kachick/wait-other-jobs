@@ -1,5 +1,3 @@
-import { deepStrictEqual } from 'node:assert';
-
 export function pick<T extends object, U extends keyof T>(
   base: Readonly<T>,
   keys: Readonly<U[]>,
@@ -38,8 +36,4 @@ export function groupBy<T, K>(items: ReadonlyArray<T>, callback: (item: T) => K)
     }
   }
   return map;
-}
-
-export function jsonEqual(actual: unknown, expected: unknown) {
-  deepStrictEqual(JSON.parse(JSON.stringify(actual)), expected);
 }
