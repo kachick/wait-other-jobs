@@ -54,7 +54,6 @@ jobs:
           echo "$DEBUG_DUMP" > ./outputs/dump.json
           ls -alh ./outputs
       - name: Upload dumps as an artifact
-        if: runner.debug
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}'
