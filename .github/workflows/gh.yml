@@ -1,0 +1,19 @@
+name: Example for gh cli
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/gh.yml'
+      - 'action.yml'
+      - 'dist/**'
+
+# Disable all permissions in workflow global as to setup clean room
+# However PRs will have read permissions because this project is on a public repository
+permissions: {}
+
+jobs:
+  wait:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - run: |
+          gh pr checks "${{ github.event.pull_request.html_url }}" --fail-fast --interval 3 --watch
