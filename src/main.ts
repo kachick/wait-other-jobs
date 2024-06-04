@@ -24,15 +24,31 @@ function colorize(severity: Severity, message: string): string {
 
 import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
-import { Severity, generateReport, getSummaries, readableDuration } from './report.ts';
+import { Report, Severity, generateReport, getSummaries, readableDuration } from './report.ts';
 import { getInterval, wait } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
+import { Check, Options, Trigger } from './schema.ts';
+import { WebhookPayload } from '@actions/github/lib/interfaces.ts';
+
+interface Attempt {
+  elapsed: Temporal.Duration;
+  checks: Check[];
+  report: Report;
+}
+
+interface Dumper {
+  trigger: Trigger;
+  options: Options;
+  payload: WebhookPayload;
+  results: Attempt[];
+}
 
 async function run(): Promise<void> {
   const startedAt = performance.now();
   startGroup('Parameters');
-  const { trigger, options, githubToken } = parseInput();
+  const { trigger, options, githubToken, payload } = parseInput();
   info(JSON.stringify(
+    // Do NOT include payload
     {
       trigger,
       startedAt,
@@ -49,6 +65,9 @@ async function run(): Promise<void> {
   if (options.isDryRun) {
     return;
   }
+
+  // Do not include secret even in debug mode
+  const dumper: Dumper = { trigger, options, payload, results: [] };
 
   for (;;) {
     attempts += 1;
@@ -70,9 +89,7 @@ async function run(): Promise<void> {
     const elapsed = Temporal.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()} # total elapsed ${readableDuration(elapsed)}`);
     const checks = await fetchChecks(githubToken, trigger);
-    if (isDebug()) {
-      setOutput('checks', JSON.stringify(checks, null, 2));
-    }
+
     const report = generateReport(
       getSummaries(checks, trigger),
       trigger,
@@ -101,9 +118,7 @@ async function run(): Promise<void> {
       );
     }
 
-    if (isDebug()) {
-      setOutput('report', JSON.stringify(report, null, 2));
-    }
+    dumper.results.push({ elapsed, checks, report });
 
     const { ok, done, logs } = report;
 
@@ -138,6 +153,10 @@ async function run(): Promise<void> {
 
       break;
     }
+  }
+
+  if (isDebug()) {
+    setOutput('dump', JSON.stringify(dumper, null, 2));
   }
 }
 

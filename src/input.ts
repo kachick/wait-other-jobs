@@ -1,9 +1,10 @@
-import { getInput, getBooleanInput, setSecret, isDebug, error, setOutput } from '@actions/core';
+import { getInput, getBooleanInput, setSecret, error } from '@actions/core';
+import { WebhookPayload } from '@actions/github/lib/interfaces.ts';
 import { context } from '@actions/github';
 
 import { Durationable, Options, Trigger } from './schema.ts';
 
-export function parseInput(): { trigger: Trigger; options: Options; githubToken: string } {
+export function parseInput(): { trigger: Trigger; options: Options; githubToken: string; payload: WebhookPayload } {
   const {
     repo,
     payload,
@@ -19,10 +20,6 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     if (typeof prSha === 'string') {
       commitSha = prSha;
     } else {
-      if (isDebug()) {
-        // Do not print secret even for debug code
-        setOutput('pr-context', JSON.stringify(pr, null, 2));
-      }
       error('github context has unexpected format: missing context.payload.pull_request.head.sha');
     }
   }
@@ -62,5 +59,5 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
   setSecret(githubToken);
 
-  return { trigger, options, githubToken };
+  return { trigger, options, githubToken, payload };
 }

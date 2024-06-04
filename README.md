@@ -78,16 +78,6 @@ Full list of the options
 | `skip-same-workflow`                | Skip jobs defined in the same workflow which using this action | `bool`   | `false`               |                                          |
 | `dry-run`                           | Avoid requests for tests                                       | `bool`   | `false`               |                                          |
 
-## Outputs
-
-(Since v3.4.0)
-
-For now, this action outputs used resources only into `GITHUB_OUTPUT` in debug mode.
-
-- checks
-- pr-context
-- report
-
 ## Required GITHUB_TOKEN permissions
 
 In public repositories, they are satisfied by default
@@ -98,6 +88,13 @@ permissions:
   checks: read
   actions: read
 ```
+
+## jobs.<job_id>.outputs
+
+(Since v3.4.0)
+
+If used in debug mode, this action outputs the used resources into the `dump` key.\
+This data is only provided for debugging purposes, so the schema is not defined.
 
 ## Examples
 

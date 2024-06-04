@@ -18878,7 +18878,7 @@ var require_core = __commonJS({
 Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
     }
     exports.getBooleanInput = getBooleanInput2;
-    function setOutput3(name, value) {
+    function setOutput2(name, value) {
       const filePath = process.env["GITHUB_OUTPUT"] || "";
       if (filePath) {
         return file_command_1.issueFileCommand("OUTPUT", file_command_1.prepareKeyValueMessage(name, value));
@@ -18886,7 +18886,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       process.stdout.write(os2.EOL);
       command_1.issueCommand("set-output", { name }, utils_1.toCommandValue(value));
     }
-    exports.setOutput = setOutput3;
+    exports.setOutput = setOutput2;
     function setCommandEcho(enabled) {
       command_1.issue("echo", enabled ? "on" : "off");
     }
@@ -18896,10 +18896,10 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       error2(message);
     }
     exports.setFailed = setFailed2;
-    function isDebug3() {
+    function isDebug2() {
       return process.env["RUNNER_DEBUG"] === "1";
     }
-    exports.isDebug = isDebug3;
+    exports.isDebug = isDebug2;
     function debug(message) {
       command_1.issueCommand("debug", {}, message);
     }
@@ -31125,9 +31125,6 @@ function parseInput() {
     if (typeof prSha === "string") {
       commitSha = prSha;
     } else {
-      if ((0, import_core.isDebug)()) {
-        (0, import_core.setOutput)("pr-context", JSON.stringify(pr2, null, 2));
-      }
       (0, import_core.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
     }
   }
@@ -31161,7 +31158,7 @@ function parseInput() {
   const trigger = { ...repo, ref: commitSha, runId, jobName: job, eventName };
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core.setSecret)(githubToken);
-  return { trigger, options, githubToken };
+  return { trigger, options, githubToken, payload };
 }
 
 // node_modules/.pnpm/universal-user-agent@7.0.2/node_modules/universal-user-agent/index.js
@@ -32555,8 +32552,9 @@ function colorize(severity, message) {
 async function run() {
   const startedAt = performance.now();
   (0, import_core3.startGroup)("Parameters");
-  const { trigger, options, githubToken } = parseInput();
+  const { trigger, options, githubToken, payload } = parseInput();
   (0, import_core3.info)(JSON.stringify(
+    // Do NOT include payload
     {
       trigger,
       startedAt,
@@ -32572,6 +32570,7 @@ async function run() {
   if (options.isDryRun) {
     return;
   }
+  const dumper = { trigger, options, payload, results: [] };
   for (; ; ) {
     attempts += 1;
     if (attempts > options.attemptLimits) {
@@ -32589,9 +32588,6 @@ async function run() {
     const elapsed = mr.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
     (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()} # total elapsed ${readableDuration(elapsed)}`);
     const checks = await fetchChecks(githubToken, trigger);
-    if ((0, import_core3.isDebug)()) {
-      (0, import_core3.setOutput)("checks", JSON.stringify(checks, null, 2));
-    }
     const report = generateReport(
       getSummaries(checks, trigger),
       trigger,
@@ -32613,9 +32609,7 @@ async function run() {
         `${workflowBasename}(${colorize(severity, jobName)}): [eventName: ${eventName}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`
       );
     }
-    if ((0, import_core3.isDebug)()) {
-      (0, import_core3.setOutput)("report", JSON.stringify(report, null, 2));
-    }
+    dumper.results.push({ elapsed, checks, report });
     const { ok, done, logs } = report;
     for (const { severity, message, resource } of logs) {
       (0, import_core3.info)(colorize(severity, message));
@@ -32644,6 +32638,9 @@ async function run() {
       }
       break;
     }
+  }
+  if ((0, import_core3.isDebug)()) {
+    (0, import_core3.setOutput)("dump", JSON.stringify(dumper, null, 2));
   }
 }
 void run();

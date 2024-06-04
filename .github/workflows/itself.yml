@@ -183,16 +183,12 @@ jobs:
             ]
       - name: 'Copy the output results to files'
         env:
-          DEBUG_PR_CONTEXT: '${{ steps.wait.outputs.pr-context }}'
-          DEBUG_CHECKS_CONTEXT: '${{ steps.wait.outputs.checks }}'
-          DEBUG_REPORT_CONTEXT: '${{ steps.wait.outputs.report }}'
+          DEBUG_DUMP: '${{ steps.wait.outputs.dump }}'
         run: |
           mkdir outputs
-          echo "$DEBUG_PR_CONTEXT" > ./outputs/pr-context.json
-          echo "$DEBUG_CHECKS_CONTEXT" > ./outputs/checks.json
-          echo "$DEBUG_REPORT_CONTEXT" > ./outputs/report.json
+          echo "$DEBUG_DUMP" > ./outputs/dump.json
           ls -alh ./outputs
-      - name: Upload logs as an artifact
+      - name: Upload dumps as an artifact
         if: runner.debug
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
