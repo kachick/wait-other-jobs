@@ -156,7 +156,6 @@ jobs:
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - uses: ./
-        id: wait
         with:
           retry-method: 'equal_intervals'
           min-interval-seconds: 5
@@ -181,16 +180,3 @@ jobs:
                 "workflowFile": "GH-820-graceperiod.yml"
               }
             ]
-      - name: 'Copy the output results to files'
-        env:
-          DEBUG_DUMP: '${{ steps.wait.outputs.dump }}'
-        run: |
-          mkdir outputs
-          echo "$DEBUG_DUMP" > ./outputs/dump.json
-          ls -alh ./outputs
-      - name: Upload dumps as an artifact
-        if: runner.debug
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
-        with:
-          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}'
-          path: ./outputs
