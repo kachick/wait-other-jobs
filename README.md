@@ -150,6 +150,10 @@ This action starts immediately but ignores the job missing in the first 5 minute
 
 If not using wait-list, this pattern should be considered in your `wait-seconds-before-first-polling`.
 
+## Alternative candidates
+
+[gh](https://github.com/cli/cli) commands, such as `gh pr checks` and `gh run watch`, should be useful if your requirements are simple.
+
 ## Limitations
 
 - If any workflow starts many jobs as 100+, this action does not support it.\
