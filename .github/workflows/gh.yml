@@ -16,4 +16,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - run: |
+          gh --version
+      - run: |
           gh pr checks "${{ github.event.pull_request.html_url }}" --fail-fast --interval 3 --watch
+        env:
+          GH_TOKEN: ${{ github.token }}
