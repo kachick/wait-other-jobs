@@ -42,7 +42,7 @@ jobs:
             [
               {
                 "workflowFile": "outputs.yml",
-                "jobName": "echo".
+                "jobName": "echo",
                 "optional": false
               }
             ]
