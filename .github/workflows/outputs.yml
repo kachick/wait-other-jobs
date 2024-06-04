@@ -24,7 +24,7 @@ jobs:
     steps:
       - run: echo ':)'
       # Wait longer than min-interval-seconds
-      - run: sleep 5
+      - run: sleep 8
       - run: echo '🎉'
   dump:
     runs-on: ubuntu-24.04
@@ -36,7 +36,8 @@ jobs:
         id: wait
         with:
           retry-method: 'equal_intervals'
-          min-interval-seconds: 3
+          wait-seconds-before-first-polling: '1'
+          min-interval-seconds: '3'
           skip-same-workflow: 'false'
           wait-list: |
             [
