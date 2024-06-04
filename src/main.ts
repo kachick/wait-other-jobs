@@ -30,7 +30,7 @@ import { Temporal } from 'temporal-polyfill';
 import { Check, Options, Trigger } from './schema.ts';
 import { WebhookPayload } from '@actions/github/lib/interfaces.ts';
 
-interface Attempt {
+interface Result {
   elapsed: Temporal.Duration;
   checks: Check[];
   report: Report;
@@ -40,7 +40,8 @@ interface Dumper {
   trigger: Trigger;
   options: Options;
   payload: WebhookPayload;
-  results: Attempt[];
+  // - Do not include all pollings in one file, it might be large size
+  results: Record<number, Result>;
 }
 
 async function run(): Promise<void> {
@@ -66,8 +67,8 @@ async function run(): Promise<void> {
     return;
   }
 
-  // Do not include secret even in debug mode
-  const dumper: Dumper = { trigger, options, payload, results: [] };
+  // - Do not include secret even in debug mode
+  const dumper: Dumper = { trigger, options, payload, results: {} };
 
   for (;;) {
     attempts += 1;
@@ -97,6 +98,10 @@ async function run(): Promise<void> {
       options,
     );
 
+    if (attempts === 1) {
+      dumper.results[attempts] = { elapsed: elapsed, checks, report };
+    }
+
     for (const summary of report.summaries) {
       const {
         runStatus,
@@ -117,8 +122,6 @@ async function run(): Promise<void> {
         }][runURL: ${checkRunUrl}]`,
       );
     }
-
-    dumper.results.push({ elapsed, checks, report });
 
     const { ok, done, logs } = report;
 
@@ -145,6 +148,10 @@ async function run(): Promise<void> {
     endGroup();
 
     if (shouldStop) {
+      if (attempts !== 1) {
+        dumper.results[attempts] = { elapsed, checks, report };
+      }
+
       if (ok) {
         info(colorize('notice', 'all jobs passed'));
       } else {
