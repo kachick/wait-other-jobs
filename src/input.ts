@@ -39,6 +39,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   );
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
+  const shouldDump = getBooleanInput('dump', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
 
   const options = Options.parse({
@@ -50,6 +51,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     skipList: JSON.parse(getInput('skip-list', { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
+    shouldDump,
     isDryRun,
   });
 

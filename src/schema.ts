@@ -102,6 +102,7 @@ export const Options = z.object({
   attemptLimits: z.number().min(1),
   isEarlyExit: z.boolean(),
   shouldSkipSameWorkflow: z.boolean(),
+  shouldDump: z.boolean(),
   isDryRun: z.boolean(),
 }).strict().readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),

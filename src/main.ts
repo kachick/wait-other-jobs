@@ -155,7 +155,7 @@ async function run(): Promise<void> {
     }
   }
 
-  if (isDebug()) {
+  if (options.shouldDump) {
     setOutput('dump', JSON.stringify(dumper, null, 2));
   }
 }

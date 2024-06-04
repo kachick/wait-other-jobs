@@ -41,6 +41,10 @@ inputs:
     description: 'Skip jobs defined in the same workflow which using this action'
     required: false
     default: 'false'
+  dump:
+    description: 'Output resources into jobs.<job_id>.outputs.dump for debugging purposes'
+    required: false
+    default: 'false'
   dry-run:
     description: 'Avoid http requests for tests'
     required: false
