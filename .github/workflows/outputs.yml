@@ -54,6 +54,7 @@ jobs:
           mkdir outputs
           echo "$DEBUG_DUMP" > ./outputs/dump.json
           ls -alh ./outputs
+          set +e
           if [[ -s './outputs/dump.json' ]] && [[ '${{ runner.debug }}' != '1' ]]; then
             exit 2
           fi
