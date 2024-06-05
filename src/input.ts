@@ -4,7 +4,6 @@ import { context } from '@actions/github';
 import { Durationable, Options, Path, Trigger } from './schema.ts';
 import { mkdtempSync } from 'fs';
 import { join } from 'path';
-import { assert } from 'console';
 
 export function parseInput(): { trigger: Trigger; options: Options; githubToken: string; tempDir: string } {
   const {

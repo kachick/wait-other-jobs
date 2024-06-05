@@ -31107,8 +31107,11 @@ var Options = z2.object({
     path: ["initialDuration", "waitList"]
   }
 );
+var Path = z2.string().min(1);
 
 // src/input.ts
+import { mkdtempSync } from "fs";
+import { join } from "path";
 function parseInput() {
   const {
     repo,
@@ -31128,6 +31131,8 @@ function parseInput() {
       (0, import_core.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
     }
   }
+  const tempRoot = Path.parse(process.env["RUNNER_TEMP"]);
+  const tempDir = mkdtempSync(join(tempRoot, "wait-other-jobs-"));
   const waitSecondsBeforeFirstPolling = parseInt(
     (0, import_core.getInput)("wait-seconds-before-first-polling", { required: true, trimWhitespace: true }),
     10
@@ -31158,7 +31163,7 @@ function parseInput() {
   const trigger = { ...repo, ref: commitSha, runId, jobName: job, eventName };
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core.setSecret)(githubToken);
-  return { trigger, options, githubToken };
+  return { trigger, options, githubToken, tempDir };
 }
 
 // node_modules/.pnpm/universal-user-agent@7.0.2/node_modules/universal-user-agent/index.js
@@ -32343,7 +32348,7 @@ async function fetchChecks(token, trigger) {
 }
 
 // src/report.ts
-import { join, relative } from "path";
+import { join as join2, relative } from "path";
 
 // src/util.ts
 function groupBy(items, callback) {
@@ -32397,7 +32402,7 @@ function summarize(check, trigger) {
 }
 function getSummaries(checks, trigger) {
   return checks.map((check) => summarize(check, trigger)).toSorted(
-    (a2, b2) => join(a2.workflowBasename, a2.jobName).localeCompare(join(b2.workflowBasename, b2.jobName))
+    (a2, b2) => join2(a2.workflowBasename, a2.jobName).localeCompare(join2(b2.workflowBasename, b2.jobName))
   );
 }
 function seekWaitList(summaries, waitList, elapsed) {
@@ -32529,6 +32534,8 @@ function getInterval(method, leastInterval, attempts) {
 }
 
 // src/main.ts
+import { join as join3 } from "path";
+import { writeFileSync } from "fs";
 function colorize(severity, message) {
   switch (severity) {
     case "error": {
@@ -32552,7 +32559,7 @@ function colorize(severity, message) {
 async function run() {
   const startedAt = performance.now();
   (0, import_core3.startGroup)("Parameters");
-  const { trigger, options, githubToken } = parseInput();
+  const { trigger, options, githubToken, tempDir } = parseInput();
   (0, import_core3.info)(JSON.stringify(
     // Do NOT include payload
     {
@@ -32571,6 +32578,7 @@ async function run() {
     return;
   }
   const dumper = { trigger, options, results: {} };
+  const dumpFile = join3(tempDir, "dump.json");
   for (; ; ) {
     attempts += 1;
     if (attempts > options.attemptLimits) {
@@ -32644,7 +32652,9 @@ async function run() {
       break;
     }
   }
-  (0, import_core3.setOutput)("dump", JSON.stringify(dumper, null, 2));
+  writeFileSync(dumpFile, JSON.stringify(dumper, null, 2));
+  (0, import_core3.setOutput)("dump", dumpFile);
+  (0, import_core3.info)(colorize("info", `you can read the checks detail in ${dumpFile}`));
 }
 void run();
 /*! Bundled license information:

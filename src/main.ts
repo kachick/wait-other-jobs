@@ -29,7 +29,7 @@ import { getInterval, wait } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
 import { Check, Options, Trigger } from './schema.ts';
 import { join } from 'path';
-import { fstat, writeFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 
 interface Result {
   elapsed: Temporal.Duration;
