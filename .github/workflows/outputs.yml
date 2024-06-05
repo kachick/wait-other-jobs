@@ -48,7 +48,8 @@ jobs:
             ]
       - name: 'Copy the output results to files'
         env:
-          DEBUG_DUMP: '${{ steps.wait.outputs.dump }}'
+          DEBUG_DUMP: |
+            ${{ steps.wait.outputs.dump }}
         run: |
           mkdir outputs
           echo -n "$DEBUG_DUMP" > ./outputs/dump.json
