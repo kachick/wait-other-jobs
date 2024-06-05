@@ -32654,7 +32654,7 @@ async function run() {
   }
   writeFileSync(dumpFile, JSON.stringify(dumper, null, 2));
   (0, import_core3.setOutput)("dump", dumpFile);
-  (0, import_core3.info)(colorize("info", `you can read the checks detail in ${dumpFile}`));
+  (0, import_core3.info)(colorize("info", `Resources are saved in ${dumpFile}`));
 }
 void run();
 /*! Bundled license information:
