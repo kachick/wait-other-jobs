@@ -46,16 +46,11 @@ jobs:
                 "optional": false
               }
             ]
-      - name: 'Copy the output results to files'
-        env:
-          DEBUG_DUMP: |
-            ${{ steps.wait.outputs.dump }}
+      - name: Make sure there is the file
         run: |
-          mkdir outputs
-          echo -n "$DEBUG_DUMP" > ./outputs/dump.json
-          ls -alh ./outputs
+          ls -alh '${{ steps.wait.outputs.dump }}'
       - name: Upload dumps as an artifact
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}'
-          path: ./outputs
+          path: '${{ steps.wait.outputs.dump }}'
