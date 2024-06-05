@@ -28,7 +28,6 @@ jobs:
       - run: echo '🎉'
   dump:
     runs-on: ubuntu-24.04
-    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
@@ -54,10 +53,6 @@ jobs:
           mkdir outputs
           echo -n "$DEBUG_DUMP" > ./outputs/dump.json
           ls -alh ./outputs
-          set +e
-          if [[ -s './outputs/dump.json' ]] && [[ '${{ runner.debug }}' != '1' ]]; then
-            exit 2
-          fi
       - name: Upload dumps as an artifact
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
