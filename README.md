@@ -89,12 +89,12 @@ permissions:
   actions: read
 ```
 
-## jobs.<job_id>.outputs
+## outputs.<output_id>
 
 (Since v3.4.0)
 
 - `dump`\
-  Collected resources which keeps fields then logged.\
+  A file path for collected resources which keeps fields then logged.\
   This data is only provided for debugging purposes, so the schema is not defined.
 
 ## Examples

@@ -122,6 +122,8 @@ export const Options = z.object({
   },
 );
 
+export const Path = z.string().min(1);
+
 export type Options = z.infer<typeof Options>;
 
 export interface Trigger {

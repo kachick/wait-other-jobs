@@ -28,6 +28,8 @@ import { Report, Severity, generateReport, getSummaries, readableDuration } from
 import { getInterval, wait } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
 import { Check, Options, Trigger } from './schema.ts';
+import { join } from 'path';
+import { fstat, writeFileSync } from 'fs';
 
 interface Result {
   elapsed: Temporal.Duration;
@@ -46,7 +48,7 @@ interface Dumper {
 async function run(): Promise<void> {
   const startedAt = performance.now();
   startGroup('Parameters');
-  const { trigger, options, githubToken } = parseInput();
+  const { trigger, options, githubToken, tempDir } = parseInput();
   info(JSON.stringify(
     // Do NOT include payload
     {
@@ -68,6 +70,7 @@ async function run(): Promise<void> {
 
   // - Do not include secret even in debug mode
   const dumper: Dumper = { trigger, options, results: {} };
+  const dumpFile = join(tempDir, 'dump.json');
 
   for (;;) {
     attempts += 1;
@@ -161,7 +164,9 @@ async function run(): Promise<void> {
     }
   }
 
-  setOutput('dump', JSON.stringify(dumper, null, 2));
+  writeFileSync(dumpFile, JSON.stringify(dumper, null, 2));
+  setOutput('dump', dumpFile);
+  info(colorize('info', `you can read the checks detail in ${dumpFile}`));
 }
 
 void run();
