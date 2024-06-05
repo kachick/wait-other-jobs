@@ -93,8 +93,9 @@ permissions:
 
 (Since v3.4.0)
 
-If used in debug mode, this action outputs the used resources into the `dump` key.\
-This data is only provided for debugging purposes, so the schema is not defined.
+- `dump`\
+  Collected resources which keeps fields then logged.\
+  This data is only provided for debugging purposes, so the schema is not defined.
 
 ## Examples
 

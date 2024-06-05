@@ -28,7 +28,6 @@ import { Report, Severity, generateReport, getSummaries, readableDuration } from
 import { getInterval, wait } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
 import { Check, Options, Trigger } from './schema.ts';
-import { WebhookPayload } from '@actions/github/lib/interfaces.ts';
 
 interface Result {
   elapsed: Temporal.Duration;
@@ -36,10 +35,10 @@ interface Result {
   report: Report;
 }
 
+// `payload` is intentionally omitted for now: https://github.com/kachick/wait-other-jobs/pull/832#discussion_r1625952633
 interface Dumper {
   trigger: Trigger;
   options: Options;
-  payload: WebhookPayload;
   // - Do not include all pollings in one file, it might be large size
   results: Record<number, Result>;
 }
@@ -47,7 +46,7 @@ interface Dumper {
 async function run(): Promise<void> {
   const startedAt = performance.now();
   startGroup('Parameters');
-  const { trigger, options, githubToken, payload } = parseInput();
+  const { trigger, options, githubToken } = parseInput();
   info(JSON.stringify(
     // Do NOT include payload
     {
@@ -68,7 +67,7 @@ async function run(): Promise<void> {
   }
 
   // - Do not include secret even in debug mode
-  const dumper: Dumper = { trigger, options, payload, results: {} };
+  const dumper: Dumper = { trigger, options, results: {} };
 
   for (;;) {
     attempts += 1;
@@ -162,9 +161,7 @@ async function run(): Promise<void> {
     }
   }
 
-  if (options.shouldDump) {
-    setOutput('dump', JSON.stringify(dumper, null, 2));
-  }
+  setOutput('dump', JSON.stringify(dumper, null, 2));
 }
 
 void run();

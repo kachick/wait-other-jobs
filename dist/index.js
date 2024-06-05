@@ -31091,7 +31091,6 @@ var Options = z2.object({
   attemptLimits: z2.number().min(1),
   isEarlyExit: z2.boolean(),
   shouldSkipSameWorkflow: z2.boolean(),
-  shouldDump: z2.boolean(),
   isDryRun: z2.boolean()
 }).strict().readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
@@ -31144,7 +31143,6 @@ function parseInput() {
   );
   const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
   const shouldSkipSameWorkflow = (0, import_core.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
-  const shouldDump = (0, import_core.getBooleanInput)("dump", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const options = Options.parse({
     initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
@@ -31155,13 +31153,12 @@ function parseInput() {
     skipList: JSON.parse((0, import_core.getInput)("skip-list", { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
-    shouldDump,
     isDryRun
   });
   const trigger = { ...repo, ref: commitSha, runId, jobName: job, eventName };
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core.setSecret)(githubToken);
-  return { trigger, options, githubToken, payload };
+  return { trigger, options, githubToken };
 }
 
 // node_modules/.pnpm/universal-user-agent@7.0.2/node_modules/universal-user-agent/index.js
@@ -32555,7 +32552,7 @@ function colorize(severity, message) {
 async function run() {
   const startedAt = performance.now();
   (0, import_core3.startGroup)("Parameters");
-  const { trigger, options, githubToken, payload } = parseInput();
+  const { trigger, options, githubToken } = parseInput();
   (0, import_core3.info)(JSON.stringify(
     // Do NOT include payload
     {
@@ -32573,7 +32570,7 @@ async function run() {
   if (options.isDryRun) {
     return;
   }
-  const dumper = { trigger, options, payload, results: {} };
+  const dumper = { trigger, options, results: {} };
   for (; ; ) {
     attempts += 1;
     if (attempts > options.attemptLimits) {
@@ -32647,9 +32644,7 @@ async function run() {
       break;
     }
   }
-  if (options.shouldDump) {
-    (0, import_core3.setOutput)("dump", JSON.stringify(dumper, null, 2));
-  }
+  (0, import_core3.setOutput)("dump", JSON.stringify(dumper, null, 2));
 }
 void run();
 /*! Bundled license information:
