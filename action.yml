@@ -45,6 +45,12 @@ inputs:
     description: 'Avoid http requests for tests'
     required: false
     default: 'false'
+outputs:
+  dump:
+    description: |
+      A file path for collected resources which keeps fields than logged.
+      This data is only provided for debugging purposes, so the schema is not defined.
+
 runs:
   using: 'node20'
   main: 'dist/index.js'

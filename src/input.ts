@@ -1,9 +1,11 @@
-import { debug, getInput, getBooleanInput, setSecret, isDebug, error } from '@actions/core';
+import { getInput, getBooleanInput, setSecret, error } from '@actions/core';
 import { context } from '@actions/github';
 
-import { Durationable, Options, Trigger } from './schema.ts';
+import { Durationable, Options, Path, Trigger } from './schema.ts';
+import { mkdtempSync } from 'fs';
+import { join } from 'path';
 
-export function parseInput(): { trigger: Trigger; options: Options; githubToken: string } {
+export function parseInput(): { trigger: Trigger; options: Options; githubToken: string; tempDir: string } {
   const {
     repo,
     payload,
@@ -19,13 +21,12 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     if (typeof prSha === 'string') {
       commitSha = prSha;
     } else {
-      if (isDebug()) {
-        // Do not print secret even for debug code
-        debug(JSON.stringify({ label: 'PullRequestContext', pr }, null, 2));
-      }
       error('github context has unexpected format: missing context.payload.pull_request.head.sha');
     }
   }
+  // Do not use `tmpdir` from `node:os` in action: See https://github.com/actions/toolkit/issues/518
+  const tempRoot = Path.parse(process.env['RUNNER_TEMP']);
+  const tempDir = mkdtempSync(join(tempRoot, 'wait-other-jobs-'));
 
   const waitSecondsBeforeFirstPolling = parseInt(
     getInput('wait-seconds-before-first-polling', { required: true, trimWhitespace: true }),
@@ -62,5 +63,5 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
   setSecret(githubToken);
 
-  return { trigger, options, githubToken };
+  return { trigger, options, githubToken, tempDir };
 }

@@ -726,7 +726,7 @@ var require_tunnel = __commonJS({
         connectOptions.headers = connectOptions.headers || {};
         connectOptions.headers["Proxy-Authorization"] = "Basic " + new Buffer(connectOptions.proxyAuth).toString("base64");
       }
-      debug3("making CONNECT request");
+      debug("making CONNECT request");
       var connectReq = self.request(connectOptions);
       connectReq.useChunkedEncodingByDefault = false;
       connectReq.once("response", onResponse);
@@ -746,7 +746,7 @@ var require_tunnel = __commonJS({
         connectReq.removeAllListeners();
         socket.removeAllListeners();
         if (res.statusCode !== 200) {
-          debug3(
+          debug(
             "tunneling socket could not be established, statusCode=%d",
             res.statusCode
           );
@@ -758,7 +758,7 @@ var require_tunnel = __commonJS({
           return;
         }
         if (head.length > 0) {
-          debug3("got illegal response body from proxy");
+          debug("got illegal response body from proxy");
           socket.destroy();
           var error2 = new Error("got illegal response body from proxy");
           error2.code = "ECONNRESET";
@@ -766,13 +766,13 @@ var require_tunnel = __commonJS({
           self.removeSocket(placeholder);
           return;
         }
-        debug3("tunneling connection has established");
+        debug("tunneling connection has established");
         self.sockets[self.sockets.indexOf(placeholder)] = socket;
         return cb(socket);
       }
       function onError(cause) {
         connectReq.removeAllListeners();
-        debug3(
+        debug(
           "tunneling socket could not be established, cause=%s\n",
           cause.message,
           cause.stack
@@ -834,9 +834,9 @@ var require_tunnel = __commonJS({
       }
       return target;
     }
-    var debug3;
+    var debug;
     if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
-      debug3 = function() {
+      debug = function() {
         var args = Array.prototype.slice.call(arguments);
         if (typeof args[0] === "string") {
           args[0] = "TUNNEL: " + args[0];
@@ -846,10 +846,10 @@ var require_tunnel = __commonJS({
         console.error.apply(console, args);
       };
     } else {
-      debug3 = function() {
+      debug = function() {
       };
     }
-    exports.debug = debug3;
+    exports.debug = debug;
   }
 });
 
@@ -18878,7 +18878,7 @@ var require_core = __commonJS({
 Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
     }
     exports.getBooleanInput = getBooleanInput2;
-    function setOutput(name, value) {
+    function setOutput2(name, value) {
       const filePath = process.env["GITHUB_OUTPUT"] || "";
       if (filePath) {
         return file_command_1.issueFileCommand("OUTPUT", file_command_1.prepareKeyValueMessage(name, value));
@@ -18886,7 +18886,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       process.stdout.write(os2.EOL);
       command_1.issueCommand("set-output", { name }, utils_1.toCommandValue(value));
     }
-    exports.setOutput = setOutput;
+    exports.setOutput = setOutput2;
     function setCommandEcho(enabled) {
       command_1.issue("echo", enabled ? "on" : "off");
     }
@@ -18896,14 +18896,14 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       error2(message);
     }
     exports.setFailed = setFailed2;
-    function isDebug3() {
+    function isDebug() {
       return process.env["RUNNER_DEBUG"] === "1";
     }
-    exports.isDebug = isDebug3;
-    function debug3(message) {
+    exports.isDebug = isDebug;
+    function debug(message) {
       command_1.issueCommand("debug", {}, message);
     }
-    exports.debug = debug3;
+    exports.debug = debug;
     function error2(message, properties = {}) {
       command_1.issueCommand("error", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
@@ -31107,8 +31107,11 @@ var Options = z2.object({
     path: ["initialDuration", "waitList"]
   }
 );
+var Path = z2.string().min(1);
 
 // src/input.ts
+import { mkdtempSync } from "fs";
+import { join } from "path";
 function parseInput() {
   const {
     repo,
@@ -31125,12 +31128,11 @@ function parseInput() {
     if (typeof prSha === "string") {
       commitSha = prSha;
     } else {
-      if ((0, import_core.isDebug)()) {
-        (0, import_core.debug)(JSON.stringify({ label: "PullRequestContext", pr: pr2 }, null, 2));
-      }
       (0, import_core.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
     }
   }
+  const tempRoot = Path.parse(process.env["RUNNER_TEMP"]);
+  const tempDir = mkdtempSync(join(tempRoot, "wait-other-jobs-"));
   const waitSecondsBeforeFirstPolling = parseInt(
     (0, import_core.getInput)("wait-seconds-before-first-polling", { required: true, trimWhitespace: true }),
     10
@@ -31161,7 +31163,7 @@ function parseInput() {
   const trigger = { ...repo, ref: commitSha, runId, jobName: job, eventName };
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core.setSecret)(githubToken);
-  return { trigger, options, githubToken };
+  return { trigger, options, githubToken, tempDir };
 }
 
 // node_modules/.pnpm/universal-user-agent@7.0.2/node_modules/universal-user-agent/index.js
@@ -32346,7 +32348,7 @@ async function fetchChecks(token, trigger) {
 }
 
 // src/report.ts
-import { join, relative } from "path";
+import { join as join2, relative } from "path";
 
 // src/util.ts
 function groupBy(items, callback) {
@@ -32400,7 +32402,7 @@ function summarize(check, trigger) {
 }
 function getSummaries(checks, trigger) {
   return checks.map((check) => summarize(check, trigger)).toSorted(
-    (a2, b2) => join(a2.workflowBasename, a2.jobName).localeCompare(join(b2.workflowBasename, b2.jobName))
+    (a2, b2) => join2(a2.workflowBasename, a2.jobName).localeCompare(join2(b2.workflowBasename, b2.jobName))
   );
 }
 function seekWaitList(summaries, waitList, elapsed) {
@@ -32532,6 +32534,8 @@ function getInterval(method, leastInterval, attempts) {
 }
 
 // src/main.ts
+import { join as join3 } from "path";
+import { writeFileSync } from "fs";
 function colorize(severity, message) {
   switch (severity) {
     case "error": {
@@ -32555,8 +32559,9 @@ function colorize(severity, message) {
 async function run() {
   const startedAt = performance.now();
   (0, import_core3.startGroup)("Parameters");
-  const { trigger, options, githubToken } = parseInput();
+  const { trigger, options, githubToken, tempDir } = parseInput();
   (0, import_core3.info)(JSON.stringify(
+    // Do NOT include payload
     {
       trigger,
       startedAt,
@@ -32572,6 +32577,8 @@ async function run() {
   if (options.isDryRun) {
     return;
   }
+  const dumper = { trigger, options, results: {} };
+  const dumpFile = join3(tempDir, "dump.json");
   for (; ; ) {
     attempts += 1;
     if (attempts > options.attemptLimits) {
@@ -32589,15 +32596,15 @@ async function run() {
     const elapsed = mr.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
     (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()} # total elapsed ${readableDuration(elapsed)}`);
     const checks = await fetchChecks(githubToken, trigger);
-    if ((0, import_core3.isDebug)()) {
-      (0, import_core3.debug)(JSON.stringify({ label: "rawdata", checks, elapsed }, null, 2));
-    }
     const report = generateReport(
       getSummaries(checks, trigger),
       trigger,
       elapsed,
       options
     );
+    if (attempts === 1) {
+      dumper.results[attempts] = { elapsed, checks, report };
+    }
     for (const summary of report.summaries) {
       const {
         runStatus,
@@ -32612,9 +32619,6 @@ async function run() {
       (0, import_core3.info)(
         `${workflowBasename}(${colorize(severity, jobName)}): [eventName: ${eventName}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`
       );
-    }
-    if ((0, import_core3.isDebug)()) {
-      (0, import_core3.debug)(JSON.stringify({ label: "filtered", report }, null, 2));
     }
     const { ok, done, logs } = report;
     for (const { severity, message, resource } of logs) {
@@ -32637,6 +32641,9 @@ async function run() {
     }
     (0, import_core3.endGroup)();
     if (shouldStop) {
+      if (attempts !== 1) {
+        dumper.results[attempts] = { elapsed, checks, report };
+      }
       if (ok) {
         (0, import_core3.info)(colorize("notice", "all jobs passed"));
       } else {
@@ -32645,6 +32652,9 @@ async function run() {
       break;
     }
   }
+  writeFileSync(dumpFile, JSON.stringify(dumper, null, 2));
+  (0, import_core3.setOutput)("dump", dumpFile);
+  (0, import_core3.info)(colorize("info", `Resources are saved in ${dumpFile}`));
 }
 void run();
 /*! Bundled license information:

@@ -1,4 +1,4 @@
-import { debug, info, setFailed, isDebug, startGroup, endGroup } from '@actions/core';
+import { info, setFailed, startGroup, endGroup, setOutput } from '@actions/core';
 import styles from 'ansi-styles';
 
 function colorize(severity: Severity, message: string): string {
@@ -24,15 +24,33 @@ function colorize(severity: Severity, message: string): string {
 
 import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
-import { Severity, generateReport, getSummaries, readableDuration } from './report.ts';
+import { Report, Severity, generateReport, getSummaries, readableDuration } from './report.ts';
 import { getInterval, wait } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
+import { Check, Options, Trigger } from './schema.ts';
+import { join } from 'path';
+import { writeFileSync } from 'fs';
+
+interface Result {
+  elapsed: Temporal.Duration;
+  checks: Check[];
+  report: Report;
+}
+
+// `payload` is intentionally omitted for now: https://github.com/kachick/wait-other-jobs/pull/832#discussion_r1625952633
+interface Dumper {
+  trigger: Trigger;
+  options: Options;
+  // - Do not include all pollings in one file, it might be large size
+  results: Record<number, Result>;
+}
 
 async function run(): Promise<void> {
   const startedAt = performance.now();
   startGroup('Parameters');
-  const { trigger, options, githubToken } = parseInput();
+  const { trigger, options, githubToken, tempDir } = parseInput();
   info(JSON.stringify(
+    // Do NOT include payload
     {
       trigger,
       startedAt,
@@ -49,6 +67,10 @@ async function run(): Promise<void> {
   if (options.isDryRun) {
     return;
   }
+
+  // - Do not include secret even in debug mode
+  const dumper: Dumper = { trigger, options, results: {} };
+  const dumpFile = join(tempDir, 'dump.json');
 
   for (;;) {
     attempts += 1;
@@ -70,15 +92,17 @@ async function run(): Promise<void> {
     const elapsed = Temporal.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()} # total elapsed ${readableDuration(elapsed)}`);
     const checks = await fetchChecks(githubToken, trigger);
-    if (isDebug()) {
-      debug(JSON.stringify({ label: 'rawdata', checks, elapsed }, null, 2));
-    }
+
     const report = generateReport(
       getSummaries(checks, trigger),
       trigger,
       elapsed,
       options,
     );
+
+    if (attempts === 1) {
+      dumper.results[attempts] = { elapsed: elapsed, checks, report };
+    }
 
     for (const summary of report.summaries) {
       const {
@@ -99,10 +123,6 @@ async function run(): Promise<void> {
           runConclusion ?? nullStr
         }][runURL: ${checkRunUrl}]`,
       );
-    }
-
-    if (isDebug()) {
-      debug(JSON.stringify({ label: 'filtered', report }, null, 2));
     }
 
     const { ok, done, logs } = report;
@@ -130,6 +150,10 @@ async function run(): Promise<void> {
     endGroup();
 
     if (shouldStop) {
+      if (attempts !== 1) {
+        dumper.results[attempts] = { elapsed, checks, report };
+      }
+
       if (ok) {
         info(colorize('notice', 'all jobs passed'));
       } else {
@@ -139,6 +163,10 @@ async function run(): Promise<void> {
       break;
     }
   }
+
+  writeFileSync(dumpFile, JSON.stringify(dumper, null, 2));
+  setOutput('dump', dumpFile);
+  info(colorize('info', `Resources are saved in ${dumpFile}`));
 }
 
 void run();
