@@ -18896,10 +18896,10 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       error2(message);
     }
     exports.setFailed = setFailed2;
-    function isDebug2() {
+    function isDebug() {
       return process.env["RUNNER_DEBUG"] === "1";
     }
-    exports.isDebug = isDebug2;
+    exports.isDebug = isDebug;
     function debug(message) {
       command_1.issueCommand("debug", {}, message);
     }
@@ -31091,6 +31091,7 @@ var Options = z2.object({
   attemptLimits: z2.number().min(1),
   isEarlyExit: z2.boolean(),
   shouldSkipSameWorkflow: z2.boolean(),
+  shouldDump: z2.boolean(),
   isDryRun: z2.boolean()
 }).strict().readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
@@ -31143,6 +31144,7 @@ function parseInput() {
   );
   const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
   const shouldSkipSameWorkflow = (0, import_core.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
+  const shouldDump = (0, import_core.getBooleanInput)("dump", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const options = Options.parse({
     initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
@@ -31153,6 +31155,7 @@ function parseInput() {
     skipList: JSON.parse((0, import_core.getInput)("skip-list", { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
+    shouldDump,
     isDryRun
   });
   const trigger = { ...repo, ref: commitSha, runId, jobName: job, eventName };
@@ -32570,7 +32573,7 @@ async function run() {
   if (options.isDryRun) {
     return;
   }
-  const dumper = { trigger, options, payload, results: [] };
+  const dumper = { trigger, options, payload, results: {} };
   for (; ; ) {
     attempts += 1;
     if (attempts > options.attemptLimits) {
@@ -32594,6 +32597,9 @@ async function run() {
       elapsed,
       options
     );
+    if (attempts === 1) {
+      dumper.results[attempts] = { elapsed, checks, report };
+    }
     for (const summary of report.summaries) {
       const {
         runStatus,
@@ -32609,7 +32615,6 @@ async function run() {
         `${workflowBasename}(${colorize(severity, jobName)}): [eventName: ${eventName}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`
       );
     }
-    dumper.results.push({ elapsed, checks, report });
     const { ok, done, logs } = report;
     for (const { severity, message, resource } of logs) {
       (0, import_core3.info)(colorize(severity, message));
@@ -32631,6 +32636,9 @@ async function run() {
     }
     (0, import_core3.endGroup)();
     if (shouldStop) {
+      if (attempts !== 1) {
+        dumper.results[attempts] = { elapsed, checks, report };
+      }
       if (ok) {
         (0, import_core3.info)(colorize("notice", "all jobs passed"));
       } else {
@@ -32639,7 +32647,7 @@ async function run() {
       break;
     }
   }
-  if ((0, import_core3.isDebug)()) {
+  if (options.shouldDump) {
     (0, import_core3.setOutput)("dump", JSON.stringify(dumper, null, 2));
   }
 }

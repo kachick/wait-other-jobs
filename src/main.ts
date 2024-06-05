@@ -1,4 +1,4 @@
-import { info, setFailed, isDebug, startGroup, endGroup, setOutput } from '@actions/core';
+import { info, setFailed, startGroup, endGroup, setOutput } from '@actions/core';
 import styles from 'ansi-styles';
 
 function colorize(severity: Severity, message: string): string {
