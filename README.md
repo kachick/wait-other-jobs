@@ -94,7 +94,7 @@ permissions:
 (Since v3.4.0)
 
 - `dump`\
-  A file path for collected resources which keeps fields then logged.\
+  A file path for collected resources which keeps fields than logged.\
   This data is only provided for debugging purposes, so the schema is not defined.
 
 ## Examples

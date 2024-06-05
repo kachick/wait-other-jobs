@@ -1,5 +1,7 @@
 # How to extract checks from debug log
 
+(This note is outdated)
+
 Source: https://github.com/kachick/wait-other-jobs/actions/runs/9281068681
 
 This file recorded snapshot checks for GH-820 in the debug log
