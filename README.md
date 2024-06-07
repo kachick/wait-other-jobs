@@ -104,28 +104,54 @@ See the [docs](docs/examples.md) for further detail.
 
 ## Deadlocks
 
-- If you use this action in multiple jobs on the same repository, you should avoid deadlocks.\
-  The `skip-list`, `wait-list` and `skip-same-workflow` options cover this use case.
+If you use this action in multiple jobs on the same repository, you should avoid deadlocks.\
+The `skip-list`, `wait-list` and `skip-same-workflow` options cover this use case.
 
-- If you changed job name from the default, you should specify with `skip-list` or use `skip-same-workflow`
-  ```yaml
-  jobs:
-    your_job: # This will be used default job name if you not specify below "name" field
-      name: "Changed at here"
-      runs-on: ubuntu-24.04
-      steps:
-        - uses: kachick/wait-other-jobs@v3
-          with:
-            skip-list: |
-              [
-                {
-                  "workflowFile": "this_file_name_here.yml",
-                  "jobName": "Changed at here"
-                }
-              ]
-          timeout-minutes: 15
-  ```
-  Similar problems should be considered in matrix jobs. See [#761](https://github.com/kachick/wait-other-jobs/issues/761) for further detail
+If you changed job name from the default, you should set `skip-list` or roughly use `skip-same-workflow`
+
+```yaml
+jobs:
+  your_job: # This will be used default job name if you not specify below "name" field
+    name: "Changed at here"
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: kachick/wait-other-jobs@v3.4.0
+        with:
+          skip-list: |
+            [
+              {
+                "workflowFile": "this_file_name.yml",
+                "jobName": "Changed at here"
+              }
+            ]
+        timeout-minutes: 15
+```
+
+Similar problems should be considered in matrix use.\
+Since v3.4.0, you can set `prefix` for `jobMatchMode` to make small list.
+
+```yaml
+jobs:
+  your_job:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-24.04
+          - ubuntu-22.04
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: kachick/wait-other-jobs@v3.4.0
+        with:
+          skip-list: |
+            [
+              {
+                "workflowFile": "this_file_name.yml",
+                "jobMatchMode": "prefix",
+                "jobName": "${{ github.job }}"
+              }
+            ]
+      - run: make test
+```
 
 ## Startup grace period
 
