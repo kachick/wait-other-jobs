@@ -69,6 +69,22 @@ jobs:
                 "jobName": "wait, ubuntu-22.04 and wait-seconds-before-first-polling 7"
               },
               {
+                "workflowFile": "GH-761-matrix.yml",
+                "jobName": "wait-with-own-job-prefix (ubuntu-24.04, 3)"
+              },
+              {
+                "workflowFile": "GH-761-matrix.yml",
+                "jobName": "wait-with-own-job-prefix (ubuntu-22.04, 3)"
+              },
+              {
+                "workflowFile": "GH-761-matrix.yml",
+                "jobName": "wait-with-own-job-prefix (ubuntu-24.04, 7)"
+              },
+              {
+                "workflowFile": "GH-761-matrix.yml",
+                "jobName": "wait-with-own-job-prefix (ubuntu-22.04, 7)"
+              },
+              {
                 "workflowFile": "merge-bot-pr.yml",
                 "optional": true
               }
