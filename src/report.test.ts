@@ -72,7 +72,7 @@ test('wait-list', async (t) => {
           },
         ],
         skipList: [],
-        shouldSkipSameWorkflow: false,
+        skipSameWorkflow: false,
       },
     );
 
@@ -114,7 +114,7 @@ test('wait-list', async (t) => {
             },
           ],
           skipList: [],
-          shouldSkipSameWorkflow: false,
+          skipSameWorkflow: false,
         },
       );
 
@@ -186,7 +186,7 @@ test('wait-list', async (t) => {
             },
           ],
           skipList: [],
-          shouldSkipSameWorkflow: false,
+          skipSameWorkflow: false,
         },
       );
 
@@ -254,7 +254,7 @@ test('wait-list', async (t) => {
             },
           ],
           skipList: [],
-          shouldSkipSameWorkflow: false,
+          skipSameWorkflow: false,
         },
       );
 
@@ -342,7 +342,7 @@ test('wait-list', async (t) => {
             },
           ],
           skipList: [],
-          shouldSkipSameWorkflow: false,
+          skipSameWorkflow: false,
         },
       );
 
@@ -421,7 +421,7 @@ test('skip-list', () => {
           'jobName': 'dependabot',
         },
       ],
-      shouldSkipSameWorkflow: false,
+      skipSameWorkflow: false,
     },
   );
 

@@ -146,7 +146,7 @@ export function generateReport(
   summaries: readonly Summary[],
   trigger: Trigger,
   elapsed: Temporal.Duration,
-  { ownJobPrefix, waitList, skipList, shouldSkipSameWorkflow }: Pick<
+  { ownJobPrefix, waitList, skipList, skipSameWorkflow: shouldSkipSameWorkflow }: Pick<
     Options,
     'ownJobPrefix' | 'waitList' | 'skipList' | 'shouldSkipSameWorkflow'
   >,
