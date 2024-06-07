@@ -1,5 +1,4 @@
 name: GH-761 - Matrix
-run-name: 'Used in Actions tab'
 on:
   push:
     branches: [main]
