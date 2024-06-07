@@ -54,7 +54,7 @@ test('wait-list', async (t) => {
         waitList: [
           {
             'workflowFile': 'lint.yml',
-            jobMatchMode: 'exact',
+            jobMatchMode: 'all',
             'optional': false,
             'eventName': 'pull_request',
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
@@ -68,7 +68,7 @@ test('wait-list', async (t) => {
           },
           {
             'workflowFile': 'THERE_ARE_NO_FILES_AS_THIS.yml',
-            jobMatchMode: 'exact',
+            jobMatchMode: 'all',
             'optional': true,
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
@@ -513,15 +513,15 @@ test('skip-list', async (t) => {
         skipList: [
           {
             'workflowFile': 'itself.yml',
-            jobMatchMode: 'exact',
+            jobMatchMode: 'all',
           },
           {
             'workflowFile': 'ci.yml',
-            jobMatchMode: 'exact',
+            jobMatchMode: 'all',
           },
           {
             'workflowFile': 'ci-nix.yml',
-            jobMatchMode: 'exact',
+            jobMatchMode: 'all',
           },
           {
             'workflowFile': 'merge-bot-pr.yml',

@@ -31063,23 +31063,33 @@ function getDuration(durationable) {
   }
   throw new Error("unexpected value is specified in durations");
 }
-var FilterCondition = z2.object({
-  workflowFile: z2.string().endsWith(".yml"),
-  jobName: z2.string().min(1).optional(),
+var workflowFile = z2.string().endsWith(".yml");
+var matchAllJobs = z2.object({
+  workflowFile,
+  jobName: z2.undefined(),
+  // Preferring undefined over null for backward compatibility
+  jobMatchMode: z2.literal("all").default("all")
+}).strict();
+var matchPartialJobs = z2.object({
+  workflowFile,
+  jobName: z2.string().min(1),
   jobMatchMode: z2.enum(["exact", "prefix"]).default("exact")
-});
+}).strict();
+var FilterCondition = z2.union([matchAllJobs, matchPartialJobs]);
 var SkipFilterCondition = FilterCondition.readonly();
-var WaitFilterCondition = FilterCondition.extend(
-  {
-    optional: z2.boolean().default(false).readonly(),
-    // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
-    // - Intentionally omitted in skip-list, let me know if you have the use-case
-    eventName: z2.string().min(1).optional(),
-    // Do not raise validation errors for the reasonability of max value.
-    // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
-    startupGracePeriod: Durationable.default(defaultGrace)
-  }
-).readonly();
+var waitOptions = {
+  optional: z2.boolean().default(false).readonly(),
+  // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
+  // - Intentionally omitted in skip-list, let me know if you have the use-case
+  eventName: z2.string().min(1).optional(),
+  // Do not raise validation errors for the reasonability of max value.
+  // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
+  startupGracePeriod: Durationable.default(defaultGrace)
+};
+var WaitFilterCondition = z2.union([
+  matchAllJobs.extend(waitOptions).strict(),
+  matchPartialJobs.extend(waitOptions).strict()
+]).readonly();
 var WaitList = z2.array(WaitFilterCondition).readonly();
 var SkipList = z2.array(SkipFilterCondition).readonly();
 var retryMethods = z2.enum(["exponential_backoff", "equal_intervals"]);
@@ -32409,8 +32419,8 @@ function getSummaries(checks, trigger) {
     (a2, b2) => join2(a2.workflowBasename, a2.jobName).localeCompare(join2(b2.workflowBasename, b2.jobName))
   );
 }
-function matchPath({ workflowFile, jobName, jobMatchMode }, summary) {
-  if (workflowFile !== summary.workflowBasename) {
+function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summary) {
+  if (workflowFile2 !== summary.workflowBasename) {
     return false;
   }
   if (!jobName) {

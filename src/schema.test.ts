@@ -37,7 +37,7 @@ test('Options set some default values it cannot be defined in action.yml', () =>
       ...defaultOptions,
       waitList: [{
         workflowFile: 'ci.yml',
-        jobMatchMode: 'exact',
+        jobMatchMode: 'all',
         optional: false,
         startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
       }],
@@ -123,7 +123,7 @@ test('wait-list have startupGracePeriod', async (t) => {
         ...defaultOptions,
         waitList: [{
           workflowFile: 'ci.yml',
-          jobMatchMode: 'exact',
+          jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ minutes: 5 }),
         }],
@@ -172,7 +172,7 @@ test('wait-list have startupGracePeriod', async (t) => {
         ...defaultOptions,
         waitList: [{
           workflowFile: 'ci.yml',
-          jobMatchMode: 'exact',
+          jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ minutes: 1, seconds: 42 }),
         }],
@@ -207,7 +207,7 @@ test('wait-list have startupGracePeriod', async (t) => {
         initialDuration: Temporal.Duration.from({ seconds: 42 }),
         waitList: [{
           workflowFile: 'ci.yml',
-          jobMatchMode: 'exact',
+          jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
         }],
@@ -225,7 +225,7 @@ test('wait-list have startupGracePeriod', async (t) => {
         initialDuration: Temporal.Duration.from({ seconds: 42 }),
         waitList: [{
           workflowFile: 'ci.yml',
-          jobMatchMode: 'exact',
+          jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
         }],
