@@ -43,7 +43,7 @@ inputs:
     required: false
     default: '[]'
   skip-same-workflow:
-    description: 'Skip jobs defined in the same workflow for example which using this action'
+    description: 'Skip jobs defined in the same workflow which using this action'
     required: false
     default: 'false'
   dry-run:

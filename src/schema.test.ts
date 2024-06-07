@@ -27,7 +27,7 @@ test('Options keep given values', () => {
     initialDuration: Temporal.Duration.from({ seconds: 10 }),
     leastInterval: Temporal.Duration.from({ seconds: 15 }),
     retryMethod: 'equal_intervals',
-    skipSameWorkflow: false,
+    shouldSkipSameWorkflow: false,
     isDryRun: false,
   }, Options.parse(defaultOptions));
 });

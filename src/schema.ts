@@ -91,10 +91,6 @@ export type WaitList = z.infer<typeof WaitList>;
 const retryMethods = z.enum(['exponential_backoff', 'equal_intervals']);
 export type RetryMethod = z.infer<typeof retryMethods>;
 
-const skipAll = z.object({ all: z.literal(true) }).strict().readonly();
-const skipPrefix = z.object({ all: z.literal(false), prefix: z.string().min(1) }).strict().readonly();
-const skipExact = z.object({ all: z.literal(false) }).strict().readonly();
-
 // - Do not specify default values with zod. That is an action.yml role
 // - Do not include secrets here, for example githubToken. See https://github.com/colinhacks/zod/issues/1783
 export const Options = z.object({
@@ -106,7 +102,7 @@ export const Options = z.object({
   retryMethod: retryMethods,
   attemptLimits: z.number().min(1),
   isEarlyExit: z.boolean(),
-  skipSameWorkflow: z.union([skipAll, skipPrefix, skipExact]),
+  shouldSkipSameWorkflow: z.boolean(),
   isDryRun: z.boolean(),
 }).strict().readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
