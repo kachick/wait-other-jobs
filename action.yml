@@ -9,6 +9,11 @@ inputs:
     description: 'The GITHUB_TOKEN secret'
     required: false
     default: ${{ github.token }}
+  own-job-prefix:
+    description: 'Typically needed in matrix jobs, will ignore to wait jobs in same workflow which has this prefix'
+    required: false
+    # Intentionally avoided to set jobId for default
+    # default: ${{ github.job }}
   wait-seconds-before-first-polling:
     description: 'Wait this seconds before first polling'
     required: false

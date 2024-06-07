@@ -5,6 +5,7 @@ import { Temporal } from 'temporal-polyfill';
 import { durationEqual, optionsEqual } from './assert.ts';
 
 const defaultOptions = Object.freeze({
+  ownJobPrefix: null,
   isEarlyExit: true,
   attemptLimits: 1000,
   waitList: [],
@@ -18,6 +19,7 @@ const defaultOptions = Object.freeze({
 
 test('Options keep given values', () => {
   optionsEqual({
+    ownJobPrefix: null,
     isEarlyExit: true,
     attemptLimits: 1000,
     waitList: [],

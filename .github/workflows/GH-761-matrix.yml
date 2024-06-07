@@ -25,8 +25,7 @@ jobs:
       - run: |
           sleep 10
           echo ':)'
-  # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
-  wait: # The <job_id> must start with a letter or _ and contain only alphanumeric characters, -, or _.
+  wait-with-skip-list:
     strategy:
       fail-fast: false
       matrix:
@@ -41,12 +40,6 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      # - name: Spy :)
-      #   env:
-      #     GITHUB_ALL: '${{ toJson(github) }}'
-      #   uses: mxschmitt/action-tmate@v3
-      #   with:
-      #     limit-access-to-actor: true
       - uses: ./
         id: wait
         continue-on-error: true
@@ -75,6 +68,44 @@ jobs:
                 "workflowFile": "GH-761-matrix.yml",
                 "jobName": "wait, ubuntu-22.04 and wait-seconds-before-first-polling 7"
               },
+              {
+                "workflowFile": "merge-bot-pr.yml",
+                "optional": true
+              }
+            ]
+      - name: Upload dumps as an artifact
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        with:
+          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}-${{ matrix.os }}-${{ matrix.wait-seconds-before-first-polling }}'
+          path: '${{ steps.wait.outputs.dump }}'
+  wait-with-own-job-prefix:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04
+          - ubuntu-22.04
+        wait-seconds-before-first-polling:
+          - '3'
+          - '7'
+    runs-on: ${{ matrix.os }}
+    # name: # Will work even if not specified job name
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: ./
+        id: wait
+        continue-on-error: true
+        with:
+          own-job-prefix: "${{ github.job }}"
+          retry-method: 'equal_intervals'
+          min-interval-seconds: 5
+          wait-seconds-before-first-polling: '${{ matrix.wait-seconds-before-first-polling }}'
+          skip-same-workflow: 'false' # Intentionally set false to test skip list also can cover this use case
+          # Should specify jobName to test details
+          # But we should pattern likes regex for the jobName
+          skip-list: |
+            [
               {
                 "workflowFile": "merge-bot-pr.yml",
                 "optional": true

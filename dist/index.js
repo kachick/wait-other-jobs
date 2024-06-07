@@ -31083,6 +31083,7 @@ var WaitList = z2.array(WaitFilterCondition).readonly();
 var SkipList = z2.array(SkipFilterCondition).readonly();
 var retryMethods = z2.enum(["exponential_backoff", "equal_intervals"]);
 var Options = z2.object({
+  ownJobPrefix: z2.string().min(1).nullable(),
   waitList: WaitList,
   skipList: SkipList,
   initialDuration: Duration,
@@ -31136,6 +31137,7 @@ function parseInput() {
   }
   const tempRoot = Path.parse(process.env["RUNNER_TEMP"]);
   const tempDir = mkdtempSync(join(tempRoot, "wait-other-jobs-"));
+  const ownJobPrefix = (0, import_core.getInput)("own-job-prefix", { required: false, trimWhitespace: true }) || null;
   const waitSecondsBeforeFirstPolling = parseInt(
     (0, import_core.getInput)("wait-seconds-before-first-polling", { required: true, trimWhitespace: true }),
     10
@@ -31153,6 +31155,7 @@ function parseInput() {
   const shouldSkipSameWorkflow = (0, import_core.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const options = Options.parse({
+    ownJobPrefix,
     initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
     leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
@@ -32454,7 +32457,7 @@ function judge(summaries) {
     logs
   };
 }
-function generateReport(summaries, trigger, elapsed, { waitList, skipList, shouldSkipSameWorkflow }) {
+function generateReport(summaries, trigger, elapsed, { ownJobPrefix, waitList, skipList, shouldSkipSameWorkflow }) {
   const others = summaries.filter(
     (summary) => !(summary.isSameWorkflow && // Ideally this logic should be...
     //
@@ -32466,7 +32469,7 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, shoul
     // But GitHub does not provide the jobName for each context: https://github.com/orgs/community/discussions/16614
     //
     // On the otherhand, the conxtext.jobId will be used for the jobName if not given the name and not used in matrix
-    trigger.jobId === summary.jobName)
+    (ownJobPrefix ? summary.jobName.startsWith(ownJobPrefix) : trigger.jobId === summary.jobName))
   );
   const targets = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
   if (waitList.length > 0) {
