@@ -33,7 +33,7 @@ const exampleSummary = Object.freeze(
     runStatus: 'IN_PROGRESS',
     runConclusion: 'FAILURE',
     severity: 'error',
-  } satisfies Summary,
+  } as const satisfies Summary,
 );
 
 test('wait-list', async (t) => {
@@ -401,47 +401,103 @@ test('wait-list', async (t) => {
   });
 });
 
-test('skip-list', () => {
-  const trigger = {
-    owner: 'kachick',
-    repo: 'wait-other-jobs',
-    'runId': 8679817057,
-    ref: '760074f4f419b55cb864030c29ece58a689a42a2',
-    jobId: 'skip-list',
-    eventName: 'pull_request',
-  };
-  const report = generateReport(
-    getSummaries(checks8679817057, trigger),
-    trigger,
-    Temporal.Duration.from({ seconds: 420 }),
-    {
-      waitList: [],
-      skipList: [
-        {
-          'workflowFile': 'itself.yml',
-          jobMatchMode: 'exact',
-        },
-        {
-          'workflowFile': 'ci.yml',
-          jobMatchMode: 'exact',
-        },
-        {
-          'workflowFile': 'ci-nix.yml',
-          jobMatchMode: 'exact',
-        },
-        {
-          'workflowFile': 'merge-bot-pr.yml',
-          'jobName': 'dependabot',
-          jobMatchMode: 'exact',
-        },
-      ],
-      shouldSkipSameWorkflow: false,
-    },
-  );
+test('skip-list', async (t) => {
+  await t.test('ignores listed jobs', (_t) => {
+    const trigger = {
+      owner: 'kachick',
+      repo: 'wait-other-jobs',
+      'runId': 8679817057,
+      ref: '760074f4f419b55cb864030c29ece58a689a42a2',
+      jobId: 'skip-list',
+      eventName: 'pull_request',
+    };
+    const exactReport = generateReport(
+      getSummaries(checks8679817057, trigger),
+      trigger,
+      Temporal.Duration.from({ seconds: 420 }),
+      {
+        waitList: [],
+        skipList: [
+          {
+            'workflowFile': 'itself.yml',
+            jobMatchMode: 'exact',
+          },
+          {
+            'workflowFile': 'ci.yml',
+            jobMatchMode: 'exact',
+          },
+          {
+            'workflowFile': 'ci-nix.yml',
+            jobMatchMode: 'exact',
+          },
+          {
+            'workflowFile': 'merge-bot-pr.yml',
+            'jobName': 'dependabot',
+            jobMatchMode: 'exact',
+          },
+        ],
+        shouldSkipSameWorkflow: false,
+      },
+    );
 
-  assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
-    done: true,
-    logs: [],
-    ok: true,
+    assert.deepStrictEqual(omit<Report, 'summaries'>(exactReport, ['summaries']), {
+      done: true,
+      logs: [],
+      ok: true,
+    });
+  });
+
+  await t.test('prefix mode ignores more', (_t) => {
+    const trigger = Object.freeze({
+      owner: 'kachick',
+      repo: 'wait-other-jobs',
+      'runId': 92810686811,
+      ref: '8c14d2a44d6dff4e69b0a3cacc2a14e416b44137',
+      jobId: 'wait-success',
+      eventName: 'pull_request',
+    });
+    const report = generateReport(
+      [{
+        ...exampleSummary,
+        isAcceptable: true,
+        isCompleted: false,
+        runStatus: 'IN_PROGRESS',
+        workflowBasename: 'ci.yml',
+        jobName: 'quickstarter-success',
+      }, {
+        ...exampleSummary,
+        isAcceptable: false,
+        isCompleted: false,
+        runStatus: 'IN_PROGRESS',
+        workflowBasename: 'ci.yml',
+        jobName: 'quickstarter-fail',
+      }, {
+        ...exampleSummary,
+        isAcceptable: true,
+        isCompleted: true,
+        runStatus: 'COMPLETED',
+        workflowBasename: 'ci.yml',
+        jobName: 'another-success',
+      }],
+      trigger,
+      Temporal.Duration.from({ seconds: 60 }),
+      {
+        waitList: [],
+        'skipList': [
+          {
+            'workflowFile': 'ci.yml',
+            'jobName': 'quickstarter-',
+            jobMatchMode: 'prefix',
+          },
+        ],
+        shouldSkipSameWorkflow: false,
+      },
+    );
+
+    jsonEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+      done: true,
+      logs: [],
+      ok: true,
+    });
   });
 });
