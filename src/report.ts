@@ -93,15 +93,18 @@ function matchPath({ workflowFile, jobName, jobMatchMode }: FilterCondition, sum
     return true;
   }
 
-  if (jobMatchMode === 'exact') {
-    return jobName === summary.jobName;
+  switch (jobMatchMode) {
+    case 'exact': {
+      return jobName === summary.jobName;
+    }
+    case 'prefix': {
+      return summary.jobName.startsWith(jobName);
+    }
+    default: {
+      const _exhaustiveCheck: never = jobMatchMode;
+      return false;
+    }
   }
-
-  if (jobMatchMode === 'prefix') {
-    return summary.jobName.startsWith(jobName);
-  }
-
-  return false;
 }
 
 function seekWaitList(

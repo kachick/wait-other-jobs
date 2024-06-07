@@ -16,7 +16,7 @@ function colorize(severity: Severity, message: string): string {
       return message;
     }
     default: {
-      const _unexpectedSeverity: never = severity;
+      const _exhaustiveCheck: never = severity;
       return message;
     }
   }

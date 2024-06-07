@@ -32416,13 +32416,18 @@ function matchPath({ workflowFile, jobName, jobMatchMode }, summary) {
   if (!jobName) {
     return true;
   }
-  if (jobMatchMode === "exact") {
-    return jobName === summary.jobName;
+  switch (jobMatchMode) {
+    case "exact": {
+      return jobName === summary.jobName;
+    }
+    case "prefix": {
+      return summary.jobName.startsWith(jobName);
+    }
+    default: {
+      const _exhaustiveCheck = jobMatchMode;
+      return false;
+    }
   }
-  if (jobMatchMode === "prefix") {
-    return summary.jobName.startsWith(jobName);
-  }
-  return false;
 }
 function seekWaitList(summaries, waitList, elapsed) {
   const seeker = waitList.map((condition) => ({ ...condition, found: false }));
@@ -32579,7 +32584,7 @@ function colorize(severity, message) {
       return message;
     }
     default: {
-      const _unexpectedSeverity = severity;
+      const _exhaustiveCheck = severity;
       return message;
     }
   }
