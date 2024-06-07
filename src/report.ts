@@ -165,9 +165,9 @@ export function generateReport(
   summaries: readonly Summary[],
   trigger: Trigger,
   elapsed: Temporal.Duration,
-  { ownJobPrefix, waitList, skipList, shouldSkipSameWorkflow }: Pick<
+  { waitList, skipList, shouldSkipSameWorkflow }: Pick<
     Options,
-    'ownJobPrefix' | 'waitList' | 'skipList' | 'shouldSkipSameWorkflow'
+    'waitList' | 'skipList' | 'shouldSkipSameWorkflow'
   >,
 ): Report {
   const others = summaries.filter((summary) =>
@@ -181,10 +181,9 @@ export function generateReport(
       // 2. `context.jobName === checkRun.jobName`
       // But GitHub does not provide the jobName for each context: https://github.com/orgs/community/discussions/16614
       //
-      // On the otherhand, the conxtext.jobId will be used for the jobName if not given the name and not used in matrix
-      ownJobPrefix
-        ? summary.jobName.startsWith(ownJobPrefix)
-        : trigger.jobId === summary.jobName
+      // On the otherhand, the conxtext.jobId will be used for the default jobName
+      // Anyway, in matrix use, GitHub uses the default name for the prefix. It should be considered in list based solutions
+      trigger.jobId === summary.jobName
     ))
   );
   const targets = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));

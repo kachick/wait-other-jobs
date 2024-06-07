@@ -51,7 +51,6 @@ test('wait-list', async (t) => {
       trigger,
       Temporal.Duration.from({ seconds: 420 }),
       {
-        ownJobPrefix: null,
         waitList: [
           {
             'workflowFile': 'lint.yml',
@@ -101,7 +100,6 @@ test('wait-list', async (t) => {
         trigger,
         Temporal.Duration.from({ milliseconds: Math.ceil(986.9570700004697) }),
         {
-          ownJobPrefix: null,
           'waitList': [
             {
               'workflowFile': 'GH-820-graceperiod.yml',
@@ -176,7 +174,6 @@ test('wait-list', async (t) => {
         trigger,
         grace.add({ milliseconds: 1 }),
         {
-          ownJobPrefix: null,
           'waitList': [
             {
               'workflowFile': 'GH-820-graceperiod.yml',
@@ -247,7 +244,6 @@ test('wait-list', async (t) => {
         trigger,
         Temporal.Duration.from({ seconds: 60 }),
         {
-          ownJobPrefix: null,
           'waitList': [
             {
               'workflowFile': 'GH-820-graceperiod.yml',
@@ -332,7 +328,6 @@ test('wait-list', async (t) => {
         trigger,
         Temporal.Duration.from({ minutes: 2 }),
         {
-          ownJobPrefix: null,
           'waitList': [
             {
               'workflowFile': 'ci.yml',
@@ -420,7 +415,6 @@ test('skip-list', () => {
     trigger,
     Temporal.Duration.from({ seconds: 420 }),
     {
-      ownJobPrefix: null,
       waitList: [],
       skipList: [
         {

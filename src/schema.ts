@@ -96,7 +96,6 @@ export type RetryMethod = z.infer<typeof retryMethods>;
 // - Do not specify default values with zod. That is an action.yml role
 // - Do not include secrets here, for example githubToken. See https://github.com/colinhacks/zod/issues/1783
 export const Options = z.object({
-  ownJobPrefix: z.string().min(1).nullable(),
   waitList: WaitList,
   skipList: SkipList,
   initialDuration: Duration,

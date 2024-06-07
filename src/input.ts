@@ -31,7 +31,6 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const tempRoot = Path.parse(process.env['RUNNER_TEMP']);
   const tempDir = mkdtempSync(join(tempRoot, 'wait-other-jobs-'));
 
-  const ownJobPrefix = getInput('own-job-prefix', { required: false, trimWhitespace: true }) || null;
   const waitSecondsBeforeFirstPolling = parseInt(
     getInput('wait-seconds-before-first-polling', { required: true, trimWhitespace: true }),
     10,
@@ -50,7 +49,6 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
 
   const options = Options.parse({
-    ownJobPrefix,
     initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
     leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
