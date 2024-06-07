@@ -41,12 +41,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - name: Spy :)
-        env:
-          GITHUB_ALL: '${{ toJson(github) }}'
-        uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: true
+      # - name: Spy :)
+      #   env:
+      #     GITHUB_ALL: '${{ toJson(github) }}'
+      #   uses: mxschmitt/action-tmate@v3
+      #   with:
+      #     limit-access-to-actor: true
       - uses: ./
         id: wait
         continue-on-error: true
