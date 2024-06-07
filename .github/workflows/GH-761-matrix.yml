@@ -30,6 +30,7 @@ jobs:
           - '3'
           - '7'
     runs-on: ${{ matrix.os }}
+    name: '${{ github.job }} - ${{ matrix.os }}'
     # name: 'the_job_id_and_job_name_is_different' # Use jobs.<job_id>.name to set a name for the job, which is displayed in the GitHub UI.
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 10
@@ -51,7 +52,11 @@ jobs:
             [
               {
                 "workflowFile": "GH-761-matrix.yml",
-                "jobName": "wait"
+                "jobName": "wait - ubuntu-24.04"
+              },
+              {
+                "workflowFile": "GH-761-matrix.yml",
+                "jobName": "wait - ubuntu-22.04"
               }
             ]
       - name: Upload dumps as an artifact
