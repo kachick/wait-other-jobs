@@ -166,7 +166,6 @@ async function run(): Promise<void> {
 
   writeFileSync(dumpFile, JSON.stringify(dumper, null, 2));
   setOutput('dump', dumpFile);
-  info(colorize('info', `Resources are saved in ${dumpFile}`));
 }
 
 void run();
