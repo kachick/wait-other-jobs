@@ -23,7 +23,7 @@ jobs:
     #   actions: read
     runs-on: ubuntu-24.04
     steps:
-      - uses: kachick/wait-other-jobs@v3.3.0
+      - uses: kachick/wait-other-jobs@v3.4.0
         timeout-minutes: 15 # Recommended to be enabled with your appropriate value for fail-safe use
 ```
 
@@ -92,8 +92,6 @@ permissions:
 
 ## outputs.<output_id>
 
-(Since v3.4.0)
-
 - `dump`\
   A file path for collected resources which keeps fields than logged.\
   This data is only provided for debugging purposes, so the schema is not defined.
@@ -128,8 +126,12 @@ jobs:
         timeout-minutes: 15
 ```
 
-Similar problems should be considered in matrix use.\
-Since v3.4.0, you can set `prefix` for `jobMatchMode` to make small list.
+Similar problems should be considered in matrix use. Because of GitHub does not provide the context.
+
+- https://github.com/orgs/community/discussions/8945
+- https://github.com/orgs/community/discussions/16614
+
+However you can set `prefix` for `jobMatchMode` to create small skip-list to avoid this problem.
 
 ```yaml
 jobs:

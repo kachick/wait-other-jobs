@@ -3,8 +3,9 @@
 This file only records notable changes. Not synchronized with all releases and tags.
 
 - main - not yet released
-  - Add `jobMatchMode` option for both wait and skip list
-  - Add `dump` outputs
+- v3.4.0
+  - Add `jobMatchMode` option for both the wait and skip lists. It typically helps to use matrix: [#761](https://github.com/kachick/wait-other-jobs/issues/761)
+  - Add `outputs.dump`
 - v3.3.0
   - Add `startupGracePeriod` option in wait-list: [#820](https://github.com/kachick/wait-other-jobs/issues/820)
   - Restrict `wait-seconds-before-first-polling` if it is too short as zero or shorter than `startupGracePeriod`
