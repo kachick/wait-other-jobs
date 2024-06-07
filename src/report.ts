@@ -84,7 +84,7 @@ export type Report = {
   summaries: readonly Summary[];
 };
 
-function matchJob({ workflowFile, jobName, jobMatchMode }: FilterCondition, summary: Summary): boolean {
+function matchPath({ workflowFile, jobName, jobMatchMode }: FilterCondition, summary: Summary): boolean {
   if (workflowFile !== summary.workflowBasename) {
     return false;
   }
@@ -112,7 +112,7 @@ function seekWaitList(
   const seeker = waitList.map((condition) => ({ ...condition, found: false }));
   const filtered = summaries.filter((summary) =>
     seeker.some((target) => {
-      const isMatchPath = matchJob(target, summary);
+      const isMatchPath = matchPath(target, summary);
       const isMatchEvent = target.eventName ? (target.eventName === summary.eventName) : true;
       if (isMatchPath && isMatchEvent) {
         target.found = true;
@@ -226,7 +226,7 @@ export function generateReport(
     return defaultReport;
   }
   if (skipList.length > 0) {
-    const filtered = targets.filter((summary) => !skipList.some((target) => matchJob(target, summary)));
+    const filtered = targets.filter((summary) => !skipList.some((target) => matchPath(target, summary)));
 
     return { ...judge(filtered), summaries: filtered };
   }
