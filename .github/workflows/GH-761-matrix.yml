@@ -53,7 +53,7 @@ jobs:
           skip-list: |
             [
               {
-                "workflowFile": "itself.yml",
+                "workflowFile": "itself.yml"
               },
               {
                 "workflowFile": "GH-761-matrix.yml",
