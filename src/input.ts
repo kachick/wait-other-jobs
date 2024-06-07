@@ -10,7 +10,10 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     repo,
     payload,
     runId,
-    job,
+    // Not jobName, and GitHub does not provide the jobName
+    // https://github.com/orgs/community/discussions/8945
+    // https://github.com/orgs/community/discussions/16614
+    job: jobId,
     sha,
     eventName,
   } = context;
@@ -57,7 +60,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     isDryRun,
   });
 
-  const trigger = { ...repo, ref: commitSha, runId, jobName: job, eventName } as const satisfies Trigger;
+  const trigger = { ...repo, ref: commitSha, runId, jobId, eventName } as const satisfies Trigger;
 
   // `getIDToken` does not fit for this purpose. It is provided for OIDC Token
   const githubToken = getInput('github-token', { required: true, trimWhitespace: false });

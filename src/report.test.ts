@@ -33,7 +33,7 @@ const exampleSummary = Object.freeze(
     runStatus: 'IN_PROGRESS',
     runConclusion: 'FAILURE',
     severity: 'error',
-  } satisfies Summary,
+  } as const satisfies Summary,
 );
 
 test('wait-list', async (t) => {
@@ -43,7 +43,7 @@ test('wait-list', async (t) => {
       repo: 'wait-other-jobs',
       'runId': 8679817057,
       ref: '760074f4f419b55cb864030c29ece58a689a42a2',
-      jobName: 'wait-list',
+      jobId: 'wait-list',
       eventName: 'pull_request',
     };
     const report = generateReport(
@@ -54,6 +54,7 @@ test('wait-list', async (t) => {
         waitList: [
           {
             'workflowFile': 'lint.yml',
+            jobMatchMode: 'all',
             'optional': false,
             'eventName': 'pull_request',
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
@@ -61,11 +62,13 @@ test('wait-list', async (t) => {
           {
             'workflowFile': 'merge-bot-pr.yml',
             'jobName': 'dependabot',
+            jobMatchMode: 'exact',
             'optional': true,
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
           {
             'workflowFile': 'THERE_ARE_NO_FILES_AS_THIS.yml',
+            jobMatchMode: 'all',
             'optional': true,
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
@@ -82,13 +85,106 @@ test('wait-list', async (t) => {
     });
   });
 
+  await t.test('prefix mode matches more', (_t) => {
+    const trigger = Object.freeze({
+      owner: 'kachick',
+      repo: 'wait-other-jobs',
+      'runId': 92810686811,
+      ref: '8c14d2a44d6dff4e69b0a3cacc2a14e416b44137',
+      jobId: 'wait-success',
+      eventName: 'pull_request',
+    });
+    const report = generateReport(
+      [{
+        ...exampleSummary,
+        isAcceptable: true,
+        isCompleted: false,
+        runStatus: 'IN_PROGRESS',
+        workflowBasename: 'ci.yml',
+        jobName: 'quickstarter-success',
+      }, {
+        ...exampleSummary,
+        isAcceptable: false,
+        isCompleted: false,
+        runStatus: 'IN_PROGRESS',
+        workflowBasename: 'ci.yml',
+        jobName: 'quickstarter-fail',
+      }, {
+        ...exampleSummary,
+        isAcceptable: true,
+        isCompleted: true,
+        runStatus: 'COMPLETED',
+        workflowBasename: 'ci.yml',
+        jobName: 'another-success',
+      }],
+      trigger,
+      Temporal.Duration.from({ seconds: 60 }),
+      {
+        'waitList': [
+          {
+            'workflowFile': 'ci.yml',
+            'jobName': 'quickstarter-',
+            jobMatchMode: 'prefix',
+            'optional': false,
+            startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+          },
+        ],
+        skipList: [],
+        shouldSkipSameWorkflow: false,
+      },
+    );
+
+    jsonEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+      done: false,
+      logs: [
+        {
+          message: 'some jobs still in progress',
+          resource: [
+            {
+              checkRunUrl: 'https://example.com',
+              checkSuiteConclusion: 'FAILURE',
+              checkSuiteStatus: 'IN_PROGRESS',
+              eventName: 'pull_request',
+              isAcceptable: true,
+              isCompleted: false,
+              isSameWorkflow: false,
+              jobName: 'quickstarter-success',
+              runConclusion: 'FAILURE',
+              runDatabaseId: 42,
+              runStatus: 'IN_PROGRESS',
+              severity: 'error',
+              workflowBasename: 'ci.yml',
+            },
+            {
+              checkRunUrl: 'https://example.com',
+              checkSuiteConclusion: 'FAILURE',
+              checkSuiteStatus: 'IN_PROGRESS',
+              eventName: 'pull_request',
+              isAcceptable: false,
+              isCompleted: false,
+              isSameWorkflow: false,
+              jobName: 'quickstarter-fail',
+              runConclusion: 'FAILURE',
+              runDatabaseId: 42,
+              runStatus: 'IN_PROGRESS',
+              severity: 'error',
+              workflowBasename: 'ci.yml',
+            },
+          ],
+          severity: 'info',
+        },
+      ],
+      ok: true,
+    });
+  });
+
   await t.test('startupGracePeriod', async (t) => {
     const trigger = Object.freeze({
       owner: 'kachick',
       repo: 'wait-other-jobs',
       'runId': 92810686811,
       ref: '8c14d2a44d6dff4e69b0a3cacc2a14e416b44137',
-      jobName: 'wait-success',
+      jobId: 'wait-success',
       eventName: 'pull_request',
     });
     await t.test('required slowstarting job and set enough grace period', (_t) => {
@@ -101,12 +197,14 @@ test('wait-list', async (t) => {
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'quickstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
             },
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'slowstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
             },
@@ -148,6 +246,7 @@ test('wait-list', async (t) => {
                 {
                   found: false,
                   jobName: 'slowstarter-success',
+                  jobMatchMode: 'exact',
                   optional: false,
                   startupGracePeriod: 'PT60S',
                   workflowFile: 'GH-820-graceperiod.yml',
@@ -172,12 +271,14 @@ test('wait-list', async (t) => {
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'quickstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
             },
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'slowstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': grace,
             },
@@ -217,6 +318,7 @@ test('wait-list', async (t) => {
               {
                 found: false,
                 jobName: 'slowstarter-success',
+                jobMatchMode: 'exact',
                 optional: false,
                 startupGracePeriod: 'PT60S',
                 workflowFile: 'GH-820-graceperiod.yml',
@@ -239,12 +341,14 @@ test('wait-list', async (t) => {
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'quickstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
             },
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'slowstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
             },
@@ -284,6 +388,7 @@ test('wait-list', async (t) => {
               {
                 found: false,
                 jobName: 'slowstarter-success',
+                jobMatchMode: 'exact',
                 optional: false,
                 startupGracePeriod: 'PT60S',
                 workflowFile: 'GH-820-graceperiod.yml',
@@ -320,18 +425,21 @@ test('wait-list', async (t) => {
             {
               'workflowFile': 'ci.yml',
               'jobName': 'quickstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ minutes: 5 }),
             },
             {
               'workflowFile': 'ci.yml',
               'jobName': 'quickstarter-fail',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ minutes: 5 }),
             },
             {
               'workflowFile': 'ci.yml',
               'jobName': 'slowstarter-missing',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ minutes: 5 }),
             },
@@ -371,6 +479,7 @@ test('wait-list', async (t) => {
               {
                 found: false,
                 jobName: 'slowstarter-missing',
+                jobMatchMode: 'exact',
                 optional: false,
                 startupGracePeriod: 'PT5M',
                 workflowFile: 'ci.yml',
@@ -385,43 +494,103 @@ test('wait-list', async (t) => {
   });
 });
 
-test('skip-list', () => {
-  const trigger = {
-    owner: 'kachick',
-    repo: 'wait-other-jobs',
-    'runId': 8679817057,
-    ref: '760074f4f419b55cb864030c29ece58a689a42a2',
-    jobName: 'skip-list',
-    eventName: 'pull_request',
-  };
-  const report = generateReport(
-    getSummaries(checks8679817057, trigger),
-    trigger,
-    Temporal.Duration.from({ seconds: 420 }),
-    {
-      waitList: [],
-      skipList: [
-        {
-          'workflowFile': 'itself.yml',
-        },
-        {
-          'workflowFile': 'ci.yml',
-        },
-        {
-          'workflowFile': 'ci-nix.yml',
-        },
-        {
-          'workflowFile': 'merge-bot-pr.yml',
-          'jobName': 'dependabot',
-        },
-      ],
-      shouldSkipSameWorkflow: false,
-    },
-  );
+test('skip-list', async (t) => {
+  await t.test('ignores listed jobs', (_t) => {
+    const trigger = {
+      owner: 'kachick',
+      repo: 'wait-other-jobs',
+      'runId': 8679817057,
+      ref: '760074f4f419b55cb864030c29ece58a689a42a2',
+      jobId: 'skip-list',
+      eventName: 'pull_request',
+    };
+    const exactReport = generateReport(
+      getSummaries(checks8679817057, trigger),
+      trigger,
+      Temporal.Duration.from({ seconds: 420 }),
+      {
+        waitList: [],
+        skipList: [
+          {
+            'workflowFile': 'itself.yml',
+            jobMatchMode: 'all',
+          },
+          {
+            'workflowFile': 'ci.yml',
+            jobMatchMode: 'all',
+          },
+          {
+            'workflowFile': 'ci-nix.yml',
+            jobMatchMode: 'all',
+          },
+          {
+            'workflowFile': 'merge-bot-pr.yml',
+            'jobName': 'dependabot',
+            jobMatchMode: 'exact',
+          },
+        ],
+        shouldSkipSameWorkflow: false,
+      },
+    );
 
-  assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
-    done: true,
-    logs: [],
-    ok: true,
+    assert.deepStrictEqual(omit<Report, 'summaries'>(exactReport, ['summaries']), {
+      done: true,
+      logs: [],
+      ok: true,
+    });
+  });
+
+  await t.test('prefix mode ignores more', (_t) => {
+    const trigger = Object.freeze({
+      owner: 'kachick',
+      repo: 'wait-other-jobs',
+      'runId': 92810686811,
+      ref: '8c14d2a44d6dff4e69b0a3cacc2a14e416b44137',
+      jobId: 'wait-success',
+      eventName: 'pull_request',
+    });
+    const report = generateReport(
+      [{
+        ...exampleSummary,
+        isAcceptable: true,
+        isCompleted: false,
+        runStatus: 'IN_PROGRESS',
+        workflowBasename: 'ci.yml',
+        jobName: 'quickstarter-success',
+      }, {
+        ...exampleSummary,
+        isAcceptable: false,
+        isCompleted: false,
+        runStatus: 'IN_PROGRESS',
+        workflowBasename: 'ci.yml',
+        jobName: 'quickstarter-fail',
+      }, {
+        ...exampleSummary,
+        isAcceptable: true,
+        isCompleted: true,
+        runStatus: 'COMPLETED',
+        workflowBasename: 'ci.yml',
+        jobName: 'another-success',
+      }],
+      trigger,
+      Temporal.Duration.from({ seconds: 60 }),
+      {
+        waitList: [],
+        'skipList': [
+          {
+            'workflowFile': 'ci.yml',
+            'jobName': 'quickstarter-',
+            jobMatchMode: 'prefix',
+          },
+        ],
+        shouldSkipSameWorkflow: false,
+      },
+    );
+
+    jsonEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+      done: true,
+      logs: [],
+      ok: true,
+    });
   });
 });

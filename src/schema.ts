@@ -66,26 +66,40 @@ export function getDuration(durationable: string | MyDurationLike): Duration {
   throw new Error('unexpected value is specified in durations');
 }
 
-const FilterCondition = z.object({
-  workflowFile: z.string().endsWith('.yml'),
-  jobName: (z.string().min(1)).optional(),
-});
+const workflowFile = z.string().endsWith('.yml');
+const matchAllJobs = z.object({
+  workflowFile: workflowFile,
+  jobName: z.undefined(), // Preferring undefined over null for backward compatibility
+  jobMatchMode: z.literal('all').default('all'),
+}).strict();
+const matchPartialJobs = z.object({
+  workflowFile: workflowFile,
+  jobName: z.string().min(1),
+  jobMatchMode: z.enum(['exact', 'prefix']).default('exact'),
+}).strict();
+
+const FilterCondition = z.union([matchAllJobs, matchPartialJobs]);
 const SkipFilterCondition = FilterCondition.readonly();
-const WaitFilterCondition = FilterCondition.extend(
-  {
-    optional: z.boolean().default(false).readonly(),
 
-    // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
-    // - Intentionally omitted in skip-list, let me know if you have the use-case
-    eventName: z.string().min(1).optional(),
+const waitOptions = {
+  optional: z.boolean().default(false).readonly(),
 
-    // Do not raise validation errors for the reasonability of max value.
-    // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
-    startupGracePeriod: Durationable.default(defaultGrace),
-  },
-).readonly();
+  // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
+  // - Intentionally omitted in skip-list, let me know if you have the use-case
+  eventName: z.string().min(1).optional(),
+
+  // Do not raise validation errors for the reasonability of max value.
+  // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
+  startupGracePeriod: Durationable.default(defaultGrace),
+};
+
+const WaitFilterCondition = z.union([
+  matchAllJobs.extend(waitOptions).strict(),
+  matchPartialJobs.extend(waitOptions).strict(),
+]).readonly();
 const WaitList = z.array(WaitFilterCondition).readonly();
 const SkipList = z.array(SkipFilterCondition).readonly();
+export type FilterCondition = z.infer<typeof FilterCondition>;
 export type WaitList = z.infer<typeof WaitList>;
 
 const retryMethods = z.enum(['exponential_backoff', 'equal_intervals']);
@@ -131,7 +145,7 @@ export interface Trigger {
   repo: string;
   ref: string;
   runId: number;
-  jobName: string;
+  jobId: string;
   eventName: string;
 }
 

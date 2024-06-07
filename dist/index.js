@@ -31063,22 +31063,33 @@ function getDuration(durationable) {
   }
   throw new Error("unexpected value is specified in durations");
 }
-var FilterCondition = z2.object({
-  workflowFile: z2.string().endsWith(".yml"),
-  jobName: z2.string().min(1).optional()
-});
+var workflowFile = z2.string().endsWith(".yml");
+var matchAllJobs = z2.object({
+  workflowFile,
+  jobName: z2.undefined(),
+  // Preferring undefined over null for backward compatibility
+  jobMatchMode: z2.literal("all").default("all")
+}).strict();
+var matchPartialJobs = z2.object({
+  workflowFile,
+  jobName: z2.string().min(1),
+  jobMatchMode: z2.enum(["exact", "prefix"]).default("exact")
+}).strict();
+var FilterCondition = z2.union([matchAllJobs, matchPartialJobs]);
 var SkipFilterCondition = FilterCondition.readonly();
-var WaitFilterCondition = FilterCondition.extend(
-  {
-    optional: z2.boolean().default(false).readonly(),
-    // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
-    // - Intentionally omitted in skip-list, let me know if you have the use-case
-    eventName: z2.string().min(1).optional(),
-    // Do not raise validation errors for the reasonability of max value.
-    // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
-    startupGracePeriod: Durationable.default(defaultGrace)
-  }
-).readonly();
+var waitOptions = {
+  optional: z2.boolean().default(false).readonly(),
+  // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
+  // - Intentionally omitted in skip-list, let me know if you have the use-case
+  eventName: z2.string().min(1).optional(),
+  // Do not raise validation errors for the reasonability of max value.
+  // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
+  startupGracePeriod: Durationable.default(defaultGrace)
+};
+var WaitFilterCondition = z2.union([
+  matchAllJobs.extend(waitOptions).strict(),
+  matchPartialJobs.extend(waitOptions).strict()
+]).readonly();
 var WaitList = z2.array(WaitFilterCondition).readonly();
 var SkipList = z2.array(SkipFilterCondition).readonly();
 var retryMethods = z2.enum(["exponential_backoff", "equal_intervals"]);
@@ -31117,7 +31128,10 @@ function parseInput() {
     repo,
     payload,
     runId,
-    job,
+    // Not jobName, and GitHub does not provide the jobName
+    // https://github.com/orgs/community/discussions/8945
+    // https://github.com/orgs/community/discussions/16614
+    job: jobId,
     sha,
     eventName
   } = import_github.context;
@@ -31160,7 +31174,7 @@ function parseInput() {
     shouldSkipSameWorkflow,
     isDryRun
   });
-  const trigger = { ...repo, ref: commitSha, runId, jobName: job, eventName };
+  const trigger = { ...repo, ref: commitSha, runId, jobId, eventName };
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core.setSecret)(githubToken);
   return { trigger, options, githubToken, tempDir };
@@ -32405,11 +32419,31 @@ function getSummaries(checks, trigger) {
     (a2, b2) => join2(a2.workflowBasename, a2.jobName).localeCompare(join2(b2.workflowBasename, b2.jobName))
   );
 }
+function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summary) {
+  if (workflowFile2 !== summary.workflowBasename) {
+    return false;
+  }
+  if (!jobName) {
+    return true;
+  }
+  switch (jobMatchMode) {
+    case "exact": {
+      return jobName === summary.jobName;
+    }
+    case "prefix": {
+      return summary.jobName.startsWith(jobName);
+    }
+    default: {
+      const _exhaustiveCheck = jobMatchMode;
+      return false;
+    }
+  }
+}
 function seekWaitList(summaries, waitList, elapsed) {
   const seeker = waitList.map((condition) => ({ ...condition, found: false }));
   const filtered = summaries.filter(
     (summary) => seeker.some((target) => {
-      const isMatchPath = target.workflowFile === summary.workflowBasename && (target.jobName ? target.jobName === summary.jobName : true);
+      const isMatchPath = matchPath(target, summary);
       const isMatchEvent = target.eventName ? target.eventName === summary.eventName : true;
       if (isMatchPath && isMatchEvent) {
         target.found = true;
@@ -32452,7 +32486,20 @@ function judge(summaries) {
   };
 }
 function generateReport(summaries, trigger, elapsed, { waitList, skipList, shouldSkipSameWorkflow }) {
-  const others = summaries.filter((summary) => !(summary.isSameWorkflow && trigger.jobName === summary.jobName));
+  const others = summaries.filter(
+    (summary) => !(summary.isSameWorkflow && // Ideally this logic should be...
+    //
+    // 1. `trigger(context).jobId === smmmary(checkRun).jobId`
+    // But GitHub does not provide the jobId for each checkRun: https://github.com/orgs/community/discussions/8945
+    //
+    // or second place as
+    // 2. `context.jobName === checkRun.jobName`
+    // But GitHub does not provide the jobName for each context: https://github.com/orgs/community/discussions/16614
+    //
+    // On the otherhand, the conxtext.jobId will be used for the default jobName
+    // Anyway, in matrix use, GitHub uses the default name for the prefix. It should be considered in list based solutions
+    trigger.jobId === summary.jobName)
+  );
   const targets = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
   if (waitList.length > 0) {
     const { filtered, unmatches, unstarted } = seekWaitList(targets, waitList, elapsed);
@@ -32489,11 +32536,7 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, shoul
     return defaultReport;
   }
   if (skipList.length > 0) {
-    const filtered = targets.filter(
-      (summary) => !skipList.some(
-        (target) => target.workflowFile === summary.workflowBasename && (target.jobName ? target.jobName === summary.jobName : true)
-      )
-    );
+    const filtered = targets.filter((summary) => !skipList.some((target) => matchPath(target, summary)));
     return { ...judge(filtered), summaries: filtered };
   }
   return { ...judge(targets), summaries: targets };
@@ -32551,7 +32594,7 @@ function colorize(severity, message) {
       return message;
     }
     default: {
-      const _unexpectedSeverity = severity;
+      const _exhaustiveCheck = severity;
       return message;
     }
   }

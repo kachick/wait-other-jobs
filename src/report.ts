@@ -1,5 +1,5 @@
 import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
-import { Check, Options, Trigger, WaitList } from './schema.ts';
+import { Check, FilterCondition, Options, Trigger, WaitList } from './schema.ts';
 import { join, relative } from 'path';
 import { Temporal } from 'temporal-polyfill';
 import { groupBy } from './util.ts';
@@ -84,6 +84,29 @@ export type Report = {
   summaries: readonly Summary[];
 };
 
+function matchPath({ workflowFile, jobName, jobMatchMode }: FilterCondition, summary: Summary): boolean {
+  if (workflowFile !== summary.workflowBasename) {
+    return false;
+  }
+
+  if (!jobName) {
+    return true;
+  }
+
+  switch (jobMatchMode) {
+    case 'exact': {
+      return jobName === summary.jobName;
+    }
+    case 'prefix': {
+      return summary.jobName.startsWith(jobName);
+    }
+    default: {
+      const _exhaustiveCheck: never = jobMatchMode;
+      return false;
+    }
+  }
+}
+
 function seekWaitList(
   summaries: readonly Summary[],
   waitList: WaitList,
@@ -92,8 +115,7 @@ function seekWaitList(
   const seeker = waitList.map((condition) => ({ ...condition, found: false }));
   const filtered = summaries.filter((summary) =>
     seeker.some((target) => {
-      const isMatchPath = target.workflowFile === summary.workflowBasename
-        && (target.jobName ? (target.jobName === summary.jobName) : true);
+      const isMatchPath = matchPath(target, summary);
       const isMatchEvent = target.eventName ? (target.eventName === summary.eventName) : true;
       if (isMatchPath && isMatchEvent) {
         target.found = true;
@@ -146,9 +168,27 @@ export function generateReport(
   summaries: readonly Summary[],
   trigger: Trigger,
   elapsed: Temporal.Duration,
-  { waitList, skipList, shouldSkipSameWorkflow }: Pick<Options, 'waitList' | 'skipList' | 'shouldSkipSameWorkflow'>,
+  { waitList, skipList, shouldSkipSameWorkflow }: Pick<
+    Options,
+    'waitList' | 'skipList' | 'shouldSkipSameWorkflow'
+  >,
 ): Report {
-  const others = summaries.filter((summary) => !(summary.isSameWorkflow && (trigger.jobName === summary.jobName)));
+  const others = summaries.filter((summary) =>
+    !(summary.isSameWorkflow && (
+      // Ideally this logic should be...
+      //
+      // 1. `trigger(context).jobId === smmmary(checkRun).jobId`
+      // But GitHub does not provide the jobId for each checkRun: https://github.com/orgs/community/discussions/8945
+      //
+      // or second place as
+      // 2. `context.jobName === checkRun.jobName`
+      // But GitHub does not provide the jobName for each context: https://github.com/orgs/community/discussions/16614
+      //
+      // On the otherhand, the conxtext.jobId will be used for the default jobName
+      // Anyway, in matrix use, GitHub uses the default name for the prefix. It should be considered in list based solutions
+      trigger.jobId === summary.jobName
+    ))
+  );
   const targets = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
 
   if (waitList.length > 0) {
@@ -188,12 +228,7 @@ export function generateReport(
     return defaultReport;
   }
   if (skipList.length > 0) {
-    const filtered = targets.filter((summary) =>
-      !skipList.some((target) =>
-        target.workflowFile === summary.workflowBasename
-        && (target.jobName ? (target.jobName === summary.jobName) : true)
-      )
-    );
+    const filtered = targets.filter((summary) => !skipList.some((target) => matchPath(target, summary)));
 
     return { ...judge(filtered), summaries: filtered };
   }

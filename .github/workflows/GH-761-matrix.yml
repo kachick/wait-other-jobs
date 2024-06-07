@@ -1,0 +1,70 @@
+name: GH-761 - Matrix
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**GH-761**'
+      - 'action.yml'
+      - 'dist/**'
+  pull_request:
+    paths:
+      - '**GH-761**'
+      - 'action.yml'
+      - 'dist/**'
+
+# Disable all permissions in workflow global as to setup clean room
+# However PRs will have read permissions because this project is on a public repository
+permissions: {}
+
+jobs:
+  echo:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: |
+          sleep 10
+          echo ':)'
+  wait:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04
+          - ubuntu-22.04
+        wait-seconds-before-first-polling:
+          - '3'
+          - '7'
+    runs-on: ${{ matrix.os }}
+    # name: # By default, GitHub sets with `github.job` and the matrix values
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: ./
+        id: wait
+        continue-on-error: true
+        with:
+          retry-method: 'equal_intervals'
+          min-interval-seconds: 5
+          wait-seconds-before-first-polling: '${{ matrix.wait-seconds-before-first-polling }}'
+          skip-same-workflow: 'false' # Intentionally set false to test skip list also can cover this use case
+          # Should specify jobName to test details
+          # But we should pattern likes regex for the jobName
+          skip-list: |
+            [
+              {
+                "workflowFile": "itself.yml"
+              },
+              {
+                "workflowFile": "GH-761-matrix.yml",
+                "jobName": "${{ github.job }}",
+                "jobMatchMode": "prefix"
+              },
+              {
+                "workflowFile": "merge-bot-pr.yml"
+              }
+            ]
+      - name: Upload dumps as an artifact
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        with:
+          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}-${{ matrix.os }}-${{ matrix.wait-seconds-before-first-polling }}'
+          path: '${{ steps.wait.outputs.dump }}'
