@@ -55,6 +55,7 @@ test('wait-list', async (t) => {
         waitList: [
           {
             'workflowFile': 'lint.yml',
+            jobMatchMode: 'exact',
             'optional': false,
             'eventName': 'pull_request',
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
@@ -62,11 +63,13 @@ test('wait-list', async (t) => {
           {
             'workflowFile': 'merge-bot-pr.yml',
             'jobName': 'dependabot',
+            jobMatchMode: 'exact',
             'optional': true,
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
           {
             'workflowFile': 'THERE_ARE_NO_FILES_AS_THIS.yml',
+            jobMatchMode: 'exact',
             'optional': true,
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
@@ -103,12 +106,14 @@ test('wait-list', async (t) => {
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'quickstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
             },
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'slowstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
             },
@@ -150,6 +155,7 @@ test('wait-list', async (t) => {
                 {
                   found: false,
                   jobName: 'slowstarter-success',
+                  jobMatchMode: 'exact',
                   optional: false,
                   startupGracePeriod: 'PT60S',
                   workflowFile: 'GH-820-graceperiod.yml',
@@ -175,12 +181,14 @@ test('wait-list', async (t) => {
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'quickstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
             },
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'slowstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': grace,
             },
@@ -220,6 +228,7 @@ test('wait-list', async (t) => {
               {
                 found: false,
                 jobName: 'slowstarter-success',
+                jobMatchMode: 'exact',
                 optional: false,
                 startupGracePeriod: 'PT60S',
                 workflowFile: 'GH-820-graceperiod.yml',
@@ -243,12 +252,14 @@ test('wait-list', async (t) => {
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'quickstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
             },
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'slowstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
             },
@@ -288,6 +299,7 @@ test('wait-list', async (t) => {
               {
                 found: false,
                 jobName: 'slowstarter-success',
+                jobMatchMode: 'exact',
                 optional: false,
                 startupGracePeriod: 'PT60S',
                 workflowFile: 'GH-820-graceperiod.yml',
@@ -325,18 +337,21 @@ test('wait-list', async (t) => {
             {
               'workflowFile': 'ci.yml',
               'jobName': 'quickstarter-success',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ minutes: 5 }),
             },
             {
               'workflowFile': 'ci.yml',
               'jobName': 'quickstarter-fail',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ minutes: 5 }),
             },
             {
               'workflowFile': 'ci.yml',
               'jobName': 'slowstarter-missing',
+              jobMatchMode: 'exact',
               'optional': false,
               'startupGracePeriod': Temporal.Duration.from({ minutes: 5 }),
             },
@@ -376,6 +391,7 @@ test('wait-list', async (t) => {
               {
                 found: false,
                 jobName: 'slowstarter-missing',
+                jobMatchMode: 'exact',
                 optional: false,
                 startupGracePeriod: 'PT5M',
                 workflowFile: 'ci.yml',
@@ -409,16 +425,20 @@ test('skip-list', () => {
       skipList: [
         {
           'workflowFile': 'itself.yml',
+          jobMatchMode: 'exact',
         },
         {
           'workflowFile': 'ci.yml',
+          jobMatchMode: 'exact',
         },
         {
           'workflowFile': 'ci-nix.yml',
+          jobMatchMode: 'exact',
         },
         {
           'workflowFile': 'merge-bot-pr.yml',
           'jobName': 'dependabot',
+          jobMatchMode: 'exact',
         },
       ],
       shouldSkipSameWorkflow: false,

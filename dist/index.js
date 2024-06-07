@@ -31065,7 +31065,8 @@ function getDuration(durationable) {
 }
 var FilterCondition = z2.object({
   workflowFile: z2.string().endsWith(".yml"),
-  jobName: z2.string().min(1).optional()
+  jobName: z2.string().min(1).optional(),
+  jobMatchMode: z2.enum(["exact", "prefix"]).default("exact")
 });
 var SkipFilterCondition = FilterCondition.readonly();
 var WaitFilterCondition = FilterCondition.extend(
@@ -32411,11 +32412,26 @@ function getSummaries(checks, trigger) {
     (a2, b2) => join2(a2.workflowBasename, a2.jobName).localeCompare(join2(b2.workflowBasename, b2.jobName))
   );
 }
+function matchJob({ workflowFile, jobName, jobMatchMode }, summary) {
+  if (workflowFile !== summary.workflowBasename) {
+    return false;
+  }
+  if (!jobName) {
+    return true;
+  }
+  if (jobMatchMode === "exact") {
+    return jobName === summary.jobName;
+  }
+  if (jobMatchMode === "prefix") {
+    return summary.jobName.startsWith(jobName);
+  }
+  return false;
+}
 function seekWaitList(summaries, waitList, elapsed) {
   const seeker = waitList.map((condition) => ({ ...condition, found: false }));
   const filtered = summaries.filter(
     (summary) => seeker.some((target) => {
-      const isMatchPath = target.workflowFile === summary.workflowBasename && (target.jobName ? target.jobName === summary.jobName : true);
+      const isMatchPath = matchJob(target, summary);
       const isMatchEvent = target.eventName ? target.eventName === summary.eventName : true;
       if (isMatchPath && isMatchEvent) {
         target.found = true;
@@ -32507,11 +32523,7 @@ function generateReport(summaries, trigger, elapsed, { ownJobPrefix, waitList, s
     return defaultReport;
   }
   if (skipList.length > 0) {
-    const filtered = targets.filter(
-      (summary) => !skipList.some(
-        (target) => target.workflowFile === summary.workflowBasename && (target.jobName ? target.jobName === summary.jobName : true)
-      )
-    );
+    const filtered = targets.filter((summary) => !skipList.some((target) => matchJob(target, summary)));
     return { ...judge(filtered), summaries: filtered };
   }
   return { ...judge(targets), summaries: targets };

@@ -69,6 +69,7 @@ export function getDuration(durationable: string | MyDurationLike): Duration {
 const FilterCondition = z.object({
   workflowFile: z.string().endsWith('.yml'),
   jobName: (z.string().min(1)).optional(),
+  jobMatchMode: z.enum(['exact', 'prefix']).default('exact'),
 });
 const SkipFilterCondition = FilterCondition.readonly();
 const WaitFilterCondition = FilterCondition.extend(
@@ -86,6 +87,7 @@ const WaitFilterCondition = FilterCondition.extend(
 ).readonly();
 const WaitList = z.array(WaitFilterCondition).readonly();
 const SkipList = z.array(SkipFilterCondition).readonly();
+export type FilterCondition = z.infer<typeof FilterCondition>;
 export type WaitList = z.infer<typeof WaitList>;
 
 const retryMethods = z.enum(['exponential_backoff', 'equal_intervals']);

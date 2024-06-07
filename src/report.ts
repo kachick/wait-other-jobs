@@ -1,5 +1,5 @@
 import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
-import { Check, Options, Trigger, WaitList } from './schema.ts';
+import { Check, FilterCondition, Options, Trigger, WaitList } from './schema.ts';
 import { join, relative } from 'path';
 import { Temporal } from 'temporal-polyfill';
 import { groupBy } from './util.ts';
@@ -84,6 +84,26 @@ export type Report = {
   summaries: readonly Summary[];
 };
 
+function matchJob({ workflowFile, jobName, jobMatchMode }: FilterCondition, summary: Summary): boolean {
+  if (workflowFile !== summary.workflowBasename) {
+    return false;
+  }
+
+  if (!jobName) {
+    return true;
+  }
+
+  if (jobMatchMode === 'exact') {
+    return jobName === summary.jobName;
+  }
+
+  if (jobMatchMode === 'prefix') {
+    return summary.jobName.startsWith(jobName);
+  }
+
+  return false;
+}
+
 function seekWaitList(
   summaries: readonly Summary[],
   waitList: WaitList,
@@ -92,8 +112,7 @@ function seekWaitList(
   const seeker = waitList.map((condition) => ({ ...condition, found: false }));
   const filtered = summaries.filter((summary) =>
     seeker.some((target) => {
-      const isMatchPath = target.workflowFile === summary.workflowBasename
-        && (target.jobName ? (target.jobName === summary.jobName) : true);
+      const isMatchPath = matchJob(target, summary);
       const isMatchEvent = target.eventName ? (target.eventName === summary.eventName) : true;
       if (isMatchPath && isMatchEvent) {
         target.found = true;
@@ -207,12 +226,7 @@ export function generateReport(
     return defaultReport;
   }
   if (skipList.length > 0) {
-    const filtered = targets.filter((summary) =>
-      !skipList.some((target) =>
-        target.workflowFile === summary.workflowBasename
-        && (target.jobName ? (target.jobName === summary.jobName) : true)
-      )
-    );
+    const filtered = targets.filter((summary) => !skipList.some((target) => matchJob(target, summary)));
 
     return { ...judge(filtered), summaries: filtered };
   }
