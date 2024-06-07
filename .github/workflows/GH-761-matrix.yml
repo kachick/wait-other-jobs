@@ -61,8 +61,7 @@ jobs:
                 "jobMatchMode": "prefix"
               },
               {
-                "workflowFile": "merge-bot-pr.yml",
-                "optional": true
+                "workflowFile": "merge-bot-pr.yml"
               }
             ]
       - name: Upload dumps as an artifact
