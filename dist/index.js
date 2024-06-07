@@ -31117,7 +31117,10 @@ function parseInput() {
     repo,
     payload,
     runId,
-    job,
+    // Not jobName, and GitHub does not provide the jobName
+    // https://github.com/orgs/community/discussions/8945
+    // https://github.com/orgs/community/discussions/16614
+    job: jobId,
     sha,
     eventName
   } = import_github.context;
@@ -31160,7 +31163,7 @@ function parseInput() {
     shouldSkipSameWorkflow,
     isDryRun
   });
-  const trigger = { ...repo, ref: commitSha, runId, jobName: job, eventName };
+  const trigger = { ...repo, ref: commitSha, runId, jobId, eventName };
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core.setSecret)(githubToken);
   return { trigger, options, githubToken, tempDir };
@@ -32452,7 +32455,19 @@ function judge(summaries) {
   };
 }
 function generateReport(summaries, trigger, elapsed, { waitList, skipList, shouldSkipSameWorkflow }) {
-  const others = summaries.filter((summary) => !(summary.isSameWorkflow && trigger.jobName === summary.jobName));
+  const others = summaries.filter(
+    (summary) => !(summary.isSameWorkflow && // Ideally this logic should be...
+    //
+    // 1. `trigger(context).jobId === smmmary(checkRun).jobId`
+    // But GitHub does not provide the jobId for each checkRun: https://github.com/orgs/community/discussions/8945
+    //
+    // or second place as
+    // 2. `context.jobName === checkRun.jobName`
+    // But GitHub does not provide the jobName for each context: https://github.com/orgs/community/discussions/16614
+    //
+    // On the otherhand, the conxtext.jobId will be used for the jobName if not given the name and not used in matrix
+    trigger.jobId === summary.jobName)
+  );
   const targets = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
   if (waitList.length > 0) {
     const { filtered, unmatches, unstarted } = seekWaitList(targets, waitList, elapsed);

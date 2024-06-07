@@ -43,7 +43,7 @@ test('wait-list', async (t) => {
       repo: 'wait-other-jobs',
       'runId': 8679817057,
       ref: '760074f4f419b55cb864030c29ece58a689a42a2',
-      jobName: 'wait-list',
+      jobId: 'wait-list',
       eventName: 'pull_request',
     };
     const report = generateReport(
@@ -88,7 +88,7 @@ test('wait-list', async (t) => {
       repo: 'wait-other-jobs',
       'runId': 92810686811,
       ref: '8c14d2a44d6dff4e69b0a3cacc2a14e416b44137',
-      jobName: 'wait-success',
+      jobId: 'wait-success',
       eventName: 'pull_request',
     });
     await t.test('required slowstarting job and set enough grace period', (_t) => {
@@ -391,7 +391,7 @@ test('skip-list', () => {
     repo: 'wait-other-jobs',
     'runId': 8679817057,
     ref: '760074f4f419b55cb864030c29ece58a689a42a2',
-    jobName: 'skip-list',
+    jobId: 'skip-list',
     eventName: 'pull_request',
   };
   const report = generateReport(

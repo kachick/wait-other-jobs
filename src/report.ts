@@ -148,7 +148,21 @@ export function generateReport(
   elapsed: Temporal.Duration,
   { waitList, skipList, shouldSkipSameWorkflow }: Pick<Options, 'waitList' | 'skipList' | 'shouldSkipSameWorkflow'>,
 ): Report {
-  const others = summaries.filter((summary) => !(summary.isSameWorkflow && (trigger.jobName === summary.jobName)));
+  const others = summaries.filter((summary) =>
+    !(summary.isSameWorkflow && (
+      // Ideally this logic should be...
+      //
+      // 1. `trigger(context).jobId === smmmary(checkRun).jobId`
+      // But GitHub does not provide the jobId for each checkRun: https://github.com/orgs/community/discussions/8945
+      //
+      // or second place as
+      // 2. `context.jobName === checkRun.jobName`
+      // But GitHub does not provide the jobName for each context: https://github.com/orgs/community/discussions/16614
+      //
+      // On the otherhand, the conxtext.jobId will be used for the jobName if not given the name and not used in matrix
+      trigger.jobId === summary.jobName
+    ))
+  );
   const targets = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
 
   if (waitList.length > 0) {

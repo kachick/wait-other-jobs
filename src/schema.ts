@@ -131,7 +131,7 @@ export interface Trigger {
   repo: string;
   ref: string;
   runId: number;
-  jobName: string;
+  jobId: string;
   eventName: string;
 }
 
