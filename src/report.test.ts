@@ -85,6 +85,99 @@ test('wait-list', async (t) => {
     });
   });
 
+  await t.test('prefix mode matches more', (_t) => {
+    const trigger = Object.freeze({
+      owner: 'kachick',
+      repo: 'wait-other-jobs',
+      'runId': 92810686811,
+      ref: '8c14d2a44d6dff4e69b0a3cacc2a14e416b44137',
+      jobId: 'wait-success',
+      eventName: 'pull_request',
+    });
+    const report = generateReport(
+      [{
+        ...exampleSummary,
+        isAcceptable: true,
+        isCompleted: false,
+        runStatus: 'IN_PROGRESS',
+        workflowBasename: 'ci.yml',
+        jobName: 'quickstarter-success',
+      }, {
+        ...exampleSummary,
+        isAcceptable: false,
+        isCompleted: false,
+        runStatus: 'IN_PROGRESS',
+        workflowBasename: 'ci.yml',
+        jobName: 'quickstarter-fail',
+      }, {
+        ...exampleSummary,
+        isAcceptable: true,
+        isCompleted: true,
+        runStatus: 'COMPLETED',
+        workflowBasename: 'ci.yml',
+        jobName: 'another-success',
+      }],
+      trigger,
+      Temporal.Duration.from({ seconds: 60 }),
+      {
+        'waitList': [
+          {
+            'workflowFile': 'ci.yml',
+            'jobName': 'quickstarter-',
+            jobMatchMode: 'prefix',
+            'optional': false,
+            startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+          },
+        ],
+        skipList: [],
+        shouldSkipSameWorkflow: false,
+      },
+    );
+
+    jsonEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+      done: false,
+      logs: [
+        {
+          message: 'some jobs still in progress',
+          resource: [
+            {
+              checkRunUrl: 'https://example.com',
+              checkSuiteConclusion: 'FAILURE',
+              checkSuiteStatus: 'IN_PROGRESS',
+              eventName: 'pull_request',
+              isAcceptable: true,
+              isCompleted: false,
+              isSameWorkflow: false,
+              jobName: 'quickstarter-success',
+              runConclusion: 'FAILURE',
+              runDatabaseId: 42,
+              runStatus: 'IN_PROGRESS',
+              severity: 'error',
+              workflowBasename: 'ci.yml',
+            },
+            {
+              checkRunUrl: 'https://example.com',
+              checkSuiteConclusion: 'FAILURE',
+              checkSuiteStatus: 'IN_PROGRESS',
+              eventName: 'pull_request',
+              isAcceptable: false,
+              isCompleted: false,
+              isSameWorkflow: false,
+              jobName: 'quickstarter-fail',
+              runConclusion: 'FAILURE',
+              runDatabaseId: 42,
+              runStatus: 'IN_PROGRESS',
+              severity: 'error',
+              workflowBasename: 'ci.yml',
+            },
+          ],
+          severity: 'info',
+        },
+      ],
+      ok: true,
+    });
+  });
+
   await t.test('startupGracePeriod', async (t) => {
     const trigger = Object.freeze({
       owner: 'kachick',
