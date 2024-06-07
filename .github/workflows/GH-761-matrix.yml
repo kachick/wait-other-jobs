@@ -18,6 +18,13 @@ on:
 permissions: {}
 
 jobs:
+  echo:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: |
+          sleep 10
+          echo ':)'
   # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
   wait: # The <job_id> must start with a letter or _ and contain only alphanumeric characters, -, or _.
     strategy:
@@ -31,15 +38,12 @@ jobs:
           - '7'
     runs-on: ${{ matrix.os }}
     name: 'wait, ${{ matrix.os }} and wait-seconds-before-first-polling ${{ matrix.wait-seconds-before-first-polling }}'
-    # name: 'the_job_id_and_job_name_is_different' # Use jobs.<job_id>.name to set a name for the job, which is displayed in the GitHub UI.
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - uses: ./
         id: wait
         continue-on-error: true
-        env:
-          ACTIONS_STEP_DEBUG: true
         with:
           retry-method: 'equal_intervals'
           min-interval-seconds: 5
@@ -64,6 +68,10 @@ jobs:
               {
                 "workflowFile": "GH-761-matrix.yml",
                 "jobName": "wait, ubuntu-22.04 and wait-seconds-before-first-polling 7"
+              },
+              {
+                "workflowFile": "merge-bot-pr.yml",
+                "optional": true
               }
             ]
       - name: Upload dumps as an artifact

@@ -18,7 +18,6 @@ permissions: {}
 jobs:
   echo:
     runs-on: ubuntu-24.04
-    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
       - name: Print note
@@ -27,7 +26,6 @@ jobs:
           echo 'See https://github.com/kachick/wait-other-jobs/issues/771 for the detail'
   wait:
     runs-on: ubuntu-24.04
-    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
       - run: |
