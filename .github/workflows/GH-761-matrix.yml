@@ -1,4 +1,4 @@
-name: GH-761 - Matrix use
+name: GH-761 - Matrix
 run-name: 'Used in Actions tab'
 on:
   push:
@@ -36,6 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - uses: ./
+        id: wait
         env:
           ACTIONS_STEP_DEBUG: true
         with:
@@ -52,3 +53,8 @@ jobs:
                 "jobName": "wait"
               }
             ]
+      - name: Upload dumps as an artifact
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        with:
+          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}'
+          path: '${{ steps.wait.outputs.dump }}'
