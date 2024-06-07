@@ -70,5 +70,5 @@ jobs:
       - name: Upload dumps as an artifact
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
-          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}'
+          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}-${{ matrix.os }}-${{ matrix.attempt-limits }}'
           path: '${{ steps.wait.outputs.dump }}'
