@@ -1,0 +1,56 @@
+name: Outputs
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/outputs.yml'
+      - 'action.yml'
+      - 'dist/**'
+  pull_request:
+    paths:
+      - '.github/workflows/outputs.yml'
+      - 'action.yml'
+      - 'dist/**'
+  workflow_dispatch:
+
+# Disable all permissions in workflow global as to setup clean room
+# However PRs will have read permissions because this project is on a public repository
+permissions: {}
+
+jobs:
+  echo:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: echo ':)'
+      # Wait longer than min-interval-seconds
+      - run: sleep 8
+      - run: echo '🎉'
+  dump:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: ./
+        id: wait
+        with:
+          retry-method: 'equal_intervals'
+          wait-seconds-before-first-polling: '1'
+          min-interval-seconds: '3'
+          skip-same-workflow: 'false'
+          wait-list: |
+            [
+              {
+                "workflowFile": "outputs.yml",
+                "jobName": "echo",
+                "optional": false
+              }
+            ]
+      - name: Make sure there is the file
+        run: |
+          ls -alh '${{ steps.wait.outputs.dump }}'
+      - name: Upload dumps as an artifact
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        with:
+          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}'
+          path: '${{ steps.wait.outputs.dump }}'

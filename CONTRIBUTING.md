@@ -35,19 +35,27 @@ See also [scripts](package.json) for tasks details.
 
 ## REPL
 
-```typescript
+```bash
 pnpm run repl
+```
 
-Welcome to Node.js v20.5.1.
+```typescript
+Welcome to Node.js v20.12.2.
 Type ".help" for more information.
+>
 
-> // You can use `import()` function, not `import statement`.
-> const { info, isDebug, debug } = await import('@actions/core');
-> isDebug()
-false
+// You can use `import()` function, not `import statement`.
+> const { Temporal } = await import('temporal-polyfill')
+> Temporal.Duration.from({seconds: 500}).round({ largestUnit: 'minutes' }).toString()
+'PT8M20S'
 
-> // Utils can be loaded
-> const { readableDuration } = await import('./src/wait.ts');
-> readableDuration(4200)
-'about 4 seconds'
+// exported methods in this repository also can be loaded
+> const { readableDuration } = await import('./src/report.ts');
+> readableDuration(Temporal.Duration.from({seconds: 500}))
+'about 8 minutes 20 seconds'
+
+// You can directly use TypeScript code
+> const map = new Map<K, Array<T>>();
+> map.set(undefined, 42)
+Map(1) { undefined => 42 }
 ```

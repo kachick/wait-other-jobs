@@ -1,7 +1,9 @@
 # wait-other-jobs
 
-[![CI](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml?query=event%3Apush++)
 [![Itself](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml?query=event%3Apush++)
+[![TypeScript](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml?query=event%3Apush++)
+[![gracePeriod](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml?query=event%3Apush++)
+[![eventName](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-771-eventname.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-771-eventname.yml?query=event%3Apush++)
 
 This GitHub action waits for all or specific jobs, even if they are running in other workflows.\
 If any of those jobs fail, this action will fail as well.
@@ -18,9 +20,9 @@ jobs:
     #   contents: read
     #   checks: read
     #   actions: read
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: kachick/wait-other-jobs@v3.0.0
+      - uses: kachick/wait-other-jobs@v3.3.0
         timeout-minutes: 15 # Recommended to be enabled with your appropriate value for fail-safe use
 ```
 
@@ -37,13 +39,16 @@ with:
   # lists should be given with JSON formatted array, do not specify both wait-list and skip-list
   #   - Each item should have a "workflowFile" field, and they can optionally have a "jobName" field.
   #   - If no jobName is specified, all the jobs in the workflow will be targeted.
-  #   - wait-list: If the checkRun for the specified name is not found, this action raise errors by default.
-  #                You can disable this validation `optional: true`.
+  #   - wait-list: 
+  #     - If the checkRun for the specified name is not found, this action raise errors by default.
+  #       You can disable this validation with `"optional": true` or use the `startupGracePeriod` that described in following section
+  #     - Wait for all event types by default, you can change with `"eventName": "EVENT_NAME_AS_push"`.
   wait-list: |
     [
       {
         "workflowFile": "ci.yml",
-        "jobName": "test"
+        "jobName": "test",
+        "eventName": "${{ github.event_name }}"
       },
       {
         "workflowFile": "release.yml",
@@ -73,7 +78,7 @@ Full list of the options
 | `skip-same-workflow`                | Skip jobs defined in the same workflow which using this action | `bool`   | `false`               |                                          |
 | `dry-run`                           | Avoid requests for tests                                       | `bool`   | `false`               |                                          |
 
-## Required GTHUB_TOKEN permissions
+## Required GITHUB_TOKEN permissions
 
 In public repositories, they are satisfied by default
 
@@ -84,19 +89,80 @@ permissions:
   actions: read
 ```
 
+## outputs.<output_id>
+
+(Since v3.4.0)
+
+- `dump`\
+  A file path for collected resources which keeps fields than logged.\
+  This data is only provided for debugging purposes, so the schema is not defined.
+
 ## Examples
 
 I'm using this action for auto-merging bot PRs and wait for deploy.\
 See the [docs](docs/examples.md) for further detail.
 
-## Limitations
+## Deadlocks
 
 - If you use this action in multiple jobs on the same repository, you should avoid deadlocks.\
   The `skip-list`, `wait-list` and `skip-same-workflow` options cover this use case.
 
-- Judge OK or Bad with the checkRun state at the moment.\
-  When some jobs will be triggered after this action with `needs: [distant-first]`, it might be unaccurate.\
-  (I didn't see actual example yet)
+- If you changed job name from the default, you should specify with `skip-list` or use `skip-same-workflow`
+  ```yaml
+  jobs:
+    your_job: # This will be used default job name if you not specify below "name" field
+      name: "Changed at here"
+      runs-on: ubuntu-24.04
+      steps:
+        - uses: kachick/wait-other-jobs@v3
+          with:
+            skip-list: |
+              [
+                {
+                  "workflowFile": "this_file_name_here.yml",
+                  "jobName": "Changed at here"
+                }
+              ]
+          timeout-minutes: 15
+  ```
+  Similar problems should be considered in matrix jobs. See [#761](https://github.com/kachick/wait-other-jobs/issues/761) for further detail
+
+## Startup grace period
+
+Judge whether the checkRun state at the moment.\
+When some jobs are triggered late after this action, we need to use the following configurations.
+
+An example of using a `wait-list`.
+
+```yaml
+with:
+  wait-list: |
+    [
+      {
+        "workflowFile": "might_be_triggered_after_0-4_minutes.yml",
+        "optional": false,
+        "startupGracePeriod": { "minutes": 5 }
+      }
+    ]
+```
+
+This action starts immediately but ignores the job missing in the first 5 minutes.
+
+- No need to extend `wait-seconds-before-first-polling`
+- Disable `optional`, because it is needed to check
+- Set enough value for `startupGracePeriod` for this purpose.\
+  It should be parsible with [TC39 - Temporal.Duration](https://github.com/tc39/proposal-temporal/blob/26e4cebe3c49f56932c1d5064fec9993e981823a/docs/duration.md)\
+  e.g
+  - `"PT3M42S"` # ISO 8601 duration format
+  - `{ "minutes": 3, "seconds": 42 }` # key-value for each unit
+
+If not using wait-list, this pattern should be considered in your `wait-seconds-before-first-polling`.
+
+## Alternative candidates
+
+[gh](https://github.com/cli/cli) commands, such as `gh pr checks` and `gh run watch`, should be useful if your requirements are simple.
+
+## Limitations
 
 - If any workflow starts many jobs as 100+, this action does not support it.\
   Because of nested paging in GraphQL makes complex. See [related docs](https://github.com/octokit/plugin-paginate-graphql.js/blob/a6b12e867466b0c583b002acd1cb1ed90b11841f/README.md#L184-L218) for further detail.

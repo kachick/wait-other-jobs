@@ -1,4 +1,4 @@
-name: Update nixpkgs and CI dependencies
+name: 🤖🆙❄️
 on:
   pull_request:
     paths:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   update-nixpkgs:
-    uses: kachick/selfup/.github/workflows/reusable-bump-flake-lock-and-selfup.yml@action-v1
+    uses: kachick/selfup/.github/workflows/reusable-bump-flake-lock-and-selfup.yml@v1.1.2
     with:
       dry-run: ${{ github.event_name == 'pull_request' }}
       optional-run: |

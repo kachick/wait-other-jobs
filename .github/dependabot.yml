@@ -9,6 +9,9 @@ updates:
         versions:
           # https://github.com/actions/dependency-review-action/issues/493
           - '3.0.5'
+          # https://github.com/actions/dependency-review-action/issues/759
+          - '4.3.0'
+          - '4.3.1'
     groups:
       determinatesystems-actions:
         patterns:

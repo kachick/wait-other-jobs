@@ -1,4 +1,4 @@
-name: Merge bot PR after CI
+name: 🤖👌🤖
 on: pull_request
 
 permissions:
@@ -10,14 +10,14 @@ permissions:
 jobs:
   judge-dependabot:
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       merge: ${{ steps.conclusion.outputs.merge }}
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: Dependabot metadata
         id: dependabot
-        uses: dependabot/fetch-metadata@0fb21704c18a42ce5aa8d720ea4b912f5e6babef # v2.0.0
+        uses: dependabot/fetch-metadata@5e5f99653a5b510e8555840e80cbf1514ad4af38 # v2.1.0
       - name: Judge
         id: conclusion
         if: >-
@@ -28,7 +28,7 @@ jobs:
     needs: [judge-dependabot]
     if: ${{ needs.judge-dependabot.outputs.merge == 'true' }}
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
@@ -52,7 +52,7 @@ jobs:
   #   Changing in all personal repository is annoy task for me. Even if using terrafform, getting mandatory CI names in each repo is too annoy!
   renovate:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
@@ -73,7 +73,7 @@ jobs:
   # https://github.com/kachick/anylang-template/issues/51
   selfup-runner:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor == 'selfup-runner[bot]' }}
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.

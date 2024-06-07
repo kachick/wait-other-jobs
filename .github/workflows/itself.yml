@@ -11,6 +11,11 @@ on:
       - '.github/workflows/itself.yml'
       - 'action.yml'
       - 'dist/**'
+  schedule:
+    # Every 10:50 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '50 1 * * *'
+  workflow_dispatch:
 
 # Disable all permissions in workflow global as to setup clean room
 # However PRs will have read permissions because this project is on a public repository
@@ -20,15 +25,22 @@ permissions: {}
 
 jobs:
   default_logic:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      # Do NOT specify any options here to make sure zero config may work
+      # Do NOT specify options except non omittable skip-list to make sure zero config may work
       - uses: ./
+        with:
+          skip-list: |
+            [
+              {
+                "workflowFile": "GH-820-graceperiod.yml"
+              }
+            ]
   validation_example_basic_errors_allow_failure:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
@@ -43,7 +55,7 @@ jobs:
           min-interval-seconds: '-1'
           attempt-limits: '0'
   validation_example_combination_errors_allow_failure:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
@@ -67,7 +79,7 @@ jobs:
               }
             ]
   exponential_backoff_allow_failure:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
@@ -84,8 +96,14 @@ jobs:
           min-interval-seconds: 2
           attempt-limits: 2
           skip-same-workflow: 'true'
+          skip-list: |
+            [
+              {
+                "workflowFile": "GH-820-graceperiod.yml"
+              }
+            ]
   equal_intervals:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 10
     steps:
@@ -98,8 +116,14 @@ jobs:
           min-interval-seconds: 10
           attempt-limits: 60
           skip-same-workflow: 'true'
+          skip-list: |
+            [
+              {
+                "workflowFile": "GH-820-graceperiod.yml"
+              }
+            ]
   wait-list:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
@@ -112,7 +136,8 @@ jobs:
           wait-list: |
             [
               {
-                "workflowFile": "lint.yml"
+                "workflowFile": "lint.yml",
+                "optional": ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
               },
               {
                 "workflowFile": "merge-bot-pr.yml",
@@ -125,7 +150,7 @@ jobs:
               }
             ]
   skip-list:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]' }}
     timeout-minutes: 5
     steps:
@@ -150,6 +175,9 @@ jobs:
               {
                 "workflowFile": "merge-bot-pr.yml",
                 "jobName": "dependabot"
+              },
+              {
+                "workflowFile": "GH-820-graceperiod.yml"
               }
             ]
   matrix_and_skip-same-workflow:

@@ -1,34 +1,55 @@
-name: Linters
+name: 👕
 on:
   push:
     branches: [main]
     paths-ignore:
       - 'dist/**'
-      - 'pnpm-lock.yaml'
   pull_request:
     paths-ignore:
       - 'dist/**'
-      - 'pnpm-lock.yaml'
+  workflow_dispatch:
+
 jobs:
+  deno_lint:
+    timeout-minutes: 15
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: denoland/setup-deno@041b854f97b325bd60e53e9dc2de9cb9f9ac0cba # v1.1.4
+        with:
+          deno-version: '1.43.5' # selfup {"extract":"\\d[^']+","replacer":["bash","-c","deno --version | head -n 1"], "nth": 2}
+      - run: deno lint
+
   dprint:
     timeout-minutes: 15
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - uses: dprint/check@2f1cf31537886c3bfb05591c031f7744e48ba8a1 # v2.2
         with:
-          dprint-version: '0.45.0' # selfup { "regex": "\\d[^']+", "script": "dprint --version | cut -d ' ' -f 2" }
+          dprint-version: '0.45.1' # selfup { "extract": "\\d[^']+", "replacer": ["dprint", "--version"], "nth": 2 }
 
   typos:
     timeout-minutes: 15
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       # Intentionally point to the latest version, not the version bound by nix.
       # Because getting commit ref from version string requires network access.
-      - uses: crate-ci/typos@e1591a6852c2aa310c0ddff92a33c70b9815868d # v1.20.7
+      - uses: crate-ci/typos@41752caac953aa62b357d386cc658221af004915 # v1.22.0
         with:
           files: |
             .
             .github
             .vscode
+
+  yamlfmt:
+    timeout-minutes: 15
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - name: Set up Go
+        uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
+      - name: Install yamlfmt
+        run: go install github.com/google/yamlfmt/cmd/yamlfmt@v0.12.1 # TODO: Apply selfup after https://github.com/google/yamlfmt/pull/179
+      - run: yamlfmt -lint .

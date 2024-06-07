@@ -1,9 +1,9 @@
-name: CI
+name: TypeScript
 on:
   push:
     branches: [main]
     paths-ignore:
-      - '.github/dependabot.yml'
+      - '.github/workflows/ci-nix.yml'
       - 'LICENSE'
       - '.editorconfig'
       - 'README.md'
@@ -18,10 +18,10 @@ on:
 jobs:
   build:
     timeout-minutes: 15
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # v3.0.0
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
       - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version-file: '.node-version'
@@ -33,10 +33,10 @@ jobs:
 
   test:
     timeout-minutes: 15
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # v3.0.0
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
       - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version-file: '.node-version'
@@ -46,10 +46,10 @@ jobs:
 
   typecheck:
     timeout-minutes: 15
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # v3.0.0
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
       - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version-file: '.node-version'
@@ -57,13 +57,3 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Typecheck
         run: pnpm run typecheck
-
-  lint:
-    timeout-minutes: 15
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: denoland/setup-deno@041b854f97b325bd60e53e9dc2de9cb9f9ac0cba # v1.1.4
-        with:
-          deno-version: '1.41.3' # selfup { "regex": "\\d[^']+", "script": "deno --version | head -n 1 | cut -d ' ' -f 2" }
-      - run: deno lint
