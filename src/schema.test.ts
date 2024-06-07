@@ -233,3 +233,63 @@ test('wait-list have startupGracePeriod', async (t) => {
     );
   });
 });
+
+test('jobMatchMode', async (t) => {
+  await t.test('it accepts exact and prefix mode', (_t) => {
+    optionsEqual(
+      Options.parse({
+        ...defaultOptions,
+        skipList: [
+          {
+            workflowFile: 'ci.yml',
+            jobName: 'test-',
+            jobMatchMode: 'exact',
+          },
+        ],
+      }),
+      {
+        ...defaultOptions,
+        skipList: [{
+          workflowFile: 'ci.yml',
+          jobName: 'test-',
+          jobMatchMode: 'exact',
+        }],
+      },
+    );
+
+    optionsEqual(
+      Options.parse({
+        ...defaultOptions,
+        skipList: [
+          {
+            workflowFile: 'ci.yml',
+            jobName: 'test-',
+            jobMatchMode: 'prefix',
+          },
+        ],
+      }),
+      {
+        ...defaultOptions,
+        skipList: [{
+          workflowFile: 'ci.yml',
+          jobName: 'test-',
+          jobMatchMode: 'prefix',
+        }],
+      },
+    );
+  });
+
+  await t.test('it raises a ZodError if given an unsupported mode', (_t) => {
+    throws(
+      () =>
+        Options.parse({
+          ...defaultOptions,
+          skipList: [{ workflowFile: 'ci.yml', jobMatchMode: 'regexp' }],
+        }),
+      {
+        name: 'ZodError',
+        message: /invalid_enum_value/,
+      },
+    );
+  });
+});
