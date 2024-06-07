@@ -53,6 +53,9 @@ jobs:
           skip-list: |
             [
               {
+                "workflowFile": "itself.yml",
+              },
+              {
                 "workflowFile": "GH-761-matrix.yml",
                 "jobName": "wait, ubuntu-24.04 and wait-seconds-before-first-polling 3"
               },
@@ -122,6 +125,9 @@ jobs:
           # But we should pattern likes regex for the jobName
           skip-list: |
             [
+              {
+                "workflowFile": "itself.yml",
+              },
               {
                 "workflowFile": "merge-bot-pr.yml",
                 "optional": true
