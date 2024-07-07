@@ -2,7 +2,10 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": true,
   "labels": ["dependencies", "renovate"],
-  "enabledManagers": ["nix"],
+  "enabledManagers": ["nix", "regex"],
+  "extends": [
+    "github>kachick/renovate-config-dprint#1.1.0"
+  ],
   "nix": {
     "enabled": true
   },

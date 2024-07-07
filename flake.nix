@@ -46,7 +46,6 @@
                 deno
                 dprint
                 typos
-                yamlfmt
 
                 # Helper for writing and linting actions
                 #

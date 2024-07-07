@@ -8,7 +8,6 @@ on:
     paths-ignore:
       - 'dist/**'
   workflow_dispatch:
-
 jobs:
   deno_lint:
     timeout-minutes: 15
@@ -19,7 +18,6 @@ jobs:
         with:
           deno-version: '1.43.6' # selfup {"extract":"\\d[^']+","replacer":["bash","-c","deno --version | head -n 1"], "nth": 2}
       - run: deno lint
-
   dprint:
     timeout-minutes: 15
     runs-on: ubuntu-24.04
@@ -28,7 +26,6 @@ jobs:
       - uses: dprint/check@2f1cf31537886c3bfb05591c031f7744e48ba8a1 # v2.2
         with:
           dprint-version: '0.45.1' # selfup { "extract": "\\d[^']+", "replacer": ["dprint", "--version"], "nth": 2 }
-
   typos:
     timeout-minutes: 15
     runs-on: ubuntu-24.04
@@ -38,18 +35,7 @@ jobs:
       # Because getting commit ref from version string requires network access.
       - uses: crate-ci/typos@c16dc8f5b4a7ad6211464ecf136c69c851e8e83c # v1.22.9
         with:
-          files: |
+          files: |-
             .
             .github
             .vscode
-
-  yamlfmt:
-    timeout-minutes: 15
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - name: Set up Go
-        uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
-      - name: Install yamlfmt
-        run: go install github.com/google/yamlfmt/cmd/yamlfmt@v0.12.1 # TODO: Apply selfup after https://github.com/google/yamlfmt/pull/179
-      - run: yamlfmt -lint .

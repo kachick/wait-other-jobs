@@ -3,7 +3,6 @@
     "github.vscode-github-actions",
     "editorconfig.editorconfig",
     "dprint.dprint",
-    "kachick.vscode-yamlfmt",
     "tekumara.typos-vscode",
     "jnoortheen.nix-ide",
     "tamasfe.even-better-toml",
