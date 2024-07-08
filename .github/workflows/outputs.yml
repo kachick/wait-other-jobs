@@ -50,7 +50,7 @@ jobs:
         run: |
           ls -alh '${{ steps.wait.outputs.dump }}'
       - name: Upload dumps as an artifact
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
         with:
           name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}'
           path: '${{ steps.wait.outputs.dump }}'
