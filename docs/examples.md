@@ -75,7 +75,7 @@ If you use GITHUB_TOKEN as above, make sure two options are enabled
 How to enable with gh CLI
 
 ```bash
-gh repo edit OWNER/REPO --enable-auto-merge
+gh repo edit --enable-auto-merge
 ```
 
 `https://github.com/OWNER/REPO/settings/actions` => `Allow GitHub Actions to create and approve pull requests`
@@ -87,7 +87,7 @@ gh api \
   --method PUT \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
-  /repos/OWNER/REPO/actions/permissions/workflow \
+  '/repos/{owner}/{repo}/actions/permissions/workflow' \
   -F can_approve_pull_request_reviews=true
 ```
 
