@@ -31,7 +31,7 @@ You can change the token, polling interval, allow/deny list and turns early-exit
 
 ```yaml
 with:
-  github-token: "${{ secrets.YOUR_PAT }}"
+  github-token: '${{ secrets.YOUR_PAT }}'
   wait-seconds-before-first-polling: '30' # default '10'
   min-interval-seconds: '300' # default '15'
   retry-method: 'exponential_backoff' # default 'equal_intervals'
@@ -40,7 +40,7 @@ with:
   # lists should be given with JSON formatted array, do not specify both wait-list and skip-list
   #   - Each item should have a "workflowFile" field, and they can optionally have a "jobName" field.
   #   - If no jobName is specified, all the jobs in the workflow will be targeted.
-  #   - wait-list: 
+  #   - wait-list:
   #     - If the checkRun for the specified name is not found, this action raise errors by default.
   #       You can disable this validation with `"optional": true` or use the `startupGracePeriod` that described in following section
   #     - Wait for all event types by default, you can change with `"eventName": "EVENT_NAME_AS_push"`.
@@ -111,7 +111,7 @@ If you changed job name from the default, you should set `skip-list` or roughly 
 ```yaml
 jobs:
   your_job: # This will be used default job name if you not specify below "name" field
-    name: "Changed at here"
+    name: 'Changed at here'
     runs-on: ubuntu-24.04
     steps:
       - uses: kachick/wait-other-jobs@v3.4.0
