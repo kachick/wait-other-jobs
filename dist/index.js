@@ -32303,6 +32303,7 @@ var PaginatableOctokit = Octokit.plugin(paginateGraphQL);
 async function fetchChecks(token, trigger) {
   const octokit = new PaginatableOctokit({ auth: token });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate(
+    /* GraphQL */
     `
     query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!, $cursor: String) {
       repository(owner: $owner, name: $repo) {
