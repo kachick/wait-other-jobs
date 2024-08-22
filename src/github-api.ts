@@ -13,7 +13,7 @@ export async function fetchChecks(
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate<
     { repository: { object: { checkSuites: Commit['checkSuites'] } } }
   >(
-    `
+    /* GraphQL */ `
     query GetCheckRuns($owner: String!, $repo: String!, $commitSha: String!, $cursor: String) {
       repository(owner: $owner, name: $repo) {
         object(expression: $commitSha) {
