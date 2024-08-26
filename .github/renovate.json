@@ -4,7 +4,8 @@
   "labels": ["dependencies", "renovate"],
   "enabledManagers": ["nix", "regex"],
   "extends": [
-    "github>kachick/renovate-config-dprint#1.1.0"
+    "github>kachick/renovate-config-dprint#1.1.0",
+    "github>kachick/renovate-config-dprint:self"
   ],
   "nix": {
     "enabled": true
