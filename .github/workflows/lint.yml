@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: denoland/setup-deno@916edb9a40fd86d1ff57b758807ebe57242f7407 # v1.4.0
+      - uses: denoland/setup-deno@fa660b328d065f7683e7303976bd81e2d58e98ae # v1.4.1
         with:
           deno-version: '1.44.3' # selfup {"extract":"\\d[^']+","replacer":["bash","-c","deno --version | head -n 1"], "nth": 2}
       - run: deno lint
