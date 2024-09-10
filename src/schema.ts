@@ -66,7 +66,7 @@ export function getDuration(durationable: string | MyDurationLike): Duration {
   throw new Error('unexpected value is specified in durations');
 }
 
-const workflowFile = z.string().endsWith('.yml');
+const workflowFile = z.string().regex(/\.(yml|yaml)$/);
 const matchAllJobs = z.object({
   workflowFile: workflowFile,
   jobName: z.undefined(), // Preferring undefined over null for backward compatibility
