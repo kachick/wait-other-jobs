@@ -2,7 +2,7 @@ import { readdirSync } from 'node:fs';
 import { join } from 'path';
 import { execFileSync } from 'node:child_process';
 
-const dirEnts = readdirSync('.', { encoding: 'utf-8', recursive: true, withFileTypes: true });
+const dirEnts = readdirSync('__tests__', { encoding: 'utf-8', recursive: true, withFileTypes: true });
 const testPaths = dirEnts.flatMap((dirent) => dirent.name.endsWith('.test.ts') ? [join(dirent.path, dirent.name)] : []);
 
 console.log('Starting to run tests for', testPaths);

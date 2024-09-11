@@ -1,6 +1,6 @@
 import { strictEqual, deepStrictEqual } from 'node:assert';
 import { Temporal } from 'temporal-polyfill';
-import { Options } from './schema.ts';
+import { Options } from '../src/schema.ts';
 
 export function jsonEqual(actual: unknown, expected: unknown) {
   deepStrictEqual(JSON.parse(JSON.stringify(actual)), expected);

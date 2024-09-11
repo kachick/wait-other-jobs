@@ -4,7 +4,7 @@ import {
   MIN_JITTER_MILLISECONDS,
   MAX_JITTER_MILLISECONDS,
   getInterval,
-} from './wait.ts';
+} from '../src/wait.ts';
 import test from 'node:test';
 import assert from 'node:assert';
 import { Temporal } from 'temporal-polyfill';

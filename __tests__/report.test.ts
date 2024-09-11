@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './snapshot.ts';
-import { Report, Summary, generateReport, getSummaries, readableDuration } from './report.ts';
-import { omit } from './util.ts';
+import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './fixtures/snapshot.ts';
+import { Report, Summary, generateReport, getSummaries, readableDuration } from '../src/report.ts';
+import { omit } from '../src/util.ts';
 import { Temporal } from 'temporal-polyfill';
 import { jsonEqual } from './assert.ts';
 

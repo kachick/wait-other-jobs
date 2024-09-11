@@ -1,4 +1,4 @@
-import { Check } from './schema.ts';
+import { Check } from '../../src/schema.ts';
 
 // https://github.com/kachick/wait-other-jobs/actions/runs/8679817057/job/23799347421?pr=764
 // TODO: Update after #771

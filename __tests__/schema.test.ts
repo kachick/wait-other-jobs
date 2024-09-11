@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert, { strictEqual, throws } from 'node:assert';
-import { Durationable, Options, yamlPattern } from './schema.ts';
+import { Durationable, Options, yamlPattern } from '../src/schema.ts';
 import { Temporal } from 'temporal-polyfill';
 import { durationEqual, optionsEqual } from './assert.ts';
 import { z } from 'zod';
