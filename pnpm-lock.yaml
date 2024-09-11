@@ -43,6 +43,9 @@ devDependencies:
   esbuild:
     specifier: 0.23.1
     version: 0.23.1
+  recheck:
+    specifier: ^4.4.5
+    version: 4.4.5
   tsx:
     specifier: ^4.19.0
     version: 4.19.0
@@ -555,6 +558,46 @@ packages:
     dependencies:
       wrappy: 1.0.2
     dev: false
+
+  /recheck-jar@4.4.5:
+    resolution: {integrity: sha512-a2kMzcfr+ntT0bObNLY22EUNV6Z6WeZ+DybRmPOUXVWzGcqhRcrK74tpgrYt3FdzTlSh85pqoryAPmrNkwLc0g==}
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /recheck-linux-x64@4.4.5:
+    resolution: {integrity: sha512-s8OVPCpiSGw+tLCxH3eei7Zp2AoL22kXqLmEtWXi0AnYNwfuTjZmeLn2aQjW8qhs8ZPSkxS7uRIRTeZqR5Fv/Q==}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /recheck-macos-x64@4.4.5:
+    resolution: {integrity: sha512-Ouup9JwwoKCDclt3Na8+/W2pVbt8FRpzjkDuyM32qTR2TOid1NI+P1GA6/VQAKEOjvaxgGjxhcP/WqAjN+EULA==}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /recheck-windows-x64@4.4.5:
+    resolution: {integrity: sha512-mkpzLHu9G9Ztjx8HssJh9k/Xm1d1d/4OoT7etHqFk+k1NGzISCRXBD22DqYF9w8+J4QEzTAoDf8icFt0IGhOEQ==}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /recheck@4.4.5:
+    resolution: {integrity: sha512-J80Ykhr+xxWtvWrfZfPpOR/iw2ijvb4WY8d9AVoN8oHsPP07JT1rCAalUSACMGxM1cvSocb6jppWFjVS6eTTrA==}
+    engines: {node: '>=14'}
+    optionalDependencies:
+      recheck-jar: 4.4.5
+      recheck-linux-x64: 4.4.5
+      recheck-macos-x64: 4.4.5
+      recheck-windows-x64: 4.4.5
+    dev: true
 
   /resolve-pkg-maps@1.0.0:
     resolution: {integrity: sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==}
