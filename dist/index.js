@@ -31079,7 +31079,8 @@ function getDuration(durationable) {
   }
   throw new Error("unexpected value is specified in durations");
 }
-var workflowFile = z2.string().endsWith(".yml");
+var yamlPattern = /\.(yml|yaml)$/;
+var workflowFile = z2.string().regex(yamlPattern);
 var matchAllJobs = z2.object({
   workflowFile,
   jobName: z2.undefined(),
