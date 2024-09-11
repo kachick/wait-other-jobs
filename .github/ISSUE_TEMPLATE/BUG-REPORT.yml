@@ -24,7 +24,7 @@ body:
       label: Version
       description: What version are you using?
       options:
-        - 'v3.4.0' # selfup {"extract":"v\\d[^']+","replacer":["bash","-c","git tag --list 'v3.*' | tail -1"]}
+        - 'v3.4.1' # selfup {"extract":"v\\d[^']+","replacer":["bash","-c","git tag --list 'v3.*' | tail -1"]}
         - other
       default: 0
     validations:
