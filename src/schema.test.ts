@@ -45,6 +45,35 @@ test('Options set some default values it cannot be defined in action.yml', () =>
   );
 });
 
+test('Options accept all yaml extensions', () => {
+  optionsEqual(
+    Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }),
+    {
+      ...defaultOptions,
+      waitList: [{
+        workflowFile: 'ci.yml',
+        jobMatchMode: 'all',
+        optional: false,
+        startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+      }],
+    },
+  );
+
+  optionsEqual(
+    Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yaml' }] }),
+    {
+      ...defaultOptions,
+      waitList: [{
+        // https://github.com/github/docs/blob/52d198a935e66623de173fa914bb01cd0ce0a255/content/actions/writing-workflows/workflow-syntax-for-github-actions.md?plain=1#L22
+        workflowFile: 'ci.yaml',
+        jobMatchMode: 'all',
+        optional: false,
+        startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+      }],
+    },
+  );
+});
+
 test('Options reject invalid values', () => {
   throws(() => Options.parse({ ...defaultOptions, leastInterval: Temporal.Duration.from({ seconds: 0 }) }), {
     name: 'ZodError',
@@ -81,6 +110,30 @@ test('Options reject invalid values', () => {
     {
       name: 'ZodError',
       message: /Do not specify both wait-list and skip-list/,
+    },
+  );
+
+  throws(
+    () =>
+      Options.parse({
+        ...defaultOptions,
+        waitList: [{ workflowFile: 'ci.toml' }],
+      }),
+    {
+      name: 'ZodError',
+      message: /Invalid input: must end with/,
+    },
+  );
+
+  throws(
+    () =>
+      Options.parse({
+        ...defaultOptions,
+        waitList: [{ workflowFile: 'ciyaml' }],
+      }),
+    {
+      name: 'ZodError',
+      message: /Invalid input: must end with/,
     },
   );
 });
