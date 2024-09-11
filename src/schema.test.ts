@@ -1,8 +1,10 @@
 import test from 'node:test';
-import { throws } from 'node:assert';
+import assert, { throws } from 'node:assert';
 import { Durationable, Options } from './schema.ts';
 import { Temporal } from 'temporal-polyfill';
 import { durationEqual, optionsEqual } from './assert.ts';
+import { z } from 'zod';
+import { deepStrictEqual } from 'node:assert/strict';
 
 const defaultOptions = Object.freeze({
   isEarlyExit: true,
@@ -119,9 +121,21 @@ test('Options reject invalid values', () => {
         ...defaultOptions,
         waitList: [{ workflowFile: 'ci.toml' }],
       }),
-    {
-      name: 'ZodError',
-      message: /Invalid input: must end with/,
+    (err) => {
+      assert(err instanceof z.ZodError);
+      deepStrictEqual(err.issues, [
+        {
+          code: 'invalid_string',
+          message: 'Invalid',
+          path: [
+            'waitList',
+            0,
+            'workflowFile',
+          ],
+          validation: 'regex',
+        },
+      ]);
+      return true;
     },
   );
 
@@ -131,9 +145,21 @@ test('Options reject invalid values', () => {
         ...defaultOptions,
         waitList: [{ workflowFile: 'ciyaml' }],
       }),
-    {
-      name: 'ZodError',
-      message: /Invalid input: must end with/,
+    (err) => {
+      assert(err instanceof z.ZodError);
+      deepStrictEqual(err.issues, [
+        {
+          code: 'invalid_string',
+          message: 'Invalid',
+          path: [
+            'waitList',
+            0,
+            'workflowFile',
+          ],
+          validation: 'regex',
+        },
+      ]);
+      return true;
     },
   );
 });
