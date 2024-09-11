@@ -1,10 +1,11 @@
 import test from 'node:test';
-import assert, { throws } from 'node:assert';
-import { Durationable, Options } from './schema.ts';
+import assert, { strictEqual, throws } from 'node:assert';
+import { Durationable, Options, yamlPattern } from './schema.ts';
 import { Temporal } from 'temporal-polyfill';
 import { durationEqual, optionsEqual } from './assert.ts';
 import { z } from 'zod';
 import { deepStrictEqual } from 'node:assert/strict';
+import { checkSync } from 'recheck';
 
 const defaultOptions = Object.freeze({
   isEarlyExit: true,
@@ -74,6 +75,10 @@ test('Options accept all yaml extensions', () => {
       }],
     },
   );
+});
+
+test('regex option does not have higher ReDoS possibilities', () => {
+  strictEqual(checkSync(yamlPattern.source, '').status, 'safe');
 });
 
 test('Options reject invalid values', () => {
