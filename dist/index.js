@@ -32570,10 +32570,14 @@ function getRandomInt(min, max) {
   const flooredMin = Math.ceil(min);
   return Math.floor(Math.random() * (Math.floor(max) - flooredMin) + flooredMin);
 }
-var MIN_JITTER_MILLISECONDS = 1e3;
-var MAX_JITTER_MILLISECONDS = 7e3;
+var MIN_JITTER = mr.Duration.from({
+  seconds: 1
+});
+var MAX_JITTER = mr.Duration.from({
+  seconds: 7
+});
 function calcExponentialBackoffAndJitter(leastInterval, attempts) {
-  const jitterMilliseconds = getRandomInt(MIN_JITTER_MILLISECONDS, MAX_JITTER_MILLISECONDS);
+  const jitterMilliseconds = getRandomInt(MIN_JITTER.total("milliseconds"), MAX_JITTER.total("milliseconds"));
   return mr.Duration.from({
     milliseconds: leastInterval.total("milliseconds") * 2 ** (attempts - 1) + jitterMilliseconds
   });

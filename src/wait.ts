@@ -15,14 +15,18 @@ function getRandomInt(min: number, max: number) {
   return Math.floor((Math.random() * (Math.floor(max) - flooredMin)) + flooredMin);
 }
 
-export const MIN_JITTER_MILLISECONDS = 1000;
-export const MAX_JITTER_MILLISECONDS = 7000;
+export const MIN_JITTER = Temporal.Duration.from({
+  seconds: 1,
+});
+export const MAX_JITTER = Temporal.Duration.from({
+  seconds: 7,
+});
 
 export function calcExponentialBackoffAndJitter(
   leastInterval: Temporal.Duration,
   attempts: number,
 ): Temporal.Duration {
-  const jitterMilliseconds = getRandomInt(MIN_JITTER_MILLISECONDS, MAX_JITTER_MILLISECONDS);
+  const jitterMilliseconds = getRandomInt(MIN_JITTER.total('milliseconds'), MAX_JITTER.total('milliseconds'));
   return Temporal.Duration.from({
     milliseconds: (leastInterval.total('milliseconds') * (2 ** (attempts - 1))) + jitterMilliseconds,
   });

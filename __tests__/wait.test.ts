@@ -1,12 +1,6 @@
-import {
-  wait,
-  calcExponentialBackoffAndJitter,
-  MIN_JITTER_MILLISECONDS,
-  MAX_JITTER_MILLISECONDS,
-  getInterval,
-} from '../src/wait.ts';
+import { wait, calcExponentialBackoffAndJitter, MIN_JITTER, MAX_JITTER, getInterval } from '../src/wait.ts';
 import test from 'node:test';
-import assert from 'node:assert';
+import assert, { strictEqual } from 'node:assert';
 import { Temporal } from 'temporal-polyfill';
 
 test('wait 100 ms', async () => {
@@ -26,32 +20,99 @@ test('wait 100 ms', async () => {
 test('interval will be like a cheap exponential backoff', () => {
   const leastInterval = Temporal.Duration.from({ seconds: 100 });
 
-  assert(calcExponentialBackoffAndJitter(leastInterval, 1).total('milliseconds') >= (100000 + MIN_JITTER_MILLISECONDS));
-  assert(calcExponentialBackoffAndJitter(leastInterval, 1).total('milliseconds') < (100000 + MAX_JITTER_MILLISECONDS));
-  assert(calcExponentialBackoffAndJitter(leastInterval, 2).total('milliseconds') >= (200000 + MIN_JITTER_MILLISECONDS));
-  assert(calcExponentialBackoffAndJitter(leastInterval, 2).total('milliseconds') < (200000 + MAX_JITTER_MILLISECONDS));
-  assert(calcExponentialBackoffAndJitter(leastInterval, 3).total('milliseconds') >= (400000 + MIN_JITTER_MILLISECONDS));
-  assert(calcExponentialBackoffAndJitter(leastInterval, 3).total('milliseconds') < (400000 + MAX_JITTER_MILLISECONDS));
-  assert(calcExponentialBackoffAndJitter(leastInterval, 4).total('milliseconds') >= (800000 + MIN_JITTER_MILLISECONDS));
-  assert(calcExponentialBackoffAndJitter(leastInterval, 4).total('milliseconds') < (800000 + MAX_JITTER_MILLISECONDS));
   assert(
-    calcExponentialBackoffAndJitter(leastInterval, 5).total('milliseconds') >= (1600000 + MIN_JITTER_MILLISECONDS),
+    Temporal.Duration.compare(
+      calcExponentialBackoffAndJitter(leastInterval, 1),
+      MIN_JITTER.add({ milliseconds: 100000 }),
+    ) >= 0,
   );
-  assert(calcExponentialBackoffAndJitter(leastInterval, 5).total('milliseconds') < (1600000 + MAX_JITTER_MILLISECONDS));
+  strictEqual(
+    Temporal.Duration.compare(
+      calcExponentialBackoffAndJitter(leastInterval, 1),
+      MAX_JITTER.add({ milliseconds: 100000 }),
+    ),
+    -1,
+  );
+
+  assert(
+    Temporal.Duration.compare(
+      calcExponentialBackoffAndJitter(leastInterval, 2),
+      MIN_JITTER.add({ milliseconds: 200000 }),
+    ) >= 0,
+  );
+  strictEqual(
+    Temporal.Duration.compare(
+      calcExponentialBackoffAndJitter(leastInterval, 2),
+      MAX_JITTER.add({ milliseconds: 200000 }),
+    ),
+    -1,
+  );
+
+  assert(
+    Temporal.Duration.compare(
+      calcExponentialBackoffAndJitter(leastInterval, 3),
+      MIN_JITTER.add({ milliseconds: 400000 }),
+    ) >= 0,
+  );
+  strictEqual(
+    Temporal.Duration.compare(
+      calcExponentialBackoffAndJitter(leastInterval, 3),
+      MAX_JITTER.add({ milliseconds: 400000 }),
+    ),
+    -1,
+  );
+
+  assert(
+    Temporal.Duration.compare(
+      calcExponentialBackoffAndJitter(leastInterval, 4),
+      MIN_JITTER.add({ milliseconds: 800000 }),
+    ) >= 0,
+  );
+  strictEqual(
+    Temporal.Duration.compare(
+      calcExponentialBackoffAndJitter(leastInterval, 4),
+      MAX_JITTER.add({ milliseconds: 800000 }),
+    ),
+    -1,
+  );
+
+  assert(
+    Temporal.Duration.compare(
+      calcExponentialBackoffAndJitter(leastInterval, 5),
+      MIN_JITTER.add({ milliseconds: 1600000 }),
+    ) >= 0,
+  );
+  strictEqual(
+    Temporal.Duration.compare(
+      calcExponentialBackoffAndJitter(leastInterval, 5),
+      MAX_JITTER.add({ milliseconds: 1600000 }),
+    ),
+    -1,
+  );
 });
 
 test('getInterval returns different value with the given method', () => {
   const leastInterval = Temporal.Duration.from({ seconds: 100 });
 
   assert(
-    getInterval('exponential_backoff', leastInterval, 5).total('milliseconds') >= (1600000 + MIN_JITTER_MILLISECONDS),
+    Temporal.Duration.compare(
+      getInterval('exponential_backoff', leastInterval, 5),
+      MIN_JITTER.add({ milliseconds: 1600000 }),
+    ) >= 0,
   );
-  assert(
-    getInterval('exponential_backoff', leastInterval, 5).total('milliseconds') < (1600000 + MAX_JITTER_MILLISECONDS),
+  strictEqual(
+    Temporal.Duration.compare(
+      getInterval('exponential_backoff', leastInterval, 5),
+      MAX_JITTER.add({ milliseconds: 1600000 }),
+    ),
+    -1,
   );
 
-  assert.strictEqual(
-    Temporal.Duration.compare(getInterval('equal_intervals', leastInterval, 5), leastInterval),
+  strictEqual(
+    Temporal.Duration.compare(
+      getInterval('equal_intervals', leastInterval, 5),
+      leastInterval,
+    ),
     0,
   );
 });
