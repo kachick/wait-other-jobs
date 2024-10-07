@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@actions/core':
-    specifier: ^1.10.1
-    version: 1.10.1
+    specifier: ^1.11.1
+    version: 1.11.1
   '@actions/github':
     specifier: ^6.0.0
     version: 6.0.0
@@ -55,11 +55,17 @@ devDependencies:
 
 packages:
 
-  /@actions/core@1.10.1:
-    resolution: {integrity: sha512-3lBR9EDAY+iYIpTnTIXmWcNbX3T2kCkAEQGIQx4NVQ0575nk2k3GRZDTPQG+vVtS2izSLmINlxXf0uLtnrTP+g==}
+  /@actions/core@1.11.1:
+    resolution: {integrity: sha512-hXJCSrkwfA46Vd9Z3q4cpEpHB1rL5NG04+/rbqW9d3+CSvtB1tYe8UTpAlixa1vj0m/ULglfEK2UKxMGxCxv5A==}
     dependencies:
-      '@actions/http-client': 2.2.1
-      uuid: 8.3.2
+      '@actions/exec': 1.1.1
+      '@actions/http-client': 2.2.3
+    dev: false
+
+  /@actions/exec@1.1.1:
+    resolution: {integrity: sha512-+sCcHHbVdk93a0XT19ECtO/gIXoxvdsgQLzb2fE2/5sIZmWQuluYyjPQtrtTHdU1YzTZ7bAPN4sITq2xi1679w==}
+    dependencies:
+      '@actions/io': 1.1.3
     dev: false
 
   /@actions/github@6.0.0:
@@ -76,6 +82,17 @@ packages:
     dependencies:
       tunnel: 0.0.6
       undici: 5.28.4
+    dev: false
+
+  /@actions/http-client@2.2.3:
+    resolution: {integrity: sha512-mx8hyJi/hjFvbPokCg4uRd4ZX78t+YyRPtnKWwIl+RzNaVuFpQHfmlGVfsKEJN8LwTCvL+DfVgAM04XaHkm6bA==}
+    dependencies:
+      tunnel: 0.0.6
+      undici: 5.28.4
+    dev: false
+
+  /@actions/io@1.1.3:
+    resolution: {integrity: sha512-wi9JjgKLYS7U/z8PPbco+PvTb/nRWjeoFlJ1Qer83k/3C5PHQi28hiVdeE2kHXmIL99mQFawx8qt/JPjZilJ8Q==}
     dev: false
 
   /@esbuild/aix-ppc64@0.23.1:
@@ -904,11 +921,6 @@ packages:
 
   /universal-user-agent@7.0.2:
     resolution: {integrity: sha512-0JCqzSKnStlRRQfCdowvqy3cy0Dvtlb8xecj/H8JFZuCze4rwjPZQOgvFvn0Ws/usCHQFGpyr+pB9adaGwXn4Q==}
-    dev: false
-
-  /uuid@8.3.2:
-    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
-    hasBin: true
     dev: false
 
   /wrappy@1.0.2:
