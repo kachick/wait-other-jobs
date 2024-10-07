@@ -18,8 +18,8 @@ dependencies:
     specifier: ^15.25.0
     version: 15.25.0
   '@octokit/plugin-paginate-graphql':
-    specifier: ^5.2.2
-    version: 5.2.2(@octokit/core@6.1.2)
+    specifier: ^5.2.3
+    version: 5.2.3(@octokit/core@6.1.2)
   ansi-styles:
     specifier: ^6.2.1
     version: 6.2.1
@@ -600,8 +600,8 @@ packages:
     resolution: {integrity: sha512-1yN5m1IMNXthoBDUXFF97N1gHop04B3H8ws7wtOr8GgRyDO1gKALjwMHARNBoMBiB/2vEe/vxstrApcJZzQbnQ==}
     dev: false
 
-  /@octokit/plugin-paginate-graphql@5.2.2(@octokit/core@6.1.2):
-    resolution: {integrity: sha512-7znSVvlNAOJisCqAnjN1FtEziweOHSjPGAuc5W58NeGNAr/ZB57yCsjQbXDlWsVryA7hHQaEQPcBbJYFawlkyg==}
+  /@octokit/plugin-paginate-graphql@5.2.3(@octokit/core@6.1.2):
+    resolution: {integrity: sha512-EzFueuXVU3VHv5FwEXbdznn9EmyF0vA5LGDX6a8fJ9YJAlDgdYHRKJMO4Ghl2PPPJBxIPMDUJMnlUHqcvP7AnQ==}
     engines: {node: '>= 18'}
     peerDependencies:
       '@octokit/core': '>=6'
