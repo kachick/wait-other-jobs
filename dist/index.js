@@ -32618,6 +32618,7 @@ var WaitList = z2.array(WaitFilterCondition).readonly();
 var SkipList = z2.array(SkipFilterCondition).readonly();
 var retryMethods = z2.enum(["exponential_backoff", "equal_intervals"]);
 var Options = z2.object({
+  apiUrl: z2.string().url(),
   waitList: WaitList,
   skipList: SkipList,
   initialDuration: Duration,
@@ -32687,7 +32688,9 @@ function parseInput() {
   const isEarlyExit = (0, import_core.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
   const shouldSkipSameWorkflow = (0, import_core.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
+  const apiUrl = (0, import_core.getInput)("github-api-url", { required: true, trimWhitespace: true });
   const options = Options.parse({
+    apiUrl,
     initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
     leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
@@ -33808,8 +33811,8 @@ function paginateGraphQL(octokit) {
 
 // src/github-api.ts
 var PaginatableOctokit = Octokit.plugin(paginateGraphQL);
-async function fetchChecks(token, trigger) {
-  const octokit = new PaginatableOctokit({ auth: token });
+async function fetchChecks(apiUrl, token, trigger) {
+  const octokit = new PaginatableOctokit({ auth: token, baseUrl: apiUrl });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate(
     /* GraphQL */
     `
@@ -34167,7 +34170,7 @@ async function run() {
     }
     const elapsed = mr.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
     (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()} # total elapsed ${readableDuration(elapsed)}`);
-    const checks = await fetchChecks(githubToken, trigger);
+    const checks = await fetchChecks(options.apiUrl, githubToken, trigger);
     const report = generateReport(
       getSummaries(checks, trigger),
       trigger,

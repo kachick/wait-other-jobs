@@ -9,6 +9,10 @@ inputs:
     description: 'The GITHUB_TOKEN secret'
     required: false
     default: ${{ github.token }}
+  github-api-url:
+    description: 'Github API URL'
+    required: true
+    default: 'https://api.github.com'
   wait-seconds-before-first-polling:
     description: 'Wait this seconds before first polling'
     required: false
