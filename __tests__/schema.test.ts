@@ -8,6 +8,7 @@ import { deepStrictEqual } from 'node:assert/strict';
 import { checkSync } from 'recheck';
 
 const defaultOptions = Object.freeze({
+  apiUrl: 'https://api.github.com',
   isEarlyExit: true,
   attemptLimits: 1000,
   waitList: [],
@@ -21,6 +22,7 @@ const defaultOptions = Object.freeze({
 
 test('Options keep given values', () => {
   optionsEqual({
+    apiUrl: 'https://api.github.com',
     isEarlyExit: true,
     attemptLimits: 1000,
     waitList: [],
