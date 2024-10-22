@@ -68,6 +68,7 @@ Full list of the options
 
 | NAME                                | DESCRIPTION                                                    | TYPE     | DEFAULT               | OPTIONS                                  |
 | ----------------------------------- | -------------------------------------------------------------- | -------- | --------------------- | ---------------------------------------- |
+| `github-api-url`                    | The Github API endpoint. Override for Github Enterprise usage. | `string` | `true`                | `https://api.github.com`                 |
 | `github-token`                      | The GITHUB_TOKEN secret. You can use PAT if you want.          | `string` | `${{ github.token }}` |                                          |
 | `wait-seconds-before-first-polling` | Wait this interval before first polling                        | `number` | `10`                  |                                          |
 | `min-interval-seconds`              | Wait this interval or the multiplied value (and jitter)        | `number` | `15`                  |                                          |
@@ -88,6 +89,15 @@ permissions:
   contents: read # Since v2
   checks: read
   actions: read
+```
+
+## Support for Github Enterprise
+
+To run this action in your Github Enterprise (GHE) instance you need to override `github-api-url`:
+
+```yaml
+with:
+  github-api-url: 'https://ghe-host.acme.net/api/v3'
 ```
 
 ## outputs.<output_id>
