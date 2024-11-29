@@ -32645,6 +32645,7 @@ var Options = z2.object({
 var Path = z2.string().min(1);
 
 // src/input.ts
+import { env } from "node:process";
 import { mkdtempSync } from "fs";
 import { join } from "path";
 function parseInput() {
@@ -32669,7 +32670,7 @@ function parseInput() {
       (0, import_core.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
     }
   }
-  const tempRoot = Path.parse(process.env["RUNNER_TEMP"]);
+  const tempRoot = Path.parse(env["RUNNER_TEMP"]);
   const tempDir = mkdtempSync(join(tempRoot, "wait-other-jobs-"));
   const waitSecondsBeforeFirstPolling = parseInt(
     (0, import_core.getInput)("wait-seconds-before-first-polling", { required: true, trimWhitespace: true }),
