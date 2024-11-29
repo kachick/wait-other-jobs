@@ -48,8 +48,10 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
   const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
+  const apiUrl = getInput('github-api-url', { required: true, trimWhitespace: true });
 
   const options = Options.parse({
+    apiUrl,
     initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
     leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,

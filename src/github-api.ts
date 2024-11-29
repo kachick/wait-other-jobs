@@ -6,10 +6,11 @@ import { Check, Trigger } from './schema.ts';
 const PaginatableOctokit = Octokit.plugin(paginateGraphQL);
 
 export async function fetchChecks(
+  apiUrl: string,
   token: string,
   trigger: Trigger,
 ): Promise<Check[]> {
-  const octokit = new PaginatableOctokit({ auth: token });
+  const octokit = new PaginatableOctokit({ auth: token, baseUrl: apiUrl });
   const { repository: { object: { checkSuites } } } = await octokit.graphql.paginate<
     { repository: { object: { checkSuites: Commit['checkSuites'] } } }
   >(
