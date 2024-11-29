@@ -12,7 +12,7 @@ inputs:
   github-api-url:
     description: 'Github API URL'
     required: true
-    default: 'https://api.github.com'
+    default: '${{ github.api_url }}'
   wait-seconds-before-first-polling:
     description: 'Wait this seconds before first polling'
     required: false
