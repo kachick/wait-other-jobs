@@ -2,6 +2,7 @@ import { getInput, getBooleanInput, setSecret, error } from '@actions/core';
 import { context } from '@actions/github';
 
 import { Durationable, Options, Path, Trigger } from './schema.ts';
+import { env } from 'node:process';
 import { mkdtempSync } from 'fs';
 import { join } from 'path';
 
@@ -28,7 +29,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     }
   }
   // Do not use `tmpdir` from `node:os` in action: See https://github.com/actions/toolkit/issues/518
-  const tempRoot = Path.parse(process.env['RUNNER_TEMP']);
+  const tempRoot = Path.parse(env['RUNNER_TEMP']);
   const tempDir = mkdtempSync(join(tempRoot, 'wait-other-jobs-'));
 
   const waitSecondsBeforeFirstPolling = parseInt(
