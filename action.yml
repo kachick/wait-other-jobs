@@ -8,7 +8,7 @@ inputs:
   github-token:
     description: 'The GITHUB_TOKEN secret'
     required: false
-    default: ${{ github.token }}
+    default: '${{ github.token }}'
   github-api-url:
     description: 'Github API URL'
     required: true
