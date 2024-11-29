@@ -6,7 +6,7 @@
   "engines": {
     "node": "20.x"
   },
-  "packageManager": "pnpm@8.15.5",
+  "packageManager": "pnpm@9.12.3",
   "type": "module",
   "scripts": {
     "prebuild": "tsx scripts/rmrf.ts lib dist",
@@ -27,7 +27,7 @@
     "@actions/github": "^6.0.0",
     "@octokit/core": "^6.1.2",
     "@octokit/graphql-schema": "^15.25.0",
-    "@octokit/plugin-paginate-graphql": "^5.2.2",
+    "@octokit/plugin-paginate-graphql": "^5.2.4",
     "ansi-styles": "^6.2.1",
     "temporal-polyfill": "^0.2.5",
     "zod": "^3.23.8"
@@ -35,10 +35,10 @@
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
     "@tsconfig/strictest": "^2.0.5",
-    "@types/node": "^20.16.10",
+    "@types/node": "^20.17.9",
     "esbuild": "0.24.0",
     "recheck": "^4.4.5",
-    "tsx": "^4.19.1",
-    "typescript": "^5.6.2"
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   }
 }

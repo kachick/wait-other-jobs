@@ -32646,6 +32646,7 @@ var Options = z2.object({
 var Path = z2.string().min(1);
 
 // src/input.ts
+import { env } from "node:process";
 import { mkdtempSync } from "fs";
 import { join } from "path";
 function parseInput() {
@@ -32670,7 +32671,7 @@ function parseInput() {
       (0, import_core.error)("github context has unexpected format: missing context.payload.pull_request.head.sha");
     }
   }
-  const tempRoot = Path.parse(process.env["RUNNER_TEMP"]);
+  const tempRoot = Path.parse(env["RUNNER_TEMP"]);
   const tempDir = mkdtempSync(join(tempRoot, "wait-other-jobs-"));
   const waitSecondsBeforeFirstPolling = parseInt(
     (0, import_core.getInput)("wait-seconds-before-first-polling", { required: true, trimWhitespace: true }),
@@ -33647,7 +33648,7 @@ var Octokit = class {
   auth;
 };
 
-// node_modules/.pnpm/@octokit+plugin-paginate-graphql@5.2.2_@octokit+core@6.1.2/node_modules/@octokit/plugin-paginate-graphql/dist-bundle/index.js
+// node_modules/.pnpm/@octokit+plugin-paginate-graphql@5.2.4_@octokit+core@6.1.2/node_modules/@octokit/plugin-paginate-graphql/dist-bundle/index.js
 var generateMessage = (path, cursorValue) => `The cursor at "${path.join(
   ","
 )}" did not change its value "${cursorValue}" after a page transition. Please make sure your that your query is set up correctly.`;
@@ -33693,10 +33694,10 @@ var deepFindPathToProperty = (object, searchProp, path = []) => {
   for (const key of Object.keys(object)) {
     const currentPath = [...path, key];
     const currentValue = object[key];
-    if (currentValue.hasOwnProperty(searchProp)) {
-      return currentPath;
-    }
     if (isObject(currentValue)) {
+      if (currentValue.hasOwnProperty(searchProp)) {
+        return currentPath;
+      }
       const result = deepFindPathToProperty(
         currentValue,
         searchProp,
@@ -33741,8 +33742,7 @@ var createIterator = (octokit) => {
     return {
       [Symbol.asyncIterator]: () => ({
         async next() {
-          if (!nextPageExists)
-            return { done: true, value: {} };
+          if (!nextPageExists) return { done: true, value: {} };
           const response = await octokit.graphql(
             query,
             parameters

@@ -25,6 +25,7 @@ script = [
   "typos . .github .vscode",
   "gitleaks detect",
   "git ls-files '*.nix' | xargs nixfmt --check",
+  "git ls-files '.github' | xargs selfup list -check",
 ]
 
 [tasks.test]
@@ -53,6 +54,12 @@ category = "Tools"
 description = 'Parallel runner for all tests and linters'
 run_task = { name = ["typecheck", "test", "lint", "build"], parallel = true }
 
+[tasks.selfup]
+category = "Tools"
+script = [
+  "git ls-files '.github' | xargs selfup run",
+]
+
 [tasks.help]
 category = "Tools"
 description = 'Might help you - (This one)'
@@ -77,6 +84,7 @@ script = [
   "jnv --version",
   "pinact --version",
   "gitleaks version",
+  "selfup -version",
 ]
 
 [tasks.check_no_git_diff]
