@@ -20,7 +20,7 @@
     {
       "extends": [
         "packages:linters",
-        "schedule:weekly"
+        "schedule:monthly"
       ]
     }
   ]
