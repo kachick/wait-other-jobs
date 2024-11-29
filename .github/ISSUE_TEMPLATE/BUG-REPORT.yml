@@ -24,7 +24,7 @@ body:
       label: Version
       description: What version are you using?
       options:
-        - 'v3.4.1' # selfup {"extract":"v\\d[^']+","replacer":["gh", "release", "view", "--json", "tagName", "--template", "{{ .tagName }}"]}
+        - 'v3.5.0' # selfup {"extract":"v\\d[^']+","replacer":["gh", "release", "view", "--json", "tagName", "--template", "{{ .tagName }}"]}
         - other
       default: 0
     validations:

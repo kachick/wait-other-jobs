@@ -3,6 +3,8 @@
 This file only records notable changes. Not synchronized with all releases and tags.
 
 - main - not yet released
+- v3.5.0
+  - Support GitHub Enterprise: [#618](https://github.com/kachick/wait-other-jobs/pull/618)
 - v3.4.1
   - Fix to support `.yaml` pattern for workflow path: [#930](https://github.com/kachick/wait-other-jobs/pull/930)
 - v3.4.0
