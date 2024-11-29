@@ -204,7 +204,7 @@ If not using wait-list, this pattern should be considered in your `wait-seconds-
 ## Limitations
 
 - If any workflow starts many jobs as 100+, this action does not support it.\
-  Because of nested paging in GraphQL makes complex. See [related docs](https://github.com/octokit/plugin-paginate-graphql.js/blob/a6b12e867466b0c583b002acd1cb1ed90b11841f/README.md#L184-L218) for further detail.
+  Because of nested paging in GraphQL makes complex. See [related docs](https://github.com/octokit/plugin-paginate-graphql.js/blob/a6b12e867466b0c583b002acd1cb1ed90b11841f/README.md?plain=1#L184-L218) for further detail.
 
 ## License
 
