@@ -33,4 +33,6 @@ jobs:
       - name: Log current versions
         run: nix develop --command makers deps
       - name: Run linters
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: nix develop --command makers check
