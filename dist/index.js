@@ -32565,10 +32565,16 @@ var MyDurationLike = z2.object({
   nanoseconds: z2.number().optional()
 }).strict().readonly();
 var Durationable = z2.union([z2.string().duration(), MyDurationLike]).transform((item) => getDuration(item));
-var Duration = z2.instanceof(mr.Duration).refine(
-  (d2) => mr.Duration.compare(d2, { seconds: 0 }) > 0,
+var PositiveDuration = z2.instanceof(mr.Duration).refine(
+  (d2) => d2.sign > 0,
   {
     message: "Too short interval for pollings"
+  }
+);
+var ZeroableDuration = z2.instanceof(mr.Duration).refine(
+  (d2) => d2.sign >= 0,
+  {
+    message: "Negative intervals are not reasonable for pollings"
   }
 );
 var defaultGrace = mr.Duration.from({ seconds: 10 });
@@ -32582,7 +32588,7 @@ function isDurationLike(my) {
 }
 function getDuration(durationable) {
   if (typeof durationable === "string" || isDurationLike(durationable)) {
-    return Duration.parse(mr.Duration.from(durationable));
+    return mr.Duration.from(durationable);
   }
   throw new Error("unexpected value is specified in durations");
 }
@@ -32621,8 +32627,8 @@ var Options = z2.object({
   apiUrl: z2.string().url(),
   waitList: WaitList,
   skipList: SkipList,
-  initialDuration: Duration,
-  leastInterval: Duration,
+  initialDuration: ZeroableDuration,
+  leastInterval: PositiveDuration,
   retryMethod: retryMethods,
   attemptLimits: z2.number().min(1),
   isEarlyExit: z2.boolean(),
@@ -34161,8 +34167,10 @@ async function run() {
       break;
     }
     if (attempts === 1) {
-      (0, import_core3.info)(`Wait ${readableDuration(options.initialDuration)} before first polling.`);
-      await wait(options.initialDuration);
+      if (options.initialDuration.sign > 0) {
+        (0, import_core3.info)(`Wait ${readableDuration(options.initialDuration)} before first polling.`);
+        await wait(options.initialDuration);
+      }
     } else {
       const interval = getInterval(options.retryMethod, options.leastInterval, attempts);
       (0, import_core3.info)(`Wait ${readableDuration(interval)} before next polling to reduce API calls.`);

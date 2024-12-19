@@ -83,7 +83,22 @@ test('regex option does not have higher ReDoS possibilities', () => {
   strictEqual(checkSync(yamlPattern.source, '').status, 'safe');
 });
 
+test('It can start immediately. GH-994', () => {
+  optionsEqual(
+    Options.parse({ ...defaultOptions, initialDuration: Temporal.Duration.from({ seconds: 0 }) }),
+    {
+      ...defaultOptions,
+      initialDuration: Temporal.Duration.from({ seconds: 0 }),
+    },
+  );
+});
+
 test('Options reject invalid values', () => {
+  throws(() => Options.parse({ ...defaultOptions, initialDuration: Temporal.Duration.from({ seconds: -1 }) }), {
+    name: 'ZodError',
+    message: /Negative intervals are not reasonable for pollings/,
+  });
+
   throws(() => Options.parse({ ...defaultOptions, leastInterval: Temporal.Duration.from({ seconds: 0 }) }), {
     name: 'ZodError',
     message: /Too short interval for pollings/,

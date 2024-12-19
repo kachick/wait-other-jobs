@@ -37,13 +37,18 @@ type MyDurationLike = z.infer<typeof MyDurationLike>;
 // IETF does not define duration formats in their RFCs, but in RFC 3399 refers ISO 8601 duration formats.
 // https://www.ietf.org/rfc/rfc3339.txt
 export const Durationable = z.union([z.string().duration(), MyDurationLike]).transform((item) => getDuration(item));
-export const Duration = z.instanceof(Temporal.Duration).refine(
-  (d) => Temporal.Duration.compare(d, { seconds: 0 }) > 0,
+export const PositiveDuration = z.instanceof(Temporal.Duration).refine(
+  (d) => d.sign > 0,
   {
     message: 'Too short interval for pollings',
   },
 );
-type Duration = z.infer<typeof Duration>;
+export const ZeroableDuration = z.instanceof(Temporal.Duration).refine(
+  (d) => d.sign >= 0,
+  {
+    message: 'Negative intervals are not reasonable for pollings',
+  },
+);
 const defaultGrace = Temporal.Duration.from({ seconds: 10 });
 
 // workaround for https://github.com/colinhacks/zod/issues/635
@@ -58,9 +63,9 @@ function isDurationLike(my: MyDurationLike): my is DurationLike {
 }
 
 // workaround for https://github.com/colinhacks/zod/issues/635
-export function getDuration(durationable: string | MyDurationLike): Duration {
+export function getDuration(durationable: string | MyDurationLike): Temporal.Duration {
   if (typeof durationable === 'string' || isDurationLike(durationable)) {
-    return Duration.parse(Temporal.Duration.from(durationable));
+    return Temporal.Duration.from(durationable);
   }
 
   throw new Error('unexpected value is specified in durations');
@@ -112,8 +117,8 @@ export const Options = z.object({
   apiUrl: z.string().url(),
   waitList: WaitList,
   skipList: SkipList,
-  initialDuration: Duration,
-  leastInterval: Duration,
+  initialDuration: ZeroableDuration,
+  leastInterval: PositiveDuration,
   retryMethod: retryMethods,
   attemptLimits: z.number().min(1),
   isEarlyExit: z.boolean(),
