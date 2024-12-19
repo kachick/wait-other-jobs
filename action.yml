@@ -13,22 +13,22 @@ inputs:
     description: 'Github API URL'
     required: true
     default: '${{ github.api_url }}'
-  wait-seconds-before-first-polling:
+  wait-seconds-before-first-polling: # TODO: Since v4.x, Rename or fallback to `initial-duration` and make it possible to take ISO 8601 duration format. See GH-821
     description: 'Wait this seconds before first polling'
     required: false
-    default: '10'
-  min-interval-seconds:
+    default: '10' # TODO: Since v4.x, Consider setting shorter or 0 because using `equal_intervals` by default. Or respect the `min-interval-seconds` if this value is empty. See GH-596 and GH-994
+  min-interval-seconds: # TODO: Since v4.x, Rename or fallback to `least-interval` and make it possible to take ISO 8601 duration format. See GH-821
     description: 'Wait this interval or the multiplied value (and jitter)'
     required: false
     default: '15'
   early-exit:
-    description: 'Stop to rest pollings if faced at least 1 bad condition'
+    description: 'Stop rest pollings if faced at least 1 bad condition'
     required: false
     default: 'true'
   retry-method:
     description: 'How to wait for next polling'
     required: false
-    default: 'equal_intervals'
+    default: 'equal_intervals' # Changed the default from `exponential_backoff` since GH-596(v2)
   attempt-limits:
     description: 'Stop rest pollings if reached to this limit'
     required: false
