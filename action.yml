@@ -16,7 +16,7 @@ inputs:
   wait-seconds-before-first-polling: # TODO: Since v4.x, Rename or fallback to `initial-duration` and make it possible to take ISO 8601 duration format. See GH-821
     description: 'Wait this seconds before first polling'
     required: false
-    default: '10' # TODO: Since v4.x, Consider setting shorter or 0 because using `equal_intervals` by default. See GH-596 and GH-994
+    default: '10' # TODO: Since v4.x, Consider setting shorter or 0 because using `equal_intervals` by default. Or respect the `min-interval-seconds` if this value is empty. See GH-596 and GH-994
   min-interval-seconds: # TODO: Since v4.x, Rename or fallback to `least-interval` and make it possible to take ISO 8601 duration format. See GH-821
     description: 'Wait this interval or the multiplied value (and jitter)'
     required: false
