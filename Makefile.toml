@@ -23,7 +23,7 @@ script = [
   "dprint check",
   "deno lint",
   "typos . .github .vscode",
-  "gitleaks detect",
+  "gitleaks dir .", # git mode is 4x slower
   "git ls-files '*.nix' | xargs nixfmt --check",
   "git ls-files '.github' | xargs selfup list -check",
 ]
