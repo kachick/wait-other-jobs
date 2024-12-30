@@ -6,7 +6,7 @@
   "engines": {
     "node": "20.x"
   },
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@9.15.1",
   "type": "module",
   "scripts": {
     "prebuild": "tsx scripts/rmrf.ts lib dist",
