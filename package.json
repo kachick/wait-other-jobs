@@ -30,7 +30,7 @@
     "@octokit/plugin-paginate-graphql": "^5.2.4",
     "ansi-styles": "^6.2.1",
     "temporal-polyfill": "^0.2.5",
-    "zod": "^3.23.8"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
