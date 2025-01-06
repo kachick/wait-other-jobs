@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       # Intentionally point to the latest version, not the version bound by nix.
       # Because getting commit ref from version string requires network access.
-      - uses: crate-ci/typos@9d890159570d5018df91fedfa40b4730cd4a81b1 # v1.28.4
+      - uses: crate-ci/typos@685eb3d55be2f85191e8c84acb9f44d7756f84ab # v1.29.4
         with:
           files: |-
             .
