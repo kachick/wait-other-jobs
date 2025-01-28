@@ -42,7 +42,6 @@
                 nil
                 nixfmt-rfc-style
 
-                cargo-make
                 sd
 
                 nodejs_20

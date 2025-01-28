@@ -5,5 +5,6 @@
     "noUnusedLocals": false,
     "allowImportingTsExtensions": true
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  "exclude": ["scripts"]
 }

@@ -8,13 +8,6 @@
   },
   "packageManager": "pnpm@9.15.3",
   "type": "module",
-  "scripts": {
-    "prebuild": "tsx scripts/rmrf.ts lib dist",
-    "build": "tsx scripts/build.ts",
-    "test": "tsx scripts/run_tests.ts",
-    "typecheck": "tsc",
-    "repl": "tsx"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kachick/wait-other-jobs.git"

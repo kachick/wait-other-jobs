@@ -8,6 +8,7 @@ on:
       - '.editorconfig'
       - 'README.md'
       - '.vscode/**'
+      - 'deno.*'
   pull_request:
     paths-ignore:
       - '.github/dependabot.yml'
@@ -15,45 +16,55 @@ on:
       - '.editorconfig'
       - 'README.md'
       - '.vscode/**'
+      - 'deno.*'
 jobs:
   build:
     timeout-minutes: 15
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: denoland/setup-deno@909cc5acb0fdd60627fb858598759246509fa755 # v2.0.2
+        with:
+          deno-version: '2.1.4' # selfup {"extract":"\\d[^']+","replacer":["bash","-c","deno --version | head -n 1"], "nth": 2}
       - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version-file: '.node-version'
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
+      - run: deno task setup
+      - run: deno task build
       - name: Check no diff for products
-        run: git add --intent-to-add . && git diff --exit-code
+        run: deno task check_no_git_diff
 
   test:
     timeout-minutes: 15
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: denoland/setup-deno@909cc5acb0fdd60627fb858598759246509fa755 # v2.0.2
+        with:
+          deno-version: '2.1.4' # selfup {"extract":"\\d[^']+","replacer":["bash","-c","deno --version | head -n 1"], "nth": 2}
       - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version-file: '.node-version'
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm test
+      - run: deno task setup
+      - run: deno task test
 
   typecheck:
     timeout-minutes: 15
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: denoland/setup-deno@909cc5acb0fdd60627fb858598759246509fa755 # v2.0.2
+        with:
+          deno-version: '2.1.4' # selfup {"extract":"\\d[^']+","replacer":["bash","-c","deno --version | head -n 1"], "nth": 2}
       - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version-file: '.node-version'
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - run: deno task setup
       - name: Typecheck
-        run: pnpm run typecheck
+        run: deno task typecheck

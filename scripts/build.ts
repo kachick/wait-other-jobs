@@ -1,4 +1,6 @@
-import * as esbuild from 'esbuild';
+#!/usr/bin/env -S deno run --allow-all
+
+import * as esbuild from 'npm:esbuild';
 
 // https://github.com/evanw/esbuild/issues/1921#issuecomment-1491470829
 // https://github.com/evanw/esbuild/issues/1921#issuecomment-1575636282
