@@ -23,10 +23,6 @@
     "deps": {
       "description": "Print development dependencies and the versions",
       "command": "./scripts/deps.ts"
-    },
-    "analyze": {
-      "description": "Run analysis script",
-      "command": "deno run --allow-read=. scripts/analyze.js"
     }
   },
   "lint": {
