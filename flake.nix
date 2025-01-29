@@ -42,8 +42,6 @@
                 nil
                 nixfmt-rfc-style
 
-                sd
-
                 nodejs_20
                 nodejs_20.pkgs.pnpm
                 esbuild
@@ -51,18 +49,14 @@
                 dprint
                 typos
 
-                # Helper for writing and linting actions
-                #
                 # NOTE: Do NOT add actionlint as a dependency
                 # - It does not target actions; it lints the user's side.
                 # - It assumes major actions in a stable state, often causing problems between versions.
                 # - Use https://github.com/github/vscode-github-actions for a better solution to get hints.
-                pinact
 
                 # For fighting the GitHub API
                 gh
                 jq
-                jnv
                 gitleaks
               ])
               ++ [ selfup.packages.${system}.default ];
@@ -85,7 +79,7 @@
                 runtimeInputs = [
                   nix
                   git
-                  sd
+                  sd # TODO: Replace with something
                   nodejs_20
                   nodejs_20.pkgs.pnpm
                 ];
