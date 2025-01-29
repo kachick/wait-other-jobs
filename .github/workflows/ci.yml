@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - uses: DeterminateSystems/nix-installer-action@e50d5f73bfe71c2dd0aa4218de8f4afa59f8f81d # v16
       - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
-      # https://github.com/actions/setup-node/blob/802632921f8532d2409ae6eac3313b6f81f11122/src/cache-utils.ts#L30-L38
+      # See https://github.com/actions/setup-node/blob/802632921f8532d2409ae6eac3313b6f81f11122/src/cache-utils.ts#L30-L38
       - name: Get pnpm store path
         id: get-pnpm-path
         run: |
@@ -35,9 +35,19 @@ jobs:
       - uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
         name: Cache pnpm store
         with:
-          path: '${{ steps.get-pnpm-path.outputs.pnpm-store-path }}'
+          path: |
+            ${{ steps.get-pnpm-path.outputs.pnpm-store-path }}
           key: |
             pnpm_store-pnpm_${{ hashFiles('pnpm-lock.*') }}-flake_${{ hashFiles('flake.lock') }}-${{ runner.arch }}-${{ runner.os }}
+      - uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        name: Cache deno modules
+        with:
+          # Using `deno info --json` prints accurate data. However this is a simple solution in this workflow
+          # See https://github.com/actions/cache/blob/1bd1e32a3bdc45362d1e726936510720a7c30a57/examples.md?plain=1#L144-L155
+          path: |
+            ~/.cache/deno
+          key: |
+            deno_store-deno_${{ hashFiles('deno.lock') }}-flake_${{ hashFiles('flake.lock') }}-${{ runner.arch }}-${{ runner.os }}
       - name: Test, build, lint ...
         run: |
           nix develop --command deno task setup
