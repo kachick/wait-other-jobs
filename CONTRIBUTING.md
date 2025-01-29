@@ -4,17 +4,8 @@ We can only use Node.js for JavaScript actions in GitHub Hosted runners.\
 However, managing the Node.js toolset is a pain for me, so this repository prefers Deno for the development tasks.\
 And finally, it transpiles and bundles into [dist](dist), which will be loaded in Node.js.
 
-In short
-
-Node.js
-
-- [dist](dist)
-- [src](src)
-- [`__tests__`](__tests__)
-
-Deno
-
-- [scripts](scripts)
+In short, [scripts](scripts) can only be adjusted for Deno.\
+Other `*.ts` and `*.js` files should be considered for use with Node.js.
 
 ## Dependency management
 
