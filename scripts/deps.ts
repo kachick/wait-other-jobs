@@ -15,5 +15,4 @@ await Promise.all([
   $`jnv --version`,
   $`pinact --version`,
   $`gitleaks version`,
-  $`selfup -version`,
 ]);

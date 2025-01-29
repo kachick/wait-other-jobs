@@ -12,7 +12,7 @@
       "dependencies": ["cleanup_build"],
       "command": "./scripts/build.ts"
     },
-    "update": "git ls-files '.github' | xargs selfup run",
+    "update": "git ls-files '.github' | xargs nix run 'github:kachick/selfup/v1.1.9' -- run",
     "check_no_git_diff": {
       "description": "Prevent unexpected commits",
       "command": "(git add --intent-to-add . && git diff --exit-code) || (echo 'You should commit all diff before running tests'; exit 1)"

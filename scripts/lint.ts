@@ -7,5 +7,4 @@ await Promise.all([
   $`typos . .github .vscode`,
   $`gitleaks dir .`, // git mode is 4x slower
   $`git ls-files '*.nix' | xargs nixfmt --check`,
-  $`git ls-files '.github' | xargs selfup list -check`,
 ]);

@@ -6,17 +6,12 @@
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-    selfup = {
-      url = "github:kachick/selfup/v1.1.9";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
     {
       self,
       nixpkgs,
-      selfup,
     }:
     let
       # Candidates: https://github.com/NixOS/nixpkgs/blob/release-23.11/lib/systems/flake-systems.nix
@@ -34,8 +29,9 @@
         in
         {
           default = pkgs.mkShellNoCC {
-            buildInputs =
-              (with pkgs; [
+            buildInputs = (
+              with pkgs;
+              [
                 # For Nix environments
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
@@ -58,8 +54,8 @@
                 gh
                 jq
                 gitleaks
-              ])
-              ++ [ selfup.packages.${system}.default ];
+              ]
+            );
           };
         }
       );
