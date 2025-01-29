@@ -6,6 +6,7 @@ await Promise.all([
   $`pnpm --version`,
   $`nix --version`,
   $`deno --version`,
+  $`esbuild --version`,
   $`dprint --version`,
   $`nixfmt --version`,
   $`typos --version`,

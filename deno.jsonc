@@ -27,7 +27,7 @@
   },
   "lint": {
     "include": ["."],
-    "exclude": ["dist/", "node_modules/", "logs/"],
+    "exclude": ["dist/", "node_modules/", "logs/", "dependencies/"],
     "rules": {
       "tags": ["recommended"]
     }
