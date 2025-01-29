@@ -35,7 +35,7 @@ jobs:
         with:
           path: '${{ steps.get-pnpm-path.outputs.pnpm-store-path }}'
           key: |
-            pnpm-store-pnpm${{ hashFiles('pnpm-lock.*') }}-flake${{ hashFiles('flake.lock') }}-${{ runner.arch }}-${{ runner.os }}
+            pnpm_store-pnpm_${{ hashFiles('pnpm-lock.*') }}-flake_${{ hashFiles('flake.lock') }}-${{ runner.arch }}-${{ runner.os }}
       - run: |
           nix develop --command deno task setup
           nix develop --command deno task build
