@@ -7,7 +7,7 @@
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     selfup = {
-      url = "github:kachick/selfup/v1.1.7";
+      url = "github:kachick/selfup/v1.1.9";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
