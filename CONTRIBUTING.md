@@ -10,7 +10,7 @@ Node.js
 
 - [dist](dist)
 - [src](src)
-- [`__test__`](__test__)
+- [`__tests__`](__tests__)
 
 Deno
 
