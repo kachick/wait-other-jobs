@@ -1,8 +1,5 @@
 {
   inputs = {
-    # Candidate channels
-    #   - https://github.com/kachick/anylang-template/issues/17
-    #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
@@ -14,7 +11,6 @@
       nixpkgs,
     }:
     let
-      # Candidates: https://github.com/NixOS/nixpkgs/blob/release-23.11/lib/systems/flake-systems.nix
       forAllSystems = nixpkgs.lib.genAttrs [
         "x86_64-linux"
         "aarch64-linux"
