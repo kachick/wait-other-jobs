@@ -2,8 +2,8 @@
 
 I mainly use this action for below use-case when they should run after multiple CI workflows
 
-- [Deploy to Firebase/Vercel/Netlify](https://github.com/kachick/convert-color-json-between-windows-terminal-and-vscode/blob/1a8eac43be819204ff21eec1198fd2dfad3fcaa3/.github/workflows/firebase-hosting-pull-request.yml#L39-L43)
-- [Release with GitHub releasing](https://github.com/kachick/asdf-cargo-make/blob/a666005e239cfd2b78d43e462e6279e8d8ab4d3d/.github/workflows/release.yml#L12-L16)
+- [Deploy to Firebase/Vercel/Netlify/GitHub Pages](https://github.com/kachick/kachick.github.io/blob/480bc464ff969807ec768428088dec7485261ee6/.github/workflows/pages.yml#L88-L100)
+- [Release with GitHub releasing](https://github.com/mise-plugins/asdf-cargo-make/blob/a666005e239cfd2b78d43e462e6279e8d8ab4d3d/.github/workflows/release.yml#L12-L16)
 - [Auto approve and merge dependabot PRs without PAT(Personal Access Token)](https://github.com/kachick/ruby-ulid/blob/ad4c6090d7835d80ff02a1a5f57d6e9ae11a85d3/.github/workflows/merge-bot-pr.yml#L21-L26)
 - [Auto approve and merge renovatebot PRs without `platformAutomerge` feature](https://github.com/kachick/ruby-ulid/blob/ad4c6090d7835d80ff02a1a5f57d6e9ae11a85d3/.github/workflows/merge-bot-pr.yml#L46-L50)
 

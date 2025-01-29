@@ -6,6 +6,7 @@
     "tekumara.typos-vscode",
     "jnoortheen.nix-ide",
     "tamasfe.even-better-toml",
-    "ms-azuretools.vscode-docker"
+    "ms-azuretools.vscode-docker",
+    "denoland.vscode-deno"
   ]
 }

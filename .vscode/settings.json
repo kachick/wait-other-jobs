@@ -18,5 +18,8 @@
     "node_modules/**": true,
     ".direnv/**": true
   },
-  "deno.enable": false
+  "deno.enable": true,
+  "deno.enablePaths": [
+    "scripts"
+  ]
 }

@@ -8,13 +8,6 @@
   },
   "packageManager": "pnpm@9.15.3",
   "type": "module",
-  "scripts": {
-    "prebuild": "tsx scripts/rmrf.ts lib dist",
-    "build": "tsx scripts/build.ts",
-    "test": "tsx scripts/run_tests.ts",
-    "typecheck": "tsc",
-    "repl": "tsx"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kachick/wait-other-jobs.git"
@@ -36,7 +29,6 @@
     "@tsconfig/node20": "^20.1.4",
     "@tsconfig/strictest": "^2.0.5",
     "@types/node": "^20.17.16",
-    "esbuild": "0.24.2",
     "recheck": "^4.4.5",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"

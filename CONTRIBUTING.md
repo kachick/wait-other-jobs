@@ -1,42 +1,42 @@
 # How to develop
 
-## Setup
+We can only use Node.js for JavaScript actions in GitHub Hosted runners.\
+However, managing the Node.js toolset is a pain for me, so this repository prefers Deno for the development tasks.\
+And finally, it transpiles and bundles into [dist](dist), which will be loaded in Node.js.
 
-### Nix
+In short
 
-1. Install [Nix](https://nixos.org/) package manager
-2. Run `nix develop` or `direnv allow`
-3. You can use development tasks
+Node.js
+
+- [dist](dist)
+- [src](src)
+- [`__test__`](__test__)
+
+Deno
+
+- [scripts](scripts)
+
+## Dependency management
+
+It will be done in [Nix](https://nixos.org/) and [pnpm](https://github.com/pnpm/pnpm).
+
+1. Run `nix develop` or `direnv allow .`
+2. `deno task setup`
+
+## Tasks
 
 ```console
-> nix develop
-(prepared shell)
+> deno task
+# Print all tasks
+
+> deno task all
+...tests, typechecks, linters, build
 ```
-
-### Tasks
-
-```console
-> makers help
-> Tools
-
----
-
-check - ...
-help - ...
-
-> makers setup
-added 438 packages, and audited 439 packages in 6s
-
-> makers check
-...tests, typechecks, linters...
-```
-
-See also [scripts](package.json) for tasks details.
 
 ## REPL
 
 ```bash
-pnpm run repl
+deno task repl
 ```
 
 ```typescript

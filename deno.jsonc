@@ -1,9 +1,38 @@
 {
+  "tasks": {
+    "setup": "pnpm install --frozen-lockfile",
+    "all": {
+      "dependencies": ["typecheck", "test", "lint", "build"],
+      "command": "echo '🎉 '"
+    },
+    "test": "./scripts/run_tests.ts",
+    "typecheck": "pnpm tsc",
+    "cleanup_build": "rm -rf ./lib ./dist",
+    "build": {
+      "dependencies": ["cleanup_build"],
+      "command": "./scripts/build.ts"
+    },
+    "update": "git ls-files '.github' | xargs nix run 'github:kachick/selfup/v1.1.9' -- run",
+    "check_no_git_diff": {
+      "description": "Prevent unexpected commits",
+      "command": "(git add --intent-to-add . && git diff --exit-code) || (echo 'You should commit all diff before running tests'; exit 1)"
+    },
+    "fmt": "dprint fmt && git ls-files '*.nix' | xargs nixfmt",
+    "lint": "./scripts/lint.ts",
+    "repl": "pnpm tsx", // Don't use deno REPL for this purpose. Finally the code will work on Node.js.
+    "deps": {
+      "description": "Print development dependencies and the versions",
+      "command": "./scripts/deps.ts"
+    }
+  },
   "lint": {
     "include": ["."],
-    "exclude": ["dist/", "node_modules/", "logs/"],
+    "exclude": ["dist/", "node_modules/", "logs/", "dependencies/"],
     "rules": {
       "tags": ["recommended"]
     }
+  },
+  "imports": {
+    "@david/dax": "jsr:@david/dax@^0.42.0"
   }
 }

@@ -1,13 +1,15 @@
-import { readdirSync } from 'node:fs';
-import { join } from 'path';
-import { execFileSync } from 'node:child_process';
+#!/usr/bin/env -S deno run --allow-all
+import $ from 'jsr:@david/dax';
 
-const dirEnts = readdirSync('__tests__', { encoding: 'utf-8', recursive: true, withFileTypes: true });
-const testPaths = dirEnts.flatMap((dirent) => dirent.name.endsWith('.test.ts') ? [join(dirent.path, dirent.name)] : []);
+import { join } from 'jsr:@std/path';
+
+const cwd = Deno.cwd();
+const testDir = join(cwd, '__tests__');
+const dirEnts = Deno.readDirSync(testDir);
+const testPaths = Array.from(dirEnts).flatMap((dirent) =>
+  dirent.name.endsWith('.test.ts') ? [join(testDir, dirent.name)] : []
+);
 
 console.log('Starting to run tests for', testPaths);
 
-execFileSync('node', ['--import', 'tsx', '--no-warnings', '--test', ...testPaths], {
-  // preserving color: https://github.com/nodejs/help/issues/2183#issuecomment-532362821
-  stdio: 'inherit',
-});
+await $`node --import tsx --no-warnings --test ${testPaths}`;
