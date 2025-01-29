@@ -39,7 +39,8 @@ jobs:
           path: '${{ steps.get-pnpm-path.outputs.pnpm-store-path }}'
           key: |
             pnpm_store-pnpm_${{ hashFiles('pnpm-lock.*') }}-flake_${{ hashFiles('flake.lock') }}-${{ runner.arch }}-${{ runner.os }}
-      - run: |
+      - name: Test, build, lint ...
+        run: |
           nix develop --command deno task setup
           nix develop --command deno task all
           nix develop --command deno task check_no_git_diff
