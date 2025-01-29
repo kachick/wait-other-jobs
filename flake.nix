@@ -33,7 +33,7 @@
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
-          default = pkgs.mkShell {
+          default = pkgs.mkShellNoCC {
             buildInputs =
               (with pkgs; [
                 # For Nix environments
