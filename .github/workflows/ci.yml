@@ -48,9 +48,13 @@ jobs:
             ~/.cache/deno
           key: |
             deno_store-deno_${{ hashFiles('deno.lock') }}-flake_${{ hashFiles('flake.lock') }}-${{ runner.arch }}-${{ runner.os }}
-      - name: Test, build, lint ...
+      - name: Setup
         run: |
           nix develop --command deno task deps
           nix develop --command deno task setup
+      - name: Test, build, lint
+        run: |
           nix develop --command deno task all
+      - name: Make sure there is no diff after build
+        run: |
           nix develop --command deno task check_no_git_diff
