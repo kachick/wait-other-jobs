@@ -1,35 +1,38 @@
-name: TypeScript
+name: CI
 on:
   push:
     branches: [main]
     paths-ignore:
-      - '.github/workflows/ci-nix.yml'
-      - 'LICENSE'
+      - '.github/dependabot.yml'
       - '.editorconfig'
-      - 'README.md'
+      - '**.md'
       - '.vscode/**'
-      - 'deno.*'
   pull_request:
     paths-ignore:
       - '.github/dependabot.yml'
-      - 'LICENSE'
       - '.editorconfig'
-      - 'README.md'
+      - '**.md'
       - '.vscode/**'
-      - 'deno.*'
+  schedule:
+    # Every 10:42 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 1 * * *'
+  workflow_dispatch:
+
 jobs:
-  build:
+  all:
     timeout-minutes: 15
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - uses: DeterminateSystems/nix-installer-action@e50d5f73bfe71c2dd0aa4218de8f4afa59f8f81d # v16
       - uses: DeterminateSystems/magic-nix-cache-action@6221693898146dc97e38ad0e013488a16477a4c4 # v9
+      - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
       # https://github.com/actions/setup-node/blob/802632921f8532d2409ae6eac3313b6f81f11122/src/cache-utils.ts#L30-L38
       - name: Get pnpm store path
         id: get-pnpm-path
         run: |
-          nix run .#extract_pnpm_store_path | tee -a "$GITHUB_OUTPUT"
+          echo "pnpm-store-path=$(nix develop --command pnpm store path --silent)" | tee -a "$GITHUB_OUTPUT"
       - uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
         name: Cache pnpm store
         with:
@@ -38,38 +41,5 @@ jobs:
             pnpm_store-pnpm_${{ hashFiles('pnpm-lock.*') }}-flake_${{ hashFiles('flake.lock') }}-${{ runner.arch }}-${{ runner.os }}
       - run: |
           nix develop --command deno task setup
-          nix develop --command deno task build
+          nix develop --command deno task all
           nix develop --command deno task check_no_git_diff
-
-  test:
-    timeout-minutes: 15
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: denoland/setup-deno@909cc5acb0fdd60627fb858598759246509fa755 # v2.0.2
-        with:
-          deno-version: '2.1.4' # selfup {"extract":"\\d[^']+","replacer":["bash","-c","deno --version | head -n 1"], "nth": 2}
-      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
-      - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
-        with:
-          node-version-file: '.node-version'
-          cache: pnpm
-      - run: deno task setup
-      - run: deno task test
-
-  typecheck:
-    timeout-minutes: 15
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: denoland/setup-deno@909cc5acb0fdd60627fb858598759246509fa755 # v2.0.2
-        with:
-          deno-version: '2.1.4' # selfup {"extract":"\\d[^']+","replacer":["bash","-c","deno --version | head -n 1"], "nth": 2}
-      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
-      - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
-        with:
-          node-version-file: '.node-version'
-          cache: pnpm
-      - run: deno task setup
-      - name: Typecheck
-        run: deno task typecheck

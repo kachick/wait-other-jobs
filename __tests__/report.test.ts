@@ -520,10 +520,6 @@ test('skip-list', async (t) => {
             jobMatchMode: 'all',
           },
           {
-            'workflowFile': 'ci-nix.yml',
-            jobMatchMode: 'all',
-          },
-          {
             'workflowFile': 'merge-bot-pr.yml',
             'jobName': 'dependabot',
             jobMatchMode: 'exact',

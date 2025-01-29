@@ -76,37 +76,6 @@
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
-          # build = {
-          #   type = "app";
-          #   program = pkgs.lib.getExe (
-          #     pkgs.writeShellApplication {
-          #       name = "extract_pnpm_store_path.bash";
-          #       runtimeInputs = with pkgs; [
-          #         deno
-          #         nodejs_20.pkgs.pnpm
-          #         esbuild
-          #         git
-          #       ];
-          #       text = ''
-          #         echo "pnpm-store-path=$(pnpm store path --silent)"
-          #       '';
-          #     }
-          #   );
-          # };
-          extract_pnpm_store_path = {
-            type = "app";
-            program = pkgs.lib.getExe (
-              pkgs.writeShellApplication {
-                name = "extract_pnpm_store_path.bash";
-                runtimeInputs = with pkgs; [
-                  nodejs_20.pkgs.pnpm
-                ];
-                text = ''
-                  echo "pnpm-store-path=$(pnpm store path --silent)"
-                '';
-              }
-            );
-          };
           bump-nix-dependencies = {
             type = "app";
             program =
