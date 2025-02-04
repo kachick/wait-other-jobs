@@ -82,7 +82,7 @@
         "npm:@octokit/plugin-paginate-graphql@^5.2.4",
         "npm:@tsconfig/node20@^20.1.4",
         "npm:@tsconfig/strictest@^2.0.5",
-        "npm:@types/node@^20.17.16",
+        "npm:@types/node@^20.17.17",
         "npm:ansi-styles@^6.2.1",
         "npm:recheck@^4.4.5",
         "npm:temporal-polyfill@~0.2.5",
