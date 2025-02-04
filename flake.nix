@@ -25,6 +25,8 @@
         in
         {
           default = pkgs.mkShellNoCC {
+            # https://github.com/denoland/deno/issues/17916
+            env.DENO_NO_PACKAGE_JSON = "1";
             buildInputs = (
               with pkgs;
               [
