@@ -16,6 +16,6 @@ jobs:
       app_id: ${{ vars.APP_ID }}
       dry-run: ${{ github.event_name == 'pull_request' }}
       optional-run: |
-        nix run .#bump-nix-dependencies
+        nix develop --command deno task sync_node_deps
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}

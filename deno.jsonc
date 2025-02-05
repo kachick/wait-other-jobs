@@ -3,7 +3,7 @@
     "setup": "pnpm install --frozen-lockfile",
     "all": {
       "dependencies": ["typecheck", "test", "lint", "build"],
-      "command": "echo '🎉 '"
+      "command": "echo '🎉'"
     },
     "test": "./scripts/run_tests.ts",
     "typecheck": "pnpm tsc",
@@ -12,7 +12,13 @@
       "dependencies": ["cleanup_build"],
       "command": "./scripts/build.ts"
     },
-    "update": "git ls-files '.github' | xargs nix run 'github:kachick/selfup/v1.1.9' -- run",
+    "update_flake": "nix flake update --commit-lock-file",
+    "sync_node_deps": {
+      "command": "./scripts/sync_versions.ts"
+    },
+    "sync_workflow_deps": {
+      "command": "git ls-files '.github' | xargs nix run 'github:kachick/selfup/v1.1.9' -- run"
+    },
     "check_no_git_diff": {
       "description": "Prevent unexpected commits",
       "command": "(git add --intent-to-add . && git diff --exit-code) || (echo 'You should commit all diff before running tests'; exit 1)"
