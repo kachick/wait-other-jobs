@@ -24,7 +24,6 @@ jobs:
         run: |
           echo 'Triggered by ${{ github.event_name }} event'
           echo 'See https://github.com/kachick/wait-other-jobs/issues/771 for the detail'
-          echo 'Intentinally raises error to check the result' && exit 42
   wait:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
