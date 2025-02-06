@@ -33865,6 +33865,7 @@ async function fetchChecks(apiUrl, token, trigger) {
                 workflowRun {
                   databaseId
                   event
+                  url # Don't use "workflow.url", it is the list of runs. Adding "/workflow" into "workflowRun.url" should be useful for permalink
                   workflow {
                     name
                     resourcePath
@@ -34188,6 +34189,8 @@ function summarize(check, trigger) {
     isAcceptable,
     isCompleted,
     severity: isCompleted ? isAcceptable ? "notice" : "error" : "warning",
+    workflowPermalink: `${workflowRun.url}/workflow`,
+    // workflow.url is not enough for permalink use
     workflowBasename: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
     // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     isSameWorkflow: suite.workflowRun?.databaseId === trigger.runId,
@@ -34472,7 +34475,7 @@ async function run() {
         ...pollingReport.summaries.map((polling) => [{
           data: emoji(polling.severity)
         }, {
-          data: polling.workflowBasename
+          data: `<a href="${polling.workflowPermalink}">${polling.workflowBasename}</a>`
         }, {
           data: polling.jobName
         }, {

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './fixtures/snapshot.ts';
+import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './fixtures/snapshot.ts'; // 'undefined/workflow'` came from old snapshots
 import { PollingReport, Summary, generateReport, getSummaries, readableDuration } from '../src/report.ts';
 import { omit } from '../src/util.ts';
 import { Temporal } from 'temporal-polyfill';
@@ -19,6 +19,7 @@ const exampleSummary = Object.freeze(
   {
     isAcceptable: false,
     isCompleted: false,
+    workflowPermalink: 'https://github.example.com/repo/owner/actions/runs/workflow_run_id/workflow',
     workflowBasename: '.github/workflows/example.yml',
     isSameWorkflow: false,
 
@@ -156,6 +157,7 @@ test('wait-list', async (t) => {
               runStatus: 'IN_PROGRESS',
               severity: 'error',
               workflowBasename: 'ci.yml',
+              workflowPermalink: 'https://github.example.com/repo/owner/actions/runs/workflow_run_id/workflow',
             },
             {
               checkRunUrl: 'https://example.com',
@@ -171,6 +173,7 @@ test('wait-list', async (t) => {
               runStatus: 'IN_PROGRESS',
               severity: 'error',
               workflowBasename: 'ci.yml',
+              workflowPermalink: 'https://github.example.com/repo/owner/actions/runs/workflow_run_id/workflow',
             },
           ],
           severity: 'info',
@@ -239,6 +242,7 @@ test('wait-list', async (t) => {
                   runStatus: 'QUEUED',
                   severity: 'warning',
                   workflowBasename: 'GH-820-graceperiod.yml',
+                  workflowPermalink: 'undefined/workflow',
                 },
               ],
             },
@@ -311,6 +315,7 @@ test('wait-list', async (t) => {
                 runStatus: 'QUEUED',
                 severity: 'warning',
                 workflowBasename: 'GH-820-graceperiod.yml',
+                workflowPermalink: 'undefined/workflow',
               },
             ],
           },
@@ -381,6 +386,7 @@ test('wait-list', async (t) => {
                 runStatus: 'QUEUED',
                 severity: 'warning',
                 workflowBasename: 'GH-820-graceperiod.yml',
+                workflowPermalink: 'undefined/workflow',
               },
             ],
           },
@@ -471,6 +477,7 @@ test('wait-list', async (t) => {
                 runDatabaseId: 42,
                 runStatus: 'COMPLETED',
                 severity: 'error',
+                workflowPermalink: 'https://github.example.com/repo/owner/actions/runs/workflow_run_id/workflow',
                 workflowBasename: 'ci.yml',
               },
             ],

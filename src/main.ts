@@ -140,7 +140,7 @@ async function run(): Promise<void> {
         ...(pollingReport.summaries.map((polling) => [{
           data: emoji(polling.severity),
         }, {
-          data: polling.workflowBasename,
+          data: `<a href="${polling.workflowPermalink}">${polling.workflowBasename}</a>`,
         }, {
           data: polling.jobName,
         }, {
