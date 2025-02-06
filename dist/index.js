@@ -34478,8 +34478,8 @@ async function run() {
         }, {
           data: polling.eventName
         }, {
-          data: `[Link](${polling.checkRunUrl})`
-          // There is not special option. See https://github.com/actions/toolkit/issues/1544
+          data: `<a href="${polling.checkRunUrl}">Link</a>`
+          // Can't use []() style and there is no special option. See https://github.com/actions/toolkit/issues/1544
         }])
       ]);
       import_core3.summary.write();
