@@ -1,8 +1,8 @@
-import { info, setFailed, startGroup, endGroup, setOutput } from '@actions/core';
+import { info, setFailed, startGroup, endGroup, setOutput, summary } from '@actions/core';
 
 import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
-import { PollingReport, colorize, generateReport, getSummaries, readableDuration } from './report.ts';
+import { PollingReport, colorize, emoji, generateReport, getSummaries, readableDuration } from './report.ts';
 import { getInterval, wait } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
 import { Check, Options, Trigger } from './schema.ts';
@@ -114,14 +114,43 @@ async function run(): Promise<void> {
 
     if (shouldStop) {
       if (attempts !== 1) {
-        dumper.results[attempts] = { elapsed, checks, pollingReport: pollingReport };
+        dumper.results[attempts] = { elapsed, checks, pollingReport };
       }
+
+      summary.addHeading('wait-other-jobs');
 
       if (ok) {
         info(colorize('notice', 'all jobs passed'));
+        summary.addRaw(`${emoji('notice')} All jobs passed`, true);
       } else {
         setFailed(colorize('error', 'failed to wait for job success'));
+        summary.addRaw(`${emoji('error')} Failed`, true);
       }
+
+      const headers = [
+        { data: 'Severity', header: true },
+        { data: 'Workflow', header: true },
+        { data: 'Job', header: true },
+        { data: 'Event', header: true },
+        { data: 'URL', header: true },
+      ];
+
+      summary.addTable([
+        headers,
+        ...(pollingReport.summaries.map((polling) => [{
+          data: emoji(polling.severity),
+        }, {
+          data: polling.workflowBasename,
+        }, {
+          data: polling.jobName,
+        }, {
+          data: polling.eventName,
+        }, {
+          data: polling.checkRunUrl,
+        }])),
+      ]);
+
+      summary.write();
 
       break;
     }

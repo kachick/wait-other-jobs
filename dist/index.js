@@ -34149,6 +34149,26 @@ function colorize(severity, message) {
     }
   }
 }
+function emoji(severity) {
+  switch (severity) {
+    case "error": {
+      return `\u274C`;
+    }
+    case "warning": {
+      return `\u{1F914}`;
+    }
+    case "notice": {
+      return `\u2705`;
+    }
+    case "info": {
+      return `\u{1F914}`;
+    }
+    default: {
+      const _exhaustiveCheck = severity;
+      return `\u{1F937}\u200D\u2642`;
+    }
+  }
+}
 function readableDuration(duration) {
   const { hours, minutes, seconds } = duration.round({ largestUnit: "hours" });
   const eachUnit = [`${seconds} seconds`];
@@ -34190,8 +34210,8 @@ function getSummaries(checks, trigger) {
     (a2, b2) => join2(a2.workflowBasename, a2.jobName).localeCompare(join2(b2.workflowBasename, b2.jobName))
   );
 }
-function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summary) {
-  if (workflowFile2 !== summary.workflowBasename) {
+function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summary2) {
+  if (workflowFile2 !== summary2.workflowBasename) {
     return false;
   }
   if (!jobName) {
@@ -34199,10 +34219,10 @@ function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summa
   }
   switch (jobMatchMode) {
     case "exact": {
-      return jobName === summary.jobName;
+      return jobName === summary2.jobName;
     }
     case "prefix": {
-      return summary.jobName.startsWith(jobName);
+      return summary2.jobName.startsWith(jobName);
     }
     default: {
       const _exhaustiveCheck = jobMatchMode;
@@ -34213,9 +34233,9 @@ function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summa
 function seekWaitList(summaries, waitList, elapsed) {
   const seeker = waitList.map((condition) => ({ ...condition, found: false }));
   const filtered = summaries.filter(
-    (summary) => seeker.some((target) => {
-      const isMatchPath = matchPath(target, summary);
-      const isMatchEvent = target.eventName ? target.eventName === summary.eventName : true;
+    (summary2) => seeker.some((target) => {
+      const isMatchPath = matchPath(target, summary2);
+      const isMatchEvent = target.eventName ? target.eventName === summary2.eventName : true;
       if (isMatchPath && isMatchEvent) {
         target.found = true;
         return true;
@@ -34229,11 +34249,11 @@ function seekWaitList(summaries, waitList, elapsed) {
   return { filtered, unmatches, unstarted };
 }
 function judge(summaries) {
-  const summariesByCompleted = groupBy(summaries, (summary) => summary.isCompleted);
+  const summariesByCompleted = groupBy(summaries, (summary2) => summary2.isCompleted);
   const completed = summariesByCompleted.get(true) || [];
   const incompleted = summariesByCompleted.get(false) || [];
   const done = incompleted.length === 0;
-  const failures = completed.filter((summary) => !summary.isAcceptable);
+  const failures = completed.filter((summary2) => !summary2.isAcceptable);
   const ok = failures.length === 0;
   const logs = [];
   if (!ok) {
@@ -34258,7 +34278,7 @@ function judge(summaries) {
 }
 function generateReport(summaries, trigger, elapsed, { waitList, skipList, shouldSkipSameWorkflow }) {
   const others = summaries.filter(
-    (summary) => !(summary.isSameWorkflow && // Ideally this logic should be...
+    (summary2) => !(summary2.isSameWorkflow && // Ideally this logic should be...
     //
     // 1. `trigger(context).jobId === smmmary(checkRun).jobId`
     // But GitHub does not provide the jobId for each checkRun: https://github.com/orgs/community/discussions/8945
@@ -34269,9 +34289,9 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, shoul
     //
     // On the otherhand, the conxtext.jobId will be used for the default jobName
     // Anyway, in matrix use, GitHub uses the default name for the prefix. It should be considered in list based solutions
-    trigger.jobId === summary.jobName)
+    trigger.jobId === summary2.jobName)
   );
-  const targets = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
+  const targets = others.filter((summary2) => !(summary2.isSameWorkflow && shouldSkipSameWorkflow));
   if (waitList.length > 0) {
     const { filtered, unmatches, unstarted } = seekWaitList(targets, waitList, elapsed);
     const { ok, done, logs } = judge(filtered);
@@ -34307,7 +34327,7 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, shoul
     return defaultReport;
   }
   if (skipList.length > 0) {
-    const filtered = targets.filter((summary) => !skipList.some((target) => matchPath(target, summary)));
+    const filtered = targets.filter((summary2) => !skipList.some((target) => matchPath(target, summary2)));
     return { ...judge(filtered), summaries: filtered };
   }
   return { ...judge(targets), summaries: targets };
@@ -34432,11 +34452,36 @@ async function run() {
       if (attempts !== 1) {
         dumper.results[attempts] = { elapsed, checks, pollingReport };
       }
+      import_core3.summary.addHeading("wait-other-jobs");
       if (ok) {
         (0, import_core3.info)(colorize("notice", "all jobs passed"));
+        import_core3.summary.addRaw(`${emoji("notice")} All jobs passed`, true);
       } else {
         (0, import_core3.setFailed)(colorize("error", "failed to wait for job success"));
+        import_core3.summary.addRaw(`${emoji("error")} Failed`, true);
       }
+      const headers = [
+        { data: "Severity", header: true },
+        { data: "Workflow", header: true },
+        { data: "Job", header: true },
+        { data: "Event", header: true },
+        { data: "URL", header: true }
+      ];
+      import_core3.summary.addTable([
+        headers,
+        ...pollingReport.summaries.map((polling) => [{
+          data: emoji(polling.severity)
+        }, {
+          data: polling.workflowBasename
+        }, {
+          data: polling.jobName
+        }, {
+          data: polling.eventName
+        }, {
+          data: polling.checkRunUrl
+        }])
+      ]);
+      import_core3.summary.write();
       break;
     }
   }

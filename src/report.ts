@@ -26,6 +26,27 @@ export function colorize(severity: Severity, message: string): string {
   }
 }
 
+export function emoji(severity: Severity): string {
+  switch (severity) {
+    case 'error': {
+      return `❌`;
+    }
+    case 'warning': {
+      return `🤔`;
+    }
+    case 'notice': {
+      return `✅`;
+    }
+    case 'info': {
+      return `🤔`;
+    }
+    default: {
+      const _exhaustiveCheck: never = severity;
+      return `🤷‍♂`;
+    }
+  }
+}
+
 export function readableDuration(duration: Temporal.Duration): string {
   const { hours, minutes, seconds } = duration.round({ largestUnit: 'hours' });
   const eachUnit = [`${seconds} seconds`];
