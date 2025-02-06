@@ -31,6 +31,7 @@ export async function fetchChecks(
                 workflowRun {
                   databaseId
                   event
+                  url # Don't use "workflow.url", it is the list of runs. Adding "/workflow" into "workflowRun.url" should be useful for permalink
                   workflow {
                     name
                     resourcePath

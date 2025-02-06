@@ -2,7 +2,54 @@ import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
 import { Check, FilterCondition, Options, Trigger, WaitList } from './schema.ts';
 import { join, relative } from 'path';
 import { Temporal } from 'temporal-polyfill';
+import styles from 'ansi-styles';
 import { groupBy } from './util.ts';
+
+export function colorize(severity: Severity, message: string): string {
+  switch (severity) {
+    case 'error': {
+      return `${styles.red.open}${message}${styles.red.close}`;
+    }
+    case 'warning': {
+      return `${styles.yellow.open}${message}${styles.yellow.close}`;
+    }
+    case 'notice': {
+      return `${styles.green.open}${message}${styles.green.close}`;
+    }
+    case 'info': {
+      return message;
+    }
+    default: {
+      const _exhaustiveCheck: never = severity;
+      return message;
+    }
+  }
+}
+
+export function emoji(severity: Severity): string {
+  switch (severity) {
+    case 'error': {
+      return `❌`;
+    }
+    case 'warning': {
+      return `🤔`;
+    }
+    case 'notice': {
+      return `✅`;
+    }
+    case 'info': {
+      return `💬`;
+    }
+    default: {
+      const _exhaustiveCheck: never = severity;
+      return `🤷‍♂`;
+    }
+  }
+}
+
+export function compareLevel(a: Summary, b: Summary): number {
+  return severities[a.severity] - severities[b.severity];
+}
 
 export function readableDuration(duration: Temporal.Duration): string {
   const { hours, minutes, seconds } = duration.round({ largestUnit: 'hours' });
@@ -20,6 +67,7 @@ export interface Summary {
   isAcceptable: boolean;
   isCompleted: boolean;
   severity: Severity;
+  workflowPermalink: string;
   workflowBasename: string;
   isSameWorkflow: boolean;
 
@@ -33,6 +81,8 @@ export interface Summary {
   checkRunUrl: CheckRun['detailsUrl'];
   runStatus: CheckRun['status'];
   runConclusion: CheckRun['conclusion']; // null if status is in progress
+
+  format: () => string;
 }
 
 function summarize(check: Check, trigger: Trigger): Summary {
@@ -46,6 +96,7 @@ function summarize(check: Check, trigger: Trigger): Summary {
     isAcceptable,
     isCompleted,
     severity: isCompleted ? (isAcceptable ? 'notice' : 'error') : 'warning',
+    workflowPermalink: `${workflowRun.url}/workflow`, // workflow.url is not enough for permalink use
     workflowBasename: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
     // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     isSameWorkflow: suite.workflowRun?.databaseId === trigger.runId,
@@ -60,6 +111,16 @@ function summarize(check: Check, trigger: Trigger): Summary {
     checkRunUrl: run.detailsUrl,
     runStatus: run.status,
     runConclusion: run.conclusion,
+
+    format: function() {
+      const nullStr = '(null)';
+
+      return `${this.workflowBasename}(${
+        colorize(this.severity, this.jobName)
+      }): [eventName: ${this.eventName}][runStatus: ${this.runStatus}][runConclusion: ${
+        this.runConclusion ?? nullStr
+      }][runURL: ${this.checkRunUrl}]`;
+    },
   };
 }
 
@@ -69,7 +130,15 @@ export function getSummaries(checks: readonly Check[], trigger: Trigger): Summar
   );
 }
 
-export type Severity = 'error' | 'warning' | 'notice' | 'info';
+// https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
+const severities = Object.freeze({
+  error: 3,
+  warning: 4,
+  notice: 5,
+  info: 6,
+});
+
+export type Severity = keyof typeof severities;
 
 interface Log {
   severity: Severity;
@@ -77,7 +146,7 @@ interface Log {
   resource?: Summary[] | WaitList;
 }
 
-export type Report = {
+export type PollingReport = {
   ok: boolean;
   done: boolean;
   logs: readonly Log[];
@@ -172,7 +241,7 @@ export function generateReport(
     Options,
     'waitList' | 'skipList' | 'shouldSkipSameWorkflow'
   >,
-): Report {
+): PollingReport {
   const others = summaries.filter((summary) =>
     !(summary.isSameWorkflow && (
       // Ideally this logic should be...
@@ -200,7 +269,7 @@ export function generateReport(
         done,
         summaries: filtered,
         logs,
-      } satisfies Report,
+      } satisfies PollingReport,
     );
 
     if (unstarted.length > 0) {

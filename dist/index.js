@@ -24664,192 +24664,6 @@ var require_fast_content_type_parse = __commonJS({
 // src/main.ts
 var import_core3 = __toESM(require_core(), 1);
 
-// node_modules/.pnpm/ansi-styles@6.2.1/node_modules/ansi-styles/index.js
-var ANSI_BACKGROUND_OFFSET = 10;
-var wrapAnsi16 = (offset = 0) => (code) => `\x1B[${code + offset}m`;
-var wrapAnsi256 = (offset = 0) => (code) => `\x1B[${38 + offset};5;${code}m`;
-var wrapAnsi16m = (offset = 0) => (red, green, blue) => `\x1B[${38 + offset};2;${red};${green};${blue}m`;
-var styles = {
-  modifier: {
-    reset: [0, 0],
-    // 21 isn't widely supported and 22 does the same thing
-    bold: [1, 22],
-    dim: [2, 22],
-    italic: [3, 23],
-    underline: [4, 24],
-    overline: [53, 55],
-    inverse: [7, 27],
-    hidden: [8, 28],
-    strikethrough: [9, 29]
-  },
-  color: {
-    black: [30, 39],
-    red: [31, 39],
-    green: [32, 39],
-    yellow: [33, 39],
-    blue: [34, 39],
-    magenta: [35, 39],
-    cyan: [36, 39],
-    white: [37, 39],
-    // Bright color
-    blackBright: [90, 39],
-    gray: [90, 39],
-    // Alias of `blackBright`
-    grey: [90, 39],
-    // Alias of `blackBright`
-    redBright: [91, 39],
-    greenBright: [92, 39],
-    yellowBright: [93, 39],
-    blueBright: [94, 39],
-    magentaBright: [95, 39],
-    cyanBright: [96, 39],
-    whiteBright: [97, 39]
-  },
-  bgColor: {
-    bgBlack: [40, 49],
-    bgRed: [41, 49],
-    bgGreen: [42, 49],
-    bgYellow: [43, 49],
-    bgBlue: [44, 49],
-    bgMagenta: [45, 49],
-    bgCyan: [46, 49],
-    bgWhite: [47, 49],
-    // Bright color
-    bgBlackBright: [100, 49],
-    bgGray: [100, 49],
-    // Alias of `bgBlackBright`
-    bgGrey: [100, 49],
-    // Alias of `bgBlackBright`
-    bgRedBright: [101, 49],
-    bgGreenBright: [102, 49],
-    bgYellowBright: [103, 49],
-    bgBlueBright: [104, 49],
-    bgMagentaBright: [105, 49],
-    bgCyanBright: [106, 49],
-    bgWhiteBright: [107, 49]
-  }
-};
-var modifierNames = Object.keys(styles.modifier);
-var foregroundColorNames = Object.keys(styles.color);
-var backgroundColorNames = Object.keys(styles.bgColor);
-var colorNames = [...foregroundColorNames, ...backgroundColorNames];
-function assembleStyles() {
-  const codes = /* @__PURE__ */ new Map();
-  for (const [groupName, group] of Object.entries(styles)) {
-    for (const [styleName, style] of Object.entries(group)) {
-      styles[styleName] = {
-        open: `\x1B[${style[0]}m`,
-        close: `\x1B[${style[1]}m`
-      };
-      group[styleName] = styles[styleName];
-      codes.set(style[0], style[1]);
-    }
-    Object.defineProperty(styles, groupName, {
-      value: group,
-      enumerable: false
-    });
-  }
-  Object.defineProperty(styles, "codes", {
-    value: codes,
-    enumerable: false
-  });
-  styles.color.close = "\x1B[39m";
-  styles.bgColor.close = "\x1B[49m";
-  styles.color.ansi = wrapAnsi16();
-  styles.color.ansi256 = wrapAnsi256();
-  styles.color.ansi16m = wrapAnsi16m();
-  styles.bgColor.ansi = wrapAnsi16(ANSI_BACKGROUND_OFFSET);
-  styles.bgColor.ansi256 = wrapAnsi256(ANSI_BACKGROUND_OFFSET);
-  styles.bgColor.ansi16m = wrapAnsi16m(ANSI_BACKGROUND_OFFSET);
-  Object.defineProperties(styles, {
-    rgbToAnsi256: {
-      value: (red, green, blue) => {
-        if (red === green && green === blue) {
-          if (red < 8) {
-            return 16;
-          }
-          if (red > 248) {
-            return 231;
-          }
-          return Math.round((red - 8) / 247 * 24) + 232;
-        }
-        return 16 + 36 * Math.round(red / 255 * 5) + 6 * Math.round(green / 255 * 5) + Math.round(blue / 255 * 5);
-      },
-      enumerable: false
-    },
-    hexToRgb: {
-      value: (hex) => {
-        const matches = /[a-f\d]{6}|[a-f\d]{3}/i.exec(hex.toString(16));
-        if (!matches) {
-          return [0, 0, 0];
-        }
-        let [colorString] = matches;
-        if (colorString.length === 3) {
-          colorString = [...colorString].map((character) => character + character).join("");
-        }
-        const integer = Number.parseInt(colorString, 16);
-        return [
-          /* eslint-disable no-bitwise */
-          integer >> 16 & 255,
-          integer >> 8 & 255,
-          integer & 255
-          /* eslint-enable no-bitwise */
-        ];
-      },
-      enumerable: false
-    },
-    hexToAnsi256: {
-      value: (hex) => styles.rgbToAnsi256(...styles.hexToRgb(hex)),
-      enumerable: false
-    },
-    ansi256ToAnsi: {
-      value: (code) => {
-        if (code < 8) {
-          return 30 + code;
-        }
-        if (code < 16) {
-          return 90 + (code - 8);
-        }
-        let red;
-        let green;
-        let blue;
-        if (code >= 232) {
-          red = ((code - 232) * 10 + 8) / 255;
-          green = red;
-          blue = red;
-        } else {
-          code -= 16;
-          const remainder = code % 36;
-          red = Math.floor(code / 36) / 5;
-          green = Math.floor(remainder / 6) / 5;
-          blue = remainder % 6 / 5;
-        }
-        const value = Math.max(red, green, blue) * 2;
-        if (value === 0) {
-          return 30;
-        }
-        let result = 30 + (Math.round(blue) << 2 | Math.round(green) << 1 | Math.round(red));
-        if (value === 2) {
-          result += 60;
-        }
-        return result;
-      },
-      enumerable: false
-    },
-    rgbToAnsi: {
-      value: (red, green, blue) => styles.ansi256ToAnsi(styles.rgbToAnsi256(red, green, blue)),
-      enumerable: false
-    },
-    hexToAnsi: {
-      value: (hex) => styles.ansi256ToAnsi(styles.hexToAnsi256(hex)),
-      enumerable: false
-    }
-  });
-  return styles;
-}
-var ansiStyles = assembleStyles();
-var ansi_styles_default = ansiStyles;
-
 // src/input.ts
 var import_core = __toESM(require_core(), 1);
 var import_github = __toESM(require_github(), 1);
@@ -34051,6 +33865,7 @@ async function fetchChecks(apiUrl, token, trigger) {
                 workflowRun {
                   databaseId
                   event
+                  url # Don't use "workflow.url", it is the list of runs. Adding "/workflow" into "workflowRun.url" should be useful for permalink
                   workflow {
                     name
                     resourcePath
@@ -34111,6 +33926,192 @@ async function fetchChecks(apiUrl, token, trigger) {
 // src/report.ts
 import { join as join2, relative } from "path";
 
+// node_modules/.pnpm/ansi-styles@6.2.1/node_modules/ansi-styles/index.js
+var ANSI_BACKGROUND_OFFSET = 10;
+var wrapAnsi16 = (offset = 0) => (code) => `\x1B[${code + offset}m`;
+var wrapAnsi256 = (offset = 0) => (code) => `\x1B[${38 + offset};5;${code}m`;
+var wrapAnsi16m = (offset = 0) => (red, green, blue) => `\x1B[${38 + offset};2;${red};${green};${blue}m`;
+var styles = {
+  modifier: {
+    reset: [0, 0],
+    // 21 isn't widely supported and 22 does the same thing
+    bold: [1, 22],
+    dim: [2, 22],
+    italic: [3, 23],
+    underline: [4, 24],
+    overline: [53, 55],
+    inverse: [7, 27],
+    hidden: [8, 28],
+    strikethrough: [9, 29]
+  },
+  color: {
+    black: [30, 39],
+    red: [31, 39],
+    green: [32, 39],
+    yellow: [33, 39],
+    blue: [34, 39],
+    magenta: [35, 39],
+    cyan: [36, 39],
+    white: [37, 39],
+    // Bright color
+    blackBright: [90, 39],
+    gray: [90, 39],
+    // Alias of `blackBright`
+    grey: [90, 39],
+    // Alias of `blackBright`
+    redBright: [91, 39],
+    greenBright: [92, 39],
+    yellowBright: [93, 39],
+    blueBright: [94, 39],
+    magentaBright: [95, 39],
+    cyanBright: [96, 39],
+    whiteBright: [97, 39]
+  },
+  bgColor: {
+    bgBlack: [40, 49],
+    bgRed: [41, 49],
+    bgGreen: [42, 49],
+    bgYellow: [43, 49],
+    bgBlue: [44, 49],
+    bgMagenta: [45, 49],
+    bgCyan: [46, 49],
+    bgWhite: [47, 49],
+    // Bright color
+    bgBlackBright: [100, 49],
+    bgGray: [100, 49],
+    // Alias of `bgBlackBright`
+    bgGrey: [100, 49],
+    // Alias of `bgBlackBright`
+    bgRedBright: [101, 49],
+    bgGreenBright: [102, 49],
+    bgYellowBright: [103, 49],
+    bgBlueBright: [104, 49],
+    bgMagentaBright: [105, 49],
+    bgCyanBright: [106, 49],
+    bgWhiteBright: [107, 49]
+  }
+};
+var modifierNames = Object.keys(styles.modifier);
+var foregroundColorNames = Object.keys(styles.color);
+var backgroundColorNames = Object.keys(styles.bgColor);
+var colorNames = [...foregroundColorNames, ...backgroundColorNames];
+function assembleStyles() {
+  const codes = /* @__PURE__ */ new Map();
+  for (const [groupName, group] of Object.entries(styles)) {
+    for (const [styleName, style] of Object.entries(group)) {
+      styles[styleName] = {
+        open: `\x1B[${style[0]}m`,
+        close: `\x1B[${style[1]}m`
+      };
+      group[styleName] = styles[styleName];
+      codes.set(style[0], style[1]);
+    }
+    Object.defineProperty(styles, groupName, {
+      value: group,
+      enumerable: false
+    });
+  }
+  Object.defineProperty(styles, "codes", {
+    value: codes,
+    enumerable: false
+  });
+  styles.color.close = "\x1B[39m";
+  styles.bgColor.close = "\x1B[49m";
+  styles.color.ansi = wrapAnsi16();
+  styles.color.ansi256 = wrapAnsi256();
+  styles.color.ansi16m = wrapAnsi16m();
+  styles.bgColor.ansi = wrapAnsi16(ANSI_BACKGROUND_OFFSET);
+  styles.bgColor.ansi256 = wrapAnsi256(ANSI_BACKGROUND_OFFSET);
+  styles.bgColor.ansi16m = wrapAnsi16m(ANSI_BACKGROUND_OFFSET);
+  Object.defineProperties(styles, {
+    rgbToAnsi256: {
+      value: (red, green, blue) => {
+        if (red === green && green === blue) {
+          if (red < 8) {
+            return 16;
+          }
+          if (red > 248) {
+            return 231;
+          }
+          return Math.round((red - 8) / 247 * 24) + 232;
+        }
+        return 16 + 36 * Math.round(red / 255 * 5) + 6 * Math.round(green / 255 * 5) + Math.round(blue / 255 * 5);
+      },
+      enumerable: false
+    },
+    hexToRgb: {
+      value: (hex) => {
+        const matches = /[a-f\d]{6}|[a-f\d]{3}/i.exec(hex.toString(16));
+        if (!matches) {
+          return [0, 0, 0];
+        }
+        let [colorString] = matches;
+        if (colorString.length === 3) {
+          colorString = [...colorString].map((character) => character + character).join("");
+        }
+        const integer = Number.parseInt(colorString, 16);
+        return [
+          /* eslint-disable no-bitwise */
+          integer >> 16 & 255,
+          integer >> 8 & 255,
+          integer & 255
+          /* eslint-enable no-bitwise */
+        ];
+      },
+      enumerable: false
+    },
+    hexToAnsi256: {
+      value: (hex) => styles.rgbToAnsi256(...styles.hexToRgb(hex)),
+      enumerable: false
+    },
+    ansi256ToAnsi: {
+      value: (code) => {
+        if (code < 8) {
+          return 30 + code;
+        }
+        if (code < 16) {
+          return 90 + (code - 8);
+        }
+        let red;
+        let green;
+        let blue;
+        if (code >= 232) {
+          red = ((code - 232) * 10 + 8) / 255;
+          green = red;
+          blue = red;
+        } else {
+          code -= 16;
+          const remainder = code % 36;
+          red = Math.floor(code / 36) / 5;
+          green = Math.floor(remainder / 6) / 5;
+          blue = remainder % 6 / 5;
+        }
+        const value = Math.max(red, green, blue) * 2;
+        if (value === 0) {
+          return 30;
+        }
+        let result = 30 + (Math.round(blue) << 2 | Math.round(green) << 1 | Math.round(red));
+        if (value === 2) {
+          result += 60;
+        }
+        return result;
+      },
+      enumerable: false
+    },
+    rgbToAnsi: {
+      value: (red, green, blue) => styles.ansi256ToAnsi(styles.rgbToAnsi256(red, green, blue)),
+      enumerable: false
+    },
+    hexToAnsi: {
+      value: (hex) => styles.ansi256ToAnsi(styles.hexToAnsi256(hex)),
+      enumerable: false
+    }
+  });
+  return styles;
+}
+var ansiStyles = assembleStyles();
+var ansi_styles_default = ansiStyles;
+
 // src/util.ts
 function groupBy(items, callback) {
   const map = /* @__PURE__ */ new Map();
@@ -34129,6 +34130,49 @@ function groupBy(items, callback) {
 }
 
 // src/report.ts
+function colorize(severity, message) {
+  switch (severity) {
+    case "error": {
+      return `${ansi_styles_default.red.open}${message}${ansi_styles_default.red.close}`;
+    }
+    case "warning": {
+      return `${ansi_styles_default.yellow.open}${message}${ansi_styles_default.yellow.close}`;
+    }
+    case "notice": {
+      return `${ansi_styles_default.green.open}${message}${ansi_styles_default.green.close}`;
+    }
+    case "info": {
+      return message;
+    }
+    default: {
+      const _exhaustiveCheck = severity;
+      return message;
+    }
+  }
+}
+function emoji(severity) {
+  switch (severity) {
+    case "error": {
+      return `\u274C`;
+    }
+    case "warning": {
+      return `\u{1F914}`;
+    }
+    case "notice": {
+      return `\u2705`;
+    }
+    case "info": {
+      return `\u{1F4AC}`;
+    }
+    default: {
+      const _exhaustiveCheck = severity;
+      return `\u{1F937}\u200D\u2642`;
+    }
+  }
+}
+function compareLevel(a2, b2) {
+  return severities[a2.severity] - severities[b2.severity];
+}
 function readableDuration(duration) {
   const { hours, minutes, seconds } = duration.round({ largestUnit: "hours" });
   const eachUnit = [`${seconds} seconds`];
@@ -34148,6 +34192,8 @@ function summarize(check, trigger) {
     isAcceptable,
     isCompleted,
     severity: isCompleted ? isAcceptable ? "notice" : "error" : "warning",
+    workflowPermalink: `${workflowRun.url}/workflow`,
+    // workflow.url is not enough for permalink use
     workflowBasename: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
     // Another file can set same workflow name. So you should filter workfrows from runId or the filename
     isSameWorkflow: suite.workflowRun?.databaseId === trigger.runId,
@@ -34158,7 +34204,11 @@ function summarize(check, trigger) {
     jobName: run2.name,
     checkRunUrl: run2.detailsUrl,
     runStatus: run2.status,
-    runConclusion: run2.conclusion
+    runConclusion: run2.conclusion,
+    format: function() {
+      const nullStr = "(null)";
+      return `${this.workflowBasename}(${colorize(this.severity, this.jobName)}): [eventName: ${this.eventName}][runStatus: ${this.runStatus}][runConclusion: ${this.runConclusion ?? nullStr}][runURL: ${this.checkRunUrl}]`;
+    }
   };
 }
 function getSummaries(checks, trigger) {
@@ -34166,8 +34216,14 @@ function getSummaries(checks, trigger) {
     (a2, b2) => join2(a2.workflowBasename, a2.jobName).localeCompare(join2(b2.workflowBasename, b2.jobName))
   );
 }
-function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summary) {
-  if (workflowFile2 !== summary.workflowBasename) {
+var severities = Object.freeze({
+  error: 3,
+  warning: 4,
+  notice: 5,
+  info: 6
+});
+function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summary2) {
+  if (workflowFile2 !== summary2.workflowBasename) {
     return false;
   }
   if (!jobName) {
@@ -34175,10 +34231,10 @@ function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summa
   }
   switch (jobMatchMode) {
     case "exact": {
-      return jobName === summary.jobName;
+      return jobName === summary2.jobName;
     }
     case "prefix": {
-      return summary.jobName.startsWith(jobName);
+      return summary2.jobName.startsWith(jobName);
     }
     default: {
       const _exhaustiveCheck = jobMatchMode;
@@ -34189,9 +34245,9 @@ function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summa
 function seekWaitList(summaries, waitList, elapsed) {
   const seeker = waitList.map((condition) => ({ ...condition, found: false }));
   const filtered = summaries.filter(
-    (summary) => seeker.some((target) => {
-      const isMatchPath = matchPath(target, summary);
-      const isMatchEvent = target.eventName ? target.eventName === summary.eventName : true;
+    (summary2) => seeker.some((target) => {
+      const isMatchPath = matchPath(target, summary2);
+      const isMatchEvent = target.eventName ? target.eventName === summary2.eventName : true;
       if (isMatchPath && isMatchEvent) {
         target.found = true;
         return true;
@@ -34205,11 +34261,11 @@ function seekWaitList(summaries, waitList, elapsed) {
   return { filtered, unmatches, unstarted };
 }
 function judge(summaries) {
-  const summariesByCompleted = groupBy(summaries, (summary) => summary.isCompleted);
+  const summariesByCompleted = groupBy(summaries, (summary2) => summary2.isCompleted);
   const completed = summariesByCompleted.get(true) || [];
   const incompleted = summariesByCompleted.get(false) || [];
   const done = incompleted.length === 0;
-  const failures = completed.filter((summary) => !summary.isAcceptable);
+  const failures = completed.filter((summary2) => !summary2.isAcceptable);
   const ok = failures.length === 0;
   const logs = [];
   if (!ok) {
@@ -34234,7 +34290,7 @@ function judge(summaries) {
 }
 function generateReport(summaries, trigger, elapsed, { waitList, skipList, shouldSkipSameWorkflow }) {
   const others = summaries.filter(
-    (summary) => !(summary.isSameWorkflow && // Ideally this logic should be...
+    (summary2) => !(summary2.isSameWorkflow && // Ideally this logic should be...
     //
     // 1. `trigger(context).jobId === smmmary(checkRun).jobId`
     // But GitHub does not provide the jobId for each checkRun: https://github.com/orgs/community/discussions/8945
@@ -34245,9 +34301,9 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, shoul
     //
     // On the otherhand, the conxtext.jobId will be used for the default jobName
     // Anyway, in matrix use, GitHub uses the default name for the prefix. It should be considered in list based solutions
-    trigger.jobId === summary.jobName)
+    trigger.jobId === summary2.jobName)
   );
-  const targets = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
+  const targets = others.filter((summary2) => !(summary2.isSameWorkflow && shouldSkipSameWorkflow));
   if (waitList.length > 0) {
     const { filtered, unmatches, unstarted } = seekWaitList(targets, waitList, elapsed);
     const { ok, done, logs } = judge(filtered);
@@ -34283,7 +34339,7 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, shoul
     return defaultReport;
   }
   if (skipList.length > 0) {
-    const filtered = targets.filter((summary) => !skipList.some((target) => matchPath(target, summary)));
+    const filtered = targets.filter((summary2) => !skipList.some((target) => matchPath(target, summary2)));
     return { ...judge(filtered), summaries: filtered };
   }
   return { ...judge(targets), summaries: targets };
@@ -34330,26 +34386,6 @@ function getInterval(method, leastInterval, attempts) {
 // src/main.ts
 import { join as join3 } from "path";
 import { writeFileSync } from "fs";
-function colorize(severity, message) {
-  switch (severity) {
-    case "error": {
-      return `${ansi_styles_default.red.open}${message}${ansi_styles_default.red.close}`;
-    }
-    case "warning": {
-      return `${ansi_styles_default.yellow.open}${message}${ansi_styles_default.yellow.close}`;
-    }
-    case "notice": {
-      return `${ansi_styles_default.green.open}${message}${ansi_styles_default.green.close}`;
-    }
-    case "info": {
-      return message;
-    }
-    default: {
-      const _exhaustiveCheck = severity;
-      return message;
-    }
-  }
-}
 async function run() {
   const startedAt = performance.now();
   (0, import_core3.startGroup)("Parameters");
@@ -34392,31 +34428,19 @@ async function run() {
     const elapsed = mr.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
     (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()} # total elapsed ${readableDuration(elapsed)}`);
     const checks = await fetchChecks(options.apiUrl, githubToken, trigger);
-    const report = generateReport(
+    const pollingReport = generateReport(
       getSummaries(checks, trigger),
       trigger,
       elapsed,
       options
     );
     if (attempts === 1) {
-      dumper.results[attempts] = { elapsed, checks, report };
+      dumper.results[attempts] = { elapsed, checks, pollingReport };
     }
-    for (const summary of report.summaries) {
-      const {
-        runStatus,
-        runConclusion,
-        jobName,
-        workflowBasename,
-        checkRunUrl,
-        eventName,
-        severity
-      } = summary;
-      const nullStr = "(null)";
-      (0, import_core3.info)(
-        `${workflowBasename}(${colorize(severity, jobName)}): [eventName: ${eventName}][runStatus: ${runStatus}][runConclusion: ${runConclusion ?? nullStr}][runURL: ${checkRunUrl}]`
-      );
+    for (const pollingSummary of pollingReport.summaries) {
+      (0, import_core3.info)(pollingSummary.format());
     }
-    const { ok, done, logs } = report;
+    const { ok, done, logs } = pollingReport;
     for (const { severity, message, resource } of logs) {
       (0, import_core3.info)(colorize(severity, message));
       if (severity != "info" && resource) {
@@ -34438,13 +34462,54 @@ async function run() {
     (0, import_core3.endGroup)();
     if (shouldStop) {
       if (attempts !== 1) {
-        dumper.results[attempts] = { elapsed, checks, report };
+        dumper.results[attempts] = { elapsed, checks, pollingReport };
       }
+      import_core3.summary.addHeading("wait-other-jobs", 1);
+      import_core3.summary.addHeading("Conclusion", 2);
       if (ok) {
         (0, import_core3.info)(colorize("notice", "all jobs passed"));
+        import_core3.summary.addRaw(`${emoji("notice")} All jobs passed`, true);
       } else {
         (0, import_core3.setFailed)(colorize("error", "failed to wait for job success"));
+        import_core3.summary.addRaw(`${emoji("error")} Failed`, true);
+        if (options.isEarlyExit) {
+          import_core3.summary.addHeading("Note", 3);
+          import_core3.summary.addRaw(
+            `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
+            true
+          );
+        }
       }
+      import_core3.summary.addHeading("Details", 2);
+      const headers = [
+        { data: "Severity", header: true },
+        { data: "Workflow", header: true },
+        { data: "Job", header: true },
+        { data: "Event", header: true },
+        { data: "Status", header: true },
+        { data: "Conclusion", header: true },
+        { data: "Log", header: true }
+      ];
+      import_core3.summary.addTable([
+        headers,
+        ...pollingReport.summaries.toSorted(compareLevel).map((polling) => [{
+          data: emoji(polling.severity)
+        }, {
+          data: `<a href="${polling.workflowPermalink}">${polling.workflowBasename}</a>`
+        }, {
+          data: polling.jobName
+        }, {
+          data: polling.eventName
+        }, {
+          data: polling.runStatus
+        }, {
+          data: polling.runConclusion ?? ""
+        }, {
+          data: `<a href="${polling.checkRunUrl}">Link</a>`
+          // Can't use []() style and there is no special option. See https://github.com/actions/toolkit/issues/1544
+        }])
+      ]);
+      import_core3.summary.write();
       break;
     }
   }
