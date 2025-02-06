@@ -34162,13 +34162,16 @@ function emoji(severity) {
       return `\u2705`;
     }
     case "info": {
-      return `\u{1F914}`;
+      return `\u{1F4AC}`;
     }
     default: {
       const _exhaustiveCheck = severity;
       return `\u{1F937}\u200D\u2642`;
     }
   }
+}
+function compareLevel(a2, b2) {
+  return severities[a2.severity] - severities[b2.severity];
 }
 function readableDuration(duration) {
   const { hours, minutes, seconds } = duration.round({ largestUnit: "hours" });
@@ -34213,6 +34216,12 @@ function getSummaries(checks, trigger) {
     (a2, b2) => join2(a2.workflowBasename, a2.jobName).localeCompare(join2(b2.workflowBasename, b2.jobName))
   );
 }
+var severities = Object.freeze({
+  error: 3,
+  warning: 4,
+  notice: 5,
+  info: 6
+});
 function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summary2) {
   if (workflowFile2 !== summary2.workflowBasename) {
     return false;
@@ -34472,7 +34481,7 @@ async function run() {
       ];
       import_core3.summary.addTable([
         headers,
-        ...pollingReport.summaries.map((polling) => [{
+        ...pollingReport.summaries.toSorted(compareLevel).map((polling) => [{
           data: emoji(polling.severity)
         }, {
           data: `<a href="${polling.workflowPermalink}">${polling.workflowBasename}</a>`

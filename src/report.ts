@@ -38,13 +38,17 @@ export function emoji(severity: Severity): string {
       return `✅`;
     }
     case 'info': {
-      return `🤔`;
+      return `💬`;
     }
     default: {
       const _exhaustiveCheck: never = severity;
       return `🤷‍♂`;
     }
   }
+}
+
+export function compareLevel(a: Summary, b: Summary): number {
+  return severities[a.severity] - severities[b.severity];
 }
 
 export function readableDuration(duration: Temporal.Duration): string {
@@ -126,7 +130,15 @@ export function getSummaries(checks: readonly Check[], trigger: Trigger): Summar
   );
 }
 
-export type Severity = 'error' | 'warning' | 'notice' | 'info';
+// https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
+const severities = Object.freeze({
+  error: 3,
+  warning: 4,
+  notice: 5,
+  info: 6,
+});
+
+export type Severity = keyof typeof severities;
 
 interface Log {
   severity: Severity;

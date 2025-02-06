@@ -2,7 +2,15 @@ import { info, setFailed, startGroup, endGroup, setOutput, summary } from '@acti
 
 import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
-import { PollingReport, colorize, emoji, generateReport, getSummaries, readableDuration } from './report.ts';
+import {
+  PollingReport,
+  colorize,
+  compareLevel,
+  emoji,
+  generateReport,
+  getSummaries,
+  readableDuration,
+} from './report.ts';
 import { getInterval, wait } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
 import { Check, Options, Trigger } from './schema.ts';
@@ -137,7 +145,7 @@ async function run(): Promise<void> {
 
       summary.addTable([
         headers,
-        ...(pollingReport.summaries.map((polling) => [{
+        ...(pollingReport.summaries.toSorted(compareLevel).map((polling) => [{
           data: emoji(polling.severity),
         }, {
           data: `<a href="${polling.workflowPermalink}">${polling.workflowBasename}</a>`,
