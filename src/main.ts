@@ -132,7 +132,7 @@ async function run(): Promise<void> {
         { data: 'Workflow', header: true },
         { data: 'Job', header: true },
         { data: 'Event', header: true },
-        { data: 'URL', header: true },
+        { data: 'Log', header: true },
       ];
 
       summary.addTable([
@@ -146,7 +146,7 @@ async function run(): Promise<void> {
         }, {
           data: polling.eventName,
         }, {
-          data: polling.checkRunUrl,
+          data: `[Link](${polling.checkRunUrl})`, // There is not special option. See https://github.com/actions/toolkit/issues/1544
         }])),
       ]);
 

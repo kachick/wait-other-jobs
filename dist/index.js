@@ -34465,7 +34465,7 @@ async function run() {
         { data: "Workflow", header: true },
         { data: "Job", header: true },
         { data: "Event", header: true },
-        { data: "URL", header: true }
+        { data: "Log", header: true }
       ];
       import_core3.summary.addTable([
         headers,
@@ -34478,7 +34478,8 @@ async function run() {
         }, {
           data: polling.eventName
         }, {
-          data: polling.checkRunUrl
+          data: `[Link](${polling.checkRunUrl})`
+          // There is not special option. See https://github.com/actions/toolkit/issues/1544
         }])
       ]);
       import_core3.summary.write();
