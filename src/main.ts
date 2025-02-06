@@ -137,6 +137,7 @@ async function run(): Promise<void> {
         summary.addRaw(`${emoji('error')} Failed`, true);
 
         if (options.isEarlyExit) {
+          summary.addHeading('Note', 3);
           summary.addRaw(
             `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
             true,
