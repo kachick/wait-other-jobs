@@ -34479,6 +34479,8 @@ async function run() {
         { data: "Workflow", header: true },
         { data: "Job", header: true },
         { data: "Event", header: true },
+        { data: "Status", header: true },
+        { data: "Conclusion", header: true },
         { data: "Log", header: true }
       ];
       import_core3.summary.addTable([
@@ -34491,6 +34493,10 @@ async function run() {
           data: polling.jobName
         }, {
           data: polling.eventName
+        }, {
+          data: polling.runStatus
+        }, {
+          data: polling.runConclusion ?? ""
         }, {
           data: `<a href="${polling.checkRunUrl}">Link</a>`
           // Can't use []() style and there is no special option. See https://github.com/actions/toolkit/issues/1544
