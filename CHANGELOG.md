@@ -3,6 +3,8 @@
 This file only records notable changes. Not synchronized with all releases and tags.
 
 - main - not yet released
+- v3.7.0
+  - Begins outputting job summary: [#1026](https://github.com/kachick/wait-other-jobs/pull/1026)
 - v3.6.0
   - Make it possible to start the first polling immediately: [#995](https://github.com/kachick/wait-other-jobs/pull/995)
 - v3.5.0
