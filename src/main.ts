@@ -135,6 +135,13 @@ async function run(): Promise<void> {
       } else {
         setFailed(colorize('error', 'failed to wait for job success'));
         summary.addRaw(`${emoji('error')} Failed`, true);
+
+        if (options.isEarlyExit) {
+          summary.addRaw(
+            `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
+            true,
+          );
+        }
       }
 
       summary.addHeading('Details', 2);

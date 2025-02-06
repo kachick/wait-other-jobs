@@ -34472,6 +34472,12 @@ async function run() {
       } else {
         (0, import_core3.setFailed)(colorize("error", "failed to wait for job success"));
         import_core3.summary.addRaw(`${emoji("error")} Failed`, true);
+        if (options.isEarlyExit) {
+          import_core3.summary.addRaw(
+            `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
+            true
+          );
+        }
       }
       import_core3.summary.addHeading("Details", 2);
       const headers = [
