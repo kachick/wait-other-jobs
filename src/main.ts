@@ -1,40 +1,18 @@
 import { info, setFailed, startGroup, endGroup, setOutput } from '@actions/core';
-import styles from 'ansi-styles';
-
-function colorize(severity: Severity, message: string): string {
-  switch (severity) {
-    case 'error': {
-      return `${styles.red.open}${message}${styles.red.close}`;
-    }
-    case 'warning': {
-      return `${styles.yellow.open}${message}${styles.yellow.close}`;
-    }
-    case 'notice': {
-      return `${styles.green.open}${message}${styles.green.close}`;
-    }
-    case 'info': {
-      return message;
-    }
-    default: {
-      const _exhaustiveCheck: never = severity;
-      return message;
-    }
-  }
-}
 
 import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
-import { Report, Severity, generateReport, getSummaries, readableDuration } from './report.ts';
+import { PollingReport, colorize, generateReport, getSummaries, readableDuration } from './report.ts';
 import { getInterval, wait } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
 import { Check, Options, Trigger } from './schema.ts';
 import { join } from 'path';
 import { writeFileSync } from 'fs';
 
-interface Result {
+interface PollingResult {
   elapsed: Temporal.Duration;
   checks: Check[];
-  report: Report;
+  pollingReport: PollingReport;
 }
 
 // `payload` is intentionally omitted for now: https://github.com/kachick/wait-other-jobs/pull/832#discussion_r1625952633
@@ -42,7 +20,7 @@ interface Dumper {
   trigger: Trigger;
   options: Options;
   // - Do not include all pollings in one file, it might be large size
-  results: Record<number, Result>;
+  results: Record<number, PollingResult>;
 }
 
 async function run(): Promise<void> {
@@ -95,7 +73,7 @@ async function run(): Promise<void> {
     startGroup(`Polling ${attempts}: ${(new Date()).toISOString()} # total elapsed ${readableDuration(elapsed)}`);
     const checks = await fetchChecks(options.apiUrl, githubToken, trigger);
 
-    const report = generateReport(
+    const pollingReport = generateReport(
       getSummaries(checks, trigger),
       trigger,
       elapsed,
@@ -103,31 +81,14 @@ async function run(): Promise<void> {
     );
 
     if (attempts === 1) {
-      dumper.results[attempts] = { elapsed: elapsed, checks, report };
+      dumper.results[attempts] = { elapsed, checks, pollingReport };
     }
 
-    for (const summary of report.summaries) {
-      const {
-        runStatus,
-        runConclusion,
-        jobName,
-        workflowBasename,
-        checkRunUrl,
-        eventName,
-        severity,
-      } = summary;
-      const nullStr = '(null)';
-
-      info(
-        `${workflowBasename}(${
-          colorize(severity, jobName)
-        }): [eventName: ${eventName}][runStatus: ${runStatus}][runConclusion: ${
-          runConclusion ?? nullStr
-        }][runURL: ${checkRunUrl}]`,
-      );
+    for (const pollingSummary of pollingReport.summaries) {
+      info(pollingSummary.format());
     }
 
-    const { ok, done, logs } = report;
+    const { ok, done, logs } = pollingReport;
 
     for (const { severity, message, resource } of logs) {
       info(colorize(severity, message));
@@ -153,7 +114,7 @@ async function run(): Promise<void> {
 
     if (shouldStop) {
       if (attempts !== 1) {
-        dumper.results[attempts] = { elapsed, checks, report };
+        dumper.results[attempts] = { elapsed, checks, pollingReport: pollingReport };
       }
 
       if (ok) {

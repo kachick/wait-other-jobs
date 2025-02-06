@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './fixtures/snapshot.ts';
-import { Report, Summary, generateReport, getSummaries, readableDuration } from '../src/report.ts';
+import { PollingReport, Summary, generateReport, getSummaries, readableDuration } from '../src/report.ts';
 import { omit } from '../src/util.ts';
 import { Temporal } from 'temporal-polyfill';
 import { jsonEqual } from './assert.ts';
@@ -33,6 +33,8 @@ const exampleSummary = Object.freeze(
     runStatus: 'IN_PROGRESS',
     runConclusion: 'FAILURE',
     severity: 'error',
+
+    format: () => '',
   } as const satisfies Summary,
 );
 
@@ -78,7 +80,7 @@ test('wait-list', async (t) => {
       },
     );
 
-    assert.deepStrictEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+    assert.deepStrictEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
       done: true,
       logs: [],
       ok: true,
@@ -134,7 +136,7 @@ test('wait-list', async (t) => {
       },
     );
 
-    jsonEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+    jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
       done: false,
       logs: [
         {
@@ -215,7 +217,7 @@ test('wait-list', async (t) => {
       );
 
       jsonEqual(
-        omit<Report, 'summaries'>(report, ['summaries']),
+        omit<PollingReport, 'summaries'>(report, ['summaries']),
         {
           done: false,
           logs: [
@@ -288,7 +290,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      jsonEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+      jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
         done: false,
         logs: [
           {
@@ -358,7 +360,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      jsonEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+      jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
         done: false,
         logs: [
           {
@@ -449,7 +451,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      jsonEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+      jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
         done: false,
         logs: [
           {
@@ -529,7 +531,7 @@ test('skip-list', async (t) => {
       },
     );
 
-    assert.deepStrictEqual(omit<Report, 'summaries'>(exactReport, ['summaries']), {
+    assert.deepStrictEqual(omit<PollingReport, 'summaries'>(exactReport, ['summaries']), {
       done: true,
       logs: [],
       ok: true,
@@ -583,7 +585,7 @@ test('skip-list', async (t) => {
       },
     );
 
-    jsonEqual(omit<Report, 'summaries'>(report, ['summaries']), {
+    jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
       done: true,
       logs: [],
       ok: true,
