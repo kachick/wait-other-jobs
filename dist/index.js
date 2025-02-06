@@ -34464,7 +34464,8 @@ async function run() {
       if (attempts !== 1) {
         dumper.results[attempts] = { elapsed, checks, pollingReport };
       }
-      import_core3.summary.addHeading("wait-other-jobs");
+      import_core3.summary.addHeading("wait-other-jobs", 1);
+      import_core3.summary.addHeading("Conclusion", 2);
       if (ok) {
         (0, import_core3.info)(colorize("notice", "all jobs passed"));
         import_core3.summary.addRaw(`${emoji("notice")} All jobs passed`, true);
@@ -34472,6 +34473,7 @@ async function run() {
         (0, import_core3.setFailed)(colorize("error", "failed to wait for job success"));
         import_core3.summary.addRaw(`${emoji("error")} Failed`, true);
       }
+      import_core3.summary.addHeading("Details", 2);
       const headers = [
         { data: "Severity", header: true },
         { data: "Workflow", header: true },

@@ -125,7 +125,9 @@ async function run(): Promise<void> {
         dumper.results[attempts] = { elapsed, checks, pollingReport };
       }
 
-      summary.addHeading('wait-other-jobs');
+      summary.addHeading('wait-other-jobs', 1);
+
+      summary.addHeading('Conclusion', 2);
 
       if (ok) {
         info(colorize('notice', 'all jobs passed'));
@@ -134,6 +136,8 @@ async function run(): Promise<void> {
         setFailed(colorize('error', 'failed to wait for job success'));
         summary.addRaw(`${emoji('error')} Failed`, true);
       }
+
+      summary.addHeading('Details', 2);
 
       const headers = [
         { data: 'Severity', header: true },
