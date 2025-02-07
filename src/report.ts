@@ -1,54 +1,43 @@
+import { summary } from '@actions/core';
 import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
 import { Check, FilterCondition, Options, Trigger, WaitList } from './schema.ts';
 import { join, relative } from 'path';
 import { Temporal } from 'temporal-polyfill';
-import styles from 'ansi-styles';
+import styles, { CSPair } from 'ansi-styles';
 import { groupBy } from './util.ts';
 
+interface Meta {
+  color: CSPair | null;
+  emoji: string;
+  level: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7; // https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
+}
+
+// https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
+const severities = Object.freeze({
+  error: Object.freeze({ color: styles.red, emoji: '❌', level: 3 }),
+  warning: Object.freeze({ color: styles.yellow, emoji: '🤔', level: 4 }),
+  notice: Object.freeze({ color: styles.green, emoji: '✅', level: 5 }),
+  info: Object.freeze({ color: null, emoji: '💬', level: 6 }),
+}) satisfies { [key: string]: Meta };
+
+export type Severity = keyof typeof severities;
+
 export function colorize(severity: Severity, message: string): string {
-  switch (severity) {
-    case 'error': {
-      return `${styles.red.open}${message}${styles.red.close}`;
-    }
-    case 'warning': {
-      return `${styles.yellow.open}${message}${styles.yellow.close}`;
-    }
-    case 'notice': {
-      return `${styles.green.open}${message}${styles.green.close}`;
-    }
-    case 'info': {
-      return message;
-    }
-    default: {
-      const _exhaustiveCheck: never = severity;
-      return message;
-    }
+  const color = severities[severity].color;
+
+  if (color) {
+    return `${color.open}${message}${color.close}`;
   }
+
+  return message;
 }
 
-export function emoji(severity: Severity): string {
-  switch (severity) {
-    case 'error': {
-      return `❌`;
-    }
-    case 'warning': {
-      return `🤔`;
-    }
-    case 'notice': {
-      return `✅`;
-    }
-    case 'info': {
-      return `💬`;
-    }
-    default: {
-      const _exhaustiveCheck: never = severity;
-      return `🤷‍♂`;
-    }
-  }
+function getEmoji(severity: Severity): string {
+  return severities[severity].emoji;
 }
 
-export function compareLevel(a: Summary, b: Summary): number {
-  return severities[a.severity] - severities[b.severity];
+function compareLevel(a: Summary, b: Summary): number {
+  return severities[a.severity].level - severities[b.severity].level;
 }
 
 export function readableDuration(duration: Temporal.Duration): string {
@@ -129,16 +118,6 @@ export function getSummaries(checks: readonly Check[], trigger: Trigger): Summar
     join(a.workflowBasename, a.jobName).localeCompare(join(b.workflowBasename, b.jobName))
   );
 }
-
-// https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
-const severities = Object.freeze({
-  error: 3,
-  warning: 4,
-  notice: 5,
-  info: 6,
-});
-
-export type Severity = keyof typeof severities;
 
 interface Log {
   severity: Severity;
@@ -303,4 +282,59 @@ export function generateReport(
   }
 
   return { ...judge(targets), summaries: targets };
+}
+
+export function writeJobSummary(lastPolling: PollingReport, options: Options) {
+  summary.addHeading('wait-other-jobs', 1);
+
+  summary.addHeading('Conclusion', 2);
+
+  if (lastPolling.ok) {
+    summary.addRaw(`${getEmoji('notice')} All jobs passed`, true);
+  } else {
+    summary.addRaw(`${getEmoji('error')} Failed`, true);
+
+    if (options.isEarlyExit) {
+      summary.addHeading('Note', 3);
+      summary.addRaw(
+        `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
+        true,
+      );
+    }
+  }
+
+  summary.addHeading('Details', 2);
+
+  const headers = [
+    { data: 'Severity', header: true },
+    { data: 'Workflow', header: true },
+    { data: 'Job', header: true },
+    { data: 'Event', header: true },
+    { data: 'Status', header: true },
+    { data: 'Conclusion', header: true },
+    { data: 'Log', header: true },
+  ];
+
+  summary.addTable([
+    headers,
+    ...(lastPolling.summaries.toSorted(compareLevel).map((
+      { severity, workflowPermalink, workflowBasename, jobName, eventName, runStatus, runConclusion, checkRunUrl },
+    ) => [{
+      data: getEmoji(severity),
+    }, {
+      data: `<a href="${workflowPermalink}">${workflowBasename}</a>`,
+    }, {
+      data: jobName,
+    }, {
+      data: eventName,
+    }, {
+      data: runStatus,
+    }, {
+      data: runConclusion ?? '',
+    }, {
+      data: `<a href="${checkRunUrl}">Link</a>`, // Can't use []() style and there is no special option. See https://github.com/actions/toolkit/issues/1544
+    }])),
+  ]);
+
+  summary.write();
 }

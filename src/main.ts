@@ -1,16 +1,8 @@
-import { info, setFailed, startGroup, endGroup, setOutput, summary } from '@actions/core';
+import { info, setFailed, startGroup, endGroup, setOutput } from '@actions/core';
 
 import { parseInput } from './input.ts';
 import { fetchChecks } from './github-api.ts';
-import {
-  PollingReport,
-  colorize,
-  compareLevel,
-  emoji,
-  generateReport,
-  getSummaries,
-  readableDuration,
-} from './report.ts';
+import { PollingReport, colorize, generateReport, getSummaries, readableDuration, writeJobSummary } from './report.ts';
 import { getInterval, wait } from './wait.ts';
 import { Temporal } from 'temporal-polyfill';
 import { Check, Options, Trigger } from './schema.ts';
@@ -125,58 +117,13 @@ async function run(): Promise<void> {
         dumper.results[attempts] = { elapsed, checks, pollingReport };
       }
 
-      summary.addHeading('wait-other-jobs', 1);
-
-      summary.addHeading('Conclusion', 2);
-
       if (ok) {
         info(colorize('notice', 'all jobs passed'));
-        summary.addRaw(`${emoji('notice')} All jobs passed`, true);
       } else {
         setFailed(colorize('error', 'failed to wait for job success'));
-        summary.addRaw(`${emoji('error')} Failed`, true);
-
-        if (options.isEarlyExit) {
-          summary.addHeading('Note', 3);
-          summary.addRaw(
-            `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
-            true,
-          );
-        }
       }
 
-      summary.addHeading('Details', 2);
-
-      const headers = [
-        { data: 'Severity', header: true },
-        { data: 'Workflow', header: true },
-        { data: 'Job', header: true },
-        { data: 'Event', header: true },
-        { data: 'Status', header: true },
-        { data: 'Conclusion', header: true },
-        { data: 'Log', header: true },
-      ];
-
-      summary.addTable([
-        headers,
-        ...(pollingReport.summaries.toSorted(compareLevel).map((polling) => [{
-          data: emoji(polling.severity),
-        }, {
-          data: `<a href="${polling.workflowPermalink}">${polling.workflowBasename}</a>`,
-        }, {
-          data: polling.jobName,
-        }, {
-          data: polling.eventName,
-        }, {
-          data: polling.runStatus,
-        }, {
-          data: polling.runConclusion ?? '',
-        }, {
-          data: `<a href="${polling.checkRunUrl}">Link</a>`, // Can't use []() style and there is no special option. See https://github.com/actions/toolkit/issues/1544
-        }])),
-      ]);
-
-      summary.write();
+      writeJobSummary(pollingReport, options);
 
       break;
     }

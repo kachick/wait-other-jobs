@@ -24669,7 +24669,7 @@ var require_fast_content_type_parse = __commonJS({
 });
 
 // src/main.ts
-var import_core3 = __toESM(require_core(), 1);
+var import_core4 = __toESM(require_core(), 1);
 
 // src/input.ts
 var import_core = __toESM(require_core(), 1);
@@ -33931,6 +33931,7 @@ async function fetchChecks(apiUrl, token, trigger) {
 }
 
 // src/report.ts
+var import_core3 = __toESM(require_core(), 1);
 import { join as join2, relative } from "path";
 
 // node_modules/.pnpm/ansi-styles@6.2.1/node_modules/ansi-styles/index.js
@@ -34137,48 +34138,24 @@ function groupBy(items, callback) {
 }
 
 // src/report.ts
+var severities = Object.freeze({
+  error: Object.freeze({ color: ansi_styles_default.red, emoji: "\u274C", level: 3 }),
+  warning: Object.freeze({ color: ansi_styles_default.yellow, emoji: "\u{1F914}", level: 4 }),
+  notice: Object.freeze({ color: ansi_styles_default.green, emoji: "\u2705", level: 5 }),
+  info: Object.freeze({ color: null, emoji: "\u{1F4AC}", level: 6 })
+});
 function colorize(severity, message) {
-  switch (severity) {
-    case "error": {
-      return `${ansi_styles_default.red.open}${message}${ansi_styles_default.red.close}`;
-    }
-    case "warning": {
-      return `${ansi_styles_default.yellow.open}${message}${ansi_styles_default.yellow.close}`;
-    }
-    case "notice": {
-      return `${ansi_styles_default.green.open}${message}${ansi_styles_default.green.close}`;
-    }
-    case "info": {
-      return message;
-    }
-    default: {
-      const _exhaustiveCheck = severity;
-      return message;
-    }
+  const color = severities[severity].color;
+  if (color) {
+    return `${color.open}${message}${color.close}`;
   }
+  return message;
 }
-function emoji(severity) {
-  switch (severity) {
-    case "error": {
-      return `\u274C`;
-    }
-    case "warning": {
-      return `\u{1F914}`;
-    }
-    case "notice": {
-      return `\u2705`;
-    }
-    case "info": {
-      return `\u{1F4AC}`;
-    }
-    default: {
-      const _exhaustiveCheck = severity;
-      return `\u{1F937}\u200D\u2642`;
-    }
-  }
+function getEmoji(severity) {
+  return severities[severity].emoji;
 }
 function compareLevel(a2, b2) {
-  return severities[a2.severity] - severities[b2.severity];
+  return severities[a2.severity].level - severities[b2.severity].level;
 }
 function readableDuration(duration) {
   const { hours, minutes, seconds } = duration.round({ largestUnit: "hours" });
@@ -34223,12 +34200,6 @@ function getSummaries(checks, trigger) {
     (a2, b2) => join2(a2.workflowBasename, a2.jobName).localeCompare(join2(b2.workflowBasename, b2.jobName))
   );
 }
-var severities = Object.freeze({
-  error: 3,
-  warning: 4,
-  notice: 5,
-  info: 6
-});
 function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summary2) {
   if (workflowFile2 !== summary2.workflowBasename) {
     return false;
@@ -34351,6 +34322,52 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, shoul
   }
   return { ...judge(targets), summaries: targets };
 }
+function writeJobSummary(lastPolling, options) {
+  import_core3.summary.addHeading("wait-other-jobs", 1);
+  import_core3.summary.addHeading("Conclusion", 2);
+  if (lastPolling.ok) {
+    import_core3.summary.addRaw(`${getEmoji("notice")} All jobs passed`, true);
+  } else {
+    import_core3.summary.addRaw(`${getEmoji("error")} Failed`, true);
+    if (options.isEarlyExit) {
+      import_core3.summary.addHeading("Note", 3);
+      import_core3.summary.addRaw(
+        `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
+        true
+      );
+    }
+  }
+  import_core3.summary.addHeading("Details", 2);
+  const headers = [
+    { data: "Severity", header: true },
+    { data: "Workflow", header: true },
+    { data: "Job", header: true },
+    { data: "Event", header: true },
+    { data: "Status", header: true },
+    { data: "Conclusion", header: true },
+    { data: "Log", header: true }
+  ];
+  import_core3.summary.addTable([
+    headers,
+    ...lastPolling.summaries.toSorted(compareLevel).map(({ severity, workflowPermalink, workflowBasename, jobName, eventName, runStatus, runConclusion, checkRunUrl }) => [{
+      data: getEmoji(severity)
+    }, {
+      data: `<a href="${workflowPermalink}">${workflowBasename}</a>`
+    }, {
+      data: jobName
+    }, {
+      data: eventName
+    }, {
+      data: runStatus
+    }, {
+      data: runConclusion ?? ""
+    }, {
+      data: `<a href="${checkRunUrl}">Link</a>`
+      // Can't use []() style and there is no special option. See https://github.com/actions/toolkit/issues/1544
+    }])
+  ]);
+  import_core3.summary.write();
+}
 
 // src/wait.ts
 import { setTimeout as setTimeout2 } from "timers/promises";
@@ -34395,9 +34412,9 @@ import { join as join3 } from "path";
 import { writeFileSync } from "fs";
 async function run() {
   const startedAt = performance.now();
-  (0, import_core3.startGroup)("Parameters");
+  (0, import_core4.startGroup)("Parameters");
   const { trigger, options, githubToken, tempDir } = parseInput();
-  (0, import_core3.info)(JSON.stringify(
+  (0, import_core4.info)(JSON.stringify(
     // Do NOT include payload
     {
       trigger,
@@ -34408,7 +34425,7 @@ async function run() {
     null,
     2
   ));
-  (0, import_core3.endGroup)();
+  (0, import_core4.endGroup)();
   let attempts = 0;
   let shouldStop = false;
   if (options.isDryRun) {
@@ -34419,21 +34436,21 @@ async function run() {
   for (; ; ) {
     attempts += 1;
     if (attempts > options.attemptLimits) {
-      (0, import_core3.setFailed)(colorize("error", `reached to given attempt limits "${options.attemptLimits}"`));
+      (0, import_core4.setFailed)(colorize("error", `reached to given attempt limits "${options.attemptLimits}"`));
       break;
     }
     if (attempts === 1) {
       if (options.initialDuration.sign > 0) {
-        (0, import_core3.info)(`Wait ${readableDuration(options.initialDuration)} before first polling.`);
+        (0, import_core4.info)(`Wait ${readableDuration(options.initialDuration)} before first polling.`);
         await wait(options.initialDuration);
       }
     } else {
       const interval = getInterval(options.retryMethod, options.leastInterval, attempts);
-      (0, import_core3.info)(`Wait ${readableDuration(interval)} before next polling to reduce API calls.`);
+      (0, import_core4.info)(`Wait ${readableDuration(interval)} before next polling to reduce API calls.`);
       await wait(interval);
     }
     const elapsed = mr.Duration.from({ milliseconds: Math.ceil(performance.now() - startedAt) });
-    (0, import_core3.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()} # total elapsed ${readableDuration(elapsed)}`);
+    (0, import_core4.startGroup)(`Polling ${attempts}: ${(/* @__PURE__ */ new Date()).toISOString()} # total elapsed ${readableDuration(elapsed)}`);
     const checks = await fetchChecks(options.apiUrl, githubToken, trigger);
     const pollingReport = generateReport(
       getSummaries(checks, trigger),
@@ -34445,13 +34462,13 @@ async function run() {
       dumper.results[attempts] = { elapsed, checks, pollingReport };
     }
     for (const pollingSummary of pollingReport.summaries) {
-      (0, import_core3.info)(pollingSummary.format());
+      (0, import_core4.info)(pollingSummary.format());
     }
     const { ok, done, logs } = pollingReport;
     for (const { severity, message, resource } of logs) {
-      (0, import_core3.info)(colorize(severity, message));
+      (0, import_core4.info)(colorize(severity, message));
       if (severity != "info" && resource) {
-        (0, import_core3.info)(JSON.stringify(resource, null, 2));
+        (0, import_core4.info)(JSON.stringify(resource, null, 2));
       }
     }
     if (done) {
@@ -34459,69 +34476,29 @@ async function run() {
     }
     if (!ok) {
       if (!done && !options.isEarlyExit) {
-        (0, import_core3.info)(
+        (0, import_core4.info)(
           colorize("warning", "found bad conditions, but will continue rest pollings because of disabled early-exit")
         );
       } else {
         shouldStop = true;
       }
     }
-    (0, import_core3.endGroup)();
+    (0, import_core4.endGroup)();
     if (shouldStop) {
       if (attempts !== 1) {
         dumper.results[attempts] = { elapsed, checks, pollingReport };
       }
-      import_core3.summary.addHeading("wait-other-jobs", 1);
-      import_core3.summary.addHeading("Conclusion", 2);
       if (ok) {
-        (0, import_core3.info)(colorize("notice", "all jobs passed"));
-        import_core3.summary.addRaw(`${emoji("notice")} All jobs passed`, true);
+        (0, import_core4.info)(colorize("notice", "all jobs passed"));
       } else {
-        (0, import_core3.setFailed)(colorize("error", "failed to wait for job success"));
-        import_core3.summary.addRaw(`${emoji("error")} Failed`, true);
-        if (options.isEarlyExit) {
-          import_core3.summary.addHeading("Note", 3);
-          import_core3.summary.addRaw(
-            `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
-            true
-          );
-        }
+        (0, import_core4.setFailed)(colorize("error", "failed to wait for job success"));
       }
-      import_core3.summary.addHeading("Details", 2);
-      const headers = [
-        { data: "Severity", header: true },
-        { data: "Workflow", header: true },
-        { data: "Job", header: true },
-        { data: "Event", header: true },
-        { data: "Status", header: true },
-        { data: "Conclusion", header: true },
-        { data: "Log", header: true }
-      ];
-      import_core3.summary.addTable([
-        headers,
-        ...pollingReport.summaries.toSorted(compareLevel).map((polling) => [{
-          data: emoji(polling.severity)
-        }, {
-          data: `<a href="${polling.workflowPermalink}">${polling.workflowBasename}</a>`
-        }, {
-          data: polling.jobName
-        }, {
-          data: polling.eventName
-        }, {
-          data: polling.runStatus
-        }, {
-          data: polling.runConclusion ?? ""
-        }, {
-          data: `<a href="${polling.checkRunUrl}">Link</a>`
-          // Can't use []() style and there is no special option. See https://github.com/actions/toolkit/issues/1544
-        }])
-      ]);
-      import_core3.summary.write();
+      writeJobSummary(pollingReport, options);
       break;
     }
   }
   writeFileSync(dumpFile, JSON.stringify(dumper, null, 2));
-  (0, import_core3.setOutput)("dump", dumpFile);
+  (0, import_core4.setOutput)("dump", dumpFile);
 }
 void run();
 /*! Bundled license information:
