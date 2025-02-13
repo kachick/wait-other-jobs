@@ -32652,13 +32652,14 @@ var matchPartialJobs = z2.object({
   jobName: z2.string().min(1),
   jobMatchMode: z2.enum(["exact", "prefix"]).default("exact")
 }).strict();
+var eventNames = z2.set(z2.string().min(1)).nonempty().optional();
 var FilterCondition = z2.union([matchAllJobs, matchPartialJobs]);
 var SkipFilterCondition = FilterCondition.readonly();
 var waitOptions = {
   optional: z2.boolean().default(false).readonly(),
   // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
-  // - Intentionally omitted in skip-list, let me know if you have the use-case
-  eventName: z2.string().min(1).optional(),
+  // - Intentionally omitted in skip-list for my laziness, let me know if you have the use-case
+  eventNames,
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
   startupGracePeriod: Durationable.default(defaultGrace)
@@ -32680,7 +32681,8 @@ var Options = z2.object({
   attemptLimits: z2.number().min(1),
   isEarlyExit: z2.boolean(),
   shouldSkipSameWorkflow: z2.boolean(),
-  isDryRun: z2.boolean()
+  isDryRun: z2.boolean(),
+  eventNames
 }).strict().readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { message: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
@@ -32753,7 +32755,8 @@ function parseInput() {
     skipList: JSON.parse((0, import_core.getInput)("skip-list", { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
-    isDryRun
+    isDryRun,
+    eventNames: JSON.parse((0, import_core.getInput)("event-names", { required: false }))
   });
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName };
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
