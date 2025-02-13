@@ -24,6 +24,7 @@ body:
       label: Version
       description: What version are you using?
       options:
+        - 'v4'
         - 'v3.7.0'
         - other
       default: 0
