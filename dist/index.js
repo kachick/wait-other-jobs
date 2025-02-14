@@ -28554,7 +28554,7 @@ var Tr = /* @__PURE__ */ Object.defineProperties(Object.create(Intl), p({
   DateTimeFormat: Sr
 }));
 
-// node_modules/.pnpm/zod@3.24.1/node_modules/zod/lib/index.mjs
+// node_modules/.pnpm/zod@3.24.2/node_modules/zod/lib/index.mjs
 var util;
 (function(util2) {
   util2.assertEqual = (val) => val;
@@ -32375,16 +32375,32 @@ ZodReadonly.create = (type, params) => {
     ...processCreateParams(params)
   });
 };
-function custom(check, params = {}, fatal) {
+function cleanParams(params, data) {
+  const p2 = typeof params === "function" ? params(data) : typeof params === "string" ? { message: params } : params;
+  const p22 = typeof p2 === "string" ? { message: p2 } : p2;
+  return p22;
+}
+function custom(check, _params = {}, fatal) {
   if (check)
     return ZodAny.create().superRefine((data, ctx) => {
       var _a2, _b;
-      if (!check(data)) {
-        const p2 = typeof params === "function" ? params(data) : typeof params === "string" ? { message: params } : params;
-        const _fatal = (_b = (_a2 = p2.fatal) !== null && _a2 !== void 0 ? _a2 : fatal) !== null && _b !== void 0 ? _b : true;
-        const p22 = typeof p2 === "string" ? { message: p2 } : p2;
-        ctx.addIssue({ code: "custom", ...p22, fatal: _fatal });
+      const r2 = check(data);
+      if (r2 instanceof Promise) {
+        return r2.then((r3) => {
+          var _a3, _b2;
+          if (!r3) {
+            const params = cleanParams(_params, data);
+            const _fatal = (_b2 = (_a3 = params.fatal) !== null && _a3 !== void 0 ? _a3 : fatal) !== null && _b2 !== void 0 ? _b2 : true;
+            ctx.addIssue({ code: "custom", ...params, fatal: _fatal });
+          }
+        });
       }
+      if (!r2) {
+        const params = cleanParams(_params, data);
+        const _fatal = (_b = (_a2 = params.fatal) !== null && _a2 !== void 0 ? _a2 : fatal) !== null && _b !== void 0 ? _b : true;
+        ctx.addIssue({ code: "custom", ...params, fatal: _fatal });
+      }
+      return;
     });
   return ZodAny.create();
 }
