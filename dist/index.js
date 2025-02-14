@@ -32772,7 +32772,7 @@ function parseInput() {
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun,
-    eventNames: JSON.parse((0, import_core.getInput)("event-names", { required: false }))
+    eventNames: new Set(JSON.parse((0, import_core.getInput)("event-names", { required: true })))
   });
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName };
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });

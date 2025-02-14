@@ -61,7 +61,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun,
-    eventNames: JSON.parse(getInput('event-names', { required: false })),
+    eventNames: new Set(JSON.parse(getInput('event-names', { required: true }))),
   });
 
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName } as const satisfies Trigger;

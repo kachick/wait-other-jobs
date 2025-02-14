@@ -49,6 +49,10 @@ inputs:
     description: 'Avoid http requests for tests'
     required: false
     default: 'false'
+  event-names:
+    description: 'wait only these events. specified with json array'
+    required: true
+    default: '[]'
 outputs:
   dump:
     description: |
