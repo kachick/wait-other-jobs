@@ -22,6 +22,7 @@
     "@octokit/graphql-schema": "^15.25.0",
     "@octokit/plugin-paginate-graphql": "^5.2.4",
     "ansi-styles": "^6.2.1",
+    "esbuild": "^0.25.0",
     "temporal-polyfill": "^0.2.5",
     "zod": "^3.24.1"
   },
@@ -35,6 +36,7 @@
   },
   "pnpm": {
     "overrides": {
+      "esbuild@<=0.24.2": "^0.25.0",
       "undici@<=5.28.4": "^5.28.5"
     }
   }
