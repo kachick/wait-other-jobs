@@ -49,6 +49,7 @@
                 gh
                 jq
                 gitleaks
+                act
               ]
             );
           };
