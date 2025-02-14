@@ -2,7 +2,7 @@ import { getInput, getBooleanInput, setSecret, error } from '@actions/core';
 import { context } from '@actions/github';
 
 import { Durationable, Options, Path, Trigger } from './schema.ts';
-import { env, eventNames } from 'node:process';
+import { env } from 'node:process';
 import { mkdtempSync } from 'fs';
 import { join } from 'path';
 

@@ -59,7 +59,7 @@ test('wait-list', async (t) => {
             'workflowFile': 'lint.yml',
             jobMatchMode: 'all',
             'optional': false,
-            'eventName': 'pull_request',
+            eventNames: new Set(['pull_request']),
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
           {

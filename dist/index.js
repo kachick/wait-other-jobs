@@ -34245,7 +34245,8 @@ function seekWaitList(summaries, waitList, elapsed) {
   const filtered = summaries.filter(
     (summary2) => seeker.some((target) => {
       const isMatchPath = matchPath(target, summary2);
-      const isMatchEvent = target.eventName ? target.eventName === summary2.eventName : true;
+      const eventNames2 = target.eventNames;
+      const isMatchEvent = eventNames2 ? eventNames2.has(summary2.eventName) : true;
       if (isMatchPath && isMatchEvent) {
         target.found = true;
         return true;
