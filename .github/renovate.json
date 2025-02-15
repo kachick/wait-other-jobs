@@ -25,6 +25,17 @@
       ],
       "matchUpdateTypes": ["major"],
       "enabled": false
+    },
+    {
+      "matchDatasources": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "esbuild",
+        "undici"
+      ],
+      "matchUpdateTypes": ["major", "minor"],
+      "enabled": false
     }
   ]
 }
