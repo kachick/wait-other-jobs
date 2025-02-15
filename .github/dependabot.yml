@@ -4,20 +4,3 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-  - package-ecosystem: 'npm' # `pnpm` uses `npm` specifier
-    directory: '/'
-    schedule:
-      interval: 'monthly'
-    ignore:
-      - dependency-name: '@types/*'
-        update-types: ['version-update:semver-major']
-    groups:
-      octokit-dependencies:
-        patterns:
-          - '@octokit/*'
-      tsconfig-dependencies:
-        patterns:
-          - '@tsconfig/*'
-      actions-dependencies:
-        patterns:
-          - '@actions/*'

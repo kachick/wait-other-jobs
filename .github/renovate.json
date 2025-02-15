@@ -6,18 +6,24 @@
     "renovate"
   ],
   "enabledManagers": [
-    "custom.regex"
+    "custom.regex",
+    "npm"
   ],
   "extends": [
+    "schedule:monthly",
     "github>kachick/renovate-config-dprint#1.3.0",
     "github>kachick/renovate-config-dprint:self"
   ],
   "packageRules": [
     {
-      "extends": [
-        "packages:linters",
-        "schedule:monthly"
-      ]
+      "matchDatasources": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "@types/**"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     }
   ]
 }
