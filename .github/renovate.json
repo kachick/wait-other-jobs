@@ -6,16 +6,12 @@
     "renovate"
   ],
   "enabledManagers": [
-    "nix",
     "custom.regex"
   ],
   "extends": [
     "github>kachick/renovate-config-dprint#1.3.0",
     "github>kachick/renovate-config-dprint:self"
   ],
-  "nix": {
-    "enabled": true
-  },
   "packageRules": [
     {
       "extends": [
