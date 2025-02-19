@@ -33,6 +33,15 @@ inputs:
     description: 'Stop rest pollings if reached to this limit'
     required: false
     default: '1000' # Enough large
+  event-list:
+    description: |
+      - Set a JSON array or special string "all".
+      - "all" is the same behavior that worked until v3.
+      - Wait only listed events.
+      - Empty list is invalid.
+      - This value will be inherited in wait and skip lists as a default value.
+    required: true
+    default: '["${{ github.event_name }}"]'
   wait-list:
     description: 'Wait only these jobs'
     required: false
@@ -49,10 +58,6 @@ inputs:
     description: 'Avoid http requests for tests'
     required: false
     default: 'false'
-  event-names:
-    description: 'wait only these events. specified with json array'
-    required: true
-    default: '[]'
 outputs:
   dump:
     description: |

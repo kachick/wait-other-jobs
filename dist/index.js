@@ -32668,14 +32668,18 @@ var matchPartialJobs = z2.object({
   jobName: z2.string().min(1),
   jobMatchMode: z2.enum(["exact", "prefix"]).default("exact")
 }).strict();
-var eventNames = z2.set(z2.string().min(1)).nonempty().optional();
+var eventName = z2.string().min(1);
+var eventNames = z2.set(eventName).nonempty();
+var TargetEvents = z2.union([
+  z2.literal("all"),
+  eventNames
+]).default("all");
 var FilterCondition = z2.union([matchAllJobs, matchPartialJobs]);
 var SkipFilterCondition = FilterCondition.readonly();
 var waitOptions = {
   optional: z2.boolean().default(false).readonly(),
-  // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
   // - Intentionally omitted in skip-list for my laziness, let me know if you have the use-case
-  eventNames,
+  targetEvents: TargetEvents,
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
   startupGracePeriod: Durationable.default(defaultGrace)
@@ -32698,7 +32702,7 @@ var Options = z2.object({
   isEarlyExit: z2.boolean(),
   shouldSkipSameWorkflow: z2.boolean(),
   isDryRun: z2.boolean(),
-  eventNames
+  targetEvents: TargetEvents
 }).strict().readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { message: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
@@ -32730,7 +32734,7 @@ function parseInput() {
     // https://github.com/orgs/community/discussions/16614
     job: jobId,
     sha,
-    eventName
+    eventName: eventName2
   } = import_github.context;
   const pr2 = payload.pull_request;
   let commitSha = sha;
@@ -32761,20 +32765,24 @@ function parseInput() {
   const shouldSkipSameWorkflow = (0, import_core.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const apiUrl = (0, import_core.getInput)("github-api-url", { required: true, trimWhitespace: true });
+  const rawInputEventList = (0, import_core.getInput)("event-list", { required: true });
+  const targetEvents = TargetEvents.parse(
+    () => rawInputEventList === "all" ? "all" : z2.string().transform((raw) => JSON.parse(raw)).pipe(eventNames)
+  );
   const options = Options.parse({
     apiUrl,
     initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
     leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
     attemptLimits,
-    waitList: JSON.parse((0, import_core.getInput)("wait-list", { required: true })),
+    waitList: { targetEvents, ...JSON.parse((0, import_core.getInput)("wait-list", { required: true })) },
     skipList: JSON.parse((0, import_core.getInput)("skip-list", { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun,
-    eventNames: new Set(JSON.parse((0, import_core.getInput)("event-names", { required: true })))
+    targetEvents
   });
-  const trigger = { ...repo, ref: commitSha, runId, jobId, eventName };
+  const trigger = { ...repo, ref: commitSha, runId, jobId, eventName: eventName2 };
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core.setSecret)(githubToken);
   return { trigger, options, githubToken, tempDir };
@@ -34245,8 +34253,8 @@ function seekWaitList(summaries, waitList, elapsed) {
   const filtered = summaries.filter(
     (summary2) => seeker.some((target) => {
       const isMatchPath = matchPath(target, summary2);
-      const eventNames2 = target.eventNames;
-      const isMatchEvent = eventNames2 ? eventNames2.has(summary2.eventName) : true;
+      const targetEvents = target.targetEvents;
+      const isMatchEvent = targetEvents === "all" ? true : targetEvents.has(summary2.eventName);
       if (isMatchPath && isMatchEvent) {
         target.found = true;
         return true;
@@ -34370,15 +34378,15 @@ function writeJobSummary(lastPolling, options) {
   ];
   import_core3.summary.addTable([
     headers,
-    ...lastPolling.summaries.toSorted(compareLevel).map(({ severity, workflowPermalink, workflowBasename, jobName, eventName, runStatus, runConclusion, checkRunUrl }) => [{
+    ...lastPolling.summaries.toSorted(compareLevel).map(({ severity, workflowPermalink, workflowBasename, jobName, eventName: eventName2, runStatus, runConclusion, checkRunUrl }) => [{
       data: getEmoji(severity)
     }, {
       // e.g. AFAIK, we can't access and control github provided dependabot workflow except the run logs. The event type is `dynamic`.
-      data: eventName === "dynamic" ? workflowBasename : `<a href="${workflowPermalink}">${workflowBasename}</a>`
+      data: eventName2 === "dynamic" ? workflowBasename : `<a href="${workflowPermalink}">${workflowBasename}</a>`
     }, {
       data: jobName
     }, {
-      data: eventName
+      data: eventName2
     }, {
       data: runStatus
     }, {

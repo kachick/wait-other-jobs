@@ -1,10 +1,11 @@
 import { getInput, getBooleanInput, setSecret, error } from '@actions/core';
 import { context } from '@actions/github';
 
-import { Durationable, Options, Path, Trigger } from './schema.ts';
+import { Durationable, eventNames, Options, Path, TargetEvents, Trigger } from './schema.ts';
 import { env } from 'node:process';
 import { mkdtempSync } from 'fs';
 import { join } from 'path';
+import { z } from 'zod';
 
 export function parseInput(): { trigger: Trigger; options: Options; githubToken: string; tempDir: string } {
   const {
@@ -49,6 +50,12 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
   const apiUrl = getInput('github-api-url', { required: true, trimWhitespace: true });
+  const rawInputEventList = getInput('event-list', { required: true });
+  const targetEvents = TargetEvents.parse(() =>
+    rawInputEventList === 'all' ? 'all' : (
+      z.string().transform(raw => JSON.parse(raw)).pipe(eventNames)
+    )
+  );
 
   const options = Options.parse({
     apiUrl,
@@ -56,12 +63,12 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
     attemptLimits,
-    waitList: JSON.parse(getInput('wait-list', { required: true })),
+    waitList: { targetEvents, ...JSON.parse(getInput('wait-list', { required: true })) },
     skipList: JSON.parse(getInput('skip-list', { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun,
-    eventNames: new Set(JSON.parse(getInput('event-names', { required: true }))),
+    targetEvents,
   });
 
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName } as const satisfies Trigger;
