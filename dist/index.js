@@ -34196,7 +34196,7 @@ function summarize(check, trigger) {
     isAcceptable,
     isCompleted,
     severity: isCompleted ? isAcceptable ? "notice" : "error" : "warning",
-    workflowPermalink: `${workflowRun.url}/workflow`,
+    workflowPermalink: workflowRun.event === "dynamic" ? workflowRun.url : `${workflowRun.url}/workflow`,
     // workflow.url is not enough for permalink use
     workflowBasename: relative(`/${trigger.owner}/${trigger.repo}/actions/workflows/`, workflow.resourcePath),
     // Another file can set same workflow name. So you should filter workfrows from runId or the filename
@@ -34373,7 +34373,8 @@ function writeJobSummary(lastPolling, options) {
     ...lastPolling.summaries.toSorted(compareLevel).map(({ severity, workflowPermalink, workflowBasename, jobName, eventName, runStatus, runConclusion, checkRunUrl }) => [{
       data: getEmoji(severity)
     }, {
-      data: `<a href="${workflowPermalink}">${workflowBasename}</a>`
+      // e.g. AFAIK, we can't access and control github provided dependabot workflow except the run logs. The event type is `dynamic`.
+      data: eventName === "dynamic" ? workflowBasename : `<a href="${workflowPermalink}">${workflowBasename}</a>`
     }, {
       data: jobName
     }, {

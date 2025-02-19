@@ -1,10 +1,10 @@
 # wait-other-jobs
 
-[![Itself](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml?query=event%3Apush++)\
-[![gracePeriod](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml?query=event%3Apush++)
-[![eventName](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-771-eventname.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-771-eventname.yml?query=event%3Apush++)
-[![matrix](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-761-matrix.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-761-matrix.yml?query=event%3Apush++)\
-[![CI](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml?query=event%3Apush++)
+[![Itself](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml?query=branch%3Amain)\
+[![gracePeriod](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml?query=branch%3Amain)
+[![eventName](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-771-eventname.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-771-eventname.yml?query=branch%3Amain)
+[![matrix](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-761-matrix.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-761-matrix.yml?query=branch%3Amain)\
+[![CI](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml?query=branch%3Amain)
 
 This GitHub action waits for all or specific jobs, even if they are running in other workflows.\
 If any of those jobs fail, this action will fail as well.

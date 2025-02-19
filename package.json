@@ -31,12 +31,11 @@
     "@tsconfig/strictest": "^2.0.5",
     "@types/node": "^20.17.19",
     "recheck": "^4.4.5",
-    "tsx": "^4.19.2",
+    "tsx": "^4.19.3",
     "typescript": "^5.7.3"
   },
   "pnpm": {
     "overrides": {
-      "esbuild@<=0.24.2": "^0.25.0",
       "undici@<=5.28.4": "^5.28.5"
     }
   }

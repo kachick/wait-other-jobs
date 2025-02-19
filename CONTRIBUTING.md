@@ -50,3 +50,9 @@ Type ".help" for more information.
 > map.set(undefined, 42)
 Map(1) { undefined => 42 }
 ```
+
+## [act](https://github.com/nektos/act)
+
+```bash
+act --platform 'ubuntu-24.04=docker.io/catthehacker/ubuntu:act-24.04' --workflows .github/workflows/lint.yml
+```
