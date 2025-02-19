@@ -32,9 +32,9 @@ jobs:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - uses: ./
         with:
-          wait-seconds-before-first-polling: 0 # This is the only value for testing in this file. So might be merged with other CIs
+          warmup-delay: 'PT0S' # This is the only value for testing in this file. So might be merged with other CIs
           retry-method: 'equal_intervals'
-          min-interval-seconds: 5
+          minimum-interval: 'PT5S'
           attempt-limits: 30
           skip-same-workflow: 'false'
           wait-list: |

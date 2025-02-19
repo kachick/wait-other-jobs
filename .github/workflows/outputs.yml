@@ -35,8 +35,8 @@ jobs:
         id: wait
         with:
           retry-method: 'equal_intervals'
-          wait-seconds-before-first-polling: '1'
-          min-interval-seconds: '3'
+          warmup-delay: 'PT1S'
+          minimum-interval: 'PT3S'
           skip-same-workflow: 'false'
           wait-list: |
             [

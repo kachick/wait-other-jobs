@@ -195,7 +195,7 @@ with:
 
 This action starts immediately but ignores the job missing in the first 5 minutes.
 
-- No need to extend `wait-seconds-before-first-polling`
+- No need to extend `warmup-delay`
 - Disable `optional`, because it is needed to check
 - Set enough value for `startupGracePeriod` for this purpose.\
   It should be parsible with [TC39 - Temporal.Duration](https://github.com/tc39/proposal-temporal/blob/26e4cebe3c49f56932c1d5064fec9993e981823a/docs/duration.md)\
@@ -203,7 +203,7 @@ This action starts immediately but ignores the job missing in the first 5 minute
   - `"PT3M42S"` # ISO 8601 duration format
   - `{ "minutes": 3, "seconds": 42 }` # key-value for each unit
 
-If not using wait-list, this pattern should be considered in your `wait-seconds-before-first-polling`.
+If not using wait-list, this pattern should be considered in your `warmup-delay`.
 
 ## Alternative candidates
 
