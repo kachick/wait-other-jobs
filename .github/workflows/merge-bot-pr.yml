@@ -62,7 +62,7 @@ jobs:
         timeout-minutes: 10
         with:
           retry-method: 'equal_intervals'
-          min-interval-seconds: '15'
+          minimum-interval: 'PT15S'
           skip-same-workflow: 'true'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash --delete-branch "$PR_URL"

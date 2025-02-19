@@ -52,7 +52,7 @@ jobs:
         continue-on-error: true
         with:
           retry-method: 'unknown_method'
-          min-interval-seconds: '-1'
+          minimum-interval: '15' # Should be 'PT15S'
           attempt-limits: '0'
   validation_example_combination_errors_allow_failure:
     runs-on: ubuntu-24.04
