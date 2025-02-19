@@ -31,19 +31,11 @@ You can change the token, polling interval, allow/deny list and turns early-exit
 
 ```yaml
 with:
-  github-token: '${{ secrets.YOUR_PAT }}'
-  wait-seconds-before-first-polling: '30' # default '10'
-  min-interval-seconds: '300' # default '15'
+  warmup-delay: 'PT30S' # default 'PT10S'
+  minimum-interval: 'PT300S' # default 'PT15S'
   retry-method: 'exponential_backoff' # default 'equal_intervals'
   early-exit: 'false' # default 'true'
   skip-same-workflow: 'true' # default 'false'
-  # lists should be given with JSON formatted array, do not specify both wait-list and skip-list
-  #   - Each item should have a "workflowFile" field, and they can optionally have a "jobName" field.
-  #   - If no jobName is specified, all the jobs in the workflow will be targeted.
-  #   - wait-list:
-  #     - If the checkRun for the specified name is not found, this action raise errors by default.
-  #       You can disable this validation with `"optional": true` or use the `startupGracePeriod` that described in following section
-  #     - Wait for all event types by default, you can change with `"eventName": "EVENT_NAME_AS_push"`.
   wait-list: |
     [
       {
@@ -66,19 +58,35 @@ with:
 
 Full list of the options
 
-| NAME                                | DESCRIPTION                                                    | TYPE     | DEFAULT                 | OPTIONS                                                         |
-| ----------------------------------- | -------------------------------------------------------------- | -------- | ----------------------- | --------------------------------------------------------------- |
-| `github-api-url`                    | The Github API endpoint. Override for Github Enterprise usage. | `string` | `${{ github.api_url }}` | `https://api.github.com`, `https://ghe-host.example.net/api/v3` |
-| `github-token`                      | The GITHUB_TOKEN secret. You can use PAT if you want.          | `string` | `${{ github.token }}`   |                                                                 |
-| `wait-seconds-before-first-polling` | Wait this interval before first polling                        | `number` | `10`                    |                                                                 |
-| `min-interval-seconds`              | Wait this interval or the multiplied value (and jitter)        | `number` | `15`                    |                                                                 |
-| `retry-method`                      | How to wait for next polling                                   | `string` | `equal_intervals`       | `exponential_backoff`, `equal_intervals`                        |
-| `early-exit`                        | Stop rest pollings if faced at least 1 bad condition           | `bool`   | `true`                  |                                                                 |
-| `attempt-limits`                    | Stop rest pollings if reached to this limit                    | `number` | `1000`                  |                                                                 |
-| `wait-list`                         | Wait only these jobs                                           | `string` | `[]`                    |                                                                 |
-| `skip-list`                         | Wait except these jobs                                         | `string` | `[]`                    |                                                                 |
-| `skip-same-workflow`                | Skip jobs defined in the same workflow which using this action | `bool`   | `false`                 |                                                                 |
-| `dry-run`                           | Avoid requests for tests                                       | `bool`   | `false`                 |                                                                 |
+| NAME                 | DESCRIPTION                                                    | TYPE     | DEFAULT                 | OPTIONS                                                         |
+| -------------------- | -------------------------------------------------------------- | -------- | ----------------------- | --------------------------------------------------------------- |
+| `github-api-url`     | The Github API endpoint. Override for Github Enterprise usage. | `string` | `${{ github.api_url }}` | `https://api.github.com`, `https://ghe-host.example.net/api/v3` |
+| `github-token`       | The GITHUB_TOKEN secret. You can use PAT if you want.          | `string` | `${{ github.token }}`   |                                                                 |
+| `warmup-delay`       | Wait this interval before first polling                        | `string` | `PT10S`                 | ISO 8601 duration format                                        |
+| `minimum-interval`   | Wait this interval or the multiplied value (and jitter)        | `string` | `PT15S`                 | ISO 8601 duration format                                        |
+| `retry-method`       | How to wait for next polling                                   | `string` | `equal_intervals`       | `exponential_backoff`, `equal_intervals`                        |
+| `early-exit`         | Stop rest pollings if faced at least 1 bad condition           | `bool`   | `true`                  |                                                                 |
+| `attempt-limits`     | Stop rest pollings if reached to this limit                    | `number` | `1000`                  |                                                                 |
+| `wait-list`          | Wait only these jobs                                           | `string` | `[]`                    | JSON Array                                                      |
+| `skip-list`          | Wait except these jobs                                         | `string` | `[]`                    | JSON Array                                                      |
+| `skip-same-workflow` | Skip jobs defined in the same workflow which using this action | `bool`   | `false`                 |                                                                 |
+| `dry-run`            | Avoid requests for tests                                       | `bool`   | `false`                 |                                                                 |
+
+## Resources for option syntax
+
+- [ISO 8601 duration format](https://github.com/tc39/proposal-temporal/blob/0.9.0/docs/duration.md)
+- [Trailing commas are not allowed in JSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Trailing_commas)
+
+## Schema of wait-list and skip-list
+
+Lists should be given with JSON array, do not use both wait-list and skip-list together
+
+- Each item should have a "workflowFile" field, and they can optionally have a "jobName" field.
+- If no jobName is specified, all the jobs in the workflow will be targeted.
+- wait-list:
+  - If the checkRun for the specified name is not found, this action raise errors by default.\
+    You can disable this validation with `"optional": true` or use the `startupGracePeriod` that described in following section
+  - Wait for all event types by default, you can change with `"eventName": "EVENT_NAME_AS_push"`.
 
 ## Required GITHUB_TOKEN permissions
 

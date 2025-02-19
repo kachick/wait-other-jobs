@@ -17,7 +17,7 @@ inputs:
     description: |
       Wait this time before first polling.
       To make sure other jobs are running and can be targeted.
-      Should be specified with ISO 8601 duration format
+      Should be specified with ISO 8601 duration format.
     required: false
     # TODO: Since v4.x, Consider setting shorter or 0. Or respect the `minimum-interval` if this value is empty. See GH-596 and GH-994
     #   Pros: WIll be fast for `equal_intervals`.
@@ -33,7 +33,7 @@ inputs:
   minimum-interval:
     description: |
       Wait this interval or longer for each polling to reduce GitHub API calls.
-      Should be specified with ISO 8601 duration format
+      Should be specified with ISO 8601 duration format.
     required: false
     default: 'PT15S'
   min-interval-seconds: # TODO: Remove since v4.x
