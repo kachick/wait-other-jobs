@@ -1,7 +1,7 @@
 import { getInput, getBooleanInput, setSecret, error } from '@actions/core';
 import { context } from '@actions/github';
 
-import { Durationable, Options, Path, Trigger } from './schema.ts';
+import { Durationable, jsonInput, Options, Path, Trigger } from './schema.ts';
 import { env } from 'node:process';
 import { mkdtempSync } from 'fs';
 import { join } from 'path';
@@ -56,8 +56,8 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
     attemptLimits,
-    waitList: JSON.parse(getInput('wait-list', { required: true })),
-    skipList: JSON.parse(getInput('skip-list', { required: true })),
+    waitList: jsonInput.parse(getInput('wait-list', { required: true })),
+    skipList: jsonInput.parse(getInput('skip-list', { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun,

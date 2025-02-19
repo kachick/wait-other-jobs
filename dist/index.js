@@ -32615,6 +32615,28 @@ var z2 = /* @__PURE__ */ Object.freeze({
 });
 
 // src/schema.ts
+var jsonLiteral = z2.union([z2.string(), z2.number(), z2.boolean(), z2.null()]);
+var jsonSchema = z2.lazy(() => z2.union([jsonLiteral, z2.array(jsonSchema), z2.record(jsonSchema)]));
+var jsonInput = z2.string().transform((str, ctx) => {
+  try {
+    return JSON.parse(str);
+  } catch (_err) {
+    const errorMessage = `Invalid JSON.
+Typical mistakens are below.
+  - Trailing comma
+    Bad: [a,b,]
+    Good: [a,b]
+  - Missing quotations for object key
+    Bad: {a: 1}
+    Good: {"a": 1}
+`;
+    ctx.addIssue({
+      code: "custom",
+      message: errorMessage
+    });
+    return z2.NEVER;
+  }
+});
 var MyDurationLike = z2.object({
   years: z2.number().optional(),
   months: z2.number().optional(),
@@ -32765,8 +32787,8 @@ function parseInput() {
     leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
     attemptLimits,
-    waitList: JSON.parse((0, import_core.getInput)("wait-list", { required: true })),
-    skipList: JSON.parse((0, import_core.getInput)("skip-list", { required: true })),
+    waitList: jsonInput.parse((0, import_core.getInput)("wait-list", { required: true })),
+    skipList: jsonInput.parse((0, import_core.getInput)("skip-list", { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun
