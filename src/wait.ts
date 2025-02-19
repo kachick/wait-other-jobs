@@ -23,31 +23,31 @@ export const MAX_JITTER = Temporal.Duration.from({
 });
 
 export function calcExponentialBackoffAndJitter(
-  leastInterval: Temporal.Duration,
+  minimumInterval: Temporal.Duration,
   attempts: number,
 ): Temporal.Duration {
   const jitterMilliseconds = getRandomInt(MIN_JITTER.total('milliseconds'), MAX_JITTER.total('milliseconds'));
   return Temporal.Duration.from({
-    milliseconds: (leastInterval.total('milliseconds') * (2 ** (attempts - 1))) + jitterMilliseconds,
+    milliseconds: (minimumInterval.total('milliseconds') * (2 ** (attempts - 1))) + jitterMilliseconds,
   });
 }
 
 export function getInterval(
   method: RetryMethod,
-  leastInterval: Temporal.Duration,
+  minimumInterval: Temporal.Duration,
   attempts: number,
 ): Temporal.Duration {
   switch (method) {
     case ('exponential_backoff'):
       return calcExponentialBackoffAndJitter(
-        leastInterval,
+        minimumInterval,
         attempts,
       );
     case ('equal_intervals'):
-      return leastInterval;
+      return minimumInterval;
     default: {
       const _exhaustiveCheck: never = method;
-      return leastInterval;
+      return minimumInterval;
     }
   }
 }

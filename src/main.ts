@@ -58,12 +58,12 @@ async function run(): Promise<void> {
     }
 
     if (attempts === 1) {
-      if (options.initialDuration.sign > 0) {
-        info(`Wait ${readableDuration(options.initialDuration)} before first polling.`);
-        await wait(options.initialDuration);
+      if (options.warmupDelay.sign > 0) {
+        info(`Wait ${readableDuration(options.warmupDelay)} before first polling.`);
+        await wait(options.warmupDelay);
       }
     } else {
-      const interval = getInterval(options.retryMethod, options.leastInterval, attempts);
+      const interval = getInterval(options.retryMethod, options.minimumInterval, attempts);
       info(`Wait ${readableDuration(interval)} before next polling to reduce API calls.`);
       await wait(interval);
     }

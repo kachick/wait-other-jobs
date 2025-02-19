@@ -18,17 +18,17 @@ test('wait 100 ms', async () => {
 });
 
 test('interval will be like a cheap exponential backoff', () => {
-  const leastInterval = Temporal.Duration.from({ seconds: 100 });
+  const minimumInterval = Temporal.Duration.from({ seconds: 100 });
 
   assert(
     Temporal.Duration.compare(
-      calcExponentialBackoffAndJitter(leastInterval, 1),
+      calcExponentialBackoffAndJitter(minimumInterval, 1),
       MIN_JITTER.add({ milliseconds: 100000 }),
     ) >= 0,
   );
   strictEqual(
     Temporal.Duration.compare(
-      calcExponentialBackoffAndJitter(leastInterval, 1),
+      calcExponentialBackoffAndJitter(minimumInterval, 1),
       MAX_JITTER.add({ milliseconds: 100000 }),
     ),
     -1,
@@ -36,13 +36,13 @@ test('interval will be like a cheap exponential backoff', () => {
 
   assert(
     Temporal.Duration.compare(
-      calcExponentialBackoffAndJitter(leastInterval, 2),
+      calcExponentialBackoffAndJitter(minimumInterval, 2),
       MIN_JITTER.add({ milliseconds: 200000 }),
     ) >= 0,
   );
   strictEqual(
     Temporal.Duration.compare(
-      calcExponentialBackoffAndJitter(leastInterval, 2),
+      calcExponentialBackoffAndJitter(minimumInterval, 2),
       MAX_JITTER.add({ milliseconds: 200000 }),
     ),
     -1,
@@ -50,13 +50,13 @@ test('interval will be like a cheap exponential backoff', () => {
 
   assert(
     Temporal.Duration.compare(
-      calcExponentialBackoffAndJitter(leastInterval, 3),
+      calcExponentialBackoffAndJitter(minimumInterval, 3),
       MIN_JITTER.add({ milliseconds: 400000 }),
     ) >= 0,
   );
   strictEqual(
     Temporal.Duration.compare(
-      calcExponentialBackoffAndJitter(leastInterval, 3),
+      calcExponentialBackoffAndJitter(minimumInterval, 3),
       MAX_JITTER.add({ milliseconds: 400000 }),
     ),
     -1,
@@ -64,13 +64,13 @@ test('interval will be like a cheap exponential backoff', () => {
 
   assert(
     Temporal.Duration.compare(
-      calcExponentialBackoffAndJitter(leastInterval, 4),
+      calcExponentialBackoffAndJitter(minimumInterval, 4),
       MIN_JITTER.add({ milliseconds: 800000 }),
     ) >= 0,
   );
   strictEqual(
     Temporal.Duration.compare(
-      calcExponentialBackoffAndJitter(leastInterval, 4),
+      calcExponentialBackoffAndJitter(minimumInterval, 4),
       MAX_JITTER.add({ milliseconds: 800000 }),
     ),
     -1,
@@ -78,13 +78,13 @@ test('interval will be like a cheap exponential backoff', () => {
 
   assert(
     Temporal.Duration.compare(
-      calcExponentialBackoffAndJitter(leastInterval, 5),
+      calcExponentialBackoffAndJitter(minimumInterval, 5),
       MIN_JITTER.add({ milliseconds: 1600000 }),
     ) >= 0,
   );
   strictEqual(
     Temporal.Duration.compare(
-      calcExponentialBackoffAndJitter(leastInterval, 5),
+      calcExponentialBackoffAndJitter(minimumInterval, 5),
       MAX_JITTER.add({ milliseconds: 1600000 }),
     ),
     -1,
@@ -92,17 +92,17 @@ test('interval will be like a cheap exponential backoff', () => {
 });
 
 test('getInterval returns different value with the given method', () => {
-  const leastInterval = Temporal.Duration.from({ seconds: 100 });
+  const minimumInterval = Temporal.Duration.from({ seconds: 100 });
 
   assert(
     Temporal.Duration.compare(
-      getInterval('exponential_backoff', leastInterval, 5),
+      getInterval('exponential_backoff', minimumInterval, 5),
       MIN_JITTER.add({ milliseconds: 1600000 }),
     ) >= 0,
   );
   strictEqual(
     Temporal.Duration.compare(
-      getInterval('exponential_backoff', leastInterval, 5),
+      getInterval('exponential_backoff', minimumInterval, 5),
       MAX_JITTER.add({ milliseconds: 1600000 }),
     ),
     -1,
@@ -110,8 +110,8 @@ test('getInterval returns different value with the given method', () => {
 
   strictEqual(
     Temporal.Duration.compare(
-      getInterval('equal_intervals', leastInterval, 5),
-      leastInterval,
+      getInterval('equal_intervals', minimumInterval, 5),
+      minimumInterval,
     ),
     0,
   );

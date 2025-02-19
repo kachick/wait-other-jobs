@@ -52,8 +52,8 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
 
   const options = Options.parse({
     apiUrl,
-    initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
-    leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
+    warmupDelay: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
+    minimumInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
     attemptLimits,
     waitList: jsonInput.parse(getInput('wait-list', { required: true })),

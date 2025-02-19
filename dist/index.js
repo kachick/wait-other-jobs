@@ -32712,8 +32712,8 @@ var Options = z2.object({
   apiUrl: z2.string().url(),
   waitList: WaitList,
   skipList: SkipList,
-  initialDuration: ZeroableDuration,
-  leastInterval: PositiveDuration,
+  warmupDelay: ZeroableDuration,
+  minimumInterval: PositiveDuration,
   retryMethod: retryMethods,
   attemptLimits: z2.number().min(1),
   isEarlyExit: z2.boolean(),
@@ -32723,15 +32723,15 @@ var Options = z2.object({
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { message: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
 ).refine(
-  ({ initialDuration, waitList }) => waitList.every(
+  ({ warmupDelay, waitList }) => waitList.every(
     (item) => !(mr.Duration.compare(
-      initialDuration,
+      warmupDelay,
       item.startupGracePeriod
     ) > 0 && mr.Duration.compare(item.startupGracePeriod, defaultGrace) !== 0)
   ),
   {
     message: "A shorter startupGracePeriod waiting for the first poll does not make sense",
-    path: ["initialDuration", "waitList"]
+    path: ["warmupDelay", "waitList"]
   }
 );
 var Path = z2.string().min(1);
@@ -32783,8 +32783,8 @@ function parseInput() {
   const apiUrl = (0, import_core.getInput)("github-api-url", { required: true, trimWhitespace: true });
   const options = Options.parse({
     apiUrl,
-    initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
-    leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
+    warmupDelay: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
+    minimumInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
     attemptLimits,
     waitList: jsonInput.parse((0, import_core.getInput)("wait-list", { required: true })),
@@ -34425,24 +34425,24 @@ var MIN_JITTER = mr.Duration.from({
 var MAX_JITTER = mr.Duration.from({
   seconds: 7
 });
-function calcExponentialBackoffAndJitter(leastInterval, attempts) {
+function calcExponentialBackoffAndJitter(minimumInterval, attempts) {
   const jitterMilliseconds = getRandomInt(MIN_JITTER.total("milliseconds"), MAX_JITTER.total("milliseconds"));
   return mr.Duration.from({
-    milliseconds: leastInterval.total("milliseconds") * 2 ** (attempts - 1) + jitterMilliseconds
+    milliseconds: minimumInterval.total("milliseconds") * 2 ** (attempts - 1) + jitterMilliseconds
   });
 }
-function getInterval(method, leastInterval, attempts) {
+function getInterval(method, minimumInterval, attempts) {
   switch (method) {
     case "exponential_backoff":
       return calcExponentialBackoffAndJitter(
-        leastInterval,
+        minimumInterval,
         attempts
       );
     case "equal_intervals":
-      return leastInterval;
+      return minimumInterval;
     default: {
       const _exhaustiveCheck = method;
-      return leastInterval;
+      return minimumInterval;
     }
   }
 }
@@ -34480,12 +34480,12 @@ async function run() {
       break;
     }
     if (attempts === 1) {
-      if (options.initialDuration.sign > 0) {
-        (0, import_core4.info)(`Wait ${readableDuration(options.initialDuration)} before first polling.`);
-        await wait(options.initialDuration);
+      if (options.warmupDelay.sign > 0) {
+        (0, import_core4.info)(`Wait ${readableDuration(options.warmupDelay)} before first polling.`);
+        await wait(options.warmupDelay);
       }
     } else {
-      const interval = getInterval(options.retryMethod, options.leastInterval, attempts);
+      const interval = getInterval(options.retryMethod, options.minimumInterval, attempts);
       (0, import_core4.info)(`Wait ${readableDuration(interval)} before next polling to reduce API calls.`);
       await wait(interval);
     }
