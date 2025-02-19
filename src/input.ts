@@ -7,6 +7,14 @@ import { mkdtempSync } from 'fs';
 import { join } from 'path';
 import { z } from 'zod';
 
+export function parseTargetEvents(rawInputEventList: string) {
+  return TargetEvents.parse(
+    rawInputEventList === 'all' ? 'all' : (
+      z.string().regex(/\[/).transform(raw => new Set(JSON.parse(raw))).pipe(eventNames).parse(rawInputEventList)
+    ),
+  );
+}
+
 export function parseInput(): { trigger: Trigger; options: Options; githubToken: string; tempDir: string } {
   const {
     repo,
@@ -50,12 +58,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
   const apiUrl = getInput('github-api-url', { required: true, trimWhitespace: true });
-  const rawInputEventList = getInput('event-list', { required: true });
-  const targetEvents = TargetEvents.parse(
-    rawInputEventList === 'all' ? 'all' : (
-      z.string().transform(raw => new Set(JSON.parse(raw))).pipe(eventNames).parse(rawInputEventList)
-    ),
-  );
+  const targetEvents = parseTargetEvents(getInput('event-list', { required: true }));
 
   const options = Options.parse({
     apiUrl,
