@@ -32764,14 +32764,16 @@ function parseInput() {
   }
   const tempRoot = Path.parse(env["RUNNER_TEMP"]);
   const tempDir = mkdtempSync(join(tempRoot, "wait-other-jobs-"));
-  const waitSecondsBeforeFirstPolling = parseInt(
-    (0, import_core.getInput)("wait-seconds-before-first-polling", { required: true, trimWhitespace: true }),
-    10
-  );
-  const minIntervalSeconds = parseInt(
-    (0, import_core.getInput)("min-interval-seconds", { required: true, trimWhitespace: true }),
-    10
-  );
+  const waitSecondsBeforeFirstPolling = (0, import_core.getInput)("wait-seconds-before-first-polling", {
+    required: false,
+    trimWhitespace: true
+  });
+  const warmupDelay = waitSecondsBeforeFirstPolling ? Durationable.parse({ seconds: parseInt(waitSecondsBeforeFirstPolling, 10) }) : Durationable.parse((0, import_core.getInput)("warmup-delay", { required: true, trimWhitespace: true }));
+  const minIntervalSeconds = (0, import_core.getInput)("min-interval-seconds", {
+    required: false,
+    trimWhitespace: true
+  });
+  const minimumInterval = minIntervalSeconds ? Durationable.parse({ seconds: parseInt(minIntervalSeconds, 10) }) : Durationable.parse((0, import_core.getInput)("minimum-interval", { required: true, trimWhitespace: true }));
   const retryMethod = (0, import_core.getInput)("retry-method", { required: true, trimWhitespace: true });
   const attemptLimits = parseInt(
     (0, import_core.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
@@ -32783,8 +32785,8 @@ function parseInput() {
   const apiUrl = (0, import_core.getInput)("github-api-url", { required: true, trimWhitespace: true });
   const options = Options.parse({
     apiUrl,
-    warmupDelay: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
-    minimumInterval: Durationable.parse({ seconds: minIntervalSeconds }),
+    warmupDelay,
+    minimumInterval,
     retryMethod,
     attemptLimits,
     waitList: jsonInput.parse((0, import_core.getInput)("wait-list", { required: true })),

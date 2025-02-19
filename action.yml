@@ -29,7 +29,6 @@ inputs:
     deprecationMessage: This option will be removed in next major release. Use warmup-delay instead
     description: 'Wait this seconds before first polling'
     required: false
-    default: '10'
   minimum-interval:
     description: |
       Wait this interval or longer for each polling to reduce GitHub API calls.
@@ -40,7 +39,6 @@ inputs:
     deprecationMessage: This option will be removed in next major release. Use minimum-interval instead
     description: 'Wait this interval or the multiplied value (and jitter)'
     required: false
-    default: '15'
   early-exit:
     description: 'Stop rest pollings if faced at least 1 bad condition'
     required: false

@@ -32,14 +32,22 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const tempRoot = Path.parse(env['RUNNER_TEMP']);
   const tempDir = mkdtempSync(join(tempRoot, 'wait-other-jobs-'));
 
-  const waitSecondsBeforeFirstPolling = parseInt(
-    getInput('wait-seconds-before-first-polling', { required: true, trimWhitespace: true }),
-    10,
-  );
-  const minIntervalSeconds = parseInt(
-    getInput('min-interval-seconds', { required: true, trimWhitespace: true }),
-    10,
-  );
+  const waitSecondsBeforeFirstPolling = getInput('wait-seconds-before-first-polling', {
+    required: false,
+    trimWhitespace: true,
+  });
+  const warmupDelay = waitSecondsBeforeFirstPolling
+    ? Durationable.parse({ seconds: parseInt(waitSecondsBeforeFirstPolling, 10) })
+    : Durationable.parse(getInput('warmup-delay', { required: true, trimWhitespace: true }));
+
+  const minIntervalSeconds = getInput('min-interval-seconds', {
+    required: false,
+    trimWhitespace: true,
+  });
+  const minimumInterval = minIntervalSeconds
+    ? Durationable.parse({ seconds: parseInt(minIntervalSeconds, 10) })
+    : Durationable.parse(getInput('minimum-interval', { required: true, trimWhitespace: true }));
+
   const retryMethod = getInput('retry-method', { required: true, trimWhitespace: true });
   const attemptLimits = parseInt(
     getInput('attempt-limits', { required: true, trimWhitespace: true }),
@@ -52,8 +60,8 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
 
   const options = Options.parse({
     apiUrl,
-    warmupDelay: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
-    minimumInterval: Durationable.parse({ seconds: minIntervalSeconds }),
+    warmupDelay,
+    minimumInterval,
     retryMethod,
     attemptLimits,
     waitList: jsonInput.parse(getInput('wait-list', { required: true })),
