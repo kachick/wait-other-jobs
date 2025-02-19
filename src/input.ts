@@ -1,16 +1,26 @@
 import { getInput, getBooleanInput, setSecret, error } from '@actions/core';
 import { context } from '@actions/github';
 
-import { Durationable, eventNames, Options, Path, TargetEvents, Trigger } from './schema.ts';
+import {
+  Durationable,
+  jsonInput,
+  eventNames,
+  Options,
+  Path,
+  TargetEvents,
+  Trigger,
+  jsonSchema,
+  eventName,
+} from './schema.ts';
 import { env } from 'node:process';
 import { mkdtempSync } from 'fs';
 import { join } from 'path';
 import { z } from 'zod';
 
-export function parseTargetEvents(rawInputEventList: string) {
+export function parseTargetEvents(raw: string) {
   return TargetEvents.parse(
-    rawInputEventList === 'all' ? 'all' : (
-      z.string().regex(/\[/).transform(raw => new Set(JSON.parse(raw))).pipe(eventNames).parse(rawInputEventList)
+    raw === 'all' ? 'all' : (
+      jsonInput.transform(json => new Set(z.array(eventName).parse(json))).pipe(eventNames).parse(raw)
     ),
   );
 }
@@ -66,8 +76,11 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
     attemptLimits,
-    waitList: { targetEvents, ...JSON.parse(getInput('wait-list', { required: true })) },
-    skipList: JSON.parse(getInput('skip-list', { required: true })),
+    waitList: {
+      targetEvents,
+      ...z.array(jsonSchema).parse(jsonInput.parse(getInput('wait-list', { required: true }))),
+    },
+    skipList: jsonInput.parse(getInput('skip-list', { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun,
