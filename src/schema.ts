@@ -2,6 +2,35 @@ import { CheckSuite, Workflow, CheckRun, WorkflowRun } from '@octokit/graphql-sc
 import { Temporal } from 'temporal-polyfill';
 import { z } from 'zod';
 
+// ref: https://github.com/colinhacks/zod/blob/e30870369d5b8f31ff4d0130d4439fd997deb523/README.md?plain=1#L1922-L1935
+const jsonLiteral = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+type Literal = z.infer<typeof jsonLiteral>;
+type Json = Literal | { [key: string]: Json } | Json[];
+const jsonSchema: z.ZodType<Json> = z.lazy(() => z.union([jsonLiteral, z.array(jsonSchema), z.record(jsonSchema)]));
+
+// ref: https://github.com/colinhacks/zod/discussions/2215
+export const jsonInput = z.string()
+  .transform((str, ctx): z.infer<z.ZodType<Json>> => {
+    try {
+      return JSON.parse(str);
+    } catch (_err) {
+      const errorMessage = `Invalid JSON.
+Typical mistakens are below.
+  - Trailing comma
+    Bad: [a,b,]
+    Good: [a,b]
+  - Missing quotations for object key
+    Bad: {a: 1}
+    Good: {"a": 1}
+`;
+      ctx.addIssue({
+        code: 'custom',
+        message: errorMessage,
+      });
+      return z.NEVER;
+    }
+  });
+
 // https://github.com/tc39/proposal-temporal/blob/26e4cebe3c49f56932c1d5064fec9993e981823a/polyfill/index.d.ts#L493-L504
 type DurationLike = {
   years?: number;
