@@ -32767,7 +32767,7 @@ function parseInput() {
   const apiUrl = (0, import_core.getInput)("github-api-url", { required: true, trimWhitespace: true });
   const rawInputEventList = (0, import_core.getInput)("event-list", { required: true });
   const targetEvents = TargetEvents.parse(
-    () => rawInputEventList === "all" ? "all" : z2.string().transform((raw) => JSON.parse(raw)).pipe(eventNames)
+    () => rawInputEventList === "all" ? "all" : z2.string().transform((raw) => JSON.parse(raw)).pipe(eventNames).parse(rawInputEventList)
   );
   const options = Options.parse({
     apiUrl,

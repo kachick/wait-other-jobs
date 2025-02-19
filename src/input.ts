@@ -53,7 +53,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const rawInputEventList = getInput('event-list', { required: true });
   const targetEvents = TargetEvents.parse(() =>
     rawInputEventList === 'all' ? 'all' : (
-      z.string().transform(raw => JSON.parse(raw)).pipe(eventNames)
+      z.string().transform(raw => JSON.parse(raw)).pipe(eventNames).parse(rawInputEventList)
     )
   );
 
