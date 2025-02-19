@@ -13,11 +13,25 @@ inputs:
     description: 'Github API URL'
     required: true
     default: '${{ github.api_url }}'
-  wait-seconds-before-first-polling: # TODO: Since v4.x, Rename or fallback to `initial-duration` and make it possible to take ISO 8601 duration format. See GH-821
+  warmup-delay:
+    description: |
+      Wait this interval before first polling.
+      Should be specified with ISO 8601 duration format
+    required: false
+    default: 'PT1S' # See GH-596 and GH-994. Shorter value is okay since using `equal_intervals` by default. However avoiding 0 for no wait-list use. This action just skips if other checks are not yet running.
+  wait-seconds-before-first-polling: # TODO: Remove since v4.x
+    deprecationMessage: This option will be removed in next major release. Use warmup-delay instead
     description: 'Wait this seconds before first polling'
     required: false
     default: '10' # TODO: Since v4.x, Consider setting shorter or 0 because using `equal_intervals` by default. Or respect the `min-interval-seconds` if this value is empty. See GH-596 and GH-994
+  minimum-interval:
+    description: |
+      Wait this interval before first polling.
+      Should be specified with ISO 8601 duration format
+    required: false
+    default: 'PT15S'
   min-interval-seconds: # TODO: Since v4.x, Rename or fallback to `least-interval` and make it possible to take ISO 8601 duration format. See GH-821
+    deprecationMessage: This option will be removed in next major release. Use minimum-interval instead
     description: 'Wait this interval or the multiplied value (and jitter)'
     required: false
     default: '15'
