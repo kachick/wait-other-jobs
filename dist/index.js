@@ -32616,7 +32616,9 @@ var z2 = /* @__PURE__ */ Object.freeze({
 
 // src/schema.ts
 var jsonLiteral = z2.union([z2.string(), z2.number(), z2.boolean(), z2.null()]);
-var jsonSchema = z2.lazy(() => z2.union([jsonLiteral, z2.array(jsonSchema), z2.record(jsonSchema)]));
+var jsonSchema = z2.lazy(
+  () => z2.union([jsonLiteral, z2.array(jsonSchema), z2.record(jsonSchema)])
+);
 var jsonInput = z2.string().transform((str, ctx) => {
   try {
     return JSON.parse(str);
@@ -32746,6 +32748,11 @@ var Path = z2.string().min(1);
 import { env } from "node:process";
 import { mkdtempSync } from "fs";
 import { join } from "path";
+function parseTargetEvents(raw) {
+  return TargetEvents.parse(
+    raw === "all" ? "all" : jsonInput.transform((json) => new Set(z2.array(eventName).parse(json))).pipe(eventNames).parse(raw)
+  );
+}
 function parseInput() {
   const {
     repo,
@@ -32787,23 +32794,18 @@ function parseInput() {
   const shouldSkipSameWorkflow = (0, import_core.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const apiUrl = (0, import_core.getInput)("github-api-url", { required: true, trimWhitespace: true });
-  const rawInputEventList = (0, import_core.getInput)("event-list", { required: true });
-  const targetEvents = TargetEvents.parse(
-    rawInputEventList === "all" ? "all" : z2.string().transform((raw) => new Set(JSON.parse(raw))).pipe(eventNames).parse(rawInputEventList)
-  );
+  const targetEvents = parseTargetEvents((0, import_core.getInput)("event-list", { required: true }));
   const options = Options.parse({
     apiUrl,
     initialDuration: Durationable.parse({ seconds: waitSecondsBeforeFirstPolling }),
     leastInterval: Durationable.parse({ seconds: minIntervalSeconds }),
     retryMethod,
     attemptLimits,
-<<<<<<< HEAD
-    waitList: { targetEvents, ...JSON.parse((0, import_core.getInput)("wait-list", { required: true })) },
-    skipList: JSON.parse((0, import_core.getInput)("skip-list", { required: true })),
-=======
-    waitList: jsonInput.parse((0, import_core.getInput)("wait-list", { required: true })),
+    waitList: {
+      targetEvents,
+      ...z2.array(jsonSchema).parse(jsonInput.parse((0, import_core.getInput)("wait-list", { required: true })))
+    },
     skipList: jsonInput.parse((0, import_core.getInput)("skip-list", { required: true })),
->>>>>>> main
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun,
