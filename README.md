@@ -23,7 +23,7 @@ jobs:
     #   actions: read
     runs-on: ubuntu-24.04
     steps:
-      - uses: kachick/wait-other-jobs@v3.7.0
+      - uses: kachick/wait-other-jobs@v3.8.0
         timeout-minutes: 15 # Recommended to be enabled with your appropriate value for fail-safe use
 ```
 
@@ -136,7 +136,7 @@ jobs:
     name: 'Changed at here'
     runs-on: ubuntu-24.04
     steps:
-      - uses: kachick/wait-other-jobs@v3.7.0
+      - uses: kachick/wait-other-jobs@v3.8.0
         with:
           skip-list: |
             [
@@ -165,7 +165,7 @@ jobs:
           - ubuntu-22.04
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: kachick/wait-other-jobs@v3.7.0
+      - uses: kachick/wait-other-jobs@v3.8.0
         with:
           skip-list: |
             [

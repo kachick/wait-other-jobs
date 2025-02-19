@@ -3,6 +3,8 @@
 This file only records notable changes. Not synchronized with all releases and tags.
 
 - main - not yet released
+- v3.8.0 - not yet released
+  - Deprecate some options to prepare v4: [#1045](https://github.com/kachick/wait-other-jobs/pull/1045)
 - v3.7.0
   - Begins outputting job summary: [#1026](https://github.com/kachick/wait-other-jobs/pull/1026)
 - v3.6.0
