@@ -51,10 +51,10 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
   const apiUrl = getInput('github-api-url', { required: true, trimWhitespace: true });
   const rawInputEventList = getInput('event-list', { required: true });
-  const targetEvents = TargetEvents.parse(() =>
+  const targetEvents = TargetEvents.parse(
     rawInputEventList === 'all' ? 'all' : (
       z.string().transform(raw => JSON.parse(raw)).pipe(eventNames).parse(rawInputEventList)
-    )
+    ),
   );
 
   const options = Options.parse({
