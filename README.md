@@ -72,10 +72,14 @@ Full list of the options
 | `skip-same-workflow` | Skip jobs defined in the same workflow which using this action | `bool`   | `false`                 |                                                                 |
 | `dry-run`            | Avoid requests for tests                                       | `bool`   | `false`                 |                                                                 |
 
-## Resources for option syntax
+## Guide for option syntax and reasonable values
 
 - [ISO 8601 duration format](https://github.com/tc39/proposal-temporal/blob/0.9.0/docs/duration.md)
 - [Trailing commas are not allowed in JSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Trailing_commas)
+- GitHub API Limit: At least we should consider about `GITHUB_TOKEN`, that is allowed 1000 per hour per repository.\
+  Roughly calculating for long jobs, setting the `minimum-interval` larger than or equal `PT4S` would be safer.
+  - [Primary Limit](https://github.com/github/docs/blob/5c2caf1b693a557043b49dabe5115177e666fca9/content/rest/using-the-rest-api/rate-limits-for-the-rest-api.md?plain=1#L78)
+  - [Secondary Limit](https://github.com/github/docs/blob/5c2caf1b693a557043b49dabe5115177e666fca9/data/reusables/rest-api/secondary-rate-limit-rest-graphql.md)
 
 ## Schema of wait-list and skip-list
 
