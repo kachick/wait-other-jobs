@@ -31,13 +31,14 @@ inputs:
     required: false
   minimum-interval:
     description: |
-      Wait this interval or longer for each polling to reduce GitHub API calls.
+      Wait for this or a longer interval between each poll to reduce GitHub API calls.
       Should be specified with ISO 8601 duration format.
     required: false
     default: 'PT15S'
   min-interval-seconds: # TODO: Remove since v4.x
     deprecationMessage: This option will be removed in next major release. Use minimum-interval instead
-    description: 'Wait this interval or the multiplied value (and jitter)'
+    description: |
+      Wait for this or a longer interval between each poll to reduce GitHub API calls.
     required: false
   early-exit:
     description: 'Stop rest pollings if faced at least 1 bad condition'
