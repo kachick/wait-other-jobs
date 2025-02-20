@@ -20825,9 +20825,9 @@ var require_before_after_hook = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@octokit+endpoint@9.0.5/node_modules/@octokit/endpoint/dist-node/index.js
+// node_modules/.pnpm/@octokit+endpoint@9.0.6/node_modules/@octokit/endpoint/dist-node/index.js
 var require_dist_node2 = __commonJS({
-  "node_modules/.pnpm/@octokit+endpoint@9.0.5/node_modules/@octokit/endpoint/dist-node/index.js"(exports, module) {
+  "node_modules/.pnpm/@octokit+endpoint@9.0.6/node_modules/@octokit/endpoint/dist-node/index.js"(exports, module) {
     "use strict";
     var __defProp2 = Object.defineProperty;
     var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
@@ -20852,7 +20852,7 @@ var require_dist_node2 = __commonJS({
     });
     module.exports = __toCommonJS(dist_src_exports);
     var import_universal_user_agent5 = require_dist_node();
-    var VERSION5 = "9.0.5";
+    var VERSION5 = "9.0.6";
     var userAgent2 = `octokit-endpoint.js/${VERSION5} ${(0, import_universal_user_agent5.getUserAgent)()}`;
     var DEFAULTS2 = {
       method: "GET",
@@ -20941,9 +20941,9 @@ var require_dist_node2 = __commonJS({
         return `${name}=${encodeURIComponent(parameters[name])}`;
       }).join("&");
     }
-    var urlVariableRegex2 = /\{[^}]+\}/g;
+    var urlVariableRegex2 = /\{[^{}}]+\}/g;
     function removeNonChars2(variableName) {
-      return variableName.replace(/^\W+|\W+$/g, "").split(/,/);
+      return variableName.replace(/(?:^\W+)|(?:(?<!\W)\W+$)/g, "").split(/,/);
     }
     function extractUrlVariableNames2(url) {
       const matches = url.match(urlVariableRegex2);
@@ -21123,7 +21123,7 @@ var require_dist_node2 = __commonJS({
         }
         if (url.endsWith("/graphql")) {
           if (options.mediaType.previews?.length) {
-            const previewsFromAcceptHeader = headers.accept.match(/[\w-]+(?=-preview)/g) || [];
+            const previewsFromAcceptHeader = headers.accept.match(/(?<![\w-])[\w-]+(?=-preview)/g) || [];
             headers.accept = previewsFromAcceptHeader.concat(options.mediaType.previews).map((preview) => {
               const format = options.mediaType.format ? `.${options.mediaType.format}` : "+json";
               return `application/vnd.github.${preview}-preview${format}`;
@@ -21263,9 +21263,9 @@ var require_once = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@octokit+request-error@5.1.0/node_modules/@octokit/request-error/dist-node/index.js
+// node_modules/.pnpm/@octokit+request-error@5.1.1/node_modules/@octokit/request-error/dist-node/index.js
 var require_dist_node4 = __commonJS({
-  "node_modules/.pnpm/@octokit+request-error@5.1.0/node_modules/@octokit/request-error/dist-node/index.js"(exports, module) {
+  "node_modules/.pnpm/@octokit+request-error@5.1.1/node_modules/@octokit/request-error/dist-node/index.js"(exports, module) {
     "use strict";
     var __create2 = Object.create;
     var __defProp2 = Object.defineProperty;
@@ -21323,7 +21323,7 @@ var require_dist_node4 = __commonJS({
         if (options.request.headers.authorization) {
           requestCopy.headers = Object.assign({}, options.request.headers, {
             authorization: options.request.headers.authorization.replace(
-              / .*$/,
+              /(?<! ) .*$/,
               " [REDACTED]"
             )
           });
@@ -21355,9 +21355,9 @@ var require_dist_node4 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@octokit+request@8.4.0/node_modules/@octokit/request/dist-node/index.js
+// node_modules/.pnpm/@octokit+request@8.4.1/node_modules/@octokit/request/dist-node/index.js
 var require_dist_node5 = __commonJS({
-  "node_modules/.pnpm/@octokit+request@8.4.0/node_modules/@octokit/request/dist-node/index.js"(exports, module) {
+  "node_modules/.pnpm/@octokit+request@8.4.1/node_modules/@octokit/request/dist-node/index.js"(exports, module) {
     "use strict";
     var __defProp2 = Object.defineProperty;
     var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
@@ -21383,7 +21383,7 @@ var require_dist_node5 = __commonJS({
     module.exports = __toCommonJS(dist_src_exports);
     var import_endpoint2 = require_dist_node2();
     var import_universal_user_agent5 = require_dist_node();
-    var VERSION5 = "8.4.0";
+    var VERSION5 = "8.4.1";
     function isPlainObject3(value) {
       if (typeof value !== "object" || value === null)
         return false;
@@ -21434,7 +21434,7 @@ var require_dist_node5 = __commonJS({
           headers[keyAndValue[0]] = keyAndValue[1];
         }
         if ("deprecation" in headers) {
-          const matches = headers.link && headers.link.match(/<([^>]+)>; rel="deprecation"/);
+          const matches = headers.link && headers.link.match(/<([^<>]+)>; rel="deprecation"/);
           const deprecationLink = matches && matches.pop();
           log.warn(
             `[@octokit/request] "${requestOptions.method} ${requestOptions.url}" is deprecated. It is scheduled to be removed on ${headers.sunset}${deprecationLink ? `. See ${deprecationLink}` : ""}`
@@ -24089,9 +24089,9 @@ var require_dist_node9 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@octokit+plugin-paginate-rest@9.2.1_@octokit+core@5.2.0/node_modules/@octokit/plugin-paginate-rest/dist-node/index.js
+// node_modules/.pnpm/@octokit+plugin-paginate-rest@9.2.2_@octokit+core@5.2.0/node_modules/@octokit/plugin-paginate-rest/dist-node/index.js
 var require_dist_node10 = __commonJS({
-  "node_modules/.pnpm/@octokit+plugin-paginate-rest@9.2.1_@octokit+core@5.2.0/node_modules/@octokit/plugin-paginate-rest/dist-node/index.js"(exports, module) {
+  "node_modules/.pnpm/@octokit+plugin-paginate-rest@9.2.2_@octokit+core@5.2.0/node_modules/@octokit/plugin-paginate-rest/dist-node/index.js"(exports, module) {
     "use strict";
     var __defProp2 = Object.defineProperty;
     var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
@@ -24118,7 +24118,7 @@ var require_dist_node10 = __commonJS({
       paginatingEndpoints: () => paginatingEndpoints
     });
     module.exports = __toCommonJS(dist_src_exports);
-    var VERSION5 = "9.2.1";
+    var VERSION5 = "9.2.2";
     function normalizePaginatedListResponse(response) {
       if (!response.data) {
         return {
@@ -24162,7 +24162,7 @@ var require_dist_node10 = __commonJS({
               const response = await requestMethod({ method, url, headers });
               const normalizedResponse = normalizePaginatedListResponse(response);
               url = ((normalizedResponse.headers.link || "").match(
-                /<([^>]+)>;\s*rel="next"/
+                /<([^<>]+)>;\s*rel="next"/
               ) || [])[1];
               return { value: normalizedResponse };
             } catch (error2) {
