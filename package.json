@@ -38,7 +38,8 @@
     "overrides": {
       "undici@<=5.28.4": "^5.28.5",
       "@octokit/plugin-paginate-rest@<9.2.2": "^9.2.2",
-      "@octokit/endpoint@<9.0.5": "^9.0.6"
+      "@octokit/endpoint@<9.0.5": "^9.0.6",
+      "@octokit/request@<8.4.1": "^8.4.1"
     }
   }
 }

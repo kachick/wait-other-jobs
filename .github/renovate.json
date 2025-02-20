@@ -34,7 +34,8 @@
       "matchPackageNames": [
         "undici",
         "@octokit/plugin-paginate-rest",
-        "@octokit/endpoint"
+        "@octokit/endpoint",
+        "@octokit/request"
       ],
       "matchUpdateTypes": ["major", "minor"],
       "enabled": false
