@@ -26,7 +26,7 @@ jobs:
       # Wait longer than min-interval-seconds
       - run: sleep 8
       - run: echo '🎉'
-  dump:
+  test_outputs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -46,6 +46,9 @@ jobs:
                 "optional": false
               }
             ]
+      - name: It outputs parameters
+        run: |
+          [[ '${{ fromJson(steps.wait.outputs.parameters).options.warmupDelay }}' == 'PT42S' ]]
       - name: Make sure there is the file
         run: |
           ls -alh '${{ steps.wait.outputs.dump }}'

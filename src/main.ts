@@ -27,8 +27,8 @@ async function run(): Promise<void> {
   const startedAt = performance.now();
   startGroup('Parameters');
   const { trigger, options, githubToken, tempDir } = parseInput();
-  info(JSON.stringify(
-    // Do NOT include payload
+  const encodedParameters = JSON.stringify(
+    // Do NOT include whole of payload
     {
       trigger,
       startedAt,
@@ -36,7 +36,9 @@ async function run(): Promise<void> {
     },
     null,
     2,
-  ));
+  );
+  info(encodedParameters);
+  setOutput('parameters', encodedParameters);
   endGroup();
 
   let attempts = 0;

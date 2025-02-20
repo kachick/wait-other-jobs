@@ -114,9 +114,13 @@ with:
 
 ## outputs.<output_id>
 
+- `parameters`\
+  Parsed values from `with` and some context.\
+  This data is only provided for testing, so the schema is not defined.
+
 - `dump`\
   A file path for collected resources which keeps fields than logged.\
-  This data is only provided for debugging purposes, so the schema is not defined.
+  This data is only provided for debugging, so the schema is not defined.
 
 ## Examples
 

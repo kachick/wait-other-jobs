@@ -34456,8 +34456,8 @@ async function run() {
   const startedAt = performance.now();
   (0, import_core4.startGroup)("Parameters");
   const { trigger, options, githubToken, tempDir } = parseInput();
-  (0, import_core4.info)(JSON.stringify(
-    // Do NOT include payload
+  const encodedParameters = JSON.stringify(
+    // Do NOT include whole of payload
     {
       trigger,
       startedAt,
@@ -34466,7 +34466,9 @@ async function run() {
     },
     null,
     2
-  ));
+  );
+  (0, import_core4.info)(encodedParameters);
+  (0, import_core4.setOutput)("parameters", encodedParameters);
   (0, import_core4.endGroup)();
   let attempts = 0;
   let shouldStop = false;
