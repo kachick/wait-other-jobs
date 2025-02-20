@@ -48,7 +48,7 @@ jobs:
             ]
       - name: It outputs parameters
         run: |
-          [[ '${{ fromJson(steps.wait.outputs.parameters).options.warmupDelay }}' == 'PT42S' ]]
+          [[ '${{ fromJson(steps.wait.outputs.parameters).options.minimumInterval }}' == 'PT3S' ]]
       - name: Make sure there is the file
         run: |
           ls -alh '${{ steps.wait.outputs.dump }}'
