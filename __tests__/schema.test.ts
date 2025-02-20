@@ -13,8 +13,8 @@ const defaultOptions = Object.freeze({
   attemptLimits: 1000,
   waitList: [],
   skipList: [],
-  initialDuration: Temporal.Duration.from({ seconds: 10 }),
-  leastInterval: Temporal.Duration.from({ seconds: 15 }),
+  warmupDelay: Temporal.Duration.from({ seconds: 10 }),
+  minimumInterval: Temporal.Duration.from({ seconds: 15 }),
   retryMethod: 'equal_intervals',
   shouldSkipSameWorkflow: false,
   isDryRun: false,
@@ -28,8 +28,8 @@ test('Options keep given values', () => {
     attemptLimits: 1000,
     waitList: [],
     skipList: [],
-    initialDuration: Temporal.Duration.from({ seconds: 10 }),
-    leastInterval: Temporal.Duration.from({ seconds: 15 }),
+    warmupDelay: Temporal.Duration.from({ seconds: 10 }),
+    minimumInterval: Temporal.Duration.from({ seconds: 15 }),
     retryMethod: 'equal_intervals',
     shouldSkipSameWorkflow: false,
     isDryRun: false,
@@ -90,21 +90,21 @@ test('regex option does not have higher ReDoS possibilities', () => {
 
 test('It can start immediately. GH-994', () => {
   optionsEqual(
-    Options.parse({ ...defaultOptions, initialDuration: Temporal.Duration.from({ seconds: 0 }) }),
+    Options.parse({ ...defaultOptions, warmupDelay: Temporal.Duration.from({ seconds: 0 }) }),
     {
       ...defaultOptions,
-      initialDuration: Temporal.Duration.from({ seconds: 0 }),
+      warmupDelay: Temporal.Duration.from({ seconds: 0 }),
     },
   );
 });
 
 test('Options reject invalid values', () => {
-  throws(() => Options.parse({ ...defaultOptions, initialDuration: Temporal.Duration.from({ seconds: -1 }) }), {
+  throws(() => Options.parse({ ...defaultOptions, warmupDelay: Temporal.Duration.from({ seconds: -1 }) }), {
     name: 'ZodError',
     message: /Negative intervals are not reasonable for pollings/,
   });
 
-  throws(() => Options.parse({ ...defaultOptions, leastInterval: Temporal.Duration.from({ seconds: 0 }) }), {
+  throws(() => Options.parse({ ...defaultOptions, minimumInterval: Temporal.Duration.from({ seconds: 0 }) }), {
     name: 'ZodError',
     message: /Too short interval for pollings/,
   });
@@ -293,7 +293,7 @@ test('wait-list have startupGracePeriod', async (t) => {
       () =>
         Options.parse({
           ...defaultOptions,
-          initialDuration: Temporal.Duration.from({ seconds: 41 }),
+          warmupDelay: Temporal.Duration.from({ seconds: 41 }),
           waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { seconds: 40 } }],
         }),
       {
@@ -307,12 +307,12 @@ test('wait-list have startupGracePeriod', async (t) => {
     optionsEqual(
       Options.parse({
         ...defaultOptions,
-        initialDuration: Temporal.Duration.from({ seconds: 42 }),
+        warmupDelay: Temporal.Duration.from({ seconds: 42 }),
         waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { seconds: 10 } }],
       }),
       {
         ...defaultOptions,
-        initialDuration: Temporal.Duration.from({ seconds: 42 }),
+        warmupDelay: Temporal.Duration.from({ seconds: 42 }),
         waitList: [{
           workflowFile: 'ci.yml',
           jobMatchMode: 'all',
@@ -326,12 +326,12 @@ test('wait-list have startupGracePeriod', async (t) => {
     optionsEqual(
       Options.parse({
         ...defaultOptions,
-        initialDuration: Temporal.Duration.from({ seconds: 42 }),
+        warmupDelay: Temporal.Duration.from({ seconds: 42 }),
         waitList: [{ workflowFile: 'ci.yml' }],
       }),
       {
         ...defaultOptions,
-        initialDuration: Temporal.Duration.from({ seconds: 42 }),
+        warmupDelay: Temporal.Duration.from({ seconds: 42 }),
         waitList: [{
           workflowFile: 'ci.yml',
           jobMatchMode: 'all',

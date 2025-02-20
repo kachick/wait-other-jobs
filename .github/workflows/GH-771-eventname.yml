@@ -35,7 +35,7 @@ jobs:
       - uses: ./
         with:
           retry-method: 'equal_intervals'
-          min-interval-seconds: 5
+          minimum-interval: 'PT5S'
           attempt-limits: 30
           skip-same-workflow: 'false'
           wait-list: |

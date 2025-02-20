@@ -48,6 +48,7 @@
                 # For fighting the GitHub API
                 gh
                 jq
+                yq-go
                 gitleaks
                 act
               ]

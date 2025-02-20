@@ -13,14 +13,33 @@ inputs:
     description: 'Github API URL'
     required: true
     default: '${{ github.api_url }}'
-  wait-seconds-before-first-polling: # TODO: Since v4.x, Rename or fallback to `initial-duration` and make it possible to take ISO 8601 duration format. See GH-821
+  warmup-delay:
+    description: |
+      Wait this time before first polling.
+      To make sure other jobs are running and can be targeted.
+      Should be specified with ISO 8601 duration format.
+    required: false
+    # TODO: Since v4.x, Consider setting shorter or 0. Or respect the `minimum-interval` if this value is empty. See GH-596 and GH-994
+    #   Pros: WIll be fast for `equal_intervals`.
+    #   Cons:
+    #     - If other jobs runs after this job, this job might not know them
+    #     - If using `exponential_backoff`, reducing the polling count much reduces total time even if waiting longer for first polling
+    default: 'PT10S'
+  wait-seconds-before-first-polling: # TODO: Remove since v4.x
+    deprecationMessage: This option will be removed in next major release. Use warmup-delay instead
     description: 'Wait this seconds before first polling'
     required: false
-    default: '10' # TODO: Since v4.x, Consider setting shorter or 0 because using `equal_intervals` by default. Or respect the `min-interval-seconds` if this value is empty. See GH-596 and GH-994
-  min-interval-seconds: # TODO: Since v4.x, Rename or fallback to `least-interval` and make it possible to take ISO 8601 duration format. See GH-821
-    description: 'Wait this interval or the multiplied value (and jitter)'
+  minimum-interval:
+    description: |
+      Wait for this or a longer interval between each poll to reduce GitHub API calls.
+      Should be specified with ISO 8601 duration format.
     required: false
-    default: '15'
+    default: 'PT15S'
+  min-interval-seconds: # TODO: Remove since v4.x
+    deprecationMessage: This option will be removed in next major release. Use minimum-interval instead
+    description: |
+      Wait for this or a longer interval between each poll to reduce GitHub API calls.
+    required: false
   early-exit:
     description: 'Stop rest pollings if faced at least 1 bad condition'
     required: false
@@ -59,10 +78,14 @@ inputs:
     required: false
     default: 'false'
 outputs:
+  parameters:
+    description: |
+      Parsed values from `with` and some context.
+      This data is only provided for testing, so the schema is not defined.
   dump:
     description: |
       A file path for collected resources which keeps fields than logged.
-      This data is only provided for debugging purposes, so the schema is not defined.
+      This data is only provided for debugging, so the schema is not defined.
 
 runs:
   using: 'node20'

@@ -52,7 +52,7 @@ jobs:
         continue-on-error: true
         with:
           retry-method: 'unknown_method'
-          min-interval-seconds: '-1'
+          minimum-interval: '15' # Should be 'PT15S'
           attempt-limits: '0'
   validation_example_combination_errors_allow_failure:
     runs-on: ubuntu-24.04
@@ -92,8 +92,8 @@ jobs:
         continue-on-error: true
         with:
           retry-method: 'exponential_backoff'
-          wait-seconds-before-first-polling: 2
-          min-interval-seconds: 2
+          warmup-delay: 'PT2S'
+          minimum-interval: 'PT2S'
           attempt-limits: 2
           skip-same-workflow: 'true'
           skip-list: |
@@ -113,7 +113,7 @@ jobs:
           ACTIONS_STEP_DEBUG: true
         with:
           retry-method: 'equal_intervals'
-          min-interval-seconds: 10
+          minimum-interval: 'PT10S'
           attempt-limits: 60
           skip-same-workflow: 'true'
           skip-list: |
@@ -131,7 +131,7 @@ jobs:
       - uses: ./
         with:
           retry-method: 'equal_intervals'
-          min-interval-seconds: 5
+          minimum-interval: 'PT5S'
           attempt-limits: 30
           wait-list: |
             [
@@ -158,7 +158,7 @@ jobs:
       - uses: ./
         with:
           retry-method: 'equal_intervals'
-          min-interval-seconds: 5
+          minimum-interval: 'PT5S'
           attempt-limits: 30
           skip-same-workflow: 'false' # Intentionally set false to test skip list also can cover this use case
           skip-list: |

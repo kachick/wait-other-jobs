@@ -233,7 +233,7 @@ export function generateReport(
       // 2. `context.jobName === checkRun.jobName`
       // But GitHub does not provide the jobName for each context: https://github.com/orgs/community/discussions/16614
       //
-      // On the otherhand, the conxtext.jobId will be used for the default jobName
+      // On the otherhand, the context.jobId will be used for the default jobName
       // Anyway, in matrix use, GitHub uses the default name for the prefix. It should be considered in list based solutions
       trigger.jobId === summary.jobName
     ))

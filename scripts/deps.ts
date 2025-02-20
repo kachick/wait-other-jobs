@@ -11,5 +11,6 @@ await Promise.all([
   $`typos --version`,
   $`gh --version`,
   $`jq --version`,
+  $`yq --version`,
   $`gitleaks version`,
 ]);

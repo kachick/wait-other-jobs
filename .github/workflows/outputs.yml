@@ -23,10 +23,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - run: echo ':)'
-      # Wait longer than min-interval-seconds
+      # Wait longer than minimum-interval
       - run: sleep 8
       - run: echo '🎉'
-  dump:
+  test_outputs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -35,8 +35,8 @@ jobs:
         id: wait
         with:
           retry-method: 'equal_intervals'
-          wait-seconds-before-first-polling: '1'
-          min-interval-seconds: '3'
+          warmup-delay: 'PT1S'
+          minimum-interval: 'PT3S'
           skip-same-workflow: 'false'
           wait-list: |
             [
@@ -46,6 +46,9 @@ jobs:
                 "optional": false
               }
             ]
+      - name: It outputs parameters
+        run: |
+          [[ '${{ fromJson(steps.wait.outputs.parameters).options.minimumInterval }}' == 'PT3S' ]]
       - name: Make sure there is the file
         run: |
           ls -alh '${{ steps.wait.outputs.dump }}'
