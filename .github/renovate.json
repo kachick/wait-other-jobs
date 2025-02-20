@@ -32,7 +32,6 @@
         "npm"
       ],
       "matchPackageNames": [
-        "esbuild",
         "undici"
       ],
       "matchUpdateTypes": ["major", "minor"],
