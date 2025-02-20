@@ -7,6 +7,7 @@ settings:
 overrides:
   undici@<=5.28.4: ^5.28.5
   '@octokit/plugin-paginate-rest@<9.2.2': ^9.2.2
+  '@octokit/endpoint@<9.0.5': ^9.0.6
 
 importers:
 
@@ -253,8 +254,8 @@ packages:
     resolution: {integrity: sha512-nBRBMpKPhQUxCsQQeW+rCJ/OPSMcj3g0nfHn01zGYZXuNDvvXudF/TYY6APj5THlurerpFN4a/dQAIAaM6BYhA==}
     engines: {node: '>= 18'}
 
-  '@octokit/endpoint@9.0.5':
-    resolution: {integrity: sha512-ekqR4/+PCLkEBF6qgj8WqJfvDq65RH85OAgrtnVp1mSxaXF03u2xW/hUdweGS5654IlC0wkNYC18Z50tSYTAFw==}
+  '@octokit/endpoint@9.0.6':
+    resolution: {integrity: sha512-H1fNTMA57HbkFESSt3Y9+FBICv+0jFceJFPWDePYlR/iMGrwM5ph+Dd4XRQs+8X+PUFURLQgX9ChPfhJ/1uNQw==}
     engines: {node: '>= 18'}
 
   '@octokit/graphql-schema@15.25.0':
@@ -568,7 +569,7 @@ snapshots:
       '@octokit/types': 13.8.0
       universal-user-agent: 7.0.2
 
-  '@octokit/endpoint@9.0.5':
+  '@octokit/endpoint@9.0.6':
     dependencies:
       '@octokit/types': 13.8.0
       universal-user-agent: 6.0.1
@@ -620,7 +621,7 @@ snapshots:
 
   '@octokit/request@8.4.0':
     dependencies:
-      '@octokit/endpoint': 9.0.5
+      '@octokit/endpoint': 9.0.6
       '@octokit/request-error': 5.1.0
       '@octokit/types': 13.8.0
       universal-user-agent: 6.0.1
