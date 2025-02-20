@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - run: echo ':)'
-      # Wait longer than min-interval-seconds
+      # Wait longer than minimum-interval
       - run: sleep 8
       - run: echo '🎉'
   test_outputs:
