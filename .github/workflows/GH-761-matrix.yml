@@ -43,8 +43,8 @@ jobs:
         id: wait
         with:
           retry-method: 'equal_intervals'
-          min-interval-seconds: 5
-          wait-seconds-before-first-polling: '${{ matrix.wait-seconds-before-first-polling }}'
+          warmup-delay: 'PT${{ matrix.wait-seconds-before-first-polling }}S'
+          minimum-interval: 'PT5S'
           skip-same-workflow: 'false' # Intentionally set false to test skip list also can cover this use case
           # Should specify jobName to test details
           # But we should pattern likes regex for the jobName

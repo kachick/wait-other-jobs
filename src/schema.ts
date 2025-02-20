@@ -146,8 +146,8 @@ export const Options = z.object({
   apiUrl: z.string().url(),
   waitList: WaitList,
   skipList: SkipList,
-  initialDuration: ZeroableDuration,
-  leastInterval: PositiveDuration,
+  warmupDelay: ZeroableDuration,
+  minimumInterval: PositiveDuration,
   retryMethod: retryMethods,
   attemptLimits: z.number().min(1),
   isEarlyExit: z.boolean(),
@@ -157,18 +157,18 @@ export const Options = z.object({
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { message: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },
 ).refine(
-  ({ initialDuration, waitList }) =>
+  ({ warmupDelay, waitList }) =>
     waitList.every(
       (item) =>
         !(Temporal.Duration.compare(
-              initialDuration,
+              warmupDelay,
               item.startupGracePeriod,
             ) > 0
           && Temporal.Duration.compare(item.startupGracePeriod, defaultGrace) !== 0),
     ),
   {
     message: 'A shorter startupGracePeriod waiting for the first poll does not make sense',
-    path: ['initialDuration', 'waitList'],
+    path: ['warmupDelay', 'waitList'],
   },
 );
 

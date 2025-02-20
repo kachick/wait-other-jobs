@@ -27,8 +27,8 @@ async function run(): Promise<void> {
   const startedAt = performance.now();
   startGroup('Parameters');
   const { trigger, options, githubToken, tempDir } = parseInput();
-  info(JSON.stringify(
-    // Do NOT include payload
+  const encodedParameters = JSON.stringify(
+    // Do NOT include whole of payload
     {
       trigger,
       startedAt,
@@ -36,7 +36,9 @@ async function run(): Promise<void> {
     },
     null,
     2,
-  ));
+  );
+  info(encodedParameters);
+  setOutput('parameters', encodedParameters);
   endGroup();
 
   let attempts = 0;
@@ -58,12 +60,12 @@ async function run(): Promise<void> {
     }
 
     if (attempts === 1) {
-      if (options.initialDuration.sign > 0) {
-        info(`Wait ${readableDuration(options.initialDuration)} before first polling.`);
-        await wait(options.initialDuration);
+      if (options.warmupDelay.sign > 0) {
+        info(`Wait ${readableDuration(options.warmupDelay)} before first polling.`);
+        await wait(options.warmupDelay);
       }
     } else {
-      const interval = getInterval(options.retryMethod, options.leastInterval, attempts);
+      const interval = getInterval(options.retryMethod, options.minimumInterval, attempts);
       info(`Wait ${readableDuration(interval)} before next polling to reduce API calls.`);
       await wait(interval);
     }
