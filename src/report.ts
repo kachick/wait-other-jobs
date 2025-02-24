@@ -164,7 +164,8 @@ function seekWaitList(
   const filtered = summaries.filter((summary) =>
     seeker.some((target) => {
       const isMatchPath = matchPath(target, summary);
-      const isMatchEvent = target.eventName ? (target.eventName === summary.eventName) : true;
+      const targetEvents = target.targetEvents;
+      const isMatchEvent = targetEvents === 'all' ? true : targetEvents.has(summary.eventName);
       if (isMatchPath && isMatchEvent) {
         target.found = true;
         return true;
