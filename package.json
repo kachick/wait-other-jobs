@@ -29,7 +29,7 @@
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
     "@tsconfig/strictest": "^2.0.5",
-    "@types/node": "^20.17.19",
+    "@types/node": "^20.17.21",
     "recheck": "^4.4.5",
     "tsx": "^4.19.3",
     "typescript": "^5.7.3"
