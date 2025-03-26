@@ -9,6 +9,11 @@
 This GitHub action waits for all or specific jobs, even if they are running in other workflows.\
 If any of those jobs fail, this action will fail as well.
 
+## v4 and v3
+
+Latest stable versions are v3.x, and developing under v4.x in main branch.
+I plan the major difference for default behaviors and option names. So updating v3 -> v4 might require config changes especially if you want to keep old behaviors.
+
 ## Usage
 
 Zero or tiny configuration may work.
