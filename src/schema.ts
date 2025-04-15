@@ -6,7 +6,9 @@ import { z } from 'zod';
 const jsonLiteral = z.union([z.string(), z.number(), z.boolean(), z.null()]);
 type Literal = z.infer<typeof jsonLiteral>;
 type Json = Literal | { [key: string]: Json } | Json[];
-const jsonSchema: z.ZodType<Json> = z.lazy(() => z.union([jsonLiteral, z.array(jsonSchema), z.record(jsonSchema)]));
+export const jsonSchema: z.ZodType<Json> = z.lazy(() =>
+  z.union([jsonLiteral, z.array(jsonSchema), z.record(jsonSchema)])
+);
 
 // ref: https://github.com/colinhacks/zod/discussions/2215
 export const jsonInput = z.string()
@@ -113,15 +115,29 @@ const matchPartialJobs = z.object({
   jobMatchMode: z.enum(['exact', 'prefix']).default('exact'),
 }).strict();
 
+// Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
+export const eventName = z.string().min(1);
+// const eventNames = z.set(eventName).nonempty().optional();
+// const parsibleEventNames = z.string();
+export const eventNames = z.set(eventName).nonempty();
+// export const TargetEvents = z.union([
+//   z.literal('all'),
+//   z.preprocess((item) => (typeof item === 'string' && item !== 'all') ? new Set(z.array(eventName).nonempty().parse(JSON.parse(item))) : , z.set(eventName).nonempty()),
+// ]);
+
+export const TargetEvents = z.union([
+  z.literal('all'),
+  eventNames,
+]).default('all');
+
 const FilterCondition = z.union([matchAllJobs, matchPartialJobs]);
 const SkipFilterCondition = FilterCondition.readonly();
 
 const waitOptions = {
   optional: z.boolean().default(false).readonly(),
 
-  // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
-  // - Intentionally omitted in skip-list, let me know if you have the use-case
-  eventName: z.string().min(1).optional(),
+  // - Intentionally omitted in skip-list for my laziness, let me know if you have the use-case
+  targetEvents: TargetEvents,
 
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
@@ -153,6 +169,7 @@ export const Options = z.object({
   isEarlyExit: z.boolean(),
   shouldSkipSameWorkflow: z.boolean(),
   isDryRun: z.boolean(),
+  targetEvents: TargetEvents,
 }).strict().readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { message: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },
