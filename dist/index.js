@@ -32616,7 +32616,9 @@ var z2 = /* @__PURE__ */ Object.freeze({
 
 // src/schema.ts
 var jsonLiteral = z2.union([z2.string(), z2.number(), z2.boolean(), z2.null()]);
-var jsonSchema = z2.lazy(() => z2.union([jsonLiteral, z2.array(jsonSchema), z2.record(jsonSchema)]));
+var jsonSchema = z2.lazy(
+  () => z2.union([jsonLiteral, z2.array(jsonSchema), z2.record(jsonSchema)])
+);
 var jsonInput = z2.string().transform((str, ctx) => {
   try {
     return JSON.parse(str);
@@ -32690,13 +32692,18 @@ var matchPartialJobs = z2.object({
   jobName: z2.string().min(1),
   jobMatchMode: z2.enum(["exact", "prefix"]).default("exact")
 }).strict();
+var eventName = z2.string().min(1);
+var eventNames = z2.set(eventName).nonempty();
+var TargetEvents = z2.union([
+  z2.literal("all"),
+  eventNames
+]).default("all");
 var FilterCondition = z2.union([matchAllJobs, matchPartialJobs]);
 var SkipFilterCondition = FilterCondition.readonly();
 var waitOptions = {
   optional: z2.boolean().default(false).readonly(),
-  // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
-  // - Intentionally omitted in skip-list, let me know if you have the use-case
-  eventName: z2.string().min(1).optional(),
+  // - Intentionally omitted in skip-list for my laziness, let me know if you have the use-case
+  targetEvents: TargetEvents,
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
   startupGracePeriod: Durationable.default(defaultGrace)
@@ -32718,7 +32725,8 @@ var Options = z2.object({
   attemptLimits: z2.number().min(1),
   isEarlyExit: z2.boolean(),
   shouldSkipSameWorkflow: z2.boolean(),
-  isDryRun: z2.boolean()
+  isDryRun: z2.boolean(),
+  targetEvents: TargetEvents
 }).strict().readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { message: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
@@ -32740,6 +32748,11 @@ var Path = z2.string().min(1);
 import { env } from "node:process";
 import { mkdtempSync } from "fs";
 import { join } from "path";
+function parseTargetEvents(raw) {
+  return TargetEvents.parse(
+    raw === "all" ? "all" : jsonInput.transform((json) => new Set(z2.array(eventName).parse(json))).pipe(eventNames).parse(raw)
+  );
+}
 function parseInput() {
   const {
     repo,
@@ -32750,7 +32763,7 @@ function parseInput() {
     // https://github.com/orgs/community/discussions/16614
     job: jobId,
     sha,
-    eventName
+    eventName: eventName2
   } = import_github.context;
   const pr2 = payload.pull_request;
   let commitSha = sha;
@@ -32783,19 +32796,24 @@ function parseInput() {
   const shouldSkipSameWorkflow = (0, import_core.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const apiUrl = (0, import_core.getInput)("github-api-url", { required: true, trimWhitespace: true });
+  const targetEvents = parseTargetEvents((0, import_core.getInput)("event-list", { required: true }));
   const options = Options.parse({
     apiUrl,
     warmupDelay,
     minimumInterval,
     retryMethod,
     attemptLimits,
-    waitList: jsonInput.parse((0, import_core.getInput)("wait-list", { required: true })),
+    waitList: {
+      targetEvents,
+      ...z2.array(jsonSchema).parse(jsonInput.parse((0, import_core.getInput)("wait-list", { required: true })))
+    },
     skipList: jsonInput.parse((0, import_core.getInput)("skip-list", { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
-    isDryRun
+    isDryRun,
+    targetEvents
   });
-  const trigger = { ...repo, ref: commitSha, runId, jobId, eventName };
+  const trigger = { ...repo, ref: commitSha, runId, jobId, eventName: eventName2 };
   const githubToken = (0, import_core.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core.setSecret)(githubToken);
   return { trigger, options, githubToken, tempDir };
@@ -34266,7 +34284,8 @@ function seekWaitList(summaries, waitList, elapsed) {
   const filtered = summaries.filter(
     (summary2) => seeker.some((target) => {
       const isMatchPath = matchPath(target, summary2);
-      const isMatchEvent = target.eventName ? target.eventName === summary2.eventName : true;
+      const targetEvents = target.targetEvents;
+      const isMatchEvent = targetEvents === "all" ? true : targetEvents.has(summary2.eventName);
       if (isMatchPath && isMatchEvent) {
         target.found = true;
         return true;
@@ -34390,15 +34409,15 @@ function writeJobSummary(lastPolling, options) {
   ];
   import_core3.summary.addTable([
     headers,
-    ...lastPolling.summaries.toSorted(compareLevel).map(({ severity, workflowPermalink, workflowBasename, jobName, eventName, runStatus, runConclusion, checkRunUrl }) => [{
+    ...lastPolling.summaries.toSorted(compareLevel).map(({ severity, workflowPermalink, workflowBasename, jobName, eventName: eventName2, runStatus, runConclusion, checkRunUrl }) => [{
       data: getEmoji(severity)
     }, {
       // e.g. AFAIK, we can't access and control github provided dependabot workflow except the run logs. The event type is `dynamic`.
-      data: eventName === "dynamic" ? workflowBasename : `<a href="${workflowPermalink}">${workflowBasename}</a>`
+      data: eventName2 === "dynamic" ? workflowBasename : `<a href="${workflowPermalink}">${workflowBasename}</a>`
     }, {
       data: jobName
     }, {
-      data: eventName
+      data: eventName2
     }, {
       data: runStatus
     }, {
