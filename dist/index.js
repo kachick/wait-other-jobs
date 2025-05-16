@@ -28552,7 +28552,7 @@ var Tr = /* @__PURE__ */ Object.defineProperties(Object.create(Intl), p({
   DateTimeFormat: Sr
 }));
 
-// node_modules/.pnpm/zod@3.24.2/node_modules/zod/lib/index.mjs
+// node_modules/.pnpm/zod@3.24.4/node_modules/zod/lib/index.mjs
 var util;
 (function(util2) {
   util2.assertEqual = (val) => val;
@@ -29396,13 +29396,14 @@ var base64urlRegex = /^([0-9a-zA-Z-_]{4})*(([0-9a-zA-Z-_]{2}(==)?)|([0-9a-zA-Z-_
 var dateRegexSource = `((\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|(02)-(0[1-9]|1\\d|2[0-8])))`;
 var dateRegex = new RegExp(`^${dateRegexSource}$`);
 function timeRegexSource(args) {
-  let regex = `([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d`;
+  let secondsRegexSource = `[0-5]\\d`;
   if (args.precision) {
-    regex = `${regex}\\.\\d{${args.precision}}`;
+    secondsRegexSource = `${secondsRegexSource}\\.\\d{${args.precision}}`;
   } else if (args.precision == null) {
-    regex = `${regex}(\\.\\d+)?`;
+    secondsRegexSource = `${secondsRegexSource}(\\.\\d+)?`;
   }
-  return regex;
+  const secondsQuantifier = args.precision ? "+" : "?";
+  return `([01]\\d|2[0-3]):[0-5]\\d(:${secondsRegexSource})${secondsQuantifier}`;
 }
 function timeRegex(args) {
   return new RegExp(`^${timeRegexSource(args)}$`);
