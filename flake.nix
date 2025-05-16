@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
   outputs =
@@ -15,7 +15,7 @@
       ];
     in
     {
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
       devShells = forAllSystems (
         system:
         let
@@ -23,15 +23,21 @@
         in
         {
           default = pkgs.mkShellNoCC {
-            # https://github.com/denoland/deno/issues/17916
-            env.DENO_NO_PACKAGE_JSON = "1";
+            env = {
+              # https://github.com/denoland/deno/issues/17916
+              DENO_NO_PACKAGE_JSON = "1";
+
+              # Correct nixd inlay hints
+              NIX_PATH = "nixpkgs=${nixpkgs.outPath}";
+            };
+
             buildInputs = (
               with pkgs;
               [
                 # For Nix environments
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
-                nil
+                nixd
                 nixfmt-rfc-style
 
                 nodejs_20
