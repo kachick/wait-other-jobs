@@ -22,7 +22,7 @@
     "@octokit/graphql-schema": "^15.26.0",
     "@octokit/plugin-paginate-graphql": "^5.2.4",
     "ansi-styles": "^6.2.1",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.25.4",
     "temporal-polyfill": "^0.2.5",
     "zod": "^3.24.2"
   },
