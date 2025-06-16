@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2.0.3
         with:
-          deno-version: '2.3.5' # selfup {"extract":"\\d[^']+","replacer":["bash","-c","deno --version | head -n 1"], "nth": 2}
+          deno-version: '2.2.12' # selfup {"extract":"\\d[^']+","replacer":["bash","-c","deno --version | head -n 1"], "nth": 2}
       - run: deno lint
   dprint:
     timeout-minutes: 15
