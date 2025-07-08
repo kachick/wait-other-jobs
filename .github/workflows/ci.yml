@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: DeterminateSystems/nix-installer-action@21a544727d0c62386e78b4befe52d19ad12692e3 # v17
+      - uses: DeterminateSystems/nix-installer-action@c723f3a885e3f1d866d91f4f0c33dd44b1fc7c60 # v18
       - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
       # See https://github.com/actions/setup-node/blob/802632921f8532d2409ae6eac3313b6f81f11122/src/cache-utils.ts#L30-L38
       - name: Get pnpm store path
