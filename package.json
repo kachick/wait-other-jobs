@@ -37,10 +37,7 @@
   "pnpm": {
     "overrides": {
       "undici@<5.28.5": "^5.29.0",
-      "@octokit/plugin-paginate-rest@<9.2.2": "^9.2.2",
-      "@octokit/endpoint@<9.0.6": "^9.0.6",
-      "@octokit/request@<8.4.1": "^8.4.1",
-      "@octokit/request-error@<5.1.1": "^5.1.1"
+      "@octokit/plugin-paginate-rest@<9.2.2": "^9.2.2"
     }
   }
 }
