@@ -61,6 +61,7 @@ type MyDurationLike = z.infer<typeof MyDurationLike>;
 
 // IETF does not define duration formats in their RFCs, but in RFC 3399 refers ISO 8601 duration formats.
 // https://www.ietf.org/rfc/rfc3339.txt
+// NOTE: `.transform()` causes it cannot be useable in `.toJSONSchema()`
 export const Durationable = z.union([z.iso.duration(), MyDurationLike]).transform((item) => getDuration(item));
 export const PositiveDuration = z.instanceof(Temporal.Duration).refine(
   (d) => d.sign > 0,
@@ -128,8 +129,8 @@ const WaitFilterCondition = z.union([
   z.strictObject(matchAllJobs.extend(waitOptions).shape),
   z.strictObject(matchPartialJobs.extend(waitOptions).shape),
 ]).readonly();
-const WaitList = z.array(WaitFilterCondition).readonly();
-const SkipList = z.array(SkipFilterCondition).readonly();
+export const WaitList = z.array(WaitFilterCondition).readonly();
+export const SkipList = z.array(SkipFilterCondition).readonly();
 export type FilterCondition = z.infer<typeof FilterCondition>;
 export type WaitList = z.infer<typeof WaitList>;
 
