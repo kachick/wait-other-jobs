@@ -39308,7 +39308,7 @@ Typical mistakens are below.
 `;
     ctx.addIssue({
       code: "custom",
-      message: errorMessage
+      error: errorMessage
     });
     return external_exports.NEVER;
   }
@@ -39329,13 +39329,13 @@ var Durationable = external_exports.union([external_exports.iso.duration(), MyDu
 var PositiveDuration = external_exports.instanceof(Xn.Duration).refine(
   (d2) => d2.sign > 0,
   {
-    message: "Too short interval for pollings"
+    error: "Too short interval for pollings"
   }
 );
 var ZeroableDuration = external_exports.instanceof(Xn.Duration).refine(
   (d2) => d2.sign >= 0,
   {
-    message: "Negative intervals are not reasonable for pollings"
+    error: "Negative intervals are not reasonable for pollings"
   }
 );
 var defaultGrace = Xn.Duration.from({ seconds: 10 });
@@ -39354,7 +39354,7 @@ function getDuration(durationable) {
   throw new Error("unexpected value is specified in durations");
 }
 var yamlPattern = /\.(yml|yaml)$/;
-var workflowFile = external_exports.regex(yamlPattern);
+var workflowFile = external_exports.string().regex(yamlPattern);
 var matchAllJobs = external_exports.object({
   workflowFile,
   jobName: external_exports.null().optional(),
@@ -39397,7 +39397,7 @@ var Options = external_exports.object({
   isDryRun: external_exports.boolean()
 }).strict().readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
-  { message: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
+  { error: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
 ).refine(
   ({ warmupDelay, waitList }) => waitList.every(
     (item) => !(Xn.Duration.compare(
@@ -39406,7 +39406,7 @@ var Options = external_exports.object({
     ) > 0 && Xn.Duration.compare(item.startupGracePeriod, defaultGrace) !== 0)
   ),
   {
-    message: "A shorter startupGracePeriod waiting for the first poll does not make sense",
+    error: "A shorter startupGracePeriod waiting for the first poll does not make sense",
     path: ["warmupDelay", "waitList"]
   }
 );

@@ -27,7 +27,7 @@ Typical mistakens are below.
 `;
       ctx.addIssue({
         code: 'custom',
-        message: errorMessage,
+        error: errorMessage,
       });
       return z.NEVER;
     }
@@ -71,13 +71,13 @@ export const Durationable = z.union([z.iso.duration(), MyDurationLike]).transfor
 export const PositiveDuration = z.instanceof(Temporal.Duration).refine(
   (d) => d.sign > 0,
   {
-    message: 'Too short interval for pollings',
+    error: 'Too short interval for pollings',
   },
 );
 export const ZeroableDuration = z.instanceof(Temporal.Duration).refine(
   (d) => d.sign >= 0,
   {
-    message: 'Negative intervals are not reasonable for pollings',
+    error: 'Negative intervals are not reasonable for pollings',
   },
 );
 const defaultGrace = Temporal.Duration.from({ seconds: 10 });
@@ -157,7 +157,7 @@ export const Options = z.object({
   isDryRun: z.boolean(),
 }).strict().readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
-  { message: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },
+  { error: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },
 ).refine(
   ({ warmupDelay, waitList }) =>
     waitList.every(
@@ -169,7 +169,7 @@ export const Options = z.object({
           && Temporal.Duration.compare(item.startupGracePeriod, defaultGrace) !== 0),
     ),
   {
-    message: 'A shorter startupGracePeriod waiting for the first poll does not make sense',
+    error: 'A shorter startupGracePeriod waiting for the first poll does not make sense',
     path: ['warmupDelay', 'waitList'],
   },
 );
