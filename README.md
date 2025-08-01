@@ -63,8 +63,8 @@ Full list of the options
 | -------------------- | ------------------------------------------------------------------------------- | -------- | ----------------------- | --------------------------------------------------------------- |
 | `github-api-url`     | The Github API endpoint. Override for Github Enterprise usage.                  | `string` | `${{ github.api_url }}` | `https://api.github.com`, `https://ghe-host.example.net/api/v3` |
 | `github-token`       | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `${{ github.token }}`   |                                                                 |
-| `warmup-delay`       | Wait this interval before first polling                                         | `string` | `PT10S`                 | ISO 8601 duration format                                        |
-| `minimum-interval`   | Wait for this or a longer interval between each poll to reduce GitHub API calls | `string` | `PT15S`                 | ISO 8601 duration format                                        |
+| `warmup-delay`       | Wait this interval before first polling                                         | `string` | `PT10S`                 | [ISO 8601 duration format][tc39-temporal-duration]              |
+| `minimum-interval`   | Wait for this or a longer interval between each poll to reduce GitHub API calls | `string` | `PT15S`                 | [ISO 8601 duration format][tc39-temporal-duration]              |
 | `retry-method`       | How to wait for next polling                                                    | `string` | `equal_intervals`       | `exponential_backoff`, `equal_intervals`                        |
 | `early-exit`         | Stop polling as soon as one job fails                                           | `bool`   | `true`                  |                                                                 |
 | `attempt-limits`     | Stop polling if reached to this limit                                           | `number` | `1000`                  |                                                                 |
@@ -75,7 +75,6 @@ Full list of the options
 
 ## Guide for option syntax and reasonable values
 
-- [ISO 8601 duration format](https://github.com/tc39/proposal-temporal/blob/0.9.0/docs/duration.md)
 - [Trailing commas are not allowed in JSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Trailing_commas)
 - GitHub API Limit: At least we should consider about `GITHUB_TOKEN`, that is allowed 1000 per hour per repository.\
   Roughly calculating for long jobs, setting the `minimum-interval` larger than or equal `PT4S` would be safer.
@@ -197,7 +196,7 @@ with:
       {
         "workflowFile": "might_be_triggered_after_0-4_minutes.yml",
         "optional": false,
-        "startupGracePeriod": { "minutes": 5 }
+        "startupGracePeriod": "PT5M"
       }
     ]
 ```
@@ -206,11 +205,8 @@ This action starts immediately but ignores the job missing in the first 5 minute
 
 - No need to extend `warmup-delay`
 - Disable `optional`, because it is needed to check
-- Set enough value for `startupGracePeriod` for this purpose.\
-  It must be parsible by [TC39 - Temporal.Duration](https://github.com/tc39/proposal-temporal/blob/26e4cebe3c49f56932c1d5064fec9993e981823a/docs/duration.md)\
-  e.g
-  - `"PT3M42S"` # ISO 8601 duration format
-  - `{ "minutes": 3, "seconds": 42 }` # key-value for each unit
+- Set enough value for `startupGracePeriod`.\
+  Use the [ISO 8601 duration format][tc39-temporal-duration].
 
 If you're not using `wait-list`, you need to handle this pattern with `warmup-delay`.
 
@@ -226,3 +222,5 @@ If you're not using `wait-list`, you need to handle this pattern with `warmup-de
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](LICENSE)
+
+[tc39-temporal-duration]: https://github.com/tc39/proposal-temporal/blob/0.9.0/docs/duration.md
