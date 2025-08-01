@@ -32862,7 +32862,7 @@ var Octokit = class {
   auth;
 };
 
-// node_modules/.pnpm/@octokit+plugin-paginate-graphql@5.2.4_@octokit+core@7.0.3/node_modules/@octokit/plugin-paginate-graphql/dist-bundle/index.js
+// node_modules/.pnpm/@octokit+plugin-paginate-graphql@6.0.0_@octokit+core@7.0.3/node_modules/@octokit/plugin-paginate-graphql/dist-bundle/index.js
 var generateMessage = (path, cursorValue) => `The cursor at "${path.join(
   ","
 )}" did not change its value "${cursorValue}" after a page transition. Please make sure your that your query is set up correctly.`;

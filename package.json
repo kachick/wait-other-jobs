@@ -20,7 +20,7 @@
     "@actions/github": "^6.0.1",
     "@octokit/core": "^7.0.3",
     "@octokit/graphql-schema": "^15.26.0",
-    "@octokit/plugin-paginate-graphql": "^5.2.4",
+    "@octokit/plugin-paginate-graphql": "^6.0.0",
     "ansi-styles": "^6.2.1",
     "esbuild": "^0.25.8",
     "temporal-polyfill": "^0.3.0",
