@@ -39289,13 +39289,10 @@ function date4(params) {
 config(en_default());
 
 // src/schema.ts
-var jsonLiteral = external_exports.union([external_exports.string(), external_exports.number(), external_exports.boolean(), external_exports.null()]);
-var jsonSchema = external_exports.lazy(
-  () => external_exports.union([jsonLiteral, external_exports.array(jsonSchema), external_exports.record(external_exports.string(), jsonSchema)])
-);
+var jsonSchema = external_exports.json();
 var jsonInput = external_exports.string().transform((str, ctx) => {
   try {
-    return JSON.parse(str);
+    return jsonSchema.parse(JSON.parse(str));
   } catch (_err) {
     const errorMessage = `Invalid JSON.
 Typical mistakens are below.
