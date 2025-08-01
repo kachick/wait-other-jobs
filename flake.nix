@@ -31,6 +31,10 @@
 
               # Correct nixd inlay hints
               NIX_PATH = "nixpkgs=${nixpkgs.outPath}";
+
+              # NixOS cannot run external pre-built CLI by default
+              RECHECK_BACKEND = "pure";
+              RECHECK_SYNC_BACKEND = "pure";
             };
 
             buildInputs = (
