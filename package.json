@@ -33,11 +33,5 @@
     "recheck": "^4.5.0",
     "tsx": "^4.20.3",
     "typescript": "^5.9.2"
-  },
-  "pnpm": {
-    "overrides": {
-      "undici@<5.28.5": "^5.29.0",
-      "@octokit/plugin-paginate-rest@<9.2.2": "^9.2.2"
-    }
   }
 }
