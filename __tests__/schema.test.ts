@@ -6,7 +6,6 @@ import { durationEqual, optionsEqual } from './assert.ts';
 import { z } from 'zod';
 import { deepStrictEqual } from 'node:assert/strict';
 import { checkSync } from 'recheck';
-import { format } from 'node:path';
 
 const defaultOptions = Object.freeze({
   apiUrl: 'https://api.github.com',
