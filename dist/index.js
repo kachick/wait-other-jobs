@@ -39321,7 +39321,7 @@ var MyDurationLike = external_exports.strictObject({
   milliseconds: external_exports.number().optional(),
   microseconds: external_exports.number().optional(),
   nanoseconds: external_exports.number().optional()
-}).readonly();
+}).readonly().meta({ deprecated: true, description: 'Use "ISO 8601 duration format" instead' });
 var Durationable = external_exports.union([external_exports.iso.duration(), MyDurationLike]).transform((item) => getDuration(item));
 var PositiveDuration = external_exports.instanceof(Xn.Duration).refine(
   (d2) => d2.sign > 0,

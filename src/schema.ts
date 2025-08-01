@@ -55,13 +55,14 @@ const MyDurationLike = z.strictObject({
   milliseconds: z.number().optional(),
   microseconds: z.number().optional(),
   nanoseconds: z.number().optional(),
-}).readonly();
+}).readonly().meta({ deprecated: true, description: 'Use "ISO 8601 duration format" instead' });
 
 type MyDurationLike = z.infer<typeof MyDurationLike>;
 
 // IETF does not define duration formats in their RFCs, but in RFC 3399 refers ISO 8601 duration formats.
 // https://www.ietf.org/rfc/rfc3339.txt
 // NOTE: `.transform()` causes it cannot be useable in `.toJSONSchema()`
+// TODO: Only allow iso.duration since action v4
 export const Durationable = z.union([z.iso.duration(), MyDurationLike]).transform((item) => getDuration(item));
 export const PositiveDuration = z.instanceof(Temporal.Duration).refine(
   (d) => d.sign > 0,
