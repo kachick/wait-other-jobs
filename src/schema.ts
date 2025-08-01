@@ -49,7 +49,7 @@ type DurationLike = {
 
 // Need both zod definition and actual type which used in Temporal.Duration
 // This is a known zod problem with exactOptionalPropertyTypes.
-// See https://github.com/colinhacks/zod/issues/635 for detail
+// See https://github.com/colinhacks/zod/issues/635 for detail, required even after Zod v4
 const MyDurationLike = z.strictObject({
   years: z.number().optional(),
   months: z.number().optional(),
@@ -82,7 +82,7 @@ export const ZeroableDuration = z.instanceof(Temporal.Duration).refine(
 );
 const defaultGrace = Temporal.Duration.from({ seconds: 10 });
 
-// workaround for https://github.com/colinhacks/zod/issues/635
+// workaround for https://github.com/colinhacks/zod/issues/635, required even after Zod v4
 function isDurationLike(my: MyDurationLike): my is DurationLike {
   for (const [_, value] of Object.entries(my)) {
     if (value === undefined) {
@@ -93,7 +93,7 @@ function isDurationLike(my: MyDurationLike): my is DurationLike {
   return true;
 }
 
-// workaround for https://github.com/colinhacks/zod/issues/635
+// workaround for https://github.com/colinhacks/zod/issues/635, required even after Zod v4
 export function getDuration(durationable: string | MyDurationLike): Temporal.Duration {
   if (typeof durationable === 'string' || isDurationLike(durationable)) {
     return Temporal.Duration.from(durationable);
@@ -106,7 +106,7 @@ export const yamlPattern = /\.(yml|yaml)$/;
 const workflowFile = z.string().regex(yamlPattern);
 const matchAllJobs = z.strictObject({
   workflowFile: workflowFile,
-  jobName: z.null().optional(), // Keep optional for backward compatibility. TODO: Remove since v4
+  jobName: z.null().optional(), // Keep optional for backward compatibility. TODO: Remove since action v4
   jobMatchMode: z.literal('all').default('all'),
 });
 const matchPartialJobs = z.strictObject({
@@ -143,7 +143,7 @@ const retryMethods = z.enum(['exponential_backoff', 'equal_intervals']);
 export type RetryMethod = z.infer<typeof retryMethods>;
 
 // - Do not specify default values with zod. That is an action.yml role
-// - Do not include secrets here, for example githubToken. See https://github.com/colinhacks/zod/issues/1783
+// - Do not include secrets here, for example githubToken. Even after https://github.com/colinhacks/zod/issues/1783 is resolved
 export const Options = z.strictObject({
   apiUrl: z.url(),
   waitList: WaitList,

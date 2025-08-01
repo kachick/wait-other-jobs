@@ -39358,7 +39358,7 @@ var workflowFile = external_exports.string().regex(yamlPattern);
 var matchAllJobs = external_exports.strictObject({
   workflowFile,
   jobName: external_exports.null().optional(),
-  // Keep optional for backward compatibility. TODO: Remove since v4
+  // Keep optional for backward compatibility. TODO: Remove since action v4
   jobMatchMode: external_exports.literal("all").default("all")
 });
 var matchPartialJobs = external_exports.strictObject({
