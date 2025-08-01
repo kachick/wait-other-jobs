@@ -4,10 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  undici@<5.28.5: ^5.29.0
-  '@octokit/plugin-paginate-rest@<9.2.2': ^9.2.2
-
 importers:
 
   .:
