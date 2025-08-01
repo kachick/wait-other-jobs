@@ -50,7 +50,7 @@ type DurationLike = {
 // Need both zod definition and actual type which used in Temporal.Duration
 // This is a known zod problem with exactOptionalPropertyTypes.
 // See https://github.com/colinhacks/zod/issues/635 for detail
-const MyDurationLike = z.object({
+const MyDurationLike = z.strictObject({
   years: z.number().optional(),
   months: z.number().optional(),
   weeks: z.number().optional(),
@@ -61,7 +61,7 @@ const MyDurationLike = z.object({
   milliseconds: z.number().optional(),
   microseconds: z.number().optional(),
   nanoseconds: z.number().optional(),
-}).strict().readonly();
+}).readonly();
 
 type MyDurationLike = z.infer<typeof MyDurationLike>;
 
@@ -104,16 +104,16 @@ export function getDuration(durationable: string | MyDurationLike): Temporal.Dur
 
 export const yamlPattern = /\.(yml|yaml)$/;
 const workflowFile = z.string().regex(yamlPattern);
-const matchAllJobs = z.object({
+const matchAllJobs = z.strictObject({
   workflowFile: workflowFile,
   jobName: z.null().optional(), // Keep optional for backward compatibility. TODO: Remove since v4
   jobMatchMode: z.literal('all').default('all'),
-}).strict();
-const matchPartialJobs = z.object({
+});
+const matchPartialJobs = z.strictObject({
   workflowFile: workflowFile,
   jobName: z.string().min(1),
   jobMatchMode: z.enum(['exact', 'prefix']).default('exact'),
-}).strict();
+});
 
 const FilterCondition = z.union([matchAllJobs, matchPartialJobs]);
 const SkipFilterCondition = FilterCondition.readonly();
@@ -131,8 +131,8 @@ const waitOptions = {
 };
 
 const WaitFilterCondition = z.union([
-  matchAllJobs.extend(waitOptions).strict(),
-  matchPartialJobs.extend(waitOptions).strict(),
+  z.strictObject(matchAllJobs.extend(waitOptions).shape),
+  z.strictObject(matchPartialJobs.extend(waitOptions).shape),
 ]).readonly();
 const WaitList = z.array(WaitFilterCondition).readonly();
 const SkipList = z.array(SkipFilterCondition).readonly();
@@ -144,7 +144,7 @@ export type RetryMethod = z.infer<typeof retryMethods>;
 
 // - Do not specify default values with zod. That is an action.yml role
 // - Do not include secrets here, for example githubToken. See https://github.com/colinhacks/zod/issues/1783
-export const Options = z.object({
+export const Options = z.strictObject({
   apiUrl: z.url(),
   waitList: WaitList,
   skipList: SkipList,
@@ -155,7 +155,7 @@ export const Options = z.object({
   isEarlyExit: z.boolean(),
   shouldSkipSameWorkflow: z.boolean(),
   isDryRun: z.boolean(),
-}).strict().readonly().refine(
+}).readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { error: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },
 ).refine(

@@ -39313,7 +39313,7 @@ Typical mistakens are below.
     return external_exports.NEVER;
   }
 });
-var MyDurationLike = external_exports.object({
+var MyDurationLike = external_exports.strictObject({
   years: external_exports.number().optional(),
   months: external_exports.number().optional(),
   weeks: external_exports.number().optional(),
@@ -39324,7 +39324,7 @@ var MyDurationLike = external_exports.object({
   milliseconds: external_exports.number().optional(),
   microseconds: external_exports.number().optional(),
   nanoseconds: external_exports.number().optional()
-}).strict().readonly();
+}).readonly();
 var Durationable = external_exports.union([external_exports.iso.duration(), MyDurationLike]).transform((item) => getDuration(item));
 var PositiveDuration = external_exports.instanceof(Xn.Duration).refine(
   (d2) => d2.sign > 0,
@@ -39355,17 +39355,17 @@ function getDuration(durationable) {
 }
 var yamlPattern = /\.(yml|yaml)$/;
 var workflowFile = external_exports.string().regex(yamlPattern);
-var matchAllJobs = external_exports.object({
+var matchAllJobs = external_exports.strictObject({
   workflowFile,
   jobName: external_exports.null().optional(),
   // Keep optional for backward compatibility. TODO: Remove since v4
   jobMatchMode: external_exports.literal("all").default("all")
-}).strict();
-var matchPartialJobs = external_exports.object({
+});
+var matchPartialJobs = external_exports.strictObject({
   workflowFile,
   jobName: external_exports.string().min(1),
   jobMatchMode: external_exports.enum(["exact", "prefix"]).default("exact")
-}).strict();
+});
 var FilterCondition = external_exports.union([matchAllJobs, matchPartialJobs]);
 var SkipFilterCondition = FilterCondition.readonly();
 var waitOptions = {
@@ -39378,13 +39378,13 @@ var waitOptions = {
   startupGracePeriod: Durationable.default(defaultGrace)
 };
 var WaitFilterCondition = external_exports.union([
-  matchAllJobs.extend(waitOptions).strict(),
-  matchPartialJobs.extend(waitOptions).strict()
+  external_exports.strictObject(matchAllJobs.extend(waitOptions).shape),
+  external_exports.strictObject(matchPartialJobs.extend(waitOptions).shape)
 ]).readonly();
 var WaitList = external_exports.array(WaitFilterCondition).readonly();
 var SkipList = external_exports.array(SkipFilterCondition).readonly();
 var retryMethods = external_exports.enum(["exponential_backoff", "equal_intervals"]);
-var Options = external_exports.object({
+var Options = external_exports.strictObject({
   apiUrl: external_exports.url(),
   waitList: WaitList,
   skipList: SkipList,
@@ -39395,7 +39395,7 @@ var Options = external_exports.object({
   isEarlyExit: external_exports.boolean(),
   shouldSkipSameWorkflow: external_exports.boolean(),
   isDryRun: external_exports.boolean()
-}).strict().readonly().refine(
+}).readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { error: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
 ).refine(
