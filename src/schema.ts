@@ -67,7 +67,7 @@ type MyDurationLike = z.infer<typeof MyDurationLike>;
 
 // IETF does not define duration formats in their RFCs, but in RFC 3399 refers ISO 8601 duration formats.
 // https://www.ietf.org/rfc/rfc3339.txt
-export const Durationable = z.union([z.string().duration(), MyDurationLike]).transform((item) => getDuration(item));
+export const Durationable = z.union([z.iso.duration(), MyDurationLike]).transform((item) => getDuration(item));
 export const PositiveDuration = z.instanceof(Temporal.Duration).refine(
   (d) => d.sign > 0,
   {
@@ -145,7 +145,7 @@ export type RetryMethod = z.infer<typeof retryMethods>;
 // - Do not specify default values with zod. That is an action.yml role
 // - Do not include secrets here, for example githubToken. See https://github.com/colinhacks/zod/issues/1783
 export const Options = z.object({
-  apiUrl: z.string().url(),
+  apiUrl: z.url(),
   waitList: WaitList,
   skipList: SkipList,
   warmupDelay: ZeroableDuration,

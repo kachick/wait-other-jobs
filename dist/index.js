@@ -39325,7 +39325,7 @@ var MyDurationLike = external_exports.object({
   microseconds: external_exports.number().optional(),
   nanoseconds: external_exports.number().optional()
 }).strict().readonly();
-var Durationable = external_exports.union([external_exports.string().duration(), MyDurationLike]).transform((item) => getDuration(item));
+var Durationable = external_exports.union([external_exports.iso.duration(), MyDurationLike]).transform((item) => getDuration(item));
 var PositiveDuration = external_exports.instanceof(Xn.Duration).refine(
   (d2) => d2.sign > 0,
   {
@@ -39354,7 +39354,7 @@ function getDuration(durationable) {
   throw new Error("unexpected value is specified in durations");
 }
 var yamlPattern = /\.(yml|yaml)$/;
-var workflowFile = external_exports.string().regex(yamlPattern);
+var workflowFile = external_exports.regex(yamlPattern);
 var matchAllJobs = external_exports.object({
   workflowFile,
   jobName: external_exports.null().optional(),
@@ -39385,7 +39385,7 @@ var WaitList = external_exports.array(WaitFilterCondition).readonly();
 var SkipList = external_exports.array(SkipFilterCondition).readonly();
 var retryMethods = external_exports.enum(["exponential_backoff", "equal_intervals"]);
 var Options = external_exports.object({
-  apiUrl: external_exports.string().url(),
+  apiUrl: external_exports.url(),
   waitList: WaitList,
   skipList: SkipList,
   warmupDelay: ZeroableDuration,
