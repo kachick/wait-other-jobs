@@ -232,7 +232,7 @@ test('wait-list have startupGracePeriod', async (t) => {
     );
   });
 
-  await t.test('it raises a TypeError if given an unexpected keys', { todo: 'TODO: Replace with ZodError' }, (_t) => {
+  await t.test('it raises an error if given an unexpected key', (_t) => {
     throws(
       () =>
         Options.parse({
@@ -240,8 +240,8 @@ test('wait-list have startupGracePeriod', async (t) => {
           waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { min: 5 } }],
         }),
       {
-        name: 'TypeError',
-        message: 'No valid fields: days,hours,microseconds,milliseconds,minutes,months,nanoseconds,seconds,weeks,years',
+        name: 'ZodError',
+        message: /Unrecognized key.+\bmin\b/,
       },
     );
   });
