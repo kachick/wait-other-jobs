@@ -6,7 +6,9 @@ import { z } from 'zod';
 const jsonLiteral = z.union([z.string(), z.number(), z.boolean(), z.null()]);
 type Literal = z.infer<typeof jsonLiteral>;
 type Json = Literal | { [key: string]: Json } | Json[];
-const jsonSchema: z.ZodType<Json> = z.lazy(() => z.union([jsonLiteral, z.array(jsonSchema), z.record(jsonSchema)]));
+const jsonSchema: z.ZodType<Json> = z.lazy(() =>
+  z.union([jsonLiteral, z.array(jsonSchema), z.record(z.string(), jsonSchema)])
+);
 
 // ref: https://github.com/colinhacks/zod/discussions/2215
 export const jsonInput = z.string()
@@ -104,7 +106,7 @@ export const yamlPattern = /\.(yml|yaml)$/;
 const workflowFile = z.string().regex(yamlPattern);
 const matchAllJobs = z.object({
   workflowFile: workflowFile,
-  jobName: z.undefined(), // Preferring undefined over null for backward compatibility
+  jobName: z.null().optional(), // Keep optional for backward compatibility. TODO: Remove since v4
   jobMatchMode: z.literal('all').default('all'),
 }).strict();
 const matchPartialJobs = z.object({

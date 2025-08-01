@@ -39290,7 +39290,9 @@ config(en_default());
 
 // src/schema.ts
 var jsonLiteral = external_exports.union([external_exports.string(), external_exports.number(), external_exports.boolean(), external_exports.null()]);
-var jsonSchema = external_exports.lazy(() => external_exports.union([jsonLiteral, external_exports.array(jsonSchema), external_exports.record(jsonSchema)]));
+var jsonSchema = external_exports.lazy(
+  () => external_exports.union([jsonLiteral, external_exports.array(jsonSchema), external_exports.record(external_exports.string(), jsonSchema)])
+);
 var jsonInput = external_exports.string().transform((str, ctx) => {
   try {
     return JSON.parse(str);
@@ -39355,8 +39357,8 @@ var yamlPattern = /\.(yml|yaml)$/;
 var workflowFile = external_exports.string().regex(yamlPattern);
 var matchAllJobs = external_exports.object({
   workflowFile,
-  jobName: external_exports.undefined(),
-  // Preferring undefined over null for backward compatibility
+  jobName: external_exports.null().optional(),
+  // Keep optional for backward compatibility. TODO: Remove since v4
   jobMatchMode: external_exports.literal("all").default("all")
 }).strict();
 var matchPartialJobs = external_exports.object({
