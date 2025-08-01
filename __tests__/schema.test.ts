@@ -111,7 +111,7 @@ test('Options reject invalid values', () => {
 
   throws(() => Options.parse({ ...defaultOptions, retryMethod: 'inverse-exponential-backoff' }), {
     name: 'ZodError',
-    message: /invalid_enum_value/,
+    message: /invalid_value/,
   });
 
   throws(() => Options.parse({ ...defaultOptions, waitList: [{ unknownField: ':)' }] }), {
@@ -147,14 +147,16 @@ test('Options reject invalid values', () => {
       assert(err instanceof z.ZodError);
       deepStrictEqual(err.issues, [
         {
-          code: 'invalid_string',
-          message: 'Invalid',
+          code: 'invalid_format',
+          format: 'regex',
+          message: 'Invalid string: must match pattern /\\.(yml|yaml)$/',
+          origin: 'string',
           path: [
             'waitList',
             0,
             'workflowFile',
           ],
-          validation: 'regex',
+          pattern: '/\\.(yml|yaml)$/',
         },
       ]);
       return true;
@@ -171,14 +173,16 @@ test('Options reject invalid values', () => {
       assert(err instanceof z.ZodError);
       deepStrictEqual(err.issues, [
         {
-          code: 'invalid_string',
-          message: 'Invalid',
+          code: 'invalid_format',
+          format: 'regex',
+          message: 'Invalid string: must match pattern /\\.(yml|yaml)$/',
+          origin: 'string',
           path: [
             'waitList',
             0,
             'workflowFile',
           ],
-          validation: 'regex',
+          pattern: '/\\.(yml|yaml)$/',
         },
       ]);
       return true;
@@ -197,7 +201,7 @@ test('Durationable', async (t) => {
       () => Durationable.parse('42 minutes'),
       {
         name: 'ZodError',
-        message: /invalid_string/,
+        message: /invalid_format/,
       },
     );
   });
@@ -389,7 +393,7 @@ test('jobMatchMode', async (t) => {
         }),
       {
         name: 'ZodError',
-        message: /invalid_enum_value/,
+        message: /invalid_value/,
       },
     );
   });
