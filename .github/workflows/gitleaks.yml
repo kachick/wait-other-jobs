@@ -24,7 +24,7 @@ jobs:
         working-directory: ${{ runner.temp }}
         env:
           GH_TOKEN: ${{ github.token }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0 # Getting all refs for git mode
       - name: Run
