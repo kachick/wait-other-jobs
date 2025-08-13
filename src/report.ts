@@ -4,7 +4,6 @@ import { Check, FilterCondition, Options, Trigger, WaitList } from './schema.ts'
 import { join, relative } from 'path';
 import { Temporal } from 'temporal-polyfill';
 import styles, { CSPair } from 'ansi-styles';
-import { groupBy } from './util.ts';
 
 interface Meta {
   color: CSPair | null;
@@ -181,7 +180,7 @@ function seekWaitList(
 }
 
 function judge(summaries: readonly Summary[]): { done: boolean; ok: boolean; logs: Log[] } {
-  const summariesByCompleted = groupBy(summaries, (summary) => summary.isCompleted);
+  const summariesByCompleted = Map.groupBy(summaries, (summary) => summary.isCompleted);
   const completed = summariesByCompleted.get(true) || [];
   const incompleted = summariesByCompleted.get(false) || [];
   const done = incompleted.length === 0;
