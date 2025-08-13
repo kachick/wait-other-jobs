@@ -79,5 +79,6 @@ outputs:
       This data is only provided for debugging, so the schema is not defined.
 
 runs:
-  using: 'node20'
+  # Available since https://github.com/actions/runner/releases/tag/v2.327.1
+  using: 'node24'
   main: 'dist/index.js'

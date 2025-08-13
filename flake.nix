@@ -46,8 +46,8 @@
                 nixd
                 nixfmt-rfc-style
 
-                nodejs_20
-                nodejs_20.pkgs.pnpm
+                nodejs_24
+                nodejs_24.pkgs.pnpm
                 deno
                 dprint
                 typos

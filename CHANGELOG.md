@@ -2,7 +2,8 @@
 
 This file only records notable changes. Not synchronized with all releases and tags.
 
-- main - not yet released
+- v4 - not yet released
+  - Update action engine to Node.js v24
 - v3.8.0
   - Deprecate some options to prepare v4: [#1045](https://github.com/kachick/wait-other-jobs/pull/1045)
   - Add `outputs.parameters`
@@ -33,7 +34,7 @@ This file only records notable changes. Not synchronized with all releases and t
   - Allow some neutral patterns: [93299c](https://github.com/kachick/wait-other-jobs/commit/93299c2fa22fd463db31668eba54b34b58270696)
 - v2.0.0
   - Add options for list-based waiting with replacing to GraphQL API: [#474](https://github.com/kachick/wait-other-jobs/issues/474), [#574](https://github.com/kachick/wait-other-jobs/pull/574)
-  - Update action engine to Node20: [#586](https://github.com/kachick/wait-other-jobs/issues/586), [#564](https://github.com/kachick/wait-other-jobs/pull/564)
+  - Update action engine to Node.js v20: [#586](https://github.com/kachick/wait-other-jobs/issues/586), [#564](https://github.com/kachick/wait-other-jobs/pull/564)
   - Change default intervals and the determined logics: [#596](https://github.com/kachick/wait-other-jobs/pull/596), [15456c0](https://github.com/kachick/wait-other-jobs/commit/15456c0)
 - v1.3.0
   - Provide default value for `github-token`: [#523](https://github.com/kachick/wait-other-jobs/pull/523)
