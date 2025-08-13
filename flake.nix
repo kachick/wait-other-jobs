@@ -47,7 +47,9 @@
                 nixfmt-rfc-style
 
                 nodejs_24
-                nodejs_24.pkgs.pnpm
+                (pnpm_10.override {
+                  withNode = false;
+                })
                 deno
                 dprint
                 typos

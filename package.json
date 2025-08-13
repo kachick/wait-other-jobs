@@ -6,7 +6,6 @@
   "engines": {
     "node": "24.x"
   },
-  "packageManager": "pnpm@9.15.9",
   "type": "module",
   "repository": {
     "type": "git",
