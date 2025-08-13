@@ -39437,16 +39437,8 @@ function parseInput() {
   }
   const tempRoot = Path.parse(env["RUNNER_TEMP"]);
   const tempDir = mkdtempSync(join(tempRoot, "wait-other-jobs-"));
-  const waitSecondsBeforeFirstPolling = (0, import_core7.getInput)("wait-seconds-before-first-polling", {
-    required: false,
-    trimWhitespace: true
-  });
-  const warmupDelay = waitSecondsBeforeFirstPolling ? Durationable.parse({ seconds: parseInt(waitSecondsBeforeFirstPolling, 10) }) : Durationable.parse((0, import_core7.getInput)("warmup-delay", { required: true, trimWhitespace: true }));
-  const minIntervalSeconds = (0, import_core7.getInput)("min-interval-seconds", {
-    required: false,
-    trimWhitespace: true
-  });
-  const minimumInterval = minIntervalSeconds ? Durationable.parse({ seconds: parseInt(minIntervalSeconds, 10) }) : Durationable.parse((0, import_core7.getInput)("minimum-interval", { required: true, trimWhitespace: true }));
+  const warmupDelay = Durationable.parse((0, import_core7.getInput)("warmup-delay", { required: true, trimWhitespace: true }));
+  const minimumInterval = Durationable.parse((0, import_core7.getInput)("minimum-interval", { required: true, trimWhitespace: true }));
   const retryMethod = (0, import_core7.getInput)("retry-method", { required: true, trimWhitespace: true });
   const attemptLimits = parseInt(
     (0, import_core7.getInput)("attempt-limits", { required: true, trimWhitespace: true }),

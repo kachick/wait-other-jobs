@@ -3,6 +3,7 @@
 This file only records notable changes. Not synchronized with all releases and tags.
 
 - v4 - not yet released
+  - Drop deprecated options
   - Update action engine to Node.js v24
 - v3.8.0
   - Deprecate some options to prepare v4: [#1045](https://github.com/kachick/wait-other-jobs/pull/1045)
@@ -20,7 +21,7 @@ This file only records notable changes. Not synchronized with all releases and t
   - Add `outputs.dump`
 - v3.3.0
   - Add `startupGracePeriod` option in wait-list: [#820](https://github.com/kachick/wait-other-jobs/issues/820)
-  - Restrict `wait-seconds-before-first-polling` if it is too short as zero or shorter than `startupGracePeriod`
+  - Restrict `warmup-delay` if it is too short as zero or shorter than `startupGracePeriod`
 - v3.2.0
   - Add `eventName` option in wait-list: [#771](https://github.com/kachick/wait-other-jobs/issues/771)
 - v3.1.0
