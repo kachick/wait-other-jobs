@@ -3,13 +3,6 @@ import $ from 'jsr:@david/dax';
 
 // Sync dependency versions with current PATH. Providing to adjust with Nix devshell
 
-const nodeVersion = await $`node --version`.text();
-const normalizedNodeVersion = nodeVersion.replace(/^v/, '');
-await $`echo ${normalizedNodeVersion} > '.node-version'`;
-
-await $`git update-index -q --really-refresh`;
-await $`git diff-index --quiet HEAD || git commit -m 'Sync .node-version with nixpkgs' .node-version`;
-
 const pnpmVersion = await $`pnpm --version`.text();
 const packageManagerSpecifier = `pnpm@${pnpmVersion}`;
 
