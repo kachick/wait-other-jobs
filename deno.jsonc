@@ -25,11 +25,7 @@
     },
     "fmt": "dprint fmt && git ls-files '*.nix' | xargs nixfmt",
     "lint": "./scripts/lint.ts",
-    "repl": "pnpm tsx", // Don't use deno REPL for this purpose. Finally the code will work on Node.js.
-    "deps": {
-      "description": "Print development dependencies and the versions",
-      "command": "./scripts/deps.ts"
-    }
+    "repl": "pnpm tsx" // Don't use deno REPL for this purpose. Finally the code will work on Node.js.
   },
   "lint": {
     "include": ["."],

@@ -50,7 +50,6 @@ jobs:
             deno_store-deno_${{ hashFiles('deno.lock') }}-flake_${{ hashFiles('flake.lock') }}-${{ runner.arch }}-${{ runner.os }}
       - name: Setup
         run: |
-          nix develop --command deno task deps
           nix develop --command deno task setup
       - name: Test, build, lint
         run: |
