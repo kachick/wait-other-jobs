@@ -40841,23 +40841,6 @@ function assembleStyles() {
 var ansiStyles = assembleStyles();
 var ansi_styles_default = ansiStyles;
 
-// src/util.ts
-function groupBy(items, callback) {
-  const map2 = /* @__PURE__ */ new Map();
-  for (const item of items) {
-    const key = callback(item);
-    if (map2.has(key)) {
-      const itemsForKey = map2.get(key);
-      if (itemsForKey) {
-        itemsForKey.push(item);
-      }
-    } else {
-      map2.set(key, [item]);
-    }
-  }
-  return map2;
-}
-
 // src/report.ts
 var severities = Object.freeze({
   error: Object.freeze({ color: ansi_styles_default.red, emoji: "\u274C", level: 3 }),
@@ -40960,7 +40943,7 @@ function seekWaitList(summaries, waitList, elapsed) {
   return { filtered, unmatches, unstarted };
 }
 function judge(summaries) {
-  const summariesByCompleted = groupBy(summaries, (summary2) => summary2.isCompleted);
+  const summariesByCompleted = Map.groupBy(summaries, (summary2) => summary2.isCompleted);
   const completed = summariesByCompleted.get(true) || [];
   const incompleted = summariesByCompleted.get(false) || [];
   const done = incompleted.length === 0;
