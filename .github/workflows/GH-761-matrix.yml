@@ -31,9 +31,9 @@ jobs:
         os:
           - ubuntu-24.04
           - ubuntu-22.04
-        wait-seconds-before-first-polling:
-          - '3'
-          - '7'
+        warmup-delay:
+          - 'PT3S'
+          - 'PT7S'
     runs-on: ${{ matrix.os }}
     # name: # By default, GitHub sets with `github.job` and the matrix values
     timeout-minutes: 10
@@ -43,7 +43,7 @@ jobs:
         id: wait
         with:
           retry-method: 'equal_intervals'
-          warmup-delay: 'PT${{ matrix.wait-seconds-before-first-polling }}S'
+          warmup-delay: '${{ matrix.warmup-delay }}'
           minimum-interval: 'PT5S'
           skip-same-workflow: 'false' # Intentionally set false to test skip list also can cover this use case
           # Should specify jobName to test details
@@ -65,5 +65,5 @@ jobs:
       - name: Upload dumps as an artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}-${{ matrix.os }}-${{ matrix.wait-seconds-before-first-polling }}'
+          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}-${{ matrix.os }}-${{ matrix.warmup-delay }}'
           path: '${{ steps.wait.outputs.dump }}'
