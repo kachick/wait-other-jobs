@@ -14,14 +14,13 @@ export function durationEqual(a: Temporal.Duration, b: Temporal.Duration) {
 }
 
 function makeComparableOptions(options: Options): Options {
-  return {
-    ...options,
-    waitList: options.waitList.map((w) => ({
-      ...w,
+  return JSON.parse(JSON.stringify(options, (_key, value) => {
+    if (value instanceof Temporal.Duration) {
       // Do not use .toJSON(), it does not normalize `seconds: 102` to `PT1M42S`, returns `PT102S`
-      startupGracePeriodNano: w.startupGracePeriod.total('nanoseconds'),
-    })),
-  };
+      return value.total('nanoseconds');
+    }
+    return value;
+  }));
 }
 
 // Providing to get better result and diff in cases which have Temporal.Duration

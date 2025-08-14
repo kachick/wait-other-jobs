@@ -113,7 +113,7 @@ jobs:
           ACTIONS_STEP_DEBUG: true
         with:
           retry-method: 'equal_intervals'
-          minimum-interval: 'PT10S'
+          minimum-interval: 'PT5S'
           attempt-limits: 60
           skip-same-workflow: 'true'
           skip-list: |
