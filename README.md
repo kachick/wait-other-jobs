@@ -32,8 +32,8 @@ You can configure the token, polling interval, allow/deny lists, and early-exit 
 
 ```yaml
 with:
-  warmup-delay: 'PT30S' # default 'PT10S'
-  minimum-interval: 'PT300S' # default 'PT15S'
+  warmup-delay: 'PT30S' # default 'PT1S'
+  minimum-interval: 'PT300S' # default 'PT10S'
   retry-method: 'exponential_backoff' # default 'equal_intervals'
   early-exit: 'false' # default 'true'
   skip-same-workflow: 'true' # default 'false'
@@ -63,8 +63,8 @@ Full list of the options
 | -------------------- | ------------------------------------------------------------------------------- | -------- | ----------------------- | --------------------------------------------------------------- |
 | `github-api-url`     | The Github API endpoint. Override for Github Enterprise usage.                  | `string` | `${{ github.api_url }}` | `https://api.github.com`, `https://ghe-host.example.net/api/v3` |
 | `github-token`       | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `${{ github.token }}`   |                                                                 |
-| `warmup-delay`       | Wait this interval before first polling                                         | `string` | `PT10S`                 | [ISO 8601 duration format][tc39-temporal-duration]              |
-| `minimum-interval`   | Wait for this or a longer interval between each poll to reduce GitHub API calls | `string` | `PT15S`                 | [ISO 8601 duration format][tc39-temporal-duration]              |
+| `warmup-delay`       | Wait this interval before first polling                                         | `string` | `PT1S`                  | [ISO 8601 duration format][tc39-temporal-duration]              |
+| `minimum-interval`   | Wait for this or a longer interval between each poll to reduce GitHub API calls | `string` | `PT10S`                 | [ISO 8601 duration format][tc39-temporal-duration]              |
 | `retry-method`       | How to wait for next polling                                                    | `string` | `equal_intervals`       | `exponential_backoff`, `equal_intervals`                        |
 | `early-exit`         | Stop polling as soon as one job fails                                           | `bool`   | `true`                  |                                                                 |
 | `attempt-limits`     | Stop polling if reached to this limit                                           | `number` | `1000`                  |                                                                 |
@@ -78,8 +78,8 @@ Full list of the options
 - [Trailing commas are not allowed in JSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Trailing_commas)
 - GitHub API Limit: At least we should consider about `GITHUB_TOKEN`, that is allowed 1000 per hour per repository.\
   Roughly calculating for long jobs, setting the `minimum-interval` larger than or equal `PT4S` would be safer.
-  - [Primary Limit](https://github.com/github/docs/blob/5c2caf1b693a557043b49dabe5115177e666fca9/content/rest/using-the-rest-api/rate-limits-for-the-rest-api.md?plain=1#L78)
-  - [Secondary Limit](https://github.com/github/docs/blob/5c2caf1b693a557043b49dabe5115177e666fca9/data/reusables/rest-api/secondary-rate-limit-rest-graphql.md)
+  - [Primary Rate Limit for GITHUB_TOKEN](https://github.com/github/docs/blob/c26f36dbabb133b263c0f979f257b31d6c979341/data/reusables/rest-api/primary-rate-limit-github-token-in-actions.md)
+  - [Secondary Limit](https://github.com/github/docs/blob/c26f36dbabb133b263c0f979f257b31d6c979341/data/reusables/rest-api/secondary-rate-limit-rest-graphql.md)
 
 ## Schema of wait-list and skip-list
 
