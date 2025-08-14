@@ -23,9 +23,6 @@ importers:
       '@octokit/plugin-paginate-graphql':
         specifier: ^6.0.0
         version: 6.0.0(@octokit/core@7.0.3)
-      ansi-styles:
-        specifier: ^6.2.1
-        version: 6.2.1
       esbuild:
         specifier: ^0.25.8
         version: 0.25.8
@@ -331,10 +328,6 @@ packages:
 
   '@types/node@24.2.1':
     resolution: {integrity: sha512-DRh5K+ka5eJic8CjH7td8QpYEV6Zo10gfRkjHCO3weqZHWDtAaSTFtl4+VMqOJ4N5jcuhZ9/l+yy8rVgw7BQeQ==}
-
-  ansi-styles@6.2.1:
-    resolution: {integrity: sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==}
-    engines: {node: '>=12'}
 
   before-after-hook@2.2.3:
     resolution: {integrity: sha512-NzUnlZexiaH/46WDhANlyR2bXRopNg4F/zuSA3OpZnllCUgRaOF2znDioDWrmbNVsuZk6l9pMquQB38cfBZwkQ==}
@@ -675,8 +668,6 @@ snapshots:
   '@types/node@24.2.1':
     dependencies:
       undici-types: 7.10.0
-
-  ansi-styles@6.2.1: {}
 
   before-after-hook@2.2.3: {}
 
