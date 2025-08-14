@@ -193,7 +193,10 @@ test('Options reject invalid values', () => {
 test('Durationable', async (t) => {
   await t.test('transformed to Temporal.Duration', (_t) => {
     durationEqual(Durationable.parse('PT1M42S'), Temporal.Duration.from({ seconds: 102 }));
-    durationEqual(Durationable.parse({ minutes: 1, seconds: 42 }), Temporal.Duration.from({ seconds: 102 }));
+    durationEqual(
+      Durationable.parse(Temporal.Duration.from({ minutes: 1, seconds: 42 })),
+      Temporal.Duration.from({ seconds: 102 }),
+    );
   });
 
   await t.test('it raises an error if given an invalid formats', (_t) => {
@@ -202,16 +205,6 @@ test('Durationable', async (t) => {
       {
         name: 'ZodError',
         message: /invalid_format/,
-      },
-    );
-  });
-
-  await t.test('it raises an error if given an unexpected keys', (_t) => {
-    throws(
-      () => Durationable.parse({ min: 5 }),
-      {
-        name: 'ZodError',
-        message: /unrecognized_key/,
       },
     );
   });
@@ -236,33 +229,16 @@ test('wait-list have startupGracePeriod', async (t) => {
     );
   });
 
-  await t.test('it raises an error if given an unexpected key', (_t) => {
+  await t.test('it raises an error if given an unexpected format', (_t) => {
     throws(
       () =>
         Options.parse({
           ...defaultOptions,
-          waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { min: 5 } }],
+          waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: '5M' }],
         }),
       {
-        name: 'ZodError',
-        message: /Unrecognized key.+\bmin\b/,
-      },
-    );
-  });
-
-  await t.test('it raises a ZodError if given an unexpected keys', {
-    todo: "TODO: I don't know why using refine appears the native error",
-    skip: 'SKIP: To suppress noise',
-  }, (_t) => {
-    throws(
-      () =>
-        Options.parse({
-          ...defaultOptions,
-          waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { min: 5 } }],
-        }),
-      {
-        name: 'ZodError',
-        message: /unrecognized_key/,
+        name: 'RangeError',
+        message: /Cannot parse:.+\b5M\b/,
       },
     );
   });
@@ -291,7 +267,7 @@ test('wait-list have startupGracePeriod', async (t) => {
         Options.parse({
           ...defaultOptions,
           warmupDelay: Temporal.Duration.from({ seconds: 41 }),
-          waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { seconds: 40 } }],
+          waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: 'PT40S' }],
         }),
       {
         name: 'ZodError',
@@ -305,7 +281,7 @@ test('wait-list have startupGracePeriod', async (t) => {
       Options.parse({
         ...defaultOptions,
         warmupDelay: Temporal.Duration.from({ seconds: 42 }),
-        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { seconds: 10 } }],
+        waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: 'PT10S' }],
       }),
       {
         ...defaultOptions,
