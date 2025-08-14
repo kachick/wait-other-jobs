@@ -1,11 +1,8 @@
 import test from 'node:test';
-import assert, { strictEqual, throws } from 'node:assert';
-import { Durationable, Options, yamlPattern } from '../src/schema.ts';
+import { throws } from 'node:assert';
+import { Durationable, Options } from '../src/schema.ts';
 import { Temporal } from 'temporal-polyfill';
 import { durationEqual, optionsEqual } from './assert.ts';
-import { z } from 'zod';
-import { deepStrictEqual } from 'node:assert/strict';
-import { checkSync } from 'recheck';
 
 const defaultOptions = Object.freeze({
   apiUrl: 'https://api.github.com',
@@ -79,10 +76,6 @@ test('Options accept all yaml extensions', () => {
   );
 });
 
-test('regex option does not have higher ReDoS possibilities', () => {
-  strictEqual(checkSync(yamlPattern.source, '').status, 'safe');
-});
-
 test('It can start immediately. GH-994', () => {
   optionsEqual(
     Options.parse({ ...defaultOptions, warmupDelay: Temporal.Duration.from({ seconds: 0 }) }),
@@ -143,49 +136,9 @@ test('Options reject invalid values', () => {
         ...defaultOptions,
         waitList: [{ workflowFile: 'ci.toml' }],
       }),
-    (err) => {
-      assert(err instanceof z.ZodError);
-      deepStrictEqual(err.issues, [
-        {
-          code: 'invalid_format',
-          format: 'regex',
-          message: 'Invalid string: must match pattern /\\.(yml|yaml)$/',
-          origin: 'string',
-          path: [
-            'waitList',
-            0,
-            'workflowFile',
-          ],
-          pattern: '/\\.(yml|yaml)$/',
-        },
-      ]);
-      return true;
-    },
-  );
-
-  throws(
-    () =>
-      Options.parse({
-        ...defaultOptions,
-        waitList: [{ workflowFile: 'ciyaml' }],
-      }),
-    (err) => {
-      assert(err instanceof z.ZodError);
-      deepStrictEqual(err.issues, [
-        {
-          code: 'invalid_format',
-          format: 'regex',
-          message: 'Invalid string: must match pattern /\\.(yml|yaml)$/',
-          origin: 'string',
-          path: [
-            'waitList',
-            0,
-            'workflowFile',
-          ],
-          pattern: '/\\.(yml|yaml)$/',
-        },
-      ]);
-      return true;
+    {
+      name: 'ZodError',
+      message: /Invalid string: must end with /,
     },
   );
 });

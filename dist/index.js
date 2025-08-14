@@ -39326,14 +39326,13 @@ var ZeroableDuration = external_exports.instanceof(Xn.Duration).refine(
   }
 );
 var defaultGrace = Xn.Duration.from({ seconds: 10 });
-var yamlPattern = /\.(yml|yaml)$/;
-var workflowFile = external_exports.string().regex(yamlPattern);
+var workflowPath = external_exports.string().endsWith(".yml").or(external_exports.string().endsWith(".yaml"));
 var matchAllJobs = external_exports.strictObject({
-  workflowFile,
+  workflowFile: workflowPath,
   jobMatchMode: external_exports.literal("all").default("all")
 });
 var matchPartialJobs = external_exports.strictObject({
-  workflowFile,
+  workflowFile: workflowPath,
   jobName: external_exports.string().min(1),
   jobMatchMode: external_exports.enum(["exact", "prefix"]).default("exact")
 });
@@ -40684,8 +40683,8 @@ function getSummaries(checks, trigger) {
   );
 }
 function matchPath(condition, summary2) {
-  const { workflowFile: workflowFile2, jobMatchMode, ...restCondition } = condition;
-  if (workflowFile2 !== summary2.workflowBasename) {
+  const { workflowFile, jobMatchMode, ...restCondition } = condition;
+  if (workflowFile !== summary2.workflowBasename) {
     return false;
   }
   if (jobMatchMode === "all") {
