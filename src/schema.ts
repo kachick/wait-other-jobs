@@ -47,14 +47,13 @@ export const ZeroableDuration = z.instanceof(Temporal.Duration).refine(
 );
 const defaultGrace = Temporal.Duration.from({ seconds: 10 });
 
-export const yamlPattern = /\.(yml|yaml)$/;
-const workflowFile = z.string().regex(yamlPattern);
+const workflowPath = z.string().endsWith('.yml').or(z.string().endsWith('.yaml'));
 const matchAllJobs = z.strictObject({
-  workflowFile: workflowFile,
+  workflowFile: workflowPath,
   jobMatchMode: z.literal('all').default('all'),
 });
 const matchPartialJobs = z.strictObject({
-  workflowFile: workflowFile,
+  workflowFile: workflowPath,
   jobName: z.string().min(1),
   jobMatchMode: z.enum(['exact', 'prefix']).default('exact'),
 });
