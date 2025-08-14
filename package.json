@@ -20,7 +20,6 @@
     "@octokit/core": "^7.0.3",
     "@octokit/graphql-schema": "^15.26.0",
     "@octokit/plugin-paginate-graphql": "^6.0.0",
-    "ansi-styles": "^6.2.1",
     "esbuild": "^0.25.8",
     "temporal-polyfill": "^0.3.0",
     "zod": "^4.0.14"
