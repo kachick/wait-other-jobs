@@ -40894,18 +40894,18 @@ function getSummaries(checks, trigger) {
     (a2, b2) => join2(a2.workflowBasename, a2.jobName).localeCompare(join2(b2.workflowBasename, b2.jobName))
   );
 }
-function matchPath(target, summary2) {
-  const { workflowFile: workflowFile2, jobMatchMode, ...rest } = target;
+function matchPath(condition, summary2) {
+  const { workflowFile: workflowFile2, jobMatchMode, ...restCondition } = condition;
   if (workflowFile2 !== summary2.workflowBasename) {
     return false;
   }
   if (jobMatchMode === "all") {
     return true;
   }
-  if (!("jobName" in rest)) {
-    throw new Error("jobName is required");
+  if (!("jobName" in restCondition)) {
+    throw new Error(`jobName is required when jobMatchMode is "${jobMatchMode}"`);
   }
-  const jobName = rest.jobName;
+  const jobName = restCondition.jobName;
   switch (jobMatchMode) {
     case "exact": {
       return jobName === summary2.jobName;
@@ -40915,7 +40915,7 @@ function matchPath(target, summary2) {
     }
     default: {
       const _exhaustiveCheck = jobMatchMode;
-      return false;
+      throw new Error(`Unknown jobMatchMode is given: "${jobMatchMode}"`);
     }
   }
 }
