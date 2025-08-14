@@ -33,7 +33,7 @@ You can configure the token, polling interval, allow/deny lists, and early-exit 
 ```yaml
 with:
   warmup-delay: 'PT30S' # default 'PT1S'
-  minimum-interval: 'PT300S' # default 'PT5S'
+  minimum-interval: 'PT300S' # default 'PT10S'
   retry-method: 'exponential_backoff' # default 'equal_intervals'
   early-exit: 'false' # default 'true'
   skip-same-workflow: 'true' # default 'false'
@@ -64,7 +64,7 @@ Full list of the options
 | `github-api-url`     | The Github API endpoint. Override for Github Enterprise usage.                  | `string` | `${{ github.api_url }}` | `https://api.github.com`, `https://ghe-host.example.net/api/v3` |
 | `github-token`       | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `${{ github.token }}`   |                                                                 |
 | `warmup-delay`       | Wait this interval before first polling                                         | `string` | `PT1S`                  | [ISO 8601 duration format][tc39-temporal-duration]              |
-| `minimum-interval`   | Wait for this or a longer interval between each poll to reduce GitHub API calls | `string` | `PT5S`                  | [ISO 8601 duration format][tc39-temporal-duration]              |
+| `minimum-interval`   | Wait for this or a longer interval between each poll to reduce GitHub API calls | `string` | `PT10S`                 | [ISO 8601 duration format][tc39-temporal-duration]              |
 | `retry-method`       | How to wait for next polling                                                    | `string` | `equal_intervals`       | `exponential_backoff`, `equal_intervals`                        |
 | `early-exit`         | Stop polling as soon as one job fails                                           | `bool`   | `true`                  |                                                                 |
 | `attempt-limits`     | Stop polling if reached to this limit                                           | `number` | `1000`                  |                                                                 |
