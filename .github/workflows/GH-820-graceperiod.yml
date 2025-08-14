@@ -65,7 +65,7 @@ jobs:
                 "workflowFile": "GH-820-graceperiod.yml",
                 "optional": false,
                 "jobName": "slowstarter-success",
-                "startupGracePeriod": 'PT60S'
+                "startupGracePeriod": "PT60S"
               }
             ]
   wait-fail:
@@ -91,6 +91,6 @@ jobs:
                 "workflowFile": "GH-820-graceperiod.yml",
                 "optional": false,
                 "jobName": "slowstarter-fail",
-                "startupGracePeriod": 'PT60S'
+                "startupGracePeriod": "PT60S"
               }
             ]
