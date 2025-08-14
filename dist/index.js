@@ -27699,7 +27699,7 @@ var eo = /* @__PURE__ */ Object.defineProperties(Object.create(Intl), n({
   DateTimeFormat: _n
 }));
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/classic/external.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/classic/external.js
 var external_exports = {};
 __export(external_exports, {
   $brand: () => $brand,
@@ -27913,7 +27913,7 @@ __export(external_exports, {
   xid: () => xid2
 });
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/index.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/index.js
 var core_exports2 = {};
 __export(core_exports2, {
   $ZodAny: () => $ZodAny,
@@ -28159,7 +28159,7 @@ __export(core_exports2, {
   version: () => version
 });
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/core.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/core.js
 var NEVER = Object.freeze({
   status: "aborted"
 });
@@ -28219,7 +28219,7 @@ function config(newConfig) {
   return globalConfig;
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/util.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/util.js
 var util_exports = {};
 __export(util_exports, {
   BIGINT_FORMAT_RANGES: () => BIGINT_FORMAT_RANGES,
@@ -28261,6 +28261,7 @@ __export(util_exports, {
   normalizeParams: () => normalizeParams,
   nullish: () => nullish,
   numKeys: () => numKeys,
+  objectClone: () => objectClone,
   omit: () => omit,
   optionalKeys: () => optionalKeys,
   partial: () => partial,
@@ -28271,6 +28272,7 @@ __export(util_exports, {
   propertyKeyTypes: () => propertyKeyTypes,
   randomString: () => randomString,
   required: () => required,
+  shallowClone: () => shallowClone,
   stringifyPrimitive: () => stringifyPrimitive,
   unwrapMessage: () => unwrapMessage
 });
@@ -28359,6 +28361,9 @@ function defineLazy(object2, key, getter) {
     configurable: true
   });
 }
+function objectClone(obj) {
+  return Object.create(Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj));
+}
 function assignProp(target, prop, value) {
   Object.defineProperty(target, prop, {
     value,
@@ -28435,6 +28440,11 @@ function isPlainObject(o2) {
     return false;
   }
   return true;
+}
+function shallowClone(o2) {
+  if (isPlainObject(o2))
+    return { ...o2 };
+  return o2;
 }
 function numKeys(data) {
   let keyCount = 0;
@@ -28775,7 +28785,7 @@ var Class = class {
   }
 };
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/errors.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/errors.js
 var initializer = (inst, def) => {
   inst.name = "$ZodError";
   Object.defineProperty(inst, "_zod", {
@@ -28917,7 +28927,7 @@ function prettifyError(error44) {
   return lines.join("\n");
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/parse.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/parse.js
 var _parse = (_Err) => (schema, value, _ctx, _params) => {
   const ctx = _ctx ? Object.assign(_ctx, { async: false }) : { async: false };
   const result = schema._zod.run({ value, issues: [] }, ctx);
@@ -28969,7 +28979,7 @@ var _safeParseAsync = (_Err) => async (schema, value, _ctx) => {
 };
 var safeParseAsync = /* @__PURE__ */ _safeParseAsync($ZodRealError);
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/regexes.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/regexes.js
 var regexes_exports = {};
 __export(regexes_exports, {
   base64: () => base64,
@@ -29083,7 +29093,7 @@ var _undefined = /undefined/i;
 var lowercase = /^[^A-Z]*$/;
 var uppercase = /^[^a-z]*$/;
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/checks.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/checks.js
 var $ZodCheck = /* @__PURE__ */ $constructor("$ZodCheck", (inst, def) => {
   var _a;
   inst._zod ?? (inst._zod = {});
@@ -29623,7 +29633,7 @@ var $ZodCheckOverwrite = /* @__PURE__ */ $constructor("$ZodCheckOverwrite", (ins
   };
 });
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/doc.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/doc.js
 var Doc = class {
   constructor(args = []) {
     this.content = [];
@@ -29659,14 +29669,14 @@ var Doc = class {
   }
 };
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/versions.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/versions.js
 var version = {
   major: 4,
   minor: 0,
-  patch: 14
+  patch: 17
 };
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/schemas.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/schemas.js
 var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
   var _a;
   inst ?? (inst = {});
@@ -30302,7 +30312,7 @@ var $ZodObject = /* @__PURE__ */ $constructor("$ZodObject", (inst, def) => {
   const _normalized = cached(() => {
     const keys = Object.keys(def.shape);
     for (const k2 of keys) {
-      if (!(def.shape[k2] instanceof $ZodType)) {
+      if (!def.shape[k2]._zod.traits.has("$ZodType")) {
         throw new Error(`Invalid element at key "${k2}": expected a Zod schema`);
       }
     }
@@ -31194,7 +31204,7 @@ var $ZodTemplateLiteral = /* @__PURE__ */ $constructor("$ZodTemplateLiteral", (i
   $ZodType.init(inst, def);
   const regexParts = [];
   for (const part of def.parts) {
-    if (part instanceof $ZodType) {
+    if (typeof part === "object" && part !== null) {
       if (!part._zod.pattern) {
         throw new Error(`Invalid template literal part, no pattern found: ${[...part._zod.traits].shift()}`);
       }
@@ -31287,7 +31297,7 @@ function handleRefineResult(result, payload, input, inst) {
   }
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/index.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/index.js
 var locales_exports = {};
 __export(locales_exports, {
   ar: () => ar_default,
@@ -31334,7 +31344,7 @@ __export(locales_exports, {
   zhTW: () => zh_TW_default
 });
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/ar.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/ar.js
 var error = () => {
   const Sizable = {
     string: { unit: "\u062D\u0631\u0641", verb: "\u0623\u0646 \u064A\u062D\u0648\u064A" },
@@ -31451,7 +31461,7 @@ function ar_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/az.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/az.js
 var error2 = () => {
   const Sizable = {
     string: { unit: "simvol", verb: "olmal\u0131d\u0131r" },
@@ -31567,7 +31577,7 @@ function az_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/be.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/be.js
 function getBelarusianPlural(count, one, few, many) {
   const absCount = Math.abs(count);
   const lastDigit = absCount % 10;
@@ -31732,7 +31742,7 @@ function be_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/ca.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/ca.js
 var error4 = () => {
   const Sizable = {
     string: { unit: "car\xE0cters", verb: "contenir" },
@@ -31852,7 +31862,7 @@ function ca_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/cs.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/cs.js
 var error5 = () => {
   const Sizable = {
     string: { unit: "znak\u016F", verb: "m\xEDt" },
@@ -31988,7 +31998,7 @@ function cs_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/da.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/da.js
 var error6 = () => {
   const Sizable = {
     string: { unit: "tegn", verb: "havde" },
@@ -32120,7 +32130,7 @@ function da_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/de.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/de.js
 var error7 = () => {
   const Sizable = {
     string: { unit: "Zeichen", verb: "zu haben" },
@@ -32237,7 +32247,7 @@ function de_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/en.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/en.js
 var parsedType = (data) => {
   const t2 = typeof data;
   switch (t2) {
@@ -32355,7 +32365,7 @@ function en_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/eo.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/eo.js
 var parsedType2 = (data) => {
   const t2 = typeof data;
   switch (t2) {
@@ -32472,7 +32482,7 @@ function eo_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/es.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/es.js
 var error10 = () => {
   const Sizable = {
     string: { unit: "caracteres", verb: "tener" },
@@ -32590,7 +32600,7 @@ function es_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/fa.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/fa.js
 var error11 = () => {
   const Sizable = {
     string: { unit: "\u06A9\u0627\u0631\u0627\u06A9\u062A\u0631", verb: "\u062F\u0627\u0634\u062A\u0647 \u0628\u0627\u0634\u062F" },
@@ -32713,7 +32723,7 @@ function fa_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/fi.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/fi.js
 var error12 = () => {
   const Sizable = {
     string: { unit: "merkki\xE4", subject: "merkkijonon" },
@@ -32836,7 +32846,7 @@ function fi_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/fr.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/fr.js
 var error13 = () => {
   const Sizable = {
     string: { unit: "caract\xE8res", verb: "avoir" },
@@ -32953,7 +32963,7 @@ function fr_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/fr-CA.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/fr-CA.js
 var error14 = () => {
   const Sizable = {
     string: { unit: "caract\xE8res", verb: "avoir" },
@@ -33071,7 +33081,7 @@ function fr_CA_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/he.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/he.js
 var error15 = () => {
   const Sizable = {
     string: { unit: "\u05D0\u05D5\u05EA\u05D9\u05D5\u05EA", verb: "\u05DC\u05DB\u05DC\u05D5\u05DC" },
@@ -33189,7 +33199,7 @@ function he_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/hu.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/hu.js
 var error16 = () => {
   const Sizable = {
     string: { unit: "karakter", verb: "legyen" },
@@ -33307,7 +33317,7 @@ function hu_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/id.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/id.js
 var error17 = () => {
   const Sizable = {
     string: { unit: "karakter", verb: "memiliki" },
@@ -33424,7 +33434,7 @@ function id_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/is.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/is.js
 var parsedType3 = (data) => {
   const t2 = typeof data;
   switch (t2) {
@@ -33542,7 +33552,7 @@ function is_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/it.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/it.js
 var error19 = () => {
   const Sizable = {
     string: { unit: "caratteri", verb: "avere" },
@@ -33660,7 +33670,7 @@ function it_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/ja.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/ja.js
 var error20 = () => {
   const Sizable = {
     string: { unit: "\u6587\u5B57", verb: "\u3067\u3042\u308B" },
@@ -33776,7 +33786,7 @@ function ja_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/kh.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/kh.js
 var error21 = () => {
   const Sizable = {
     string: { unit: "\u178F\u17BD\u17A2\u1780\u17D2\u179F\u179A", verb: "\u1782\u17BD\u179A\u1798\u17B6\u1793" },
@@ -33894,7 +33904,7 @@ function kh_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/ko.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/ko.js
 var error22 = () => {
   const Sizable = {
     string: { unit: "\uBB38\uC790", verb: "to have" },
@@ -34016,7 +34026,7 @@ function ko_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/mk.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/mk.js
 var error23 = () => {
   const Sizable = {
     string: { unit: "\u0437\u043D\u0430\u0446\u0438", verb: "\u0434\u0430 \u0438\u043C\u0430\u0430\u0442" },
@@ -34135,7 +34145,7 @@ function mk_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/ms.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/ms.js
 var error24 = () => {
   const Sizable = {
     string: { unit: "aksara", verb: "mempunyai" },
@@ -34252,7 +34262,7 @@ function ms_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/nl.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/nl.js
 var error25 = () => {
   const Sizable = {
     string: { unit: "tekens" },
@@ -34370,7 +34380,7 @@ function nl_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/no.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/no.js
 var error26 = () => {
   const Sizable = {
     string: { unit: "tegn", verb: "\xE5 ha" },
@@ -34487,7 +34497,7 @@ function no_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/ota.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/ota.js
 var error27 = () => {
   const Sizable = {
     string: { unit: "harf", verb: "olmal\u0131d\u0131r" },
@@ -34605,7 +34615,7 @@ function ota_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/ps.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/ps.js
 var error28 = () => {
   const Sizable = {
     string: { unit: "\u062A\u0648\u06A9\u064A", verb: "\u0648\u0644\u0631\u064A" },
@@ -34728,7 +34738,7 @@ function ps_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/pl.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/pl.js
 var error29 = () => {
   const Sizable = {
     string: { unit: "znak\xF3w", verb: "mie\u0107" },
@@ -34846,7 +34856,7 @@ function pl_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/pt.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/pt.js
 var error30 = () => {
   const Sizable = {
     string: { unit: "caracteres", verb: "ter" },
@@ -34963,7 +34973,7 @@ function pt_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/ru.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/ru.js
 function getRussianPlural(count, one, few, many) {
   const absCount = Math.abs(count);
   const lastDigit = absCount % 10;
@@ -35128,7 +35138,7 @@ function ru_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/sl.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/sl.js
 var error32 = () => {
   const Sizable = {
     string: { unit: "znakov", verb: "imeti" },
@@ -35246,7 +35256,7 @@ function sl_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/sv.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/sv.js
 var error33 = () => {
   const Sizable = {
     string: { unit: "tecken", verb: "att ha" },
@@ -35365,7 +35375,7 @@ function sv_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/ta.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/ta.js
 var error34 = () => {
   const Sizable = {
     string: { unit: "\u0B8E\u0BB4\u0BC1\u0BA4\u0BCD\u0BA4\u0BC1\u0B95\u0BCD\u0B95\u0BB3\u0BCD", verb: "\u0B95\u0BCA\u0BA3\u0BCD\u0B9F\u0BBF\u0BB0\u0BC1\u0B95\u0BCD\u0B95 \u0BB5\u0BC7\u0BA3\u0BCD\u0B9F\u0BC1\u0BAE\u0BCD" },
@@ -35483,7 +35493,7 @@ function ta_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/th.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/th.js
 var error35 = () => {
   const Sizable = {
     string: { unit: "\u0E15\u0E31\u0E27\u0E2D\u0E31\u0E01\u0E29\u0E23", verb: "\u0E04\u0E27\u0E23\u0E21\u0E35" },
@@ -35601,7 +35611,7 @@ function th_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/tr.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/tr.js
 var parsedType4 = (data) => {
   const t2 = typeof data;
   switch (t2) {
@@ -35717,7 +35727,7 @@ function tr_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/ua.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/ua.js
 var error37 = () => {
   const Sizable = {
     string: { unit: "\u0441\u0438\u043C\u0432\u043E\u043B\u0456\u0432", verb: "\u043C\u0430\u0442\u0438\u043C\u0435" },
@@ -35835,7 +35845,7 @@ function ua_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/ur.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/ur.js
 var error38 = () => {
   const Sizable = {
     string: { unit: "\u062D\u0631\u0648\u0641", verb: "\u06C1\u0648\u0646\u0627" },
@@ -35953,7 +35963,7 @@ function ur_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/vi.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/vi.js
 var error39 = () => {
   const Sizable = {
     string: { unit: "k\xFD t\u1EF1", verb: "c\xF3" },
@@ -36070,7 +36080,7 @@ function vi_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/zh-CN.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/zh-CN.js
 var error40 = () => {
   const Sizable = {
     string: { unit: "\u5B57\u7B26", verb: "\u5305\u542B" },
@@ -36187,7 +36197,7 @@ function zh_CN_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/zh-TW.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/zh-TW.js
 var error41 = () => {
   const Sizable = {
     string: { unit: "\u5B57\u5143", verb: "\u64C1\u6709" },
@@ -36305,7 +36315,7 @@ function zh_TW_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/locales/yo.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/locales/yo.js
 var error42 = () => {
   const Sizable = {
     string: { unit: "\xE0mi", verb: "n\xED" },
@@ -36421,7 +36431,7 @@ function yo_default() {
   };
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/registries.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/registries.js
 var $output = Symbol("ZodOutput");
 var $input = Symbol("ZodInput");
 var $ZodRegistry = class {
@@ -36472,7 +36482,7 @@ function registry() {
 }
 var globalRegistry = /* @__PURE__ */ registry();
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/api.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/api.js
 function _string(Class2, params) {
   return new Class2({
     type: "string",
@@ -37183,7 +37193,7 @@ function _default(Class2, innerType, defaultValue) {
     type: "default",
     innerType,
     get defaultValue() {
-      return typeof defaultValue === "function" ? defaultValue() : defaultValue;
+      return typeof defaultValue === "function" ? defaultValue() : shallowClone(defaultValue);
     }
   });
 }
@@ -37359,7 +37369,7 @@ function _stringFormat(Class2, format, fnOrRegex, _params = {}) {
   return inst;
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/function.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/function.js
 var $ZodFunction = class {
   constructor(def) {
     this._def = def;
@@ -37429,7 +37439,7 @@ function _function(params) {
   });
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/to-json-schema.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/to-json-schema.js
 var JSONSchemaGenerator = class {
   constructor(params) {
     this.counter = 0;
@@ -38219,10 +38229,10 @@ function isTransforming(_schema, _ctx) {
   throw new Error(`Unknown schema type: ${def.type}`);
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/core/json-schema.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/core/json-schema.js
 var json_schema_exports = {};
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/classic/iso.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/classic/iso.js
 var iso_exports = {};
 __export(iso_exports, {
   ZodISODate: () => ZodISODate,
@@ -38263,7 +38273,7 @@ function duration2(params) {
   return _isoDuration(ZodISODuration, params);
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/classic/errors.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/classic/errors.js
 var initializer2 = (inst, issues) => {
   $ZodError.init(inst, issues);
   inst.name = "ZodError";
@@ -38303,13 +38313,13 @@ var ZodRealError = $constructor("ZodError", initializer2, {
   Parent: Error
 });
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/classic/parse.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/classic/parse.js
 var parse2 = /* @__PURE__ */ _parse(ZodRealError);
 var parseAsync2 = /* @__PURE__ */ _parseAsync(ZodRealError);
 var safeParse2 = /* @__PURE__ */ _safeParse(ZodRealError);
 var safeParseAsync2 = /* @__PURE__ */ _safeParseAsync(ZodRealError);
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/classic/schemas.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/classic/schemas.js
 var ZodType = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
   $ZodType.init(inst, def);
   inst.def = def;
@@ -38752,7 +38762,7 @@ function array(element, params) {
 }
 function keyof(schema) {
   const shape = schema._zod.def.shape;
-  return literal(Object.keys(shape));
+  return _enum2(Object.keys(shape));
 }
 var ZodObject = /* @__PURE__ */ $constructor("ZodObject", (inst, def) => {
   $ZodObject.init(inst, def);
@@ -38777,7 +38787,7 @@ function object(shape, params) {
   const def = {
     type: "object",
     get shape() {
-      util_exports.assignProp(this, "shape", { ...shape });
+      util_exports.assignProp(this, "shape", shape ? util_exports.objectClone(shape) : {});
       return this.shape;
     },
     ...util_exports.normalizeParams(params)
@@ -38788,7 +38798,7 @@ function strictObject(shape, params) {
   return new ZodObject({
     type: "object",
     get shape() {
-      util_exports.assignProp(this, "shape", { ...shape });
+      util_exports.assignProp(this, "shape", util_exports.objectClone(shape));
       return this.shape;
     },
     catchall: never(),
@@ -38799,7 +38809,7 @@ function looseObject(shape, params) {
   return new ZodObject({
     type: "object",
     get shape() {
-      util_exports.assignProp(this, "shape", { ...shape });
+      util_exports.assignProp(this, "shape", util_exports.objectClone(shape));
       return this.shape;
     },
     catchall: unknown(),
@@ -39065,7 +39075,7 @@ function _default2(innerType, defaultValue) {
     type: "default",
     innerType,
     get defaultValue() {
-      return typeof defaultValue === "function" ? defaultValue() : defaultValue;
+      return typeof defaultValue === "function" ? defaultValue() : util_exports.shallowClone(defaultValue);
     }
   });
 }
@@ -39079,7 +39089,7 @@ function prefault(innerType, defaultValue) {
     type: "prefault",
     innerType,
     get defaultValue() {
-      return typeof defaultValue === "function" ? defaultValue() : defaultValue;
+      return typeof defaultValue === "function" ? defaultValue() : util_exports.shallowClone(defaultValue);
     }
   });
 }
@@ -39234,7 +39244,7 @@ function preprocess(fn2, schema) {
   return pipe(transform(fn2), schema);
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/classic/compat.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/classic/compat.js
 var ZodIssueCode = {
   invalid_type: "invalid_type",
   too_big: "too_big",
@@ -39260,7 +39270,7 @@ var ZodFirstPartyTypeKind;
 /* @__PURE__ */ (function(ZodFirstPartyTypeKind2) {
 })(ZodFirstPartyTypeKind || (ZodFirstPartyTypeKind = {}));
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/classic/coerce.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/classic/coerce.js
 var coerce_exports = {};
 __export(coerce_exports, {
   bigint: () => bigint3,
@@ -39285,7 +39295,7 @@ function date4(params) {
   return _coercedDate(ZodDate, params);
 }
 
-// node_modules/.pnpm/zod@4.0.14/node_modules/zod/v4/classic/external.js
+// node_modules/.pnpm/zod@4.0.17/node_modules/zod/v4/classic/external.js
 config(en_default());
 
 // src/schema.ts
