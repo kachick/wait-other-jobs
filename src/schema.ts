@@ -27,43 +27,12 @@ Typical mistakens are below.
     }
   });
 
-// https://github.com/tc39/proposal-temporal/blob/26e4cebe3c49f56932c1d5064fec9993e981823a/polyfill/index.d.ts#L493-L504
-type DurationLike = {
-  years?: number;
-  months?: number;
-  weeks?: number;
-  days?: number;
-  hours?: number;
-  minutes?: number;
-  seconds?: number;
-  milliseconds?: number;
-  microseconds?: number;
-  nanoseconds?: number;
-};
-
-// Need both zod definition and actual type which used in Temporal.Duration
-// This is a known zod problem with exactOptionalPropertyTypes.
-// See https://github.com/colinhacks/zod/issues/635 for detail, required even after Zod v4
-const MyDurationLike = z.strictObject({
-  years: z.number().optional(),
-  months: z.number().optional(),
-  weeks: z.number().optional(),
-  days: z.number().optional(),
-  hours: z.number().optional(),
-  minutes: z.number().optional(),
-  seconds: z.number().optional(),
-  milliseconds: z.number().optional(),
-  microseconds: z.number().optional(),
-  nanoseconds: z.number().optional(),
-}).readonly().meta({ deprecated: true, description: 'Use "ISO 8601 duration format" instead' });
-
-type MyDurationLike = z.infer<typeof MyDurationLike>;
-
 // IETF does not define duration formats in their RFCs, but in RFC 3399 refers ISO 8601 duration formats.
 // https://www.ietf.org/rfc/rfc3339.txt
 // NOTE: `.transform()` causes it cannot be useable in `.toJSONSchema()`
-// TODO: Only allow iso.duration since action v4
-export const Durationable = z.union([z.iso.duration(), MyDurationLike]).transform((item) => getDuration(item));
+export const Durationable = z.union([z.iso.duration(), z.instanceof(Temporal.Duration)]).transform((item) =>
+  Temporal.Duration.from(item)
+);
 export const PositiveDuration = z.instanceof(Temporal.Duration).refine(
   (d) => d.sign > 0,
   {
@@ -77,26 +46,6 @@ export const ZeroableDuration = z.instanceof(Temporal.Duration).refine(
   },
 );
 const defaultGrace = Temporal.Duration.from({ seconds: 10 });
-
-// workaround for https://github.com/colinhacks/zod/issues/635, required even after Zod v4
-function isDurationLike(my: MyDurationLike): my is DurationLike {
-  for (const [_, value] of Object.entries(my)) {
-    if (value === undefined) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-// workaround for https://github.com/colinhacks/zod/issues/635, required even after Zod v4
-export function getDuration(durationable: string | MyDurationLike): Temporal.Duration {
-  if (typeof durationable === 'string' || isDurationLike(durationable)) {
-    return Temporal.Duration.from(durationable);
-  }
-
-  throw new Error('unexpected value is specified in durations');
-}
 
 export const yamlPattern = /\.(yml|yaml)$/;
 const workflowFile = z.string().regex(yamlPattern);

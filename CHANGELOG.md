@@ -4,6 +4,7 @@ This file only records notable changes. Not synchronized with all releases and t
 
 - v4 - not yet released
   - Change default delay and intervals: [#1148](https://github.com/kachick/wait-other-jobs/pull/1148)
+  - Drop to support key-value format in startupGracePeriod: [GH-1149](https://github.com/kachick/wait-other-jobs/pull/1149)
   - Drop deprecated options
   - Update action engine to Node.js v24
 - v3.8.0

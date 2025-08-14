@@ -39310,19 +39310,9 @@ Typical mistakens are below.
     return external_exports.NEVER;
   }
 });
-var MyDurationLike = external_exports.strictObject({
-  years: external_exports.number().optional(),
-  months: external_exports.number().optional(),
-  weeks: external_exports.number().optional(),
-  days: external_exports.number().optional(),
-  hours: external_exports.number().optional(),
-  minutes: external_exports.number().optional(),
-  seconds: external_exports.number().optional(),
-  milliseconds: external_exports.number().optional(),
-  microseconds: external_exports.number().optional(),
-  nanoseconds: external_exports.number().optional()
-}).readonly().meta({ deprecated: true, description: 'Use "ISO 8601 duration format" instead' });
-var Durationable = external_exports.union([external_exports.iso.duration(), MyDurationLike]).transform((item) => getDuration(item));
+var Durationable = external_exports.union([external_exports.iso.duration(), external_exports.instanceof(Xn.Duration)]).transform(
+  (item) => Xn.Duration.from(item)
+);
 var PositiveDuration = external_exports.instanceof(Xn.Duration).refine(
   (d2) => d2.sign > 0,
   {
@@ -39336,20 +39326,6 @@ var ZeroableDuration = external_exports.instanceof(Xn.Duration).refine(
   }
 );
 var defaultGrace = Xn.Duration.from({ seconds: 10 });
-function isDurationLike(my) {
-  for (const [_2, value] of Object.entries(my)) {
-    if (value === void 0) {
-      return false;
-    }
-  }
-  return true;
-}
-function getDuration(durationable) {
-  if (typeof durationable === "string" || isDurationLike(durationable)) {
-    return Xn.Duration.from(durationable);
-  }
-  throw new Error("unexpected value is specified in durations");
-}
 var yamlPattern = /\.(yml|yaml)$/;
 var workflowFile = external_exports.string().regex(yamlPattern);
 var matchAllJobs = external_exports.strictObject({
