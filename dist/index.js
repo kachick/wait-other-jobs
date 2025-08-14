@@ -40899,7 +40899,11 @@ function getInterval(method, minimumInterval, attempts) {
 // src/main.ts
 import { join as join3 } from "path";
 import { writeFileSync } from "fs";
+import { env as env2 } from "process";
 async function run() {
+  if (!("FORCE_COLOR" in env2)) {
+    env2["FORCE_COLOR"] = "true";
+  }
   const startedAt = performance.now();
   (0, import_core10.startGroup)("Parameters");
   const { trigger, options, githubToken, tempDir } = parseInput();
