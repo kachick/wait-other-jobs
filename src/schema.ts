@@ -126,7 +126,7 @@ export const TargetEvents = z.union([
   eventNames,
 ]).default('all');
 
-const FilterCondition = z.union([matchAllJobs, matchPartialJobs]);
+export const FilterCondition = z.union([matchAllJobs, matchPartialJobs]);
 const SkipFilterCondition = FilterCondition.readonly();
 
 const waitOptions = {

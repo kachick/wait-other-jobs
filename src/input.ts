@@ -9,7 +9,7 @@ import {
   Path,
   TargetEvents,
   Trigger,
-  jsonSchema,
+  FilterCondition,
   eventName,
 } from './schema.ts';
 import { env } from 'node:process';
@@ -72,10 +72,12 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     minimumInterval,
     retryMethod,
     attemptLimits,
-    waitList: {
-      targetEvents,
-      ...z.array(jsonSchema).parse(jsonInput.parse(getInput('wait-list', { required: true }))),
-    },
+    waitList: z.array(FilterCondition).parse(jsonInput.parse(getInput('wait-list', { required: true }))).map(
+      item => ({
+        targetEvents,
+        ...item,
+      }),
+    ),
     skipList: jsonInput.parse(getInput('skip-list', { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,

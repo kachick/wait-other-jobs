@@ -39466,10 +39466,12 @@ function parseInput() {
     minimumInterval,
     retryMethod,
     attemptLimits,
-    waitList: {
-      targetEvents,
-      ...external_exports.array(jsonSchema).parse(jsonInput.parse((0, import_core7.getInput)("wait-list", { required: true })))
-    },
+    waitList: external_exports.array(FilterCondition).parse(jsonInput.parse((0, import_core7.getInput)("wait-list", { required: true }))).map(
+      (item) => ({
+        targetEvents,
+        ...item
+      })
+    ),
     skipList: jsonInput.parse((0, import_core7.getInput)("skip-list", { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
