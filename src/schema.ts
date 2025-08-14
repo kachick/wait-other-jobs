@@ -102,7 +102,6 @@ export const yamlPattern = /\.(yml|yaml)$/;
 const workflowFile = z.string().regex(yamlPattern);
 const matchAllJobs = z.strictObject({
   workflowFile: workflowFile,
-  jobName: z.null().optional(), // Keep optional for backward compatibility. TODO: Remove since action v4
   jobMatchMode: z.literal('all').default('all'),
 });
 const matchPartialJobs = z.strictObject({

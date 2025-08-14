@@ -39354,8 +39354,6 @@ var yamlPattern = /\.(yml|yaml)$/;
 var workflowFile = external_exports.string().regex(yamlPattern);
 var matchAllJobs = external_exports.strictObject({
   workflowFile,
-  jobName: external_exports.null().optional(),
-  // Keep optional for backward compatibility. TODO: Remove since action v4
   jobMatchMode: external_exports.literal("all").default("all")
 });
 var matchPartialJobs = external_exports.strictObject({
@@ -40896,13 +40894,18 @@ function getSummaries(checks, trigger) {
     (a2, b2) => join2(a2.workflowBasename, a2.jobName).localeCompare(join2(b2.workflowBasename, b2.jobName))
   );
 }
-function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summary2) {
+function matchPath(condition, summary2) {
+  const { workflowFile: workflowFile2, jobMatchMode, ...restCondition } = condition;
   if (workflowFile2 !== summary2.workflowBasename) {
     return false;
   }
-  if (!jobName) {
+  if (jobMatchMode === "all") {
     return true;
   }
+  if (!("jobName" in restCondition)) {
+    throw new Error(`jobName is required when jobMatchMode is "${jobMatchMode}"`);
+  }
+  const jobName = restCondition.jobName;
   switch (jobMatchMode) {
     case "exact": {
       return jobName === summary2.jobName;
@@ -40912,7 +40915,7 @@ function matchPath({ workflowFile: workflowFile2, jobName, jobMatchMode }, summa
     }
     default: {
       const _exhaustiveCheck = jobMatchMode;
-      return false;
+      throw new Error(`Unknown jobMatchMode is given: "${jobMatchMode}"`);
     }
   }
 }

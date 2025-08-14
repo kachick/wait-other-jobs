@@ -131,14 +131,22 @@ export type PollingReport = {
   summaries: readonly Summary[];
 };
 
-function matchPath({ workflowFile, jobName, jobMatchMode }: FilterCondition, summary: Summary): boolean {
+function matchPath(condition: FilterCondition, summary: Summary): boolean {
+  const { workflowFile, jobMatchMode, ...restCondition } = condition;
+
   if (workflowFile !== summary.workflowBasename) {
     return false;
   }
 
-  if (!jobName) {
+  if (jobMatchMode === 'all') {
     return true;
   }
+
+  if (!('jobName' in restCondition)) {
+    throw new Error(`jobName is required when jobMatchMode is "${jobMatchMode}"`);
+  }
+
+  const jobName = restCondition.jobName;
 
   switch (jobMatchMode) {
     case 'exact': {
@@ -149,7 +157,7 @@ function matchPath({ workflowFile, jobName, jobMatchMode }: FilterCondition, sum
     }
     default: {
       const _exhaustiveCheck: never = jobMatchMode;
-      return false;
+      throw new Error(`Unknown jobMatchMode is given: "${jobMatchMode}"`);
     }
   }
 }
