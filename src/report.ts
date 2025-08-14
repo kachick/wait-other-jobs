@@ -131,14 +131,22 @@ export type PollingReport = {
   summaries: readonly Summary[];
 };
 
-function matchPath({ workflowFile, jobName, jobMatchMode }: FilterCondition, summary: Summary): boolean {
+function matchPath(target: FilterCondition, summary: Summary): boolean {
+  const { workflowFile, jobMatchMode, ...rest } = target;
+
   if (workflowFile !== summary.workflowBasename) {
     return false;
   }
 
-  if (!jobName) {
+  if (jobMatchMode === 'all') {
     return true;
   }
+
+  if (!('jobName' in rest)) {
+    throw new Error('jobName is required');
+  }
+
+  const jobName = rest.jobName;
 
   switch (jobMatchMode) {
     case 'exact': {
