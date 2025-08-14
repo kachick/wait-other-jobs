@@ -19,18 +19,18 @@ inputs:
       To make sure other jobs are running and can be targeted.
       Should be specified with ISO 8601 duration format.
     required: false
-    # TODO: Since v4.x, Consider setting shorter or 0. Or respect the `minimum-interval` if this value is empty. See GH-596 and GH-994
-    #   Pros: WIll be fast for `equal_intervals`.
-    #   Cons:
-    #     - If other jobs runs after this job, this job might not know them
-    #     - If using `exponential_backoff`, reducing the polling count much reduces total time even if waiting longer for first polling
-    default: 'PT10S'
+    # See GH-596 and GH-994
+    # Allow users to use `0`, but avoid `0` as default value:
+    #   Pros: Faster execution with `equal_intervals`
+    #   Cons: May miss jobs that start after this job begins
+    default: 'PT1S'
   minimum-interval:
     description: |
       Wait for this or a longer interval between each poll to reduce GitHub API calls.
       Should be specified with ISO 8601 duration format.
     required: false
-    default: 'PT15S'
+    # Allow users to use shorter values, but recommends to set PT4S or greater with considering https://github.com/github/docs/blob/c26f36dbabb133b263c0f979f257b31d6c979341/data/reusables/rest-api/primary-rate-limit-github-token-in-actions.md
+    default: 'PT10S'
   early-exit:
     description: 'Stop rest pollings if faced at least 1 bad condition'
     required: false
@@ -38,7 +38,9 @@ inputs:
   retry-method:
     description: 'How to wait for next polling'
     required: false
-    default: 'equal_intervals' # Changed the default from `exponential_backoff` since GH-596(v2)
+    # Changed the default from `exponential_backoff` since GH-596(v2)
+    # Short `warmup-delay` with `exponential_backoff` can result in longer total wait times
+    default: 'equal_intervals'
   attempt-limits:
     description: 'Stop rest pollings if reached to this limit'
     required: false

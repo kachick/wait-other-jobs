@@ -3,19 +3,19 @@ import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
 import { Check, FilterCondition, Options, Trigger, WaitList } from './schema.ts';
 import { join, relative } from 'path';
 import { Temporal } from 'temporal-polyfill';
-import styles, { CSPair } from 'ansi-styles';
+import { styleText } from 'node:util';
 
 interface Meta {
-  color: CSPair | null;
+  color: Parameters<typeof styleText>[0] | null;
   emoji: string;
   level: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7; // https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
 }
 
 // https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
 const severities = Object.freeze({
-  error: Object.freeze({ color: styles.red, emoji: '❌', level: 3 }),
-  warning: Object.freeze({ color: styles.yellow, emoji: '🤔', level: 4 }),
-  notice: Object.freeze({ color: styles.green, emoji: '✅', level: 5 }),
+  error: Object.freeze({ color: 'red', emoji: '❌', level: 3 }),
+  warning: Object.freeze({ color: 'yellow', emoji: '🤔', level: 4 }),
+  notice: Object.freeze({ color: 'green', emoji: '✅', level: 5 }),
   info: Object.freeze({ color: null, emoji: '💬', level: 6 }),
 }) satisfies { [key: string]: Meta };
 
@@ -25,7 +25,7 @@ export function colorize(severity: Severity, message: string): string {
   const color = severities[severity].color;
 
   if (color) {
-    return `${color.open}${message}${color.close}`;
+    return styleText(color, message);
   }
 
   return message;
@@ -131,14 +131,22 @@ export type PollingReport = {
   summaries: readonly Summary[];
 };
 
-function matchPath({ workflowFile, jobName, jobMatchMode }: FilterCondition, summary: Summary): boolean {
+function matchPath(condition: FilterCondition, summary: Summary): boolean {
+  const { workflowFile, jobMatchMode, ...restCondition } = condition;
+
   if (workflowFile !== summary.workflowBasename) {
     return false;
   }
 
-  if (!jobName) {
+  if (jobMatchMode === 'all') {
     return true;
   }
+
+  if (!('jobName' in restCondition)) {
+    throw new Error(`jobName is required when jobMatchMode is "${jobMatchMode}"`);
+  }
+
+  const jobName = restCondition.jobName;
 
   switch (jobMatchMode) {
     case 'exact': {
@@ -149,7 +157,7 @@ function matchPath({ workflowFile, jobName, jobMatchMode }: FilterCondition, sum
     }
     default: {
       const _exhaustiveCheck: never = jobMatchMode;
-      return false;
+      throw new Error(`Unknown jobMatchMode is given: "${jobMatchMode}"`);
     }
   }
 }

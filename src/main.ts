@@ -8,6 +8,7 @@ import { Temporal } from 'temporal-polyfill';
 import { Check, Options, Trigger } from './schema.ts';
 import { join } from 'path';
 import { writeFileSync } from 'fs';
+import { env } from 'process';
 
 interface PollingResult {
   elapsed: Temporal.Duration;
@@ -24,6 +25,11 @@ interface Dumper {
 }
 
 async function run(): Promise<void> {
+  // Workaround for https://github.com/actions/runner/issues/241 and https://github.com/nodejs/node/pull/56722
+  // Don't use `core.exportVariable`, we only use this ENV in this action.
+  if (!('FORCE_COLOR' in env)) {
+    env['FORCE_COLOR'] = 'true';
+  }
   const startedAt = performance.now();
   startGroup('Parameters');
   const { trigger, options, githubToken, tempDir } = parseInput();
