@@ -30,8 +30,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0
       zod:
-        specifier: ^4.0.14
-        version: 4.0.14
+        specifier: ^4.0.17
+        version: 4.0.17
     devDependencies:
       '@tsconfig/node24':
         specifier: ^24.0.1
@@ -402,8 +402,8 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  zod@4.0.14:
-    resolution: {integrity: sha512-nGFJTnJN6cM2v9kXL+SOBq3AtjQby3Mv5ySGFof5UGRHrRioSJ5iG680cYNjE/yWk671nROcpPj4hAS8nyLhSw==}
+  zod@4.0.17:
+    resolution: {integrity: sha512-1PHjlYRevNxxdy2JZ8JcNAw7rX8V9P1AKkP+x/xZfxB0K5FYfuV+Ug6P/6NVSR2jHQ+FzDDoDHS04nYUsOIyLQ==}
 
 snapshots:
 
@@ -717,4 +717,4 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  zod@4.0.14: {}
+  zod@4.0.17: {}
