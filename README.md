@@ -6,8 +6,9 @@
 [![matrix](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-761-matrix.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-761-matrix.yml?query=branch%3Amain)\
 [![CI](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml?query=branch%3Amain)
 
-This GitHub action waits for all or specific jobs, even if they are running in other workflows.\
-If any of those jobs fail, this action will fail as well.
+This GitHub Action waits for all jobs by default even if they run in other workflows.\
+You can also choose to wait for specific jobs.\
+If any of the jobs fail, this action fails too.
 
 ## v4 and v3
 
@@ -16,7 +17,7 @@ I plan the major difference for default behaviors and option names. So updating 
 
 ## Usage
 
-Zero or tiny configuration may work.
+It works with zero or little configuration.
 
 ```yaml
 jobs:
@@ -28,11 +29,11 @@ jobs:
     #   actions: read
     runs-on: ubuntu-24.04
     steps:
-      - uses: kachick/wait-other-jobs@v3.8.0
+      - uses: kachick/wait-other-jobs@v3.8.1
         timeout-minutes: 15 # Recommended to be enabled with your appropriate value for fail-safe use
 ```
 
-You can change the token, polling interval, allow/deny list and turns early-exit as below.
+You can configure the token, polling interval, allow/deny lists, and early-exit behavior as shown below.
 
 ```yaml
 with:
@@ -67,19 +68,18 @@ Full list of the options
 | -------------------- | ------------------------------------------------------------------------------- | -------- | ----------------------- | --------------------------------------------------------------- |
 | `github-api-url`     | The Github API endpoint. Override for Github Enterprise usage.                  | `string` | `${{ github.api_url }}` | `https://api.github.com`, `https://ghe-host.example.net/api/v3` |
 | `github-token`       | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `${{ github.token }}`   |                                                                 |
-| `warmup-delay`       | Wait this interval before first polling                                         | `string` | `PT10S`                 | ISO 8601 duration format                                        |
-| `minimum-interval`   | Wait for this or a longer interval between each poll to reduce GitHub API calls | `string` | `PT15S`                 | ISO 8601 duration format                                        |
+| `warmup-delay`       | Wait this interval before first polling                                         | `string` | `PT10S`                 | [ISO 8601 duration format][tc39-temporal-duration]              |
+| `minimum-interval`   | Wait for this or a longer interval between each poll to reduce GitHub API calls | `string` | `PT15S`                 | [ISO 8601 duration format][tc39-temporal-duration]              |
 | `retry-method`       | How to wait for next polling                                                    | `string` | `equal_intervals`       | `exponential_backoff`, `equal_intervals`                        |
-| `early-exit`         | Stop rest pollings if faced at least 1 bad condition                            | `bool`   | `true`                  |                                                                 |
-| `attempt-limits`     | Stop rest pollings if reached to this limit                                     | `number` | `1000`                  |                                                                 |
-| `wait-list`          | Wait only these jobs                                                            | `string` | `[]`                    | JSON Array                                                      |
-| `skip-list`          | Wait except these jobs                                                          | `string` | `[]`                    | JSON Array                                                      |
+| `early-exit`         | Stop polling as soon as one job fails                                           | `bool`   | `true`                  |                                                                 |
+| `attempt-limits`     | Stop polling if reached to this limit                                           | `number` | `1000`                  |                                                                 |
+| `wait-list`          | Wait only for these jobs                                                        | `string` | `[]`                    | JSON Array                                                      |
+| `skip-list`          | Wait for all jobs except these                                                  | `string` | `[]`                    | JSON Array                                                      |
 | `skip-same-workflow` | Skip jobs defined in the same workflow which using this action                  | `bool`   | `false`                 |                                                                 |
 | `dry-run`            | Avoid requests for tests                                                        | `bool`   | `false`                 |                                                                 |
 
 ## Guide for option syntax and reasonable values
 
-- [ISO 8601 duration format](https://github.com/tc39/proposal-temporal/blob/0.9.0/docs/duration.md)
 - [Trailing commas are not allowed in JSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Trailing_commas)
 - GitHub API Limit: At least we should consider about `GITHUB_TOKEN`, that is allowed 1000 per hour per repository.\
   Roughly calculating for long jobs, setting the `minimum-interval` larger than or equal `PT4S` would be safer.
@@ -119,13 +119,13 @@ with:
 
 ## outputs.<output_id>
 
+These outputs are for testing and debugging only. The schema is not defined.
+
 - `parameters`\
-  Parsed values from `with` and some context.\
-  This data is only provided for testing, so the schema is not defined.
+  Parsed values from `with` and some context.
 
 - `dump`\
-  A file path for collected resources which keeps fields than logged.\
-  This data is only provided for debugging, so the schema is not defined.
+  A file path for collected resources which keeps fields than logged.
 
 ## Examples
 
@@ -134,7 +134,7 @@ See the [docs](docs/examples.md) for further detail.
 
 ## Deadlocks
 
-If you use this action in multiple jobs on the same repository, you should avoid deadlocks.\
+When using this action in multiple jobs within the same repository, be careful to avoid deadlocks.\
 The `skip-list`, `wait-list` and `skip-same-workflow` options cover this use case.
 
 If you changed job name from the default, you should set `skip-list` or roughly use `skip-same-workflow`
@@ -145,7 +145,7 @@ jobs:
     name: 'Changed at here'
     runs-on: ubuntu-24.04
     steps:
-      - uses: kachick/wait-other-jobs@v3.8.0
+      - uses: kachick/wait-other-jobs@v3.8.1
         with:
           skip-list: |
             [
@@ -157,7 +157,7 @@ jobs:
         timeout-minutes: 15
 ```
 
-Similar problems should be considered in matrix use. Because of GitHub does not provide the context.
+You need to consider similar problems when using matrix, because GitHub does not provide enough context.
 
 - https://github.com/orgs/community/discussions/8945
 - https://github.com/orgs/community/discussions/16614
@@ -174,7 +174,7 @@ jobs:
           - ubuntu-22.04
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: kachick/wait-other-jobs@v3.8.0
+      - uses: kachick/wait-other-jobs@v3.8.1
         with:
           skip-list: |
             [
@@ -189,10 +189,10 @@ jobs:
 
 ## Startup grace period
 
-Judge whether the checkRun state at the moment.\
-When some jobs are triggered late after this action, we need to use the following configurations.
+This action only checks the status of jobs at each polling time.\
+Use this option when a job may start with a short delay after this action starts.
 
-An example of using a `wait-list`.
+Example using a `wait-list`.
 
 ```yaml
 with:
@@ -201,7 +201,7 @@ with:
       {
         "workflowFile": "might_be_triggered_after_0-4_minutes.yml",
         "optional": false,
-        "startupGracePeriod": { "minutes": 5 }
+        "startupGracePeriod": "PT5M"
       }
     ]
 ```
@@ -210,13 +210,10 @@ This action starts immediately but ignores the job missing in the first 5 minute
 
 - No need to extend `warmup-delay`
 - Disable `optional`, because it is needed to check
-- Set enough value for `startupGracePeriod` for this purpose.\
-  It should be parsible with [TC39 - Temporal.Duration](https://github.com/tc39/proposal-temporal/blob/26e4cebe3c49f56932c1d5064fec9993e981823a/docs/duration.md)\
-  e.g
-  - `"PT3M42S"` # ISO 8601 duration format
-  - `{ "minutes": 3, "seconds": 42 }` # key-value for each unit
+- Set enough value for `startupGracePeriod`.\
+  Use the [ISO 8601 duration format][tc39-temporal-duration].
 
-If not using wait-list, this pattern should be considered in your `warmup-delay`.
+If you're not using `wait-list`, you need to handle this pattern with `warmup-delay`.
 
 ## Alternative candidates
 
@@ -230,3 +227,5 @@ If not using wait-list, this pattern should be considered in your `warmup-delay`
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](LICENSE)
+
+[tc39-temporal-duration]: https://github.com/tc39/proposal-temporal/blob/0.9.0/docs/duration.md

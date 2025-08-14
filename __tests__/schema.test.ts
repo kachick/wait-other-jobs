@@ -116,7 +116,7 @@ test('Options reject invalid values', () => {
 
   throws(() => Options.parse({ ...defaultOptions, retryMethod: 'inverse-exponential-backoff' }), {
     name: 'ZodError',
-    message: /invalid_enum_value/,
+    message: /invalid_value/,
   });
 
   throws(() => Options.parse({ ...defaultOptions, waitList: [{ unknownField: ':)' }] }), {
@@ -152,14 +152,16 @@ test('Options reject invalid values', () => {
       assert(err instanceof z.ZodError);
       deepStrictEqual(err.issues, [
         {
-          code: 'invalid_string',
-          message: 'Invalid',
+          code: 'invalid_format',
+          format: 'regex',
+          message: 'Invalid string: must match pattern /\\.(yml|yaml)$/',
+          origin: 'string',
           path: [
             'waitList',
             0,
             'workflowFile',
           ],
-          validation: 'regex',
+          pattern: '/\\.(yml|yaml)$/',
         },
       ]);
       return true;
@@ -176,14 +178,16 @@ test('Options reject invalid values', () => {
       assert(err instanceof z.ZodError);
       deepStrictEqual(err.issues, [
         {
-          code: 'invalid_string',
-          message: 'Invalid',
+          code: 'invalid_format',
+          format: 'regex',
+          message: 'Invalid string: must match pattern /\\.(yml|yaml)$/',
+          origin: 'string',
           path: [
             'waitList',
             0,
             'workflowFile',
           ],
-          validation: 'regex',
+          pattern: '/\\.(yml|yaml)$/',
         },
       ]);
       return true;
@@ -202,7 +206,7 @@ test('Durationable', async (t) => {
       () => Durationable.parse('42 minutes'),
       {
         name: 'ZodError',
-        message: /invalid_string/,
+        message: /invalid_format/,
       },
     );
   });
@@ -238,7 +242,7 @@ test('wait-list have startupGracePeriod', async (t) => {
     );
   });
 
-  await t.test('it raises a TypeError if given an unexpected keys', { todo: 'TODO: Replace with ZodError' }, (_t) => {
+  await t.test('it raises an error if given an unexpected key', (_t) => {
     throws(
       () =>
         Options.parse({
@@ -246,8 +250,8 @@ test('wait-list have startupGracePeriod', async (t) => {
           waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: { min: 5 } }],
         }),
       {
-        name: 'TypeError',
-        message: 'No valid fields: days,hours,microseconds,milliseconds,minutes,months,nanoseconds,seconds,weeks,years',
+        name: 'ZodError',
+        message: /Unrecognized key.+\bmin\b/,
       },
     );
   });
@@ -398,7 +402,7 @@ test('jobMatchMode', async (t) => {
         }),
       {
         name: 'ZodError',
-        message: /invalid_enum_value/,
+        message: /invalid_value/,
       },
     );
   });

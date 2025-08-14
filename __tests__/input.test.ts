@@ -30,7 +30,7 @@ test('event-list', async (t) => {
       () => parseTargetEvents('[""]'),
       {
         name: 'ZodError',
-        message: /at least 1 character/,
+        message: /too_small/,
       },
     );
   });

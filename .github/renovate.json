@@ -14,6 +14,9 @@
     "github>kachick/renovate-config-dprint#1.3.0",
     "github>kachick/renovate-config-dprint:self"
   ],
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
   "rangeStrategy": "bump",
   "ignoreDeps": ["node", "pnpm"],
   "packageRules": [
@@ -25,20 +28,6 @@
         "@types/**"
       ],
       "matchUpdateTypes": ["major"],
-      "enabled": false
-    },
-    {
-      "matchDatasources": [
-        "npm"
-      ],
-      "matchPackageNames": [
-        "undici",
-        "@octokit/plugin-paginate-rest",
-        "@octokit/endpoint",
-        "@octokit/request",
-        "@octokit/request-error"
-      ],
-      "matchUpdateTypes": ["major", "minor"],
       "enabled": false
     }
   ]

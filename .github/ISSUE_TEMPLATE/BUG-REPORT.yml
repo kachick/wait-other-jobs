@@ -24,8 +24,7 @@ body:
       label: Version
       description: What version are you using?
       options:
-        - 'v4'
-        - 'v3.8.0'
+        - 'v3.8.1'
         - other
       default: 0
     validations:

@@ -51,21 +51,9 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const tempRoot = Path.parse(env['RUNNER_TEMP']);
   const tempDir = mkdtempSync(join(tempRoot, 'wait-other-jobs-'));
 
-  const waitSecondsBeforeFirstPolling = getInput('wait-seconds-before-first-polling', {
-    required: false,
-    trimWhitespace: true,
-  });
-  const warmupDelay = waitSecondsBeforeFirstPolling
-    ? Durationable.parse({ seconds: parseInt(waitSecondsBeforeFirstPolling, 10) })
-    : Durationable.parse(getInput('warmup-delay', { required: true, trimWhitespace: true }));
+  const warmupDelay = Durationable.parse(getInput('warmup-delay', { required: true, trimWhitespace: true }));
 
-  const minIntervalSeconds = getInput('min-interval-seconds', {
-    required: false,
-    trimWhitespace: true,
-  });
-  const minimumInterval = minIntervalSeconds
-    ? Durationable.parse({ seconds: parseInt(minIntervalSeconds, 10) })
-    : Durationable.parse(getInput('minimum-interval', { required: true, trimWhitespace: true }));
+  const minimumInterval = Durationable.parse(getInput('minimum-interval', { required: true, trimWhitespace: true }));
 
   const retryMethod = getInput('retry-method', { required: true, trimWhitespace: true });
   const attemptLimits = parseInt(

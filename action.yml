@@ -25,21 +25,12 @@ inputs:
     #     - If other jobs runs after this job, this job might not know them
     #     - If using `exponential_backoff`, reducing the polling count much reduces total time even if waiting longer for first polling
     default: 'PT10S'
-  wait-seconds-before-first-polling: # TODO: Remove since v4.x
-    deprecationMessage: This option will be removed in next major release. Use warmup-delay instead
-    description: 'Wait this seconds before first polling'
-    required: false
   minimum-interval:
     description: |
       Wait for this or a longer interval between each poll to reduce GitHub API calls.
       Should be specified with ISO 8601 duration format.
     required: false
     default: 'PT15S'
-  min-interval-seconds: # TODO: Remove since v4.x
-    deprecationMessage: This option will be removed in next major release. Use minimum-interval instead
-    description: |
-      Wait for this or a longer interval between each poll to reduce GitHub API calls.
-    required: false
   early-exit:
     description: 'Stop rest pollings if faced at least 1 bad condition'
     required: false
@@ -88,5 +79,6 @@ outputs:
       This data is only provided for debugging, so the schema is not defined.
 
 runs:
-  using: 'node20'
+  # Available since https://github.com/actions/runner/releases/tag/v2.327.1
+  using: 'node24'
   main: 'dist/index.js'

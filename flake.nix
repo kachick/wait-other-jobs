@@ -1,6 +1,8 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    # Avoid using the unstable channel until issue GH-998 is resolved.
+    # Using it may cause issues GH-1106 and GH-749.
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
   };
 
   outputs =
@@ -15,7 +17,7 @@
       ];
     in
     {
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
       devShells = forAllSystems (
         system:
         let
@@ -23,19 +25,31 @@
         in
         {
           default = pkgs.mkShellNoCC {
-            # https://github.com/denoland/deno/issues/17916
-            env.DENO_NO_PACKAGE_JSON = "1";
+            env = {
+              # https://github.com/denoland/deno/issues/17916
+              DENO_NO_PACKAGE_JSON = "1";
+
+              # Correct nixd inlay hints
+              NIX_PATH = "nixpkgs=${nixpkgs.outPath}";
+
+              # NixOS cannot run external pre-built CLI by default
+              RECHECK_BACKEND = "pure";
+              RECHECK_SYNC_BACKEND = "pure";
+            };
+
             buildInputs = (
               with pkgs;
               [
                 # For Nix environments
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
-                nil
+                nixd
                 nixfmt-rfc-style
 
-                nodejs_20
-                nodejs_20.pkgs.pnpm
+                nodejs_24
+                (pnpm_10.override {
+                  withNode = false;
+                })
                 deno
                 dprint
                 typos
