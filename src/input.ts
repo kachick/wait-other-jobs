@@ -1,7 +1,7 @@
 import { getInput, getBooleanInput, setSecret, error } from '@actions/core';
 import { context } from '@actions/github';
 
-import { Durationable, jsonInput, eventNames, Options, Path, Trigger } from './schema.ts';
+import { Durationable, jsonInput, Options, Path, Trigger } from './schema.ts';
 import { env } from 'node:process';
 import { mkdtempSync } from 'fs';
 import { join } from 'path';
@@ -45,7 +45,6 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
   const apiUrl = getInput('github-api-url', { required: true, trimWhitespace: true });
-  const events = eventNames.parse(jsonInput.parse(getInput('event-list', { required: true })));
 
   const options = Options.parse({
     apiUrl,
@@ -58,7 +57,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun,
-    events,
+    eventNames: jsonInput.parse(getInput('event-list', { required: true })),
   });
 
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName } as const satisfies Trigger;

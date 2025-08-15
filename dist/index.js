@@ -39441,7 +39441,6 @@ function parseInput() {
   const shouldSkipSameWorkflow = (0, import_core7.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core7.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const apiUrl = (0, import_core7.getInput)("github-api-url", { required: true, trimWhitespace: true });
-  const events = eventNames.parse(jsonInput.parse((0, import_core7.getInput)("event-list", { required: true })));
   const options = Options.parse({
     apiUrl,
     warmupDelay,
@@ -39453,7 +39452,7 @@ function parseInput() {
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun,
-    events
+    eventNames: jsonInput.parse((0, import_core7.getInput)("event-list", { required: true }))
   });
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName: eventName2 };
   const githubToken = (0, import_core7.getInput)("github-token", { required: true, trimWhitespace: false });
