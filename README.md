@@ -13,7 +13,6 @@ If any of the jobs fail, this action fails too.
 ## v4 and v3
 
 Latest stable versions are v3.x, and developing under v4.x in main branch.
-I plan the major difference for default behaviors and option names. So updating v3 -> v4 might require config changes especially if you want to keep old behaviors.
 
 ## Usage
 
@@ -47,7 +46,7 @@ with:
       {
         "workflowFile": "ci.yml",
         "jobName": "test",
-        "eventName": "${{ github.event_name }}"
+        "eventNames": [ "push", "pull_request" ]
       },
       {
         "workflowFile": "release.yml",
@@ -95,7 +94,7 @@ Lists should be given with JSON array, do not use both wait-list and skip-list t
 - wait-list:
   - If the checkRun for the specified name is not found, this action raise errors by default.\
     You can disable this validation with `"optional": true` or use the `startupGracePeriod` that described in following section
-  - Wait for all event types by default, you can change with `"eventName": "EVENT_NAME_AS_push"`.
+  - Wait only for started event type by default, you can change it with `"eventNames": [ "push", "pull_request" ]`.
 
 ## Required GITHUB_TOKEN permissions
 
