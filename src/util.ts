@@ -19,3 +19,15 @@ export function omit<T extends object, U extends keyof T>(
   }
   return result;
 }
+
+export function jsonReplacer(_key: string, value: unknown): unknown {
+  if (value instanceof Set) {
+    return `Set<${Array.from(value)}>`;
+  }
+
+  if (value instanceof Map) {
+    return `Map<${Object.fromEntries(value)}>`;
+  }
+
+  return value;
+}

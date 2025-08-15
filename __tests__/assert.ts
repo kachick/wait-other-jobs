@@ -1,17 +1,6 @@
 import { strictEqual, deepStrictEqual } from 'node:assert';
 import { Temporal } from 'temporal-polyfill';
-
-function jsonReplacer(_key: string, value: unknown): unknown {
-  if (value instanceof Set) {
-    return `Set<${Array.from(value)}>`;
-  }
-
-  if (value instanceof Map) {
-    return `Map<${Object.fromEntries(value)}>`;
-  }
-
-  return value;
-}
+import { jsonReplacer } from '../src/util.ts';
 
 //   - Object.is() returns `false` even for same total, because they are not idencial
 //   - deepStrictEqual returns `true` even for different total because of no properties :<

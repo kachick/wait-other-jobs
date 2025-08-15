@@ -40943,6 +40943,19 @@ function getInterval(method, minimumInterval, attempts) {
 import { join as join3 } from "path";
 import { writeFileSync } from "fs";
 import { env as env2 } from "process";
+
+// src/util.ts
+function jsonReplacer(_key, value) {
+  if (value instanceof Set) {
+    return `Set<${Array.from(value)}>`;
+  }
+  if (value instanceof Map) {
+    return `Map<${Object.fromEntries(value)}>`;
+  }
+  return value;
+}
+
+// src/main.ts
 async function run() {
   if (!("FORCE_COLOR" in env2)) {
     env2["FORCE_COLOR"] = "true";
@@ -40958,7 +40971,7 @@ async function run() {
       options
       // Do NOT include secrets
     },
-    null,
+    jsonReplacer,
     2
   );
   (0, import_core10.info)(encodedParameters);
