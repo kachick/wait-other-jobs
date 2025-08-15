@@ -9,7 +9,7 @@ import { Check, Options, Trigger } from './schema.ts';
 import { join } from 'path';
 import { writeFileSync } from 'fs';
 import { env } from 'process';
-import { jsonReplacer } from './util.ts';
+import { jsonReplacerForPrettyPrint } from './util.ts';
 
 interface PollingResult {
   elapsed: Temporal.Duration;
@@ -41,7 +41,7 @@ async function run(): Promise<void> {
       startedAt,
       options, // Do NOT include secrets
     },
-    jsonReplacer,
+    jsonReplacerForPrettyPrint,
     2,
   );
   info(encodedParameters);

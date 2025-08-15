@@ -40945,14 +40945,35 @@ import { writeFileSync } from "fs";
 import { env as env2 } from "process";
 
 // src/util.ts
-function jsonReplacer(_key, value) {
-  if (value instanceof Set) {
-    return `Set<${Array.from(value)}>`;
+function jsonReplacerForPrettyPrint(_key, value) {
+  const v2 = stringifyDuration(value);
+  if (v2 instanceof Set) {
+    return `Set<${Array.from(v2)}>`;
   }
-  if (value instanceof Map) {
-    return `Map<${Object.fromEntries(value)}>`;
+  if (v2 instanceof Map) {
+    return `Map<${Object.fromEntries(v2)}>`;
   }
-  return value;
+  return v2;
+}
+function stringifyDuration(input) {
+  if (input instanceof Xn.Duration) {
+    return `Temporal.Duration<${input.round({ largestUnit: "minutes" }).toJSON()}>`;
+  }
+  if (input instanceof Set || input instanceof Map) {
+    return input;
+  }
+  if (Array.isArray(input)) {
+    return input.map((item) => stringifyDuration(item));
+  }
+  if (typeof input === "object" && input !== null) {
+    const result = {};
+    for (const key of Object.keys(input)) {
+      const value = input[key];
+      result[key] = stringifyDuration(value);
+    }
+    return result;
+  }
+  return input;
 }
 
 // src/main.ts
@@ -40971,7 +40992,7 @@ async function run() {
       options
       // Do NOT include secrets
     },
-    jsonReplacer,
+    jsonReplacerForPrettyPrint,
     2
   );
   (0, import_core10.info)(encodedParameters);
