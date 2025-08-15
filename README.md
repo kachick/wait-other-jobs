@@ -10,9 +10,10 @@ This GitHub Action waits for all jobs by default even if they run in other workf
 You can also choose to wait for specific jobs.\
 If any of the jobs fail, this action fails too.
 
-## v4 or v3
+## v4 and v3
 
-Latest stable versions are v3.x, and developing v4.x in main branch.
+Latest stable versions are v3.x, and developing under v4.x in main branch.
+I plan the major difference for default behaviors and option names. So updating v3 -> v4 might require config changes especially if you want to keep old behaviors.
 
 ## Usage
 
