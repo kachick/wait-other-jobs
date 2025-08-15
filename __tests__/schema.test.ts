@@ -2,7 +2,7 @@ import test from 'node:test';
 import { throws } from 'node:assert';
 import { Durationable, Options } from '../src/schema.ts';
 import { Temporal } from 'temporal-polyfill';
-import { durationEqual, deepEqual } from './assert.ts';
+import { durationEqual, jsonEqual } from './assert.ts';
 
 const defaultOptions = Object.freeze({
   apiUrl: 'https://api.github.com',
@@ -19,7 +19,7 @@ const defaultOptions = Object.freeze({
 });
 
 test('Options keep given values', () => {
-  deepEqual({
+  jsonEqual({
     apiUrl: 'https://api.github.com',
     isEarlyExit: true,
     attemptLimits: 1000,
@@ -35,7 +35,7 @@ test('Options keep given values', () => {
 });
 
 test('Options set some default values it cannot be defined in action.yml', () => {
-  deepEqual(
+  jsonEqual(
     Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }),
     {
       ...defaultOptions,
@@ -44,14 +44,14 @@ test('Options set some default values it cannot be defined in action.yml', () =>
         jobMatchMode: 'all',
         optional: false,
         startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
-        eventNames: new Set(['push', 'pull_request']),
+        eventNames: new Set([]),
       }],
     },
   );
 });
 
 test('Options accept all yaml extensions', () => {
-  deepEqual(
+  jsonEqual(
     Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }),
     {
       ...defaultOptions,
@@ -60,12 +60,12 @@ test('Options accept all yaml extensions', () => {
         jobMatchMode: 'all',
         optional: false,
         startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
-        eventNames: new Set(['push', 'pull_request']),
+        eventNames: new Set([]),
       }],
     },
   );
 
-  deepEqual(
+  jsonEqual(
     Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yaml' }] }),
     {
       ...defaultOptions,
@@ -75,14 +75,14 @@ test('Options accept all yaml extensions', () => {
         jobMatchMode: 'all',
         optional: false,
         startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
-        eventNames: new Set(['push', 'pull_request']),
+        eventNames: new Set([]),
       }],
     },
   );
 });
 
 test('It can start immediately. GH-994', () => {
-  deepEqual(
+  jsonEqual(
     Options.parse({ ...defaultOptions, warmupDelay: Temporal.Duration.from({ seconds: 0 }) }),
     {
       ...defaultOptions,
@@ -170,7 +170,7 @@ test('Durationable', async (t) => {
 
 test('wait-list have startupGracePeriod', async (t) => {
   await t.test('it accepts DurationLike objects', (_t) => {
-    deepEqual(
+    jsonEqual(
       Options.parse({
         ...defaultOptions,
         waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: Temporal.Duration.from({ minutes: 5 }) }],
@@ -182,7 +182,7 @@ test('wait-list have startupGracePeriod', async (t) => {
           jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ minutes: 5 }),
-          eventNames: new Set(['push', 'pull_request']),
+          eventNames: new Set([]),
         }],
       },
     );
@@ -203,7 +203,7 @@ test('wait-list have startupGracePeriod', async (t) => {
   });
 
   await t.test('it parses ISO 8601 duration format', (_t) => {
-    deepEqual(
+    jsonEqual(
       Options.parse({
         ...defaultOptions,
         waitList: [{ workflowFile: 'ci.yml', startupGracePeriod: 'PT1M42S' }],
@@ -215,7 +215,7 @@ test('wait-list have startupGracePeriod', async (t) => {
           jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ minutes: 1, seconds: 42 }),
-          eventNames: new Set(['push', 'pull_request']),
+          eventNames: new Set([]),
         }],
       },
     );
@@ -237,7 +237,7 @@ test('wait-list have startupGracePeriod', async (t) => {
   });
 
   await t.test('but does not raises errors if given value is as same as default to keep backward compatibility', (_t) => {
-    deepEqual(
+    jsonEqual(
       Options.parse({
         ...defaultOptions,
         warmupDelay: Temporal.Duration.from({ seconds: 42 }),
@@ -251,12 +251,12 @@ test('wait-list have startupGracePeriod', async (t) => {
           jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
-          eventNames: new Set(['push', 'pull_request']),
+          eventNames: new Set([]),
         }],
       },
     );
 
-    deepEqual(
+    jsonEqual(
       Options.parse({
         ...defaultOptions,
         warmupDelay: Temporal.Duration.from({ seconds: 42 }),
@@ -270,7 +270,7 @@ test('wait-list have startupGracePeriod', async (t) => {
           jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
-          eventNames: new Set(['push', 'pull_request']),
+          eventNames: new Set([]),
         }],
       },
     );
@@ -279,7 +279,7 @@ test('wait-list have startupGracePeriod', async (t) => {
 
 test('jobMatchMode', async (t) => {
   await t.test('it accepts exact and prefix mode', (_t) => {
-    deepEqual(
+    jsonEqual(
       Options.parse({
         ...defaultOptions,
         skipList: [
@@ -300,7 +300,7 @@ test('jobMatchMode', async (t) => {
       },
     );
 
-    deepEqual(
+    jsonEqual(
       Options.parse({
         ...defaultOptions,
         skipList: [

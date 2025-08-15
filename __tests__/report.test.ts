@@ -4,7 +4,7 @@ import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './fixtur
 import { PollingReport, Summary, generateReport, getSummaries, readableDuration } from '../src/report.ts';
 import { omit } from '../src/util.ts';
 import { Temporal } from 'temporal-polyfill';
-import { myDeepEqual } from './assert.ts';
+import { jsonEqual } from './assert.ts';
 
 test('readableDuration', () => {
   assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 454356 })), 'about 7 minutes 34 seconds');
@@ -144,7 +144,7 @@ test('wait-list', async (t) => {
       },
     );
 
-    myDeepEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
+    jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
       done: false,
       logs: [
         {
@@ -229,7 +229,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      myDeepEqual(
+      jsonEqual(
         omit<PollingReport, 'summaries'>(report, ['summaries']),
         {
           done: false,
@@ -260,6 +260,7 @@ test('wait-list', async (t) => {
               message: 'Some expected jobs were not started',
               resource: [
                 {
+                  eventNames: exampleEventNames,
                   found: false,
                   jobName: 'slowstarter-success',
                   jobMatchMode: 'exact',
@@ -307,7 +308,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      myDeepEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
+      jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
         done: false,
         logs: [
           {
@@ -336,6 +337,7 @@ test('wait-list', async (t) => {
             message: 'Failed to meet some runs on your specified wait-list',
             resource: [
               {
+                eventNames: exampleEventNames,
                 found: false,
                 jobName: 'slowstarter-success',
                 jobMatchMode: 'exact',
@@ -381,7 +383,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      myDeepEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
+      jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
         done: false,
         logs: [
           {
@@ -410,6 +412,7 @@ test('wait-list', async (t) => {
             message: 'Failed to meet some runs on your specified wait-list',
             resource: [
               {
+                eventNames: exampleEventNames,
                 found: false,
                 jobName: 'slowstarter-success',
                 jobMatchMode: 'exact',
@@ -478,7 +481,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      myDeepEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
+      jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
         done: false,
         logs: [
           {
@@ -507,6 +510,7 @@ test('wait-list', async (t) => {
             message: 'Some expected jobs were not started',
             resource: [
               {
+                eventNames: exampleEventNames,
                 found: false,
                 jobName: 'slowstarter-missing',
                 jobMatchMode: 'exact',
@@ -615,7 +619,7 @@ test('skip-list', async (t) => {
       },
     );
 
-    myDeepEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
+    jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
       done: true,
       logs: [],
       ok: true,

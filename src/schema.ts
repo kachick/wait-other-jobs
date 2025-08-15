@@ -61,7 +61,16 @@ const matchPartialJobs = z.strictObject({
 // Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
 const eventName = z.string().min(1);
 // Empty means "all events"
-export const eventNames = z.set(eventName).readonly();
+export const eventNames = z.preprocess(
+  (input) => {
+    if (Array.isArray(input)) {
+      return new Set(input);
+    }
+
+    return input;
+  },
+  z.set(eventName).readonly(),
+);
 
 export const FilterCondition = z.union([matchAllJobs, matchPartialJobs]);
 const SkipFilterCondition = FilterCondition.readonly();

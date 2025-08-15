@@ -39347,7 +39347,15 @@ var matchPartialJobs = external_exports.strictObject({
   jobMatchMode: external_exports.enum(["exact", "prefix"]).default("exact")
 });
 var eventName = external_exports.string().min(1);
-var eventNames = external_exports.set(eventName).readonly();
+var eventNames = external_exports.preprocess(
+  (input) => {
+    if (Array.isArray(input)) {
+      return new Set(input);
+    }
+    return input;
+  },
+  external_exports.set(eventName).readonly()
+);
 var FilterCondition = external_exports.union([matchAllJobs, matchPartialJobs]);
 var SkipFilterCondition = FilterCondition.readonly();
 var waitOptions = {
