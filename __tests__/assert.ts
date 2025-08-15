@@ -2,10 +2,6 @@ import { strictEqual, deepStrictEqual } from 'node:assert';
 import { Temporal } from 'temporal-polyfill';
 import { Options } from '../src/schema.ts';
 
-export function jsonEqual(actual: unknown, expected: unknown) {
-  deepStrictEqual(JSON.parse(JSON.stringify(actual)), expected);
-}
-
 export function durationEqual(a: Temporal.Duration, b: Temporal.Duration) {
   strictEqual(
     Temporal.Duration.compare(a, b),
@@ -17,6 +13,10 @@ export function durationEqual(a: Temporal.Duration, b: Temporal.Duration) {
 //   - Object.is() returns `false` even for same total, because they are not idencial
 //   - deepStrictEqual returns `true` even for different total because of no properties :<
 export function optionsEqual(actual: Options, expected: Options) {
+  deepStrictEqual(convertDurationToRoundedString(actual), convertDurationToRoundedString(expected));
+}
+
+export function myDeepEqual(actual: unknown, expected: unknown) {
   deepStrictEqual(convertDurationToRoundedString(actual), convertDurationToRoundedString(expected));
 }
 

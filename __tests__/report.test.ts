@@ -4,7 +4,7 @@ import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './fixtur
 import { PollingReport, Summary, generateReport, getSummaries, readableDuration } from '../src/report.ts';
 import { omit } from '../src/util.ts';
 import { Temporal } from 'temporal-polyfill';
-import { jsonEqual } from './assert.ts';
+import { myDeepEqual } from './assert.ts';
 
 test('readableDuration', () => {
   assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 454356 })), 'about 7 minutes 34 seconds');
@@ -144,7 +144,7 @@ test('wait-list', async (t) => {
       },
     );
 
-    jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
+    myDeepEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
       done: false,
       logs: [
         {
@@ -229,7 +229,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      jsonEqual(
+      myDeepEqual(
         omit<PollingReport, 'summaries'>(report, ['summaries']),
         {
           done: false,
@@ -264,7 +264,7 @@ test('wait-list', async (t) => {
                   jobName: 'slowstarter-success',
                   jobMatchMode: 'exact',
                   optional: false,
-                  startupGracePeriod: 'PT60S',
+                  startupGracePeriod: Temporal.Duration.from('PT60S'),
                   workflowFile: 'GH-820-graceperiod.yml',
                 },
               ],
@@ -307,7 +307,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
+      myDeepEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
         done: false,
         logs: [
           {
@@ -340,7 +340,7 @@ test('wait-list', async (t) => {
                 jobName: 'slowstarter-success',
                 jobMatchMode: 'exact',
                 optional: false,
-                startupGracePeriod: 'PT60S',
+                startupGracePeriod: Temporal.Duration.from('PT60S'),
                 workflowFile: 'GH-820-graceperiod.yml',
               },
             ],
@@ -381,7 +381,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
+      myDeepEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
         done: false,
         logs: [
           {
@@ -414,7 +414,7 @@ test('wait-list', async (t) => {
                 jobName: 'slowstarter-success',
                 jobMatchMode: 'exact',
                 optional: false,
-                startupGracePeriod: 'PT60S',
+                startupGracePeriod: Temporal.Duration.from('PT60S'),
 
                 workflowFile: 'GH-820-graceperiod.yml',
               },
@@ -478,7 +478,7 @@ test('wait-list', async (t) => {
         },
       );
 
-      jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
+      myDeepEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
         done: false,
         logs: [
           {
@@ -511,7 +511,7 @@ test('wait-list', async (t) => {
                 jobName: 'slowstarter-missing',
                 jobMatchMode: 'exact',
                 optional: false,
-                startupGracePeriod: 'PT5M',
+                startupGracePeriod: Temporal.Duration.from('PT5M'),
                 workflowFile: 'ci.yml',
               },
             ],
@@ -615,7 +615,7 @@ test('skip-list', async (t) => {
       },
     );
 
-    jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
+    myDeepEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
       done: true,
       logs: [],
       ok: true,
