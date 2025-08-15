@@ -1,7 +1,6 @@
 import test from 'node:test';
-import { jsonInput } from '../src/schema.ts';
+import { eventNames, jsonInput } from '../src/schema.ts';
 import { throws, deepStrictEqual } from 'node:assert/strict';
-import { parseTargetEvents } from '../src/input.ts';
 
 test('jsonInput', async (t) => {
   await t.test('it accepts exact and prefix mode', (_t) => {
@@ -20,14 +19,14 @@ test('jsonInput', async (t) => {
 
 test('event-list', async (t) => {
   await t.test('parses valid values', (_t) => {
-    deepStrictEqual(parseTargetEvents('all'), 'all');
+    deepStrictEqual(eventNames.parse(jsonInput.parse('[]')), []);
 
-    deepStrictEqual(parseTargetEvents('["push", "pull_request"]'), new Set(['push', 'pull_request']));
+    deepStrictEqual(eventNames.parse(jsonInput.parse('["push", "pull_request"]')), new Set(['push', 'pull_request']));
   });
 
   await t.test('raises error for invalid inputs', (_t) => {
     throws(
-      () => parseTargetEvents('[""]'),
+      () => eventNames.parse(jsonInput.parse('[42]')),
       {
         name: 'ZodError',
         message: /too_small/,

@@ -1,29 +1,10 @@
 import { getInput, getBooleanInput, setSecret, error } from '@actions/core';
 import { context } from '@actions/github';
 
-import {
-  Durationable,
-  jsonInput,
-  eventNames,
-  Options,
-  Path,
-  TargetEvents,
-  Trigger,
-  FilterCondition,
-  eventName,
-} from './schema.ts';
+import { Durationable, jsonInput, eventNames, Options, Path, Trigger } from './schema.ts';
 import { env } from 'node:process';
 import { mkdtempSync } from 'fs';
 import { join } from 'path';
-import { z } from 'zod';
-
-export function parseTargetEvents(raw: string) {
-  return TargetEvents.parse(
-    raw === 'all' ? 'all' : (
-      jsonInput.transform(json => new Set(z.array(eventName).parse(json))).pipe(eventNames).parse(raw)
-    ),
-  );
-}
 
 export function parseInput(): { trigger: Trigger; options: Options; githubToken: string; tempDir: string } {
   const {
@@ -64,7 +45,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
   const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
   const apiUrl = getInput('github-api-url', { required: true, trimWhitespace: true });
-  const targetEvents = parseTargetEvents(getInput('event-list', { required: true }));
+  const events = eventNames.parse(jsonInput.parse(getInput('event-list', { required: true })));
 
   const options = Options.parse({
     apiUrl,
@@ -72,17 +53,12 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     minimumInterval,
     retryMethod,
     attemptLimits,
-    waitList: z.array(FilterCondition).parse(jsonInput.parse(getInput('wait-list', { required: true }))).map(
-      item => ({
-        targetEvents,
-        ...item,
-      }),
-    ),
+    waitList: jsonInput.parse(getInput('wait-list', { required: true })),
     skipList: jsonInput.parse(getInput('skip-list', { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun,
-    targetEvents,
+    events,
   });
 
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName } as const satisfies Trigger;

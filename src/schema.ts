@@ -59,19 +59,9 @@ const matchPartialJobs = z.strictObject({
 });
 
 // Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
-export const eventName = z.string().min(1);
-// const eventNames = z.set(eventName).nonempty().optional();
-// const parsibleEventNames = z.string();
-export const eventNames = z.set(eventName).nonempty();
-// export const TargetEvents = z.union([
-//   z.literal('all'),
-//   z.preprocess((item) => (typeof item === 'string' && item !== 'all') ? new Set(z.array(eventName).nonempty().parse(JSON.parse(item))) : , z.set(eventName).nonempty()),
-// ]);
-
-export const TargetEvents = z.union([
-  z.literal('all'),
-  eventNames,
-]).default('all');
+const eventName = z.string().min(1);
+// Empty means "all events"
+export const eventNames = z.set(eventName).readonly();
 
 export const FilterCondition = z.union([matchAllJobs, matchPartialJobs]);
 const SkipFilterCondition = FilterCondition.readonly();
@@ -80,7 +70,7 @@ const waitOptions = {
   optional: z.boolean().default(false).readonly(),
 
   // - Intentionally omitted in skip-list for my laziness, let me know if you have the use-case
-  targetEvents: TargetEvents,
+  eventNames: eventNames.default(new Set([])),
 
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
@@ -112,7 +102,7 @@ export const Options = z.strictObject({
   isEarlyExit: z.boolean(),
   shouldSkipSameWorkflow: z.boolean(),
   isDryRun: z.boolean(),
-  targetEvents: TargetEvents,
+  eventNames,
 }).readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { error: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },

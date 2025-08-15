@@ -39347,17 +39347,13 @@ var matchPartialJobs = external_exports.strictObject({
   jobMatchMode: external_exports.enum(["exact", "prefix"]).default("exact")
 });
 var eventName = external_exports.string().min(1);
-var eventNames = external_exports.set(eventName).nonempty();
-var TargetEvents = external_exports.union([
-  external_exports.literal("all"),
-  eventNames
-]).default("all");
+var eventNames = external_exports.set(eventName).readonly();
 var FilterCondition = external_exports.union([matchAllJobs, matchPartialJobs]);
 var SkipFilterCondition = FilterCondition.readonly();
 var waitOptions = {
   optional: external_exports.boolean().default(false).readonly(),
   // - Intentionally omitted in skip-list for my laziness, let me know if you have the use-case
-  targetEvents: TargetEvents,
+  eventNames: eventNames.default(/* @__PURE__ */ new Set([])),
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
   startupGracePeriod: Durationable.default(defaultGrace)
@@ -39380,7 +39376,7 @@ var Options = external_exports.strictObject({
   isEarlyExit: external_exports.boolean(),
   shouldSkipSameWorkflow: external_exports.boolean(),
   isDryRun: external_exports.boolean(),
-  targetEvents: TargetEvents
+  eventNames
 }).readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { error: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
@@ -39402,11 +39398,6 @@ var Path = external_exports.string().min(1);
 import { env } from "node:process";
 import { mkdtempSync } from "fs";
 import { join } from "path";
-function parseTargetEvents(raw) {
-  return TargetEvents.parse(
-    raw === "all" ? "all" : jsonInput.transform((json2) => new Set(external_exports.array(eventName).parse(json2))).pipe(eventNames).parse(raw)
-  );
-}
 function parseInput() {
   const {
     repo,
@@ -39442,24 +39433,19 @@ function parseInput() {
   const shouldSkipSameWorkflow = (0, import_core7.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRun = (0, import_core7.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const apiUrl = (0, import_core7.getInput)("github-api-url", { required: true, trimWhitespace: true });
-  const targetEvents = parseTargetEvents((0, import_core7.getInput)("event-list", { required: true }));
+  const events = eventNames.parse(jsonInput.parse((0, import_core7.getInput)("event-list", { required: true })));
   const options = Options.parse({
     apiUrl,
     warmupDelay,
     minimumInterval,
     retryMethod,
     attemptLimits,
-    waitList: external_exports.array(FilterCondition).parse(jsonInput.parse((0, import_core7.getInput)("wait-list", { required: true }))).map(
-      (item) => ({
-        targetEvents,
-        ...item
-      })
-    ),
+    waitList: jsonInput.parse((0, import_core7.getInput)("wait-list", { required: true })),
     skipList: jsonInput.parse((0, import_core7.getInput)("skip-list", { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
     isDryRun,
-    targetEvents
+    events
   });
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName: eventName2 };
   const githubToken = (0, import_core7.getInput)("github-token", { required: true, trimWhitespace: false });
@@ -40740,8 +40726,8 @@ function seekWaitList(summaries, waitList, elapsed) {
   const filtered = summaries.filter(
     (summary2) => seeker.some((target) => {
       const isMatchPath = matchPath(target, summary2);
-      const targetEvents = target.targetEvents;
-      const isMatchEvent = targetEvents === "all" ? true : targetEvents.has(summary2.eventName);
+      const targetEvents = target.eventNames;
+      const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary2.eventName);
       if (isMatchPath && isMatchEvent) {
         target.found = true;
         return true;
@@ -40782,7 +40768,7 @@ function judge(summaries) {
     logs
   };
 }
-function generateReport(summaries, trigger, elapsed, { waitList, skipList, shouldSkipSameWorkflow }) {
+function generateReport(summaries, trigger, elapsed, { waitList, skipList, eventNames: eventNames2, shouldSkipSameWorkflow }) {
   const others = summaries.filter(
     (summary2) => !(summary2.isSameWorkflow && // Ideally this logic should be...
     //
@@ -40836,7 +40822,10 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, shoul
     const filtered = targets.filter((summary2) => !skipList.some((target) => matchPath(target, summary2)));
     return { ...judge(filtered), summaries: filtered };
   }
-  return { ...judge(targets), summaries: targets };
+  const eventFiltered = eventNames2.size === 0 ? targets : targets.filter((summary2) => {
+    return eventNames2.has(summary2.eventName);
+  });
+  return { ...judge(eventFiltered), summaries: eventFiltered };
 }
 function writeJobSummary(lastPolling, options) {
   import_core9.summary.addHeading("wait-other-jobs", 1);

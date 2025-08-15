@@ -15,7 +15,7 @@ const defaultOptions = Object.freeze({
   retryMethod: 'equal_intervals',
   shouldSkipSameWorkflow: false,
   isDryRun: false,
-  targetEvents: 'all',
+  eventNames: new Set(['push', 'pull_request']),
 });
 
 test('Options keep given values', () => {
@@ -30,7 +30,7 @@ test('Options keep given values', () => {
     retryMethod: 'equal_intervals',
     shouldSkipSameWorkflow: false,
     isDryRun: false,
-    targetEvents: 'all',
+    eventNames: new Set(['push', 'pull_request']),
   }, Options.parse(defaultOptions));
 });
 
@@ -44,7 +44,7 @@ test('Options set some default values it cannot be defined in action.yml', () =>
         jobMatchMode: 'all',
         optional: false,
         startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
-        targetEvents: 'all',
+        eventNames: new Set(['push', 'pull_request']),
       }],
     },
   );
@@ -60,7 +60,7 @@ test('Options accept all yaml extensions', () => {
         jobMatchMode: 'all',
         optional: false,
         startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
-        targetEvents: 'all',
+        eventNames: new Set(['push', 'pull_request']),
       }],
     },
   );
@@ -75,7 +75,7 @@ test('Options accept all yaml extensions', () => {
         jobMatchMode: 'all',
         optional: false,
         startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
-        targetEvents: 'all',
+        eventNames: new Set(['push', 'pull_request']),
       }],
     },
   );
@@ -182,7 +182,7 @@ test('wait-list have startupGracePeriod', async (t) => {
           jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ minutes: 5 }),
-          targetEvents: 'all',
+          eventNames: new Set(['push', 'pull_request']),
         }],
       },
     );
@@ -215,7 +215,7 @@ test('wait-list have startupGracePeriod', async (t) => {
           jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ minutes: 1, seconds: 42 }),
-          targetEvents: 'all',
+          eventNames: new Set(['push', 'pull_request']),
         }],
       },
     );
@@ -251,7 +251,7 @@ test('wait-list have startupGracePeriod', async (t) => {
           jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
-          targetEvents: 'all',
+          eventNames: new Set(['push', 'pull_request']),
         }],
       },
     );
@@ -270,7 +270,7 @@ test('wait-list have startupGracePeriod', async (t) => {
           jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
-          targetEvents: 'all',
+          eventNames: new Set(['push', 'pull_request']),
         }],
       },
     );
