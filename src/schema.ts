@@ -1,4 +1,5 @@
 import { CheckSuite, Workflow, CheckRun, WorkflowRun } from '@octokit/graphql-schema';
+import { emitWarning } from 'node:process';
 import { Temporal } from 'temporal-polyfill';
 import { z } from 'zod';
 
@@ -75,7 +76,31 @@ export const eventNames = z.preprocess(
 export const FilterCondition = z.union([matchAllJobs, matchPartialJobs]);
 const SkipFilterCondition = FilterCondition.readonly();
 
-const waitOptions = {
+// Keeping backward compatibility for eventName despite v4 cleanup,
+// since this was changed right before v4 release to avoid major breaking changes.
+const preprocessDeprecatedEventName = (input: Readonly<unknown>) => {
+  if (!(typeof input === 'object' && input !== null)) {
+    throw new Error('Invalid input');
+  }
+
+  if (!('eventName' in input)) {
+    return input;
+  }
+
+  if ('eventNames' in input) {
+    throw new Error("Don't set both eventName and eventNames together. Only use eventNames.");
+  }
+
+  emitWarning(
+    "DEPRECATED: 'eventName' will be removed in v5. Use 'eventNames' instead.",
+  );
+
+  const { eventName, ...rest } = input;
+
+  return { ...rest, eventNames: new Set([eventName]) };
+};
+
+const waitOptions = z.strictObject({
   optional: z.boolean().default(false).readonly(),
 
   // - Intentionally omitted in skip-list for my laziness, let me know if you have the use-case
@@ -84,11 +109,11 @@ const waitOptions = {
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
   startupGracePeriod: Durationable.default(defaultGrace),
-};
+});
 
 const WaitFilterCondition = z.union([
-  z.strictObject(matchAllJobs.extend(waitOptions).shape),
-  z.strictObject(matchPartialJobs.extend(waitOptions).shape),
+  z.preprocess(preprocessDeprecatedEventName, matchAllJobs.extend(waitOptions.shape)),
+  z.preprocess(preprocessDeprecatedEventName, matchPartialJobs.extend(waitOptions.shape)),
 ]).readonly();
 const WaitList = z.array(WaitFilterCondition).readonly();
 const SkipList = z.array(SkipFilterCondition).readonly();

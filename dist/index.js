@@ -23990,6 +23990,9 @@ var import_core10 = __toESM(require_core(), 1);
 var import_core7 = __toESM(require_core(), 1);
 var import_github = __toESM(require_github(), 1);
 
+// src/schema.ts
+import { emitWarning } from "node:process";
+
 // node_modules/.pnpm/temporal-polyfill@0.3.0/node_modules/temporal-polyfill/chunks/internal.js
 function clampProp(e2, n2, t2, o2, r2) {
   return clampEntity(n2, ((e3, n3) => {
@@ -39358,17 +39361,33 @@ var eventNames = external_exports.preprocess(
 );
 var FilterCondition = external_exports.union([matchAllJobs, matchPartialJobs]);
 var SkipFilterCondition = FilterCondition.readonly();
-var waitOptions = {
+var preprocessDeprecatedEventName = (input) => {
+  if (!(typeof input === "object" && input !== null)) {
+    throw new Error("Invalid input");
+  }
+  if (!("eventName" in input)) {
+    return input;
+  }
+  if ("eventNames" in input) {
+    throw new Error("Don't set both eventName and eventNames together. Only use eventNames.");
+  }
+  emitWarning(
+    "DEPRECATED: 'eventName' will be removed in v5. Use 'eventNames' instead."
+  );
+  const { eventName: eventName2, ...rest } = input;
+  return { ...rest, eventNames: /* @__PURE__ */ new Set([eventName2]) };
+};
+var waitOptions = external_exports.strictObject({
   optional: external_exports.boolean().default(false).readonly(),
   // - Intentionally omitted in skip-list for my laziness, let me know if you have the use-case
   eventNames: eventNames.default(/* @__PURE__ */ new Set([])),
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
   startupGracePeriod: Durationable.default(defaultGrace)
-};
+});
 var WaitFilterCondition = external_exports.union([
-  external_exports.strictObject(matchAllJobs.extend(waitOptions).shape),
-  external_exports.strictObject(matchPartialJobs.extend(waitOptions).shape)
+  external_exports.preprocess(preprocessDeprecatedEventName, matchAllJobs.extend(waitOptions.shape)),
+  external_exports.preprocess(preprocessDeprecatedEventName, matchPartialJobs.extend(waitOptions.shape))
 ]).readonly();
 var WaitList = external_exports.array(WaitFilterCondition).readonly();
 var SkipList = external_exports.array(SkipFilterCondition).readonly();

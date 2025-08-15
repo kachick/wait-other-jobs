@@ -277,6 +277,31 @@ test('wait-list have startupGracePeriod', async (t) => {
   });
 });
 
+test('wait-list item have deprecated eventName field', async (t) => {
+  await t.test('converts to eventNames', (_t) => {
+    jsonEqual(
+      Options.parse({
+        ...defaultOptions,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          startupGracePeriod: Temporal.Duration.from({ minutes: 5 }),
+          eventName: 'push',
+        }],
+      }),
+      {
+        ...defaultOptions,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          jobMatchMode: 'all',
+          optional: false,
+          startupGracePeriod: Temporal.Duration.from({ minutes: 5 }),
+          eventNames: new Set(['push']),
+        }],
+      },
+    );
+  });
+});
+
 test('jobMatchMode', async (t) => {
   await t.test('it accepts exact and prefix mode', (_t) => {
     jsonEqual(
