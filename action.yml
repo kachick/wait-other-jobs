@@ -46,14 +46,13 @@ inputs:
     required: false
     default: '1000' # Enough large
   event-list:
-    # TODO: Consider dropping list inheritance. v1-v3's "any" events approach may still be best for v4+
     description: |
       - Set a JSON array.
       - Wait only listed events.
       - Empty list means "any" events.
-      - This value will be inherited in wait and skip lists as the default value.
+      - This value will be ignored in wait and skip lists.
     required: true
-    default: '["${{ github.event_name }}"]'
+    default: '[ "${{ github.event_name }}" ]'
   wait-list:
     description: 'Wait only these jobs'
     required: false
