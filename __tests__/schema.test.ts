@@ -321,6 +321,7 @@ test('jobMatchMode', async (t) => {
           workflowFile: 'ci.yml',
           jobName: 'test-',
           jobMatchMode: 'exact',
+          eventNames: new Set([]),
         }],
       },
     );
@@ -342,6 +343,7 @@ test('jobMatchMode', async (t) => {
           workflowFile: 'ci.yml',
           jobName: 'test-',
           jobMatchMode: 'prefix',
+          eventNames: new Set([]),
         }],
       },
     );

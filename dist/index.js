@@ -39339,16 +39339,6 @@ var ZeroableDuration = external_exports.instanceof(Xn.Duration).refine(
   }
 );
 var defaultGrace = Xn.Duration.from({ seconds: 10 });
-var workflowPath = external_exports.string().endsWith(".yml").or(external_exports.string().endsWith(".yaml"));
-var matchAllJobs = external_exports.strictObject({
-  workflowFile: workflowPath,
-  jobMatchMode: external_exports.literal("all").default("all")
-});
-var matchPartialJobs = external_exports.strictObject({
-  workflowFile: workflowPath,
-  jobName: external_exports.string().min(1),
-  jobMatchMode: external_exports.enum(["exact", "prefix"]).default("exact")
-});
 var eventName = external_exports.string().min(1);
 var eventNames = external_exports.preprocess(
   (input) => {
@@ -39359,8 +39349,28 @@ var eventNames = external_exports.preprocess(
   },
   external_exports.set(eventName).readonly()
 );
-var FilterCondition = external_exports.union([matchAllJobs, matchPartialJobs]);
-var SkipFilterCondition = FilterCondition.readonly();
+var workflowPath = external_exports.string().endsWith(".yml").or(external_exports.string().endsWith(".yaml"));
+var anyEvents = Object.freeze(/* @__PURE__ */ new Set([]));
+var commonFilterCondition = {
+  workflowFile: workflowPath,
+  eventNames: eventNames.default(anyEvents)
+};
+var matchAllJobs = external_exports.strictObject({
+  ...commonFilterCondition,
+  jobMatchMode: external_exports.literal("all").default("all")
+});
+var matchPartialJobs = external_exports.strictObject({
+  ...commonFilterCondition,
+  jobName: external_exports.string().min(1),
+  jobMatchMode: external_exports.enum(["exact", "prefix"]).default("exact")
+});
+var commonFilterConditions = [matchAllJobs, matchPartialJobs];
+var waitOptions = {
+  optional: external_exports.boolean().default(false).readonly(),
+  // Do not raise validation errors for the reasonability of max value.
+  // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
+  startupGracePeriod: Durationable.default(defaultGrace)
+};
 var preprocessDeprecatedEventName = (input) => {
   if (!(typeof input === "object" && input !== null)) {
     throw new Error("Invalid input");
@@ -39377,20 +39387,13 @@ var preprocessDeprecatedEventName = (input) => {
   const { eventName: eventName2, ...rest } = input;
   return { ...rest, eventNames: /* @__PURE__ */ new Set([eventName2]) };
 };
-var waitOptions = external_exports.strictObject({
-  optional: external_exports.boolean().default(false).readonly(),
-  // - Intentionally omitted in skip-list for my laziness, let me know if you have the use-case
-  eventNames: eventNames.default(/* @__PURE__ */ new Set([])),
-  // Do not raise validation errors for the reasonability of max value.
-  // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
-  startupGracePeriod: Durationable.default(defaultGrace)
-});
-var WaitFilterCondition = external_exports.union([
-  external_exports.preprocess(preprocessDeprecatedEventName, matchAllJobs.extend(waitOptions.shape)),
-  external_exports.preprocess(preprocessDeprecatedEventName, matchPartialJobs.extend(waitOptions.shape))
-]).readonly();
-var WaitList = external_exports.array(WaitFilterCondition).readonly();
-var SkipList = external_exports.array(SkipFilterCondition).readonly();
+var waitFilterCondition = external_exports.union(
+  commonFilterConditions.map((item) => external_exports.preprocess(preprocessDeprecatedEventName, item.extend(waitOptions)))
+);
+var skipFilterCondition = external_exports.union(commonFilterConditions);
+var WaitList = external_exports.array(waitFilterCondition).readonly();
+var SkipList = external_exports.array(skipFilterCondition).readonly();
+var FilterCondition = external_exports.union([waitFilterCondition, skipFilterCondition]);
 var retryMethods = external_exports.enum(["exponential_backoff", "equal_intervals"]);
 var Options = external_exports.strictObject({
   apiUrl: external_exports.url(),

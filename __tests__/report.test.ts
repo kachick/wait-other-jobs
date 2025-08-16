@@ -549,15 +549,18 @@ test('skip-list', async (t) => {
           {
             'workflowFile': 'itself.yml',
             jobMatchMode: 'all',
+            eventNames: new Set([]),
           },
           {
             'workflowFile': 'ci.yml',
             jobMatchMode: 'all',
+            eventNames: new Set([]),
           },
           {
             'workflowFile': 'merge-bot-pr.yml',
             'jobName': 'dependabot',
             jobMatchMode: 'exact',
+            eventNames: new Set([]),
           },
         ],
         shouldSkipSameWorkflow: false,
@@ -613,6 +616,7 @@ test('skip-list', async (t) => {
             'workflowFile': 'ci.yml',
             'jobName': 'quickstarter-',
             jobMatchMode: 'prefix',
+            eventNames: new Set([]),
           },
         ],
         shouldSkipSameWorkflow: false,
