@@ -39348,12 +39348,15 @@ var eventNames = external_exports.preprocess(
     return input;
   },
   external_exports.set(eventName).readonly()
-);
+).default(Object.freeze(/* @__PURE__ */ new Set([]))).meta({
+  // Initially I thought literal string might be better, however those union types are complex,
+  // and also complex for the parsing user inputs. Only use string array is simple in JSON
+  description: `Empty means "any"`
+});
 var workflowPath = external_exports.string().endsWith(".yml").or(external_exports.string().endsWith(".yaml"));
-var anyEvents = Object.freeze(/* @__PURE__ */ new Set([]));
 var commonFilterCondition = {
   workflowFile: workflowPath,
-  eventNames: eventNames.default(anyEvents)
+  eventNames
 };
 var matchAllJobs = external_exports.strictObject({
   ...commonFilterCondition,

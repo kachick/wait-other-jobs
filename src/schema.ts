@@ -50,7 +50,7 @@ const defaultGrace = Temporal.Duration.from({ seconds: 10 });
 
 // Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
 const eventName = z.string().min(1);
-// Empty means "all events"
+
 export const eventNames = z.preprocess(
   (input) => {
     if (Array.isArray(input)) {
@@ -60,18 +60,17 @@ export const eventNames = z.preprocess(
     return input;
   },
   z.set(eventName).readonly(),
-);
+).default(Object.freeze(new Set([]))).meta({
+  // Initially I thought literal string might be better, however those union types are complex,
+  // and also complex for the parsing user inputs. Only use string array is simple in JSON
+  description: `Empty means "any"`,
+});
 
 const workflowPath = z.string().endsWith('.yml').or(z.string().endsWith('.yaml'));
 
-// Empty list(Set) means "any".
-// Initially I thought literal string might be better, however those union types are complex,
-// and also complex for the parsing user inputs. Only use string array is simple in JSON
-const anyEvents = Object.freeze(new Set([]));
-
 const commonFilterCondition = {
   workflowFile: workflowPath,
-  eventNames: eventNames.default(anyEvents),
+  eventNames,
 };
 
 const matchAllJobs = z.strictObject({
