@@ -87,7 +87,7 @@ const matchPartialJobs = z.strictObject({
 const commonFilterConditions = [matchAllJobs, matchPartialJobs] as const;
 
 const waitOptions = {
-  optional: z.boolean().default(false).readonly(),
+  optional: z.boolean().default(false),
 
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time

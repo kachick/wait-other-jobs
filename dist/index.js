@@ -39366,7 +39366,7 @@ var matchPartialJobs = external_exports.strictObject({
 });
 var commonFilterConditions = [matchAllJobs, matchPartialJobs];
 var waitOptions = {
-  optional: external_exports.boolean().default(false).readonly(),
+  optional: external_exports.boolean().default(false),
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
   startupGracePeriod: Durationable.default(defaultGrace)
