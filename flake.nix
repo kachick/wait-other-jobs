@@ -53,7 +53,8 @@
                 # NOTE: Do NOT add actionlint as a dependency
                 # - It does not target actions; it lints the user's side.
                 # - It assumes major actions in a stable state, often causing problems between versions.
-                # - Use https://github.com/github/vscode-github-actions for a better solution to get hints.
+                # - Use https://github.com/github/vscode-github-actions and zizmor for a better solution to get hints.
+                zizmor
 
                 # For fighting the GitHub API
                 gh
