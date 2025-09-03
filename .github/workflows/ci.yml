@@ -19,12 +19,19 @@ on:
     - cron: '42 1 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  checks: read
+  actions: read
+
 jobs:
   all:
     timeout-minutes: 15
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
       - uses: DeterminateSystems/nix-installer-action@90bb610b90bf290cad97484ba341453bd1cbefea # v19
       - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
       # See https://github.com/actions/setup-node/blob/802632921f8532d2409ae6eac3313b6f81f11122/src/cache-utils.ts#L30-L38

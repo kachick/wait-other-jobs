@@ -32,6 +32,8 @@ jobs:
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
       - name: Wait other jobs
         uses: ./
         timeout-minutes: 10
@@ -60,6 +62,8 @@ jobs:
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
       - name: Wait other jobs
         uses: ./
         timeout-minutes: 10
@@ -84,6 +88,8 @@ jobs:
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
       - name: Wait other jobs
         uses: ./
         timeout-minutes: 20

@@ -54,7 +54,7 @@
                 # - It does not target actions; it lints the user's side.
                 # - It assumes major actions in a stable state, often causing problems between versions.
                 # - Use https://github.com/github/vscode-github-actions and zizmor for a better solution to get hints.
-                zizmor
+                zizmor # TODO: Use latest if unstable nix channel is available
 
                 # For fighting the GitHub API
                 gh

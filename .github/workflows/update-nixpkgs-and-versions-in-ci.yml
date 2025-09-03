@@ -9,6 +9,9 @@ on:
     - cron: '17 1 * * 1'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update-nixpkgs:
     uses: kachick/selfup/.github/workflows/reusable-bump-flake-lock-and-selfup.yml@v1.2.2

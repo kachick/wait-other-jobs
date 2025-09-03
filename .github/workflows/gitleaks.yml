@@ -1,5 +1,9 @@
 name: 💧
 on: [pull_request, push, workflow_dispatch]
+
+permissions:
+  contents: read
+
 jobs:
   gitleaks:
     timeout-minutes: 15
@@ -26,6 +30,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - uses: actions/checkout@v5
         with:
+          persist-credentials: false
           fetch-depth: 0 # Getting all refs for git mode
       - name: Run
         run: |
