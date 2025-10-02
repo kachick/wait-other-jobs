@@ -20,7 +20,6 @@
     "@octokit/core": "^7.0.5",
     "@octokit/graphql-schema": "^15.26.0",
     "@octokit/plugin-paginate-graphql": "^6.0.0",
-    "@tsconfig/bases": "^1.0.1",
     "esbuild": "^0.25.9",
     "temporal-polyfill": "^0.3.0",
     "zod": "^4.0.17"

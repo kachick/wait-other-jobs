@@ -23,9 +23,6 @@ importers:
       '@octokit/plugin-paginate-graphql':
         specifier: ^6.0.0
         version: 6.0.0(@octokit/core@7.0.5)
-      '@tsconfig/bases':
-        specifier: ^1.0.1
-        version: 1.0.1
       esbuild:
         specifier: ^0.25.9
         version: 0.25.9
@@ -309,9 +306,6 @@ packages:
 
   '@octokit/types@15.0.0':
     resolution: {integrity: sha512-8o6yDfmoGJUIeR9OfYU0/TUJTnMPG2r68+1yEdUeG2Fdqpj8Qetg0ziKIgcBm0RW/j29H41WP37CYCEhp6GoHQ==}
-
-  '@tsconfig/bases@1.0.1':
-    resolution: {integrity: sha512-jMPUEJO1f0p28fXoTMs277s1bSxADYb3T+y6Q8O5OXXjRvoV9Lil70fgOZw3+EEkAs0bGHaxOes6BF+sUI6bRA==}
 
   '@types/node@24.2.1':
     resolution: {integrity: sha512-DRh5K+ka5eJic8CjH7td8QpYEV6Zo10gfRkjHCO3weqZHWDtAaSTFtl4+VMqOJ4N5jcuhZ9/l+yy8rVgw7BQeQ==}
@@ -614,8 +608,6 @@ snapshots:
   '@octokit/types@15.0.0':
     dependencies:
       '@octokit/openapi-types': 26.0.0
-
-  '@tsconfig/bases@1.0.1': {}
 
   '@types/node@24.2.1':
     dependencies:
