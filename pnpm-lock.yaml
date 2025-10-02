@@ -33,12 +33,9 @@ importers:
         specifier: ^4.0.17
         version: 4.0.17
     devDependencies:
-      '@tsconfig/node24':
-        specifier: ^24.0.1
-        version: 24.0.1
-      '@tsconfig/strictest':
-        specifier: ^2.0.6
-        version: 2.0.6
+      '@tsconfig/bases':
+        specifier: ^1.0.1
+        version: 1.0.1
       '@types/node':
         specifier: ^24.2.1
         version: 24.2.1
@@ -313,11 +310,8 @@ packages:
   '@octokit/types@15.0.0':
     resolution: {integrity: sha512-8o6yDfmoGJUIeR9OfYU0/TUJTnMPG2r68+1yEdUeG2Fdqpj8Qetg0ziKIgcBm0RW/j29H41WP37CYCEhp6GoHQ==}
 
-  '@tsconfig/node24@24.0.1':
-    resolution: {integrity: sha512-3+IXshza3bIrT0tbHBr9CixQDVf4iBf0HTR0hCYowhpLqkzJjswu3UY8aZWjRXZep31kYB+o2SQeD8KwIoUHYw==}
-
-  '@tsconfig/strictest@2.0.6':
-    resolution: {integrity: sha512-tPOhmDhIUcDjvpDDYyiUdssP84Eqm7n5KxJe5J3/g+s6xoDIPAf+SIn06dhw7VkhxIvLOnhDDrX7tsqMHNEhDg==}
+  '@tsconfig/bases@1.0.1':
+    resolution: {integrity: sha512-jMPUEJO1f0p28fXoTMs277s1bSxADYb3T+y6Q8O5OXXjRvoV9Lil70fgOZw3+EEkAs0bGHaxOes6BF+sUI6bRA==}
 
   '@types/node@24.2.1':
     resolution: {integrity: sha512-DRh5K+ka5eJic8CjH7td8QpYEV6Zo10gfRkjHCO3weqZHWDtAaSTFtl4+VMqOJ4N5jcuhZ9/l+yy8rVgw7BQeQ==}
@@ -621,9 +615,7 @@ snapshots:
     dependencies:
       '@octokit/openapi-types': 26.0.0
 
-  '@tsconfig/node24@24.0.1': {}
-
-  '@tsconfig/strictest@2.0.6': {}
+  '@tsconfig/bases@1.0.1': {}
 
   '@types/node@24.2.1':
     dependencies:
