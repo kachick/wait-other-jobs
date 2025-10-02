@@ -1,5 +1,5 @@
 {
-  "extends": ["@tsconfig/bases/strictest.tsconfig", "@tsconfig/bases/node24.tsconfig"],
+  "extends": ["@tsconfig/bases/strictest", "@tsconfig/bases/node24"],
   "compilerOptions": {
     "noEmit": true,
     "noUnusedLocals": false,
