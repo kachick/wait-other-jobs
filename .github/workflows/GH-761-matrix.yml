@@ -30,7 +30,7 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-          - ubuntu-22.04
+          - macos-15
         warmup-delay:
           - 'PT3S'
           - 'PT7S'
