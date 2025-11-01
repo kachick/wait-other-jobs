@@ -39566,7 +39566,7 @@ function Collection() {
 }
 var before_after_hook_default = { Singular, Collection };
 
-// node_modules/.pnpm/@octokit+endpoint@11.0.1/node_modules/@octokit/endpoint/dist-bundle/index.js
+// node_modules/.pnpm/@octokit+endpoint@11.0.2/node_modules/@octokit/endpoint/dist-bundle/index.js
 var VERSION = "0.0.0-development";
 var userAgent = `octokit-endpoint.js/${VERSION} ${getUserAgent()}`;
 var DEFAULTS = {
@@ -39879,10 +39879,10 @@ function withDefaults(oldDefaults, newDefaults) {
 }
 var endpoint = withDefaults(null, DEFAULTS);
 
-// node_modules/.pnpm/@octokit+request@10.0.5/node_modules/@octokit/request/dist-bundle/index.js
+// node_modules/.pnpm/@octokit+request@10.0.6/node_modules/@octokit/request/dist-bundle/index.js
 var import_fast_content_type_parse = __toESM(require_fast_content_type_parse(), 1);
 
-// node_modules/.pnpm/@octokit+request-error@7.0.1/node_modules/@octokit/request-error/dist-src/index.js
+// node_modules/.pnpm/@octokit+request-error@7.0.2/node_modules/@octokit/request-error/dist-src/index.js
 var RequestError = class extends Error {
   name;
   /**
@@ -39921,8 +39921,8 @@ var RequestError = class extends Error {
   }
 };
 
-// node_modules/.pnpm/@octokit+request@10.0.5/node_modules/@octokit/request/dist-bundle/index.js
-var VERSION2 = "10.0.5";
+// node_modules/.pnpm/@octokit+request@10.0.6/node_modules/@octokit/request/dist-bundle/index.js
+var VERSION2 = "10.0.6";
 var defaults_default = {
   headers: {
     "user-agent": `octokit-request.js/${VERSION2} ${getUserAgent()}`
@@ -40095,7 +40095,7 @@ function withDefaults2(oldEndpoint, newDefaults) {
 }
 var request = withDefaults2(endpoint, defaults_default);
 
-// node_modules/.pnpm/@octokit+graphql@9.0.2/node_modules/@octokit/graphql/dist-bundle/index.js
+// node_modules/.pnpm/@octokit+graphql@9.0.3/node_modules/@octokit/graphql/dist-bundle/index.js
 var VERSION3 = "0.0.0-development";
 function _buildMessageForResponseErrors(data) {
   return `Request failed due to following response errors:
@@ -40247,10 +40247,10 @@ var createTokenAuth = function createTokenAuth2(token) {
   });
 };
 
-// node_modules/.pnpm/@octokit+core@7.0.5/node_modules/@octokit/core/dist-src/version.js
-var VERSION4 = "7.0.5";
+// node_modules/.pnpm/@octokit+core@7.0.6/node_modules/@octokit/core/dist-src/version.js
+var VERSION4 = "7.0.6";
 
-// node_modules/.pnpm/@octokit+core@7.0.5/node_modules/@octokit/core/dist-src/index.js
+// node_modules/.pnpm/@octokit+core@7.0.6/node_modules/@octokit/core/dist-src/index.js
 var noop = () => {
 };
 var consoleWarn = console.warn.bind(console);
@@ -40384,7 +40384,7 @@ var Octokit = class {
   auth;
 };
 
-// node_modules/.pnpm/@octokit+plugin-paginate-graphql@6.0.0_@octokit+core@7.0.5/node_modules/@octokit/plugin-paginate-graphql/dist-bundle/index.js
+// node_modules/.pnpm/@octokit+plugin-paginate-graphql@6.0.0_@octokit+core@7.0.6/node_modules/@octokit/plugin-paginate-graphql/dist-bundle/index.js
 var generateMessage = (path, cursorValue) => `The cursor at "${path.join(
   ","
 )}" did not change its value "${cursorValue}" after a page transition. Please make sure your that your query is set up correctly.`;
