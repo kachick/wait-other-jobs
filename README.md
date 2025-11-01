@@ -158,8 +158,8 @@ jobs:
 
 You need to consider similar problems when using matrix, because GitHub does not provide enough context.
 
-- https://github.com/orgs/community/discussions/8945
-- https://github.com/orgs/community/discussions/16614
+- <https://github.com/orgs/community/discussions/8945>
+- <https://github.com/orgs/community/discussions/16614>
 
 However you can set `prefix` for `jobMatchMode` to create small skip-list to avoid this problem.
 
@@ -170,7 +170,9 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-          - ubuntu-22.04
+          - ubuntu-24.04-arm
+          - macos-26
+          - windows-2025
     runs-on: ${{ matrix.os }}
     steps:
       - uses: kachick/wait-other-jobs@v3.8.1
