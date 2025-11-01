@@ -23990,6 +23990,9 @@ var import_core10 = __toESM(require_core(), 1);
 var import_core7 = __toESM(require_core(), 1);
 var import_github = __toESM(require_github(), 1);
 
+// src/schema.ts
+import { emitWarning } from "node:process";
+
 // node_modules/.pnpm/temporal-polyfill@0.3.0/node_modules/temporal-polyfill/chunks/internal.js
 function clampProp(e2, n2, t2, o2, r2) {
   return clampEntity(n2, ((e3, n3) => {
@@ -39336,33 +39339,64 @@ var ZeroableDuration = external_exports.instanceof(Xn.Duration).refine(
   }
 );
 var defaultGrace = Xn.Duration.from({ seconds: 10 });
+var eventName = external_exports.string().min(1);
+var eventNames = external_exports.preprocess(
+  (input) => {
+    if (Array.isArray(input)) {
+      return new Set(input);
+    }
+    return input;
+  },
+  external_exports.set(eventName).readonly()
+).default(Object.freeze(/* @__PURE__ */ new Set([]))).meta({
+  // Initially I thought literal string might be better, however those union types are complex,
+  // and also complex for the parsing user inputs. Only use string array is simple in JSON
+  description: `Empty means "any"`
+});
 var workflowPath = external_exports.string().endsWith(".yml").or(external_exports.string().endsWith(".yaml"));
-var matchAllJobs = external_exports.strictObject({
+var commonFilterCondition = {
   workflowFile: workflowPath,
+  eventNames
+};
+var matchAllJobs = external_exports.strictObject({
+  ...commonFilterCondition,
   jobMatchMode: external_exports.literal("all").default("all")
 });
 var matchPartialJobs = external_exports.strictObject({
-  workflowFile: workflowPath,
+  ...commonFilterCondition,
   jobName: external_exports.string().min(1),
   jobMatchMode: external_exports.enum(["exact", "prefix"]).default("exact")
 });
-var FilterCondition = external_exports.union([matchAllJobs, matchPartialJobs]);
-var SkipFilterCondition = FilterCondition.readonly();
+var commonFilterConditions = [matchAllJobs, matchPartialJobs];
 var waitOptions = {
-  optional: external_exports.boolean().default(false).readonly(),
-  // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
-  // - Intentionally omitted in skip-list, let me know if you have the use-case
-  eventName: external_exports.string().min(1).optional(),
+  optional: external_exports.boolean().default(false),
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
   startupGracePeriod: Durationable.default(defaultGrace)
 };
-var WaitFilterCondition = external_exports.union([
-  external_exports.strictObject(matchAllJobs.extend(waitOptions).shape),
-  external_exports.strictObject(matchPartialJobs.extend(waitOptions).shape)
-]).readonly();
-var WaitList = external_exports.array(WaitFilterCondition).readonly();
-var SkipList = external_exports.array(SkipFilterCondition).readonly();
+var preprocessDeprecatedEventName = (input) => {
+  if (!(typeof input === "object" && input !== null)) {
+    throw new Error("Invalid input");
+  }
+  if (!("eventName" in input)) {
+    return input;
+  }
+  if ("eventNames" in input) {
+    throw new Error("Don't set both eventName and eventNames together. Only use eventNames.");
+  }
+  emitWarning(
+    "DEPRECATED: 'eventName' will be removed in v5. Use 'eventNames' instead."
+  );
+  const { eventName: eventName2, ...rest } = input;
+  return { ...rest, eventNames: /* @__PURE__ */ new Set([eventName2]) };
+};
+var waitFilterCondition = external_exports.union(
+  commonFilterConditions.map((item) => external_exports.preprocess(preprocessDeprecatedEventName, item.extend(waitOptions)))
+);
+var skipFilterCondition = external_exports.union(commonFilterConditions);
+var WaitList = external_exports.array(waitFilterCondition).readonly();
+var SkipList = external_exports.array(skipFilterCondition).readonly();
+var FilterCondition = external_exports.union([waitFilterCondition, skipFilterCondition]);
 var retryMethods = external_exports.enum(["exponential_backoff", "equal_intervals"]);
 var Options = external_exports.strictObject({
   apiUrl: external_exports.url(),
@@ -39374,7 +39408,8 @@ var Options = external_exports.strictObject({
   attemptLimits: external_exports.number().min(1),
   isEarlyExit: external_exports.boolean(),
   shouldSkipSameWorkflow: external_exports.boolean(),
-  isDryRun: external_exports.boolean()
+  isDryRun: external_exports.boolean(),
+  eventNames
 }).readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { error: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
@@ -39406,7 +39441,7 @@ function parseInput() {
     // https://github.com/orgs/community/discussions/16614
     job: jobId,
     sha,
-    eventName
+    eventName: eventName2
   } = import_github.context;
   const pr2 = payload.pull_request;
   let commitSha = sha;
@@ -39441,9 +39476,10 @@ function parseInput() {
     skipList: jsonInput.parse((0, import_core7.getInput)("skip-list", { required: true })),
     isEarlyExit,
     shouldSkipSameWorkflow,
-    isDryRun
+    isDryRun,
+    eventNames: jsonInput.parse((0, import_core7.getInput)("event-list", { required: true }))
   });
-  const trigger = { ...repo, ref: commitSha, runId, jobId, eventName };
+  const trigger = { ...repo, ref: commitSha, runId, jobId, eventName: eventName2 };
   const githubToken = (0, import_core7.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core7.setSecret)(githubToken);
   return { trigger, options, githubToken, tempDir };
@@ -40722,7 +40758,8 @@ function seekWaitList(summaries, waitList, elapsed) {
   const filtered = summaries.filter(
     (summary2) => seeker.some((target) => {
       const isMatchPath = matchPath(target, summary2);
-      const isMatchEvent = target.eventName ? target.eventName === summary2.eventName : true;
+      const targetEvents = target.eventNames;
+      const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary2.eventName);
       if (isMatchPath && isMatchEvent) {
         target.found = true;
         return true;
@@ -40763,7 +40800,7 @@ function judge(summaries) {
     logs
   };
 }
-function generateReport(summaries, trigger, elapsed, { waitList, skipList, shouldSkipSameWorkflow }) {
+function generateReport(summaries, trigger, elapsed, { waitList, skipList, eventNames: eventNames2, shouldSkipSameWorkflow }) {
   const others = summaries.filter(
     (summary2) => !(summary2.isSameWorkflow && // Ideally this logic should be...
     //
@@ -40817,7 +40854,10 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, shoul
     const filtered = targets.filter((summary2) => !skipList.some((target) => matchPath(target, summary2)));
     return { ...judge(filtered), summaries: filtered };
   }
-  return { ...judge(targets), summaries: targets };
+  const eventFiltered = eventNames2.size === 0 ? targets : targets.filter((summary2) => {
+    return eventNames2.has(summary2.eventName);
+  });
+  return { ...judge(eventFiltered), summaries: eventFiltered };
 }
 function writeJobSummary(lastPolling, options) {
   import_core9.summary.addHeading("wait-other-jobs", 1);
@@ -40846,15 +40886,15 @@ function writeJobSummary(lastPolling, options) {
   ];
   import_core9.summary.addTable([
     headers,
-    ...lastPolling.summaries.toSorted(compareLevel).map(({ severity, workflowPermalink, workflowBasename, jobName, eventName, runStatus, runConclusion, checkRunUrl }) => [{
+    ...lastPolling.summaries.toSorted(compareLevel).map(({ severity, workflowPermalink, workflowBasename, jobName, eventName: eventName2, runStatus, runConclusion, checkRunUrl }) => [{
       data: getEmoji(severity)
     }, {
       // e.g. AFAIK, we can't access and control github provided dependabot workflow except the run logs. The event type is `dynamic`.
-      data: eventName === "dynamic" ? workflowBasename : `<a href="${workflowPermalink}">${workflowBasename}</a>`
+      data: eventName2 === "dynamic" ? workflowBasename : `<a href="${workflowPermalink}">${workflowBasename}</a>`
     }, {
       data: jobName
     }, {
-      data: eventName
+      data: eventName2
     }, {
       data: runStatus
     }, {
@@ -40909,6 +40949,40 @@ function getInterval(method, minimumInterval, attempts) {
 import { join as join3 } from "path";
 import { writeFileSync } from "fs";
 import { env as env2 } from "process";
+
+// src/util.ts
+function jsonReplacerForPrettyPrint(_key, value) {
+  const v2 = stringifyDuration(value);
+  if (v2 instanceof Set) {
+    return `Set<${Array.from(v2)}>`;
+  }
+  if (v2 instanceof Map) {
+    return `Map<${Object.fromEntries(v2)}>`;
+  }
+  return v2;
+}
+function stringifyDuration(input) {
+  if (input instanceof Xn.Duration) {
+    return `Temporal.Duration<${input.round({ largestUnit: "minutes" }).toJSON()}>`;
+  }
+  if (input instanceof Set || input instanceof Map) {
+    return input;
+  }
+  if (Array.isArray(input)) {
+    return input.map((item) => stringifyDuration(item));
+  }
+  if (typeof input === "object" && input !== null) {
+    const result = {};
+    for (const key of Object.keys(input)) {
+      const value = input[key];
+      result[key] = stringifyDuration(value);
+    }
+    return result;
+  }
+  return input;
+}
+
+// src/main.ts
 async function run() {
   if (!("FORCE_COLOR" in env2)) {
     env2["FORCE_COLOR"] = "true";
@@ -40924,7 +40998,7 @@ async function run() {
       options
       // Do NOT include secrets
     },
-    null,
+    jsonReplacerForPrettyPrint,
     2
   );
   (0, import_core10.info)(encodedParameters);
