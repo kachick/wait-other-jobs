@@ -170,7 +170,9 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
+          - ubuntu-24.04-arm
           - macos-26
+          - windows-2025
     runs-on: ${{ matrix.os }}
     steps:
       - uses: kachick/wait-other-jobs@v3.8.1
