@@ -28,6 +28,6 @@
     "@tsconfig/bases": "^1.0.9",
     "@types/node": "^24.2.1",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   }
 }
