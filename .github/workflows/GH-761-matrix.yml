@@ -28,15 +28,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
+        runner:
           - ubuntu-24.04
           - ubuntu-24.04-arm
+          - ubuntu-slim # Limited to 15 minutes by GitHub
           - macos-26
           - windows-2025
         warmup-delay:
           - 'PT3S'
           - 'PT7S'
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner }}
     # name: # By default, GitHub sets with `github.job` and the matrix values
     timeout-minutes: 10
     steps:
@@ -69,5 +70,5 @@ jobs:
       - name: Upload dumps as an artifact
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
-          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}-${{ matrix.os }}-${{ matrix.warmup-delay }}'
+          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}-${{ matrix.runner }}-${{ matrix.warmup-delay }}'
           path: '${{ steps.wait.outputs.dump }}'

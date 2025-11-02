@@ -168,12 +168,13 @@ jobs:
   your_job:
     strategy:
       matrix:
-        os:
+        runner:
           - ubuntu-24.04
           - ubuntu-24.04-arm
+          - ubuntu-slim # Limited to 15 minutes by GitHub
           - macos-26
           - windows-2025
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: kachick/wait-other-jobs@v3.8.1
         with:
