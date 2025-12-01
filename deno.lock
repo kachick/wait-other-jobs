@@ -2,6 +2,7 @@
   "version": "4",
   "specifiers": {
     "jsr:@david/dax@*": "0.43.1",
+    "jsr:@david/dax@~0.43.1": "0.43.1",
     "jsr:@david/path@0.2": "0.2.0",
     "jsr:@david/which@~0.4.1": "0.4.1",
     "jsr:@std/bytes@^1.0.5": "1.0.5",
