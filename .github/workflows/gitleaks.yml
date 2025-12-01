@@ -10,7 +10,7 @@ jobs:
     name: gitleaks
     runs-on: ubuntu-24.04
     env:
-      CLI_VERSION: '8.26.0' # selfup {"extract":"\\d[^']+","replacer":["gitleaks", "version"]}
+      CLI_VERSION: '8.28.0' # selfup {"extract":"\\d[^']+","replacer":["gitleaks", "version"]}
       ASSET_SHA256: '5bc41815076e6ed6ef8fbecc9d9b75bcae31f39029ceb55da08086315316e3ba'
     steps:
       # gitleaks-action is unfree since v2, Don't refer the code even if used in personal repositories
