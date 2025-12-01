@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run --allow-all
-import $ from 'jsr:@david/dax';
+import $ from 'jsr:@david/dax@^0.43.1';
 
 await Promise.all([
   $`dprint check`,
