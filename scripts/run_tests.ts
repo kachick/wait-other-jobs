@@ -12,4 +12,4 @@ const testPaths = Array.from(dirEnts).flatMap((dirent) =>
 
 console.log('Starting to run tests for', testPaths);
 
-await $`node --import tsx --no-warnings --test ${testPaths}`;
+await $`node --test ${testPaths}`;
