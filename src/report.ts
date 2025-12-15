@@ -1,9 +1,9 @@
+import { styleText } from 'node:util';
 import { summary } from '@actions/core';
-import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
-import { Check, FilterCondition, Options, Trigger, WaitList } from './schema.ts';
+import type { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
 import { join, relative } from 'path';
 import { Temporal } from 'temporal-polyfill';
-import { styleText } from 'node:util';
+import type { Check, FilterCondition, Options, Trigger, WaitList } from './schema.ts';
 
 interface Meta {
   color: Parameters<typeof styleText>[0] | null;

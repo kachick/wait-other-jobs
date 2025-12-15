@@ -1,4 +1,4 @@
-import { CheckSuite, Workflow, CheckRun, WorkflowRun } from '@octokit/graphql-schema';
+import type { CheckRun, CheckSuite, Workflow, WorkflowRun } from '@octokit/graphql-schema';
 import { Temporal } from 'temporal-polyfill';
 import { z } from 'zod';
 

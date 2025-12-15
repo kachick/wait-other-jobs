@@ -1,7 +1,7 @@
-import test from 'node:test';
 import { throws } from 'node:assert';
-import { Durationable, Options } from '../src/schema.ts';
+import test from 'node:test';
 import { Temporal } from 'temporal-polyfill';
+import { Durationable, Options } from '../src/schema.ts';
 import { durationEqual, optionsEqual } from './assert.ts';
 
 const defaultOptions = Object.freeze({

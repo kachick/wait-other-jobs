@@ -1,10 +1,9 @@
-import { getInput, getBooleanInput, setSecret, error } from '@actions/core';
-import { context } from '@actions/github';
-
-import { Durationable, jsonInput, Options, Path, Trigger } from './schema.ts';
 import { env } from 'node:process';
+import { error, getBooleanInput, getInput, setSecret } from '@actions/core';
+import { context } from '@actions/github';
 import { mkdtempSync } from 'fs';
 import { join } from 'path';
+import { Durationable, jsonInput, Options, Path, type Trigger } from './schema.ts';
 
 export function parseInput(): { trigger: Trigger; options: Options; githubToken: string; tempDir: string } {
   const {

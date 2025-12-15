@@ -1,14 +1,13 @@
-import { info, setFailed, startGroup, endGroup, setOutput } from '@actions/core';
-
-import { parseInput } from './input.ts';
-import { fetchChecks } from './github-api.ts';
-import { PollingReport, colorize, generateReport, getSummaries, readableDuration, writeJobSummary } from './report.ts';
-import { getInterval, wait } from './wait.ts';
-import { Temporal } from 'temporal-polyfill';
-import { Check, Options, Trigger } from './schema.ts';
-import { join } from 'path';
+import { endGroup, info, setFailed, setOutput, startGroup } from '@actions/core';
 import { writeFileSync } from 'fs';
+import { join } from 'path';
 import { env } from 'process';
+import { Temporal } from 'temporal-polyfill';
+import { fetchChecks } from './github-api.ts';
+import { parseInput } from './input.ts';
+import { colorize, generateReport, getSummaries, type PollingReport, readableDuration, writeJobSummary } from './report.ts';
+import type { Check, Options, Trigger } from './schema.ts';
+import { getInterval, wait } from './wait.ts';
 
 interface PollingResult {
   elapsed: Temporal.Duration;

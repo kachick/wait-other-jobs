@@ -1,7 +1,7 @@
-import { wait, calcExponentialBackoffAndJitter, MIN_JITTER, MAX_JITTER, getInterval } from '../src/wait.ts';
-import test from 'node:test';
 import assert, { strictEqual } from 'node:assert';
+import test from 'node:test';
 import { Temporal } from 'temporal-polyfill';
+import { calcExponentialBackoffAndJitter, getInterval, MAX_JITTER, MIN_JITTER, wait } from '../src/wait.ts';
 
 test('wait 100 ms', async () => {
   performance.mark('start');

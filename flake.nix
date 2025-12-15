@@ -47,6 +47,7 @@
                   withNode = false;
                 })
                 deno
+                biome
                 dprint
                 typos
 
