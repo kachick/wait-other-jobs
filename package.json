@@ -15,7 +15,7 @@
   "author": "Kenichi Kamiya <kachick1@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.11.1",
+    "@actions/core": "^2.0.1",
     "@actions/github": "^6.0.1",
     "@octokit/core": "^7.0.6",
     "@octokit/graphql-schema": "^15.26.1",
