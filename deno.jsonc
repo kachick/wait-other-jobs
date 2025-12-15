@@ -22,7 +22,7 @@
     },
     "fmt": "dprint fmt && git ls-files '*.nix' | xargs nixfmt",
     "lint": "./scripts/lint.ts",
-    "repl": "pnpm tsx" // Don't use deno REPL for this purpose. Finally the code will work on Node.js.
+    "repl": "pnpm dlx tsx" // Don't use deno REPL for this purpose. Finally the code will work on Node.js.
   },
   "imports": {
     "@david/dax": "jsr:@david/dax@^0.43.1"
