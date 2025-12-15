@@ -1,10 +1,10 @@
-import test from 'node:test';
 import assert from 'node:assert';
-import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './fixtures/snapshot.ts'; // 'undefined/workflow'` came from old snapshots
-import { PollingReport, Summary, generateReport, getSummaries, readableDuration } from '../src/report.ts';
-import { omit } from '../src/util.ts';
+import test from 'node:test';
 import { Temporal } from 'temporal-polyfill';
+import { generateReport, getSummaries, type PollingReport, readableDuration, type Summary } from '../src/report.ts';
+import { omit } from '../src/util.ts';
 import { jsonEqual } from './assert.ts';
+import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './fixtures/snapshot.ts'; // 'undefined/workflow'` came from old snapshots
 
 test('readableDuration', () => {
   assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 454356 })), 'about 7 minutes 34 seconds');

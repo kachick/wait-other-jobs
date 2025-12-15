@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/core';
+import type { Commit } from '@octokit/graphql-schema';
 import { paginateGraphQL } from '@octokit/plugin-paginate-graphql';
-import { Commit } from '@octokit/graphql-schema';
-import { Check, Trigger } from './schema.ts';
+import type { Check, Trigger } from './schema.ts';
 
 const PaginatableOctokit = Octokit.plugin(paginateGraphQL);
 

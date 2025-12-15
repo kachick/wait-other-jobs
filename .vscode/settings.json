@@ -5,6 +5,9 @@
   "[nix]": {
     "editor.defaultFormatter": "jnoortheen.nix-ide"
   },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit"
+  },
   "nix.enableLanguageServer": true,
   "nix.serverPath": "nixd",
   "search.exclude": {
@@ -15,5 +18,7 @@
   "deno.enable": true,
   "deno.enablePaths": [
     "scripts"
-  ]
+  ],
+  "biome.enabled": true,
+  "biome.suggestInstallingGlobally": false
 }

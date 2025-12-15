@@ -1,6 +1,6 @@
-import { setTimeout } from 'timers/promises';
-import { RetryMethod } from './schema.ts';
+import { setTimeout } from 'node:timers/promises';
 import { Temporal } from 'temporal-polyfill';
+import type { RetryMethod } from './schema.ts';
 
 // Just aliasing to avoid misusing setTimeout between ES method and timers/promises version.
 export const waitPrimitive = setTimeout;

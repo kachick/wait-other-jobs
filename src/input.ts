@@ -1,10 +1,9 @@
-import { getInput, getBooleanInput, setSecret, error } from '@actions/core';
-import { context } from '@actions/github';
-
-import { Durationable, jsonInput, Options, Path, Trigger } from './schema.ts';
+import { mkdtempSync } from 'node:fs';
+import { join } from 'node:path';
 import { env } from 'node:process';
-import { mkdtempSync } from 'fs';
-import { join } from 'path';
+import { error, getBooleanInput, getInput, setSecret } from '@actions/core';
+import { context } from '@actions/github';
+import { Durationable, jsonInput, Options, Path, type Trigger } from './schema.ts';
 
 export function parseInput(): { trigger: Trigger; options: Options; githubToken: string; tempDir: string } {
   const {
@@ -29,6 +28,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     }
   }
   // Do not use `tmpdir` from `node:os` in action: See https://github.com/actions/toolkit/issues/518
+  // biome-ignore lint/complexity/useLiteralKeys: https://github.com/biomejs/biome/issues/463
   const tempRoot = Path.parse(env['RUNNER_TEMP']);
   const tempDir = mkdtempSync(join(tempRoot, 'wait-other-jobs-'));
 
