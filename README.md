@@ -12,7 +12,7 @@ If any of the jobs fail, this action fails too.
 
 ## v4 or v3
 
-Latest stable versions are v3.x, and developing v4.x in main branch.
+Latest stable versions are [v3.x](https://github.com/kachick/wait-other-jobs/tree/v3), and developing v4.x in main branch.
 
 ## Usage
 
