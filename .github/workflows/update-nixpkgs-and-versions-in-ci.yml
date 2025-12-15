@@ -18,5 +18,8 @@ jobs:
     with:
       app_id: ${{ vars.APP_ID }}
       dry-run: ${{ github.event_name == 'pull_request' }}
+      optional-run: |
+        nix develop --command bash -c 'biome migrate --write && dprint fmt'
+        git diff-index --quiet HEAD || git commit -m 'Bump biome.json' biome.json
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
