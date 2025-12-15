@@ -5,6 +5,7 @@
     "dprint.dprint",
     "tekumara.typos-vscode",
     "jnoortheen.nix-ide",
-    "denoland.vscode-deno"
+    "denoland.vscode-deno",
+    "biomejs.biome"
   ]
 }

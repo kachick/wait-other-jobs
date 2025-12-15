@@ -1,7 +1,7 @@
+import { join, relative } from 'node:path';
 import { styleText } from 'node:util';
 import { summary } from '@actions/core';
 import type { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
-import { join, relative } from 'path';
 import { Temporal } from 'temporal-polyfill';
 import type { Check, FilterCondition, Options, Trigger, WaitList } from './schema.ts';
 
@@ -76,7 +76,7 @@ export interface Summary {
 function summarize(check: Check, trigger: Trigger): Summary {
   const { checkRun: run, checkSuite: suite, workflow, workflowRun } = check;
   const isCompleted = run.status === 'COMPLETED';
-  const isAcceptable = (run.conclusion == 'SUCCESS')
+  const isAcceptable = (run.conclusion === 'SUCCESS')
     || (run.conclusion === 'SKIPPED')
     || (run.conclusion === 'NEUTRAL' && (suite.conclusion === 'SUCCESS' || suite.conclusion === 'SKIPPED'));
 
