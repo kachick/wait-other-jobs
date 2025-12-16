@@ -57,7 +57,7 @@ async function run(): Promise<void> {
   let attempts = 0;
   let shouldStop = false;
 
-  if (options.isDryRun) {
+  if (options.isDryRunEnabled) {
     return;
   }
 
@@ -116,7 +116,7 @@ async function run(): Promise<void> {
       shouldStop = true;
     }
     if (!ok) {
-      if (!done && !options.isEarlyExit) {
+      if (!done && !options.isEarlyExitEnabled) {
         info(
           colorize('warning', 'found bad conditions, but will continue rest pollings because of disabled early-exit'),
         );

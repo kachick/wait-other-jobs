@@ -41,9 +41,9 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     getInput('attempt-limits', { required: true, trimWhitespace: true }),
     10,
   );
-  const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
-  const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
-  const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
+  const isEarlyExitEnabled = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
+  const isSkipSameWorkflowEnabled = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
+  const isDryRunEnabled = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
   const apiUrl = getInput('github-api-url', { required: true, trimWhitespace: true });
 
   const options = Options.parse({
@@ -54,9 +54,9 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     attemptLimits,
     waitList: jsonInput.parse(getInput('wait-list', { required: true })),
     skipList: jsonInput.parse(getInput('skip-list', { required: true })),
-    isEarlyExit,
-    shouldSkipSameWorkflow,
-    isDryRun,
+    isEarlyExitEnabled,
+    isSkipSameWorkflowEnabled,
+    isDryRunEnabled,
   });
 
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName } as const satisfies Trigger;

@@ -6,29 +6,29 @@ import { durationEqual, optionsEqual } from './assert.ts';
 
 const defaultOptions = Object.freeze({
   apiUrl: 'https://api.github.com',
-  isEarlyExit: true,
+  isEarlyExitEnabled: true,
   attemptLimits: 1000,
   waitList: [],
   skipList: [],
   warmupDelay: Temporal.Duration.from({ seconds: 1 }),
   minimumInterval: Temporal.Duration.from({ seconds: 10 }),
   retryMethod: 'equal_intervals',
-  shouldSkipSameWorkflow: false,
-  isDryRun: false,
+  isSkipSameWorkflowEnabled: false,
+  isDryRunEnabled: false,
 });
 
 test('Options keep given values', () => {
   optionsEqual({
     apiUrl: 'https://api.github.com',
-    isEarlyExit: true,
+    isEarlyExitEnabled: true,
     attemptLimits: 1000,
     waitList: [],
     skipList: [],
     warmupDelay: Temporal.Duration.from({ seconds: 1 }),
     minimumInterval: Temporal.Duration.from({ seconds: 10 }),
     retryMethod: 'equal_intervals',
-    shouldSkipSameWorkflow: false,
-    isDryRun: false,
+    isSkipSameWorkflowEnabled: false,
+    isDryRunEnabled: false,
   }, Options.parse(defaultOptions));
 });
 

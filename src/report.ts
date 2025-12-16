@@ -223,9 +223,9 @@ export function generateReport(
   summaries: readonly Summary[],
   trigger: Trigger,
   elapsed: Temporal.Duration,
-  { waitList, skipList, shouldSkipSameWorkflow }: Pick<
+  { waitList, skipList, isSkipSameWorkflowEnabled }: Pick<
     Options,
-    'waitList' | 'skipList' | 'shouldSkipSameWorkflow'
+    'waitList' | 'skipList' | 'isSkipSameWorkflowEnabled'
   >,
 ): PollingReport {
   const others = summaries.filter((summary) =>
@@ -244,7 +244,7 @@ export function generateReport(
       trigger.jobId === summary.jobName
     ))
   );
-  const targets = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
+  const targets = others.filter((summary) => !(summary.isSameWorkflow && isSkipSameWorkflowEnabled));
 
   if (waitList.length > 0) {
     const { filtered, unmatches, unstarted } = seekWaitList(targets, waitList, elapsed);
@@ -301,7 +301,7 @@ export function writeJobSummary(lastPolling: PollingReport, options: Options) {
   } else {
     summary.addRaw(`${getEmoji('error')} Failed`, true);
 
-    if (options.isEarlyExit) {
+    if (options.isEarlyExitEnabled) {
       summary.addHeading('Note', 3);
       summary.addRaw(
         `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,

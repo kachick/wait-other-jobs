@@ -79,9 +79,9 @@ export const Options = z.strictObject({
   minimumInterval: PositiveDuration,
   retryMethod: retryMethods,
   attemptLimits: z.number().min(1),
-  isEarlyExit: z.boolean(),
-  shouldSkipSameWorkflow: z.boolean(),
-  isDryRun: z.boolean(),
+  isEarlyExitEnabled: z.boolean(),
+  isSkipSameWorkflowEnabled: z.boolean(),
+  isDryRunEnabled: z.boolean(),
 }).readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { error: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },
