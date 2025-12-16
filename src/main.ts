@@ -14,6 +14,7 @@ import {
   writeJobSummary,
 } from './report.ts';
 import type { Check, Options, Trigger } from './schema.ts';
+import { jsonReplacerForPrettyPrint } from './util.ts';
 import { getInterval, wait } from './wait.ts';
 
 interface PollingResult {
@@ -47,7 +48,7 @@ async function run(): Promise<void> {
       startedAt,
       options, // Do NOT include secrets
     },
-    null,
+    jsonReplacerForPrettyPrint,
     2,
   );
   info(encodedParameters);
@@ -108,7 +109,7 @@ async function run(): Promise<void> {
     for (const { severity, message, resource } of logs) {
       info(colorize(severity, message));
       if ((severity !== 'info') && resource) {
-        info(JSON.stringify(resource, null, 2));
+        info(JSON.stringify(resource, jsonReplacerForPrettyPrint, 2));
       }
     }
 
@@ -144,7 +145,7 @@ async function run(): Promise<void> {
     }
   }
 
-  writeFileSync(dumpFile, JSON.stringify(dumper, null, 2));
+  writeFileSync(dumpFile, JSON.stringify(dumper, jsonReplacerForPrettyPrint, 2));
   setOutput('dump', dumpFile);
 }
 
