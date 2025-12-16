@@ -77,7 +77,7 @@ test('wait-list', async (t) => {
           },
         ],
         skipList: [],
-        shouldSkipSameWorkflow: false,
+        isSkipSameWorkflowEnabled: false,
       },
     );
 
@@ -133,7 +133,7 @@ test('wait-list', async (t) => {
           },
         ],
         skipList: [],
-        shouldSkipSameWorkflow: false,
+        isSkipSameWorkflowEnabled: false,
       },
     );
 
@@ -215,7 +215,7 @@ test('wait-list', async (t) => {
             },
           ],
           skipList: [],
-          shouldSkipSameWorkflow: false,
+          isSkipSameWorkflowEnabled: false,
         },
       );
 
@@ -290,7 +290,7 @@ test('wait-list', async (t) => {
             },
           ],
           skipList: [],
-          shouldSkipSameWorkflow: false,
+          isSkipSameWorkflowEnabled: false,
         },
       );
 
@@ -361,7 +361,7 @@ test('wait-list', async (t) => {
             },
           ],
           skipList: [],
-          shouldSkipSameWorkflow: false,
+          isSkipSameWorkflowEnabled: false,
         },
       );
 
@@ -453,7 +453,7 @@ test('wait-list', async (t) => {
             },
           ],
           skipList: [],
-          shouldSkipSameWorkflow: false,
+          isSkipSameWorkflowEnabled: false,
         },
       );
 
@@ -534,7 +534,7 @@ test('skip-list', async (t) => {
             jobMatchMode: 'exact',
           },
         ],
-        shouldSkipSameWorkflow: false,
+        isSkipSameWorkflowEnabled: false,
       },
     );
 
@@ -588,7 +588,7 @@ test('skip-list', async (t) => {
             jobMatchMode: 'prefix',
           },
         ],
-        shouldSkipSameWorkflow: false,
+        isSkipSameWorkflowEnabled: false,
       },
     );
 

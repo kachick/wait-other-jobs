@@ -43993,9 +43993,9 @@ var Options = external_exports.strictObject({
   minimumInterval: PositiveDuration,
   retryMethod: retryMethods,
   attemptLimits: external_exports.number().min(1),
-  isEarlyExit: external_exports.boolean(),
-  shouldSkipSameWorkflow: external_exports.boolean(),
-  isDryRun: external_exports.boolean()
+  isEarlyExitEnabled: external_exports.boolean(),
+  isSkipSameWorkflowEnabled: external_exports.boolean(),
+  isDryRunEnabled: external_exports.boolean()
 }).readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { error: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
@@ -44045,9 +44045,9 @@ function parseInput() {
     (0, import_core9.getInput)("attempt-limits", { required: true, trimWhitespace: true }),
     10
   );
-  const isEarlyExit = (0, import_core9.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
-  const shouldSkipSameWorkflow = (0, import_core9.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
-  const isDryRun = (0, import_core9.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
+  const isEarlyExitEnabled = (0, import_core9.getBooleanInput)("early-exit", { required: true, trimWhitespace: true });
+  const isSkipSameWorkflowEnabled = (0, import_core9.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
+  const isDryRunEnabled = (0, import_core9.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const apiUrl = (0, import_core9.getInput)("github-api-url", { required: true, trimWhitespace: true });
   const options = Options.parse({
     apiUrl,
@@ -44057,9 +44057,9 @@ function parseInput() {
     attemptLimits,
     waitList: jsonInput.parse((0, import_core9.getInput)("wait-list", { required: true })),
     skipList: jsonInput.parse((0, import_core9.getInput)("skip-list", { required: true })),
-    isEarlyExit,
-    shouldSkipSameWorkflow,
-    isDryRun
+    isEarlyExitEnabled,
+    isSkipSameWorkflowEnabled,
+    isDryRunEnabled
   });
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName };
   const githubToken = (0, import_core9.getInput)("github-token", { required: true, trimWhitespace: false });
@@ -44370,7 +44370,7 @@ async function run() {
   (0, import_core11.endGroup)();
   let attempts = 0;
   let shouldStop = false;
-  if (options.isDryRun) {
+  if (options.isDryRunEnabled) {
     return;
   }
   const dumper = { trigger, options, results: {} };
@@ -44417,7 +44417,7 @@ async function run() {
       shouldStop = true;
     }
     if (!ok) {
-      if (!done && !options.isEarlyExit) {
+      if (!done && !options.isEarlyExitEnabled) {
         (0, import_core11.info)(
           colorize("warning", "found bad conditions, but will continue rest pollings because of disabled early-exit")
         );
