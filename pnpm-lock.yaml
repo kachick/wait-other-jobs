@@ -26,6 +26,9 @@ importers:
       esbuild:
         specifier: ^0.27.1
         version: 0.27.1
+      jsonc-parser:
+        specifier: ^3.3.1
+        version: 3.3.1
       temporal-polyfill:
         specifier: ^0.3.0
         version: 0.3.0
@@ -343,6 +346,9 @@ packages:
     resolution: {integrity: sha512-GGTKBX4SD7Wdb8mqeDLni2oaRGYQWjWHGKPQ24ZMnUtKfcsVoiv4uX8+LJr1K6U5VW2Lu1BwJnj7uiori0YtRw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
+  jsonc-parser@3.3.1:
+    resolution: {integrity: sha512-HUgH65KyejrUFPvHFPbqOY0rsFip3Bo5wb4ngvdi1EpCYWUQDC5V+Y7mZws+DLkr4M//zQJoanu1SP+87Dv1oQ==}
+
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
 
@@ -653,6 +659,8 @@ snapshots:
       tslib: 2.6.3
 
   graphql@16.9.0: {}
+
+  jsonc-parser@3.3.1: {}
 
   once@1.4.0:
     dependencies:

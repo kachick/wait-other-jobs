@@ -79,7 +79,6 @@ Full list of the options
 
 ## Guide for option syntax and reasonable values
 
-- [Trailing commas are not allowed in JSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Trailing_commas)
 - GitHub API Limit: At least we should consider about `GITHUB_TOKEN`, that is allowed 1000 per hour per repository.\
   Roughly calculating for long jobs, setting the `minimum-interval` larger than or equal `PT4S` would be safer.
   - [Primary Rate Limit for GITHUB_TOKEN](https://github.com/github/docs/blob/c26f36dbabb133b263c0f979f257b31d6c979341/data/reusables/rest-api/primary-rate-limit-github-token-in-actions.md)
