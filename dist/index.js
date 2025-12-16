@@ -20009,7 +20009,7 @@ var require_fast_content_type_parse = __commonJS({
     var defaultContentType = { type: "", parameters: new NullObject() };
     Object.freeze(defaultContentType.parameters);
     Object.freeze(defaultContentType);
-    function parse4(header) {
+    function parse5(header) {
       if (typeof header !== "string") {
         throw new TypeError("argument header is required and must be a string");
       }
@@ -20085,8 +20085,8 @@ var require_fast_content_type_parse = __commonJS({
       }
       return result;
     }
-    module.exports.default = { parse: parse4, safeParse: safeParse4 };
-    module.exports.parse = parse4;
+    module.exports.default = { parse: parse5, safeParse: safeParse4 };
+    module.exports.parse = parse5;
     module.exports.safeParse = safeParse4;
     module.exports.defaultContentType = defaultContentType;
   }
@@ -21375,7 +21375,7 @@ var require_dist_node2 = __commonJS({
         return template.replace(/\/$/, "");
       }
     }
-    function parse4(options) {
+    function parse5(options) {
       let method = options.method.toUpperCase();
       let url2 = (options.url || "/").replace(/:([a-z]\w+)/g, "{$1}");
       let headers = Object.assign({}, options.headers);
@@ -21439,7 +21439,7 @@ var require_dist_node2 = __commonJS({
       );
     }
     function endpointWithDefaults2(defaults, route, options) {
-      return parse4(merge3(defaults, route, options));
+      return parse5(merge3(defaults, route, options));
     }
     function withDefaults4(oldDefaults, newDefaults) {
       const DEFAULTS22 = merge3(oldDefaults, newDefaults);
@@ -21448,7 +21448,7 @@ var require_dist_node2 = __commonJS({
         DEFAULTS: DEFAULTS22,
         defaults: withDefaults4.bind(null, DEFAULTS22),
         merge: merge3.bind(null, DEFAULTS22),
-        parse: parse4
+        parse: parse5
       });
     }
     var endpoint2 = withDefaults4(null, DEFAULTS2);
@@ -24853,6 +24853,154 @@ var require_github = __commonJS({
       return new GitHubWithPlugins((0, utils_1.getOctokitOptions)(token, options));
     }
     exports.getOctokit = getOctokit;
+  }
+});
+
+// node_modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/umd/main.js
+var require_main2 = __commonJS({
+  "node_modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/umd/main.js"(exports, module) {
+    (function(factory) {
+      if (typeof module === "object" && typeof module.exports === "object") {
+        var v2 = factory(__require, exports);
+        if (v2 !== void 0) module.exports = v2;
+      } else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "./impl/format", "./impl/edit", "./impl/scanner", "./impl/parser"], factory);
+      }
+    })(function(require2, exports2) {
+      "use strict";
+      Object.defineProperty(exports2, "__esModule", { value: true });
+      exports2.applyEdits = exports2.modify = exports2.format = exports2.printParseErrorCode = exports2.ParseErrorCode = exports2.stripComments = exports2.visit = exports2.getNodeValue = exports2.getNodePath = exports2.findNodeAtOffset = exports2.findNodeAtLocation = exports2.parseTree = exports2.parse = exports2.getLocation = exports2.SyntaxKind = exports2.ScanError = exports2.createScanner = void 0;
+      const formatter = require2("./impl/format");
+      const edit = require2("./impl/edit");
+      const scanner = require2("./impl/scanner");
+      const parser = require2("./impl/parser");
+      exports2.createScanner = scanner.createScanner;
+      var ScanError;
+      (function(ScanError2) {
+        ScanError2[ScanError2["None"] = 0] = "None";
+        ScanError2[ScanError2["UnexpectedEndOfComment"] = 1] = "UnexpectedEndOfComment";
+        ScanError2[ScanError2["UnexpectedEndOfString"] = 2] = "UnexpectedEndOfString";
+        ScanError2[ScanError2["UnexpectedEndOfNumber"] = 3] = "UnexpectedEndOfNumber";
+        ScanError2[ScanError2["InvalidUnicode"] = 4] = "InvalidUnicode";
+        ScanError2[ScanError2["InvalidEscapeCharacter"] = 5] = "InvalidEscapeCharacter";
+        ScanError2[ScanError2["InvalidCharacter"] = 6] = "InvalidCharacter";
+      })(ScanError || (exports2.ScanError = ScanError = {}));
+      var SyntaxKind;
+      (function(SyntaxKind2) {
+        SyntaxKind2[SyntaxKind2["OpenBraceToken"] = 1] = "OpenBraceToken";
+        SyntaxKind2[SyntaxKind2["CloseBraceToken"] = 2] = "CloseBraceToken";
+        SyntaxKind2[SyntaxKind2["OpenBracketToken"] = 3] = "OpenBracketToken";
+        SyntaxKind2[SyntaxKind2["CloseBracketToken"] = 4] = "CloseBracketToken";
+        SyntaxKind2[SyntaxKind2["CommaToken"] = 5] = "CommaToken";
+        SyntaxKind2[SyntaxKind2["ColonToken"] = 6] = "ColonToken";
+        SyntaxKind2[SyntaxKind2["NullKeyword"] = 7] = "NullKeyword";
+        SyntaxKind2[SyntaxKind2["TrueKeyword"] = 8] = "TrueKeyword";
+        SyntaxKind2[SyntaxKind2["FalseKeyword"] = 9] = "FalseKeyword";
+        SyntaxKind2[SyntaxKind2["StringLiteral"] = 10] = "StringLiteral";
+        SyntaxKind2[SyntaxKind2["NumericLiteral"] = 11] = "NumericLiteral";
+        SyntaxKind2[SyntaxKind2["LineCommentTrivia"] = 12] = "LineCommentTrivia";
+        SyntaxKind2[SyntaxKind2["BlockCommentTrivia"] = 13] = "BlockCommentTrivia";
+        SyntaxKind2[SyntaxKind2["LineBreakTrivia"] = 14] = "LineBreakTrivia";
+        SyntaxKind2[SyntaxKind2["Trivia"] = 15] = "Trivia";
+        SyntaxKind2[SyntaxKind2["Unknown"] = 16] = "Unknown";
+        SyntaxKind2[SyntaxKind2["EOF"] = 17] = "EOF";
+      })(SyntaxKind || (exports2.SyntaxKind = SyntaxKind = {}));
+      exports2.getLocation = parser.getLocation;
+      exports2.parse = parser.parse;
+      exports2.parseTree = parser.parseTree;
+      exports2.findNodeAtLocation = parser.findNodeAtLocation;
+      exports2.findNodeAtOffset = parser.findNodeAtOffset;
+      exports2.getNodePath = parser.getNodePath;
+      exports2.getNodeValue = parser.getNodeValue;
+      exports2.visit = parser.visit;
+      exports2.stripComments = parser.stripComments;
+      var ParseErrorCode;
+      (function(ParseErrorCode2) {
+        ParseErrorCode2[ParseErrorCode2["InvalidSymbol"] = 1] = "InvalidSymbol";
+        ParseErrorCode2[ParseErrorCode2["InvalidNumberFormat"] = 2] = "InvalidNumberFormat";
+        ParseErrorCode2[ParseErrorCode2["PropertyNameExpected"] = 3] = "PropertyNameExpected";
+        ParseErrorCode2[ParseErrorCode2["ValueExpected"] = 4] = "ValueExpected";
+        ParseErrorCode2[ParseErrorCode2["ColonExpected"] = 5] = "ColonExpected";
+        ParseErrorCode2[ParseErrorCode2["CommaExpected"] = 6] = "CommaExpected";
+        ParseErrorCode2[ParseErrorCode2["CloseBraceExpected"] = 7] = "CloseBraceExpected";
+        ParseErrorCode2[ParseErrorCode2["CloseBracketExpected"] = 8] = "CloseBracketExpected";
+        ParseErrorCode2[ParseErrorCode2["EndOfFileExpected"] = 9] = "EndOfFileExpected";
+        ParseErrorCode2[ParseErrorCode2["InvalidCommentToken"] = 10] = "InvalidCommentToken";
+        ParseErrorCode2[ParseErrorCode2["UnexpectedEndOfComment"] = 11] = "UnexpectedEndOfComment";
+        ParseErrorCode2[ParseErrorCode2["UnexpectedEndOfString"] = 12] = "UnexpectedEndOfString";
+        ParseErrorCode2[ParseErrorCode2["UnexpectedEndOfNumber"] = 13] = "UnexpectedEndOfNumber";
+        ParseErrorCode2[ParseErrorCode2["InvalidUnicode"] = 14] = "InvalidUnicode";
+        ParseErrorCode2[ParseErrorCode2["InvalidEscapeCharacter"] = 15] = "InvalidEscapeCharacter";
+        ParseErrorCode2[ParseErrorCode2["InvalidCharacter"] = 16] = "InvalidCharacter";
+      })(ParseErrorCode || (exports2.ParseErrorCode = ParseErrorCode = {}));
+      function printParseErrorCode(code) {
+        switch (code) {
+          case 1:
+            return "InvalidSymbol";
+          case 2:
+            return "InvalidNumberFormat";
+          case 3:
+            return "PropertyNameExpected";
+          case 4:
+            return "ValueExpected";
+          case 5:
+            return "ColonExpected";
+          case 6:
+            return "CommaExpected";
+          case 7:
+            return "CloseBraceExpected";
+          case 8:
+            return "CloseBracketExpected";
+          case 9:
+            return "EndOfFileExpected";
+          case 10:
+            return "InvalidCommentToken";
+          case 11:
+            return "UnexpectedEndOfComment";
+          case 12:
+            return "UnexpectedEndOfString";
+          case 13:
+            return "UnexpectedEndOfNumber";
+          case 14:
+            return "InvalidUnicode";
+          case 15:
+            return "InvalidEscapeCharacter";
+          case 16:
+            return "InvalidCharacter";
+        }
+        return "<unknown ParseErrorCode>";
+      }
+      exports2.printParseErrorCode = printParseErrorCode;
+      function format(documentText, range, options) {
+        return formatter.format(documentText, range, options);
+      }
+      exports2.format = format;
+      function modify(text, path, value, options) {
+        return edit.setProperty(text, path, value, options);
+      }
+      exports2.modify = modify;
+      function applyEdits(text, edits) {
+        let sortedEdits = edits.slice(0).sort((a2, b2) => {
+          const diff = a2.offset - b2.offset;
+          if (diff === 0) {
+            return a2.length - b2.length;
+          }
+          return diff;
+        });
+        let lastModifiedOffset = text.length;
+        for (let i2 = sortedEdits.length - 1; i2 >= 0; i2--) {
+          let e2 = sortedEdits[i2];
+          if (e2.offset + e2.length <= lastModifiedOffset) {
+            text = edit.applyEdit(text, e2);
+          } else {
+            throw new Error("Overlapping edit");
+          }
+          lastModifiedOffset = e2.offset;
+        }
+        return text;
+      }
+      exports2.applyEdits = applyEdits;
+    });
   }
 });
 
@@ -29754,6 +29902,9 @@ var import_github = __toESM(require_github(), 1);
 import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 import { env } from "node:process";
+
+// src/schema.ts
+var import_jsonc_parser = __toESM(require_main2(), 1);
 
 // node_modules/.pnpm/zod@4.2.0/node_modules/zod/v4/classic/external.js
 var external_exports = {};
@@ -43078,25 +43229,9 @@ config(en_default());
 
 // src/schema.ts
 var jsonSchema = external_exports.json();
-var jsonInput = external_exports.string().transform((str, ctx) => {
-  try {
-    return jsonSchema.parse(JSON.parse(str));
-  } catch (_err) {
-    const errorMessage = `Invalid JSON.
-Typical mistakens are below.
-  - Trailing comma
-    Bad: [a,b,]
-    Good: [a,b]
-  - Missing quotations for object key
-    Bad: {a: 1}
-    Good: {"a": 1}
-`;
-    ctx.addIssue({
-      code: "custom",
-      error: errorMessage
-    });
-    return external_exports.NEVER;
-  }
+var jsonInput = external_exports.string().transform((str) => {
+  const untypedJsonc = (0, import_jsonc_parser.parse)(str, [], { allowTrailingComma: true, disallowComments: false });
+  return jsonSchema.parse(untypedJsonc);
 });
 var Durationable = external_exports.union([external_exports.iso.duration(), external_exports.instanceof(Xn.Duration)]).transform(
   (item) => Xn.Duration.from(item)
