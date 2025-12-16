@@ -44204,7 +44204,7 @@ function judge(summaries) {
     logs
   };
 }
-function generateReport(summaries, trigger, elapsed, { waitList, skipList, shouldSkipSameWorkflow }) {
+function generateReport(summaries, trigger, elapsed, { waitList, skipList, isSkipSameWorkflowEnabled }) {
   const others = summaries.filter(
     (summary2) => !(summary2.isSameWorkflow && // Ideally this logic should be...
     //
@@ -44219,7 +44219,7 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, shoul
     // Anyway, in matrix use, GitHub uses the default name for the prefix. It should be considered in list based solutions
     trigger.jobId === summary2.jobName)
   );
-  const targets = others.filter((summary2) => !(summary2.isSameWorkflow && shouldSkipSameWorkflow));
+  const targets = others.filter((summary2) => !(summary2.isSameWorkflow && isSkipSameWorkflowEnabled));
   if (waitList.length > 0) {
     const { filtered, unmatches, unstarted } = seekWaitList(targets, waitList, elapsed);
     const { ok, done, logs } = judge(filtered);
@@ -44267,7 +44267,7 @@ function writeJobSummary(lastPolling, options) {
     import_core10.summary.addRaw(`${getEmoji("notice")} All jobs passed`, true);
   } else {
     import_core10.summary.addRaw(`${getEmoji("error")} Failed`, true);
-    if (options.isEarlyExit) {
+    if (options.isEarlyExitEnabled) {
       import_core10.summary.addHeading("Note", 3);
       import_core10.summary.addRaw(
         `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
