@@ -10,7 +10,7 @@
     "cleanup_build": "rm -rf ./lib ./dist",
     "build": {
       "dependencies": ["cleanup_build"],
-      "command": "./scripts/build.ts"
+      "command": "node esbuild.config.ts"
     },
     "update_flake": "nix flake update --commit-lock-file",
     "sync_workflow_deps": {
