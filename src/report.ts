@@ -1,9 +1,9 @@
-import { summary } from '@actions/core';
-import { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
-import { Check, FilterCondition, Options, Trigger, WaitList } from './schema.ts';
-import { join, relative } from 'path';
-import { Temporal } from 'temporal-polyfill';
+import { join, relative } from 'node:path';
 import { styleText } from 'node:util';
+import { summary } from '@actions/core';
+import type { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
+import { Temporal } from 'temporal-polyfill';
+import type { Check, FilterCondition, Options, Trigger, WaitList } from './schema.ts';
 
 interface Meta {
   color: Parameters<typeof styleText>[0] | null;
@@ -76,7 +76,7 @@ export interface Summary {
 function summarize(check: Check, trigger: Trigger): Summary {
   const { checkRun: run, checkSuite: suite, workflow, workflowRun } = check;
   const isCompleted = run.status === 'COMPLETED';
-  const isAcceptable = (run.conclusion == 'SUCCESS')
+  const isAcceptable = (run.conclusion === 'SUCCESS')
     || (run.conclusion === 'SKIPPED')
     || (run.conclusion === 'NEUTRAL' && (suite.conclusion === 'SUCCESS' || suite.conclusion === 'SKIPPED'));
 
@@ -224,9 +224,9 @@ export function generateReport(
   summaries: readonly Summary[],
   trigger: Trigger,
   elapsed: Temporal.Duration,
-  { waitList, skipList, eventNames, shouldSkipSameWorkflow }: Pick<
+  { waitList, skipList, eventNames, isSkipSameWorkflowEnabled }: Pick<
     Options,
-    'waitList' | 'skipList' | 'eventNames' | 'shouldSkipSameWorkflow'
+    'waitList' | 'skipList' | 'eventNames' | 'isSkipSameWorkflowEnabled'
   >,
 ): PollingReport {
   const others = summaries.filter((summary) =>
@@ -245,7 +245,7 @@ export function generateReport(
       trigger.jobId === summary.jobName
     ))
   );
-  const targets = others.filter((summary) => !(summary.isSameWorkflow && shouldSkipSameWorkflow));
+  const targets = others.filter((summary) => !(summary.isSameWorkflow && isSkipSameWorkflowEnabled));
 
   if (waitList.length > 0) {
     const { filtered, unmatches, unstarted } = seekWaitList(targets, waitList, elapsed);
@@ -306,7 +306,7 @@ export function writeJobSummary(lastPolling: PollingReport, options: Options) {
   } else {
     summary.addRaw(`${getEmoji('error')} Failed`, true);
 
-    if (options.isEarlyExit) {
+    if (options.isEarlyExitEnabled) {
       summary.addHeading('Note', 3);
       summary.addRaw(
         `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,

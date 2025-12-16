@@ -10,7 +10,7 @@
     "cleanup_build": "rm -rf ./lib ./dist",
     "build": {
       "dependencies": ["cleanup_build"],
-      "command": "./scripts/build.ts"
+      "command": "node esbuild.config.ts"
     },
     "update_flake": "nix flake update --commit-lock-file",
     "sync_workflow_deps": {
@@ -22,14 +22,7 @@
     },
     "fmt": "dprint fmt && git ls-files '*.nix' | xargs nixfmt",
     "lint": "./scripts/lint.ts",
-    "repl": "pnpm tsx" // Don't use deno REPL for this purpose. Finally the code will work on Node.js.
-  },
-  "lint": {
-    "include": ["."],
-    "exclude": ["dist/", "node_modules/", "logs/", "dependencies/"],
-    "rules": {
-      "tags": ["recommended"]
-    }
+    "repl": "pnpm dlx tsx" // Don't use deno REPL for this purpose. Finally the code will work on Node.js.
   },
   "imports": {
     "@david/dax": "jsr:@david/dax@^0.43.1"

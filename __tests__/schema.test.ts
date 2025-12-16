@@ -1,36 +1,38 @@
-import test from 'node:test';
 import { throws } from 'node:assert';
-import { Durationable, Options } from '../src/schema.ts';
+import test from 'node:test';
 import { Temporal } from 'temporal-polyfill';
+
+import { Durationable, Options } from '../src/schema.ts';
+
 import { durationEqual, jsonEqual } from './assert.ts';
 
 const defaultOptions = Object.freeze({
   apiUrl: 'https://api.github.com',
-  isEarlyExit: true,
+  isEarlyExitEnabled: true,
   attemptLimits: 1000,
   waitList: [],
   skipList: [],
   warmupDelay: Temporal.Duration.from({ seconds: 1 }),
   minimumInterval: Temporal.Duration.from({ seconds: 10 }),
   retryMethod: 'equal_intervals',
-  shouldSkipSameWorkflow: false,
-  isDryRun: false,
   eventNames: new Set(['push', 'pull_request']),
+  isSkipSameWorkflowEnabled: false,
+  isDryRunEnabled: false,
 });
 
 test('Options keep given values', () => {
   jsonEqual({
     apiUrl: 'https://api.github.com',
-    isEarlyExit: true,
+    isEarlyExitEnabled: true,
     attemptLimits: 1000,
     waitList: [],
     skipList: [],
     warmupDelay: Temporal.Duration.from({ seconds: 1 }),
     minimumInterval: Temporal.Duration.from({ seconds: 10 }),
     retryMethod: 'equal_intervals',
-    shouldSkipSameWorkflow: false,
-    isDryRun: false,
     eventNames: new Set(['push', 'pull_request']),
+    isSkipSameWorkflowEnabled: false,
+    isDryRunEnabled: false,
   }, Options.parse(defaultOptions));
 });
 

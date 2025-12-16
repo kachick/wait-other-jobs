@@ -12,7 +12,7 @@ If any of the jobs fail, this action fails too.
 
 ## v4 and v3
 
-Latest stable versions are v3.x, and developing under v4.x in main branch.
+Latest stable versions are [v3.x](https://github.com/kachick/wait-other-jobs/tree/v3), and developing v4.x in main branch.
 
 ## Usage
 
@@ -80,7 +80,6 @@ Full list of the options
 
 ## Guide for option syntax and reasonable values
 
-- [Trailing commas are not allowed in JSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Trailing_commas)
 - GitHub API Limit: At least we should consider about `GITHUB_TOKEN`, that is allowed 1000 per hour per repository.\
   Roughly calculating for long jobs, setting the `minimum-interval` larger than or equal `PT4S` would be safer.
   - [Primary Rate Limit for GITHUB_TOKEN](https://github.com/github/docs/blob/c26f36dbabb133b263c0f979f257b31d6c979341/data/reusables/rest-api/primary-rate-limit-github-token-in-actions.md)
@@ -169,8 +168,8 @@ jobs:
 
 You need to consider similar problems when using matrix, because GitHub does not provide enough context.
 
-- https://github.com/orgs/community/discussions/8945
-- https://github.com/orgs/community/discussions/16614
+- <https://github.com/orgs/community/discussions/8945>
+- <https://github.com/orgs/community/discussions/16614>
 
 However you can set `prefix` for `jobMatchMode` to create small skip-list to avoid this problem.
 
@@ -179,10 +178,13 @@ jobs:
   your_job:
     strategy:
       matrix:
-        os:
+        runner:
           - ubuntu-24.04
-          - ubuntu-22.04
-    runs-on: ${{ matrix.os }}
+          - ubuntu-24.04-arm
+          - ubuntu-slim # Limited to 15 minutes by GitHub
+          - macos-26
+          - windows-2025
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: kachick/wait-other-jobs@v3.8.1
         with:

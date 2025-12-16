@@ -1,4 +1,4 @@
-import { strictEqual, deepStrictEqual } from 'node:assert';
+import { deepStrictEqual, strictEqual } from 'node:assert';
 import { Temporal } from 'temporal-polyfill';
 import { jsonReplacerForPrettyPrint } from '../src/util.ts';
 

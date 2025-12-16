@@ -1,14 +1,11 @@
 name: 🤖👌🤖
 on: pull_request
 
-permissions:
-  contents: write
-  pull-requests: write
-  # checks: read # For private repositories
-  # actions: read # For private repositories
-
 jobs:
   judge-dependabot:
+    permissions:
+      contents: read
+      pull-requests: read
     timeout-minutes: 5
     runs-on: ubuntu-24.04
     outputs:
@@ -22,16 +19,21 @@ jobs:
         id: conclusion
         if: >-
           steps.dependabot.outputs.update-type != 'version-update:semver-major' ||
-          contains(steps.dependabot.outputs.dependency-names, 'DeterminateSystems')
+          contains(steps.dependabot.outputs.dependency-names, 'cachix')
         run: echo -n 'merge=true' | tee -a "$GITHUB_OUTPUT"
   dependabot:
+    permissions:
+      contents: write
+      pull-requests: write
     needs: [judge-dependabot]
     if: ${{ needs.judge-dependabot.outputs.merge == 'true' }}
     timeout-minutes: 30
     runs-on: ubuntu-24.04
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
       - name: Wait other jobs
         uses: ./
         timeout-minutes: 10
@@ -51,12 +53,17 @@ jobs:
   #    - `Require status checks to pass before merging` and specify the status names
   #   Changing in all personal repository is annoy task for me. Even if using terrafform, getting mandatory CI names in each repo is too annoy!
   renovate:
+    permissions:
+      contents: write
+      pull-requests: write
     timeout-minutes: 30
     runs-on: ubuntu-24.04
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
       - name: Wait other jobs
         uses: ./
         timeout-minutes: 10
@@ -72,12 +79,17 @@ jobs:
 
   # https://github.com/kachick/anylang-template/issues/51
   selfup-runner:
+    permissions:
+      contents: write
+      pull-requests: write
     timeout-minutes: 30
     runs-on: ubuntu-24.04
     if: ${{ github.actor == 'selfup-runner[bot]' }}
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
       - name: Wait other jobs
         uses: ./
         timeout-minutes: 20

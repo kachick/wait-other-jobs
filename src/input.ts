@@ -1,10 +1,9 @@
-import { getInput, getBooleanInput, setSecret, error } from '@actions/core';
-import { context } from '@actions/github';
-
-import { Durationable, jsonInput, Options, Path, Trigger } from './schema.ts';
+import { mkdtempSync } from 'node:fs';
+import { join } from 'node:path';
 import { env } from 'node:process';
-import { mkdtempSync } from 'fs';
-import { join } from 'path';
+import { error, getBooleanInput, getInput, setSecret } from '@actions/core';
+import { context } from '@actions/github';
+import { Durationable, jsonInput, Options, Path, type Trigger } from './schema.ts';
 
 export function parseInput(): { trigger: Trigger; options: Options; githubToken: string; tempDir: string } {
   const {
@@ -29,6 +28,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     }
   }
   // Do not use `tmpdir` from `node:os` in action: See https://github.com/actions/toolkit/issues/518
+  // biome-ignore lint/complexity/useLiteralKeys: https://github.com/biomejs/biome/issues/463
   const tempRoot = Path.parse(env['RUNNER_TEMP']);
   const tempDir = mkdtempSync(join(tempRoot, 'wait-other-jobs-'));
 
@@ -41,9 +41,9 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     getInput('attempt-limits', { required: true, trimWhitespace: true }),
     10,
   );
-  const isEarlyExit = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
-  const shouldSkipSameWorkflow = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
-  const isDryRun = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
+  const isEarlyExitEnabled = getBooleanInput('early-exit', { required: true, trimWhitespace: true });
+  const isSkipSameWorkflowEnabled = getBooleanInput('skip-same-workflow', { required: true, trimWhitespace: true });
+  const isDryRunEnabled = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
   const apiUrl = getInput('github-api-url', { required: true, trimWhitespace: true });
 
   const options = Options.parse({
@@ -54,10 +54,10 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     attemptLimits,
     waitList: jsonInput.parse(getInput('wait-list', { required: true })),
     skipList: jsonInput.parse(getInput('skip-list', { required: true })),
-    isEarlyExit,
-    shouldSkipSameWorkflow,
-    isDryRun,
     eventNames: jsonInput.parse(getInput('event-list', { required: true })),
+    isEarlyExitEnabled,
+    isSkipSameWorkflowEnabled,
+    isDryRunEnabled,
   });
 
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName } as const satisfies Trigger;

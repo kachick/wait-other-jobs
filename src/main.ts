@@ -1,15 +1,21 @@
-import { info, setFailed, startGroup, endGroup, setOutput } from '@actions/core';
-
-import { parseInput } from './input.ts';
-import { fetchChecks } from './github-api.ts';
-import { PollingReport, colorize, generateReport, getSummaries, readableDuration, writeJobSummary } from './report.ts';
-import { getInterval, wait } from './wait.ts';
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { env } from 'node:process';
+import { endGroup, info, setFailed, setOutput, startGroup } from '@actions/core';
 import { Temporal } from 'temporal-polyfill';
-import { Check, Options, Trigger } from './schema.ts';
-import { join } from 'path';
-import { writeFileSync } from 'fs';
-import { env } from 'process';
+import { fetchChecks } from './github-api.ts';
+import { parseInput } from './input.ts';
+import {
+  colorize,
+  generateReport,
+  getSummaries,
+  type PollingReport,
+  readableDuration,
+  writeJobSummary,
+} from './report.ts';
+import type { Check, Options, Trigger } from './schema.ts';
 import { jsonReplacerForPrettyPrint } from './util.ts';
+import { getInterval, wait } from './wait.ts';
 
 interface PollingResult {
   elapsed: Temporal.Duration;
@@ -29,6 +35,7 @@ async function run(): Promise<void> {
   // Workaround for https://github.com/actions/runner/issues/241 and https://github.com/nodejs/node/pull/56722
   // Don't use `core.exportVariable`, we only use this ENV in this action.
   if (!('FORCE_COLOR' in env)) {
+    // biome-ignore lint/complexity/useLiteralKeys: https://github.com/biomejs/biome/issues/463
     env['FORCE_COLOR'] = 'true';
   }
   const startedAt = performance.now();
@@ -51,7 +58,7 @@ async function run(): Promise<void> {
   let attempts = 0;
   let shouldStop = false;
 
-  if (options.isDryRun) {
+  if (options.isDryRunEnabled) {
     return;
   }
 
@@ -101,8 +108,8 @@ async function run(): Promise<void> {
 
     for (const { severity, message, resource } of logs) {
       info(colorize(severity, message));
-      if ((severity != 'info') && resource) {
-        info(JSON.stringify(resource, null, 2));
+      if ((severity !== 'info') && resource) {
+        info(JSON.stringify(resource, jsonReplacerForPrettyPrint, 2));
       }
     }
 
@@ -110,7 +117,7 @@ async function run(): Promise<void> {
       shouldStop = true;
     }
     if (!ok) {
-      if (!done && !options.isEarlyExit) {
+      if (!done && !options.isEarlyExitEnabled) {
         info(
           colorize('warning', 'found bad conditions, but will continue rest pollings because of disabled early-exit'),
         );
@@ -138,7 +145,7 @@ async function run(): Promise<void> {
     }
   }
 
-  writeFileSync(dumpFile, JSON.stringify(dumper, null, 2));
+  writeFileSync(dumpFile, JSON.stringify(dumper, jsonReplacerForPrettyPrint, 2));
   setOutput('dump', dumpFile);
 }
 

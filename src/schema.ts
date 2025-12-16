@@ -1,32 +1,16 @@
-import { CheckSuite, Workflow, CheckRun, WorkflowRun } from '@octokit/graphql-schema';
 import { emitWarning } from 'node:process';
+import type { CheckRun, CheckSuite, Workflow, WorkflowRun } from '@octokit/graphql-schema';
+import { parse } from 'jsonc-parser';
 import { Temporal } from 'temporal-polyfill';
 import { z } from 'zod';
 
 export const jsonSchema = z.json();
 
 // ref: https://github.com/colinhacks/zod/discussions/2215#discussioncomment-13836018
-export const jsonInput = z.string()
-  .transform((str, ctx): z.infer<z.ZodJSONSchema> => {
-    try {
-      return jsonSchema.parse(JSON.parse(str));
-    } catch (_err) {
-      const errorMessage = `Invalid JSON.
-Typical mistakens are below.
-  - Trailing comma
-    Bad: [a,b,]
-    Good: [a,b]
-  - Missing quotations for object key
-    Bad: {a: 1}
-    Good: {"a": 1}
-`;
-      ctx.addIssue({
-        code: 'custom',
-        error: errorMessage,
-      });
-      return z.NEVER;
-    }
-  });
+export const jsonInput = z.string().transform((str): z.infer<z.ZodJSONSchema> => {
+  const untypedJsonc = parse(str, [], { allowTrailingComma: true, disallowComments: false });
+  return jsonSchema.parse(untypedJsonc);
+});
 
 // IETF does not define duration formats in their RFCs, but in RFC 3399 refers ISO 8601 duration formats.
 // https://www.ietf.org/rfc/rfc3339.txt
@@ -143,10 +127,10 @@ export const Options = z.strictObject({
   minimumInterval: PositiveDuration,
   retryMethod: retryMethods,
   attemptLimits: z.number().min(1),
-  isEarlyExit: z.boolean(),
-  shouldSkipSameWorkflow: z.boolean(),
-  isDryRun: z.boolean(),
   eventNames,
+  isEarlyExitEnabled: z.boolean(),
+  isSkipSameWorkflowEnabled: z.boolean(),
+  isDryRunEnabled: z.boolean(),
 }).readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { error: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },

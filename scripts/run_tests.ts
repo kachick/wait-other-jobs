@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run --allow-all
-import $ from 'jsr:@david/dax';
+import $ from 'jsr:@david/dax@^0.43.1';
 
-import { join } from 'jsr:@std/path';
+import { join } from 'jsr:@std/path@^1.0.8';
 
 const cwd = Deno.cwd();
 const testDir = join(cwd, '__tests__');
@@ -12,4 +12,4 @@ const testPaths = Array.from(dirEnts).flatMap((dirent) =>
 
 console.log('Starting to run tests for', testPaths);
 
-await $`node --import tsx --no-warnings --test ${testPaths}`;
+await $`node --test ${testPaths}`;
