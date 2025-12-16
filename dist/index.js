@@ -44308,6 +44308,38 @@ function writeJobSummary(lastPolling, options) {
   import_core10.summary.write();
 }
 
+// src/util.ts
+function jsonReplacerForPrettyPrint(_key, value) {
+  const v2 = stringifyDuration(value);
+  if (v2 instanceof Set) {
+    return `Set<${Array.from(v2)}>`;
+  }
+  if (v2 instanceof Map) {
+    return `Map<${Object.fromEntries(v2)}>`;
+  }
+  return v2;
+}
+function stringifyDuration(input) {
+  if (input instanceof Xn.Duration) {
+    return `Temporal.Duration<${input.round({ largestUnit: "minutes" }).toJSON()}>`;
+  }
+  if (input instanceof Set || input instanceof Map) {
+    return input;
+  }
+  if (Array.isArray(input)) {
+    return input.map((item) => stringifyDuration(item));
+  }
+  if (typeof input === "object" && input !== null) {
+    const result = {};
+    for (const key of Object.keys(input)) {
+      const value = input[key];
+      result[key] = stringifyDuration(value);
+    }
+    return result;
+  }
+  return input;
+}
+
 // src/wait.ts
 import { setTimeout as setTimeout2 } from "node:timers/promises";
 var waitPrimitive = setTimeout2;
@@ -44362,7 +44394,7 @@ async function run() {
       options
       // Do NOT include secrets
     },
-    null,
+    jsonReplacerForPrettyPrint,
     2
   );
   (0, import_core11.info)(encodedParameters);
@@ -44410,7 +44442,7 @@ async function run() {
     for (const { severity, message, resource } of logs) {
       (0, import_core11.info)(colorize(severity, message));
       if (severity !== "info" && resource) {
-        (0, import_core11.info)(JSON.stringify(resource, null, 2));
+        (0, import_core11.info)(JSON.stringify(resource, jsonReplacerForPrettyPrint, 2));
       }
     }
     if (done) {
@@ -44439,7 +44471,7 @@ async function run() {
       break;
     }
   }
-  writeFileSync(dumpFile, JSON.stringify(dumper, null, 2));
+  writeFileSync(dumpFile, JSON.stringify(dumper, jsonReplacerForPrettyPrint, 2));
   (0, import_core11.setOutput)("dump", dumpFile);
 }
 void run();
