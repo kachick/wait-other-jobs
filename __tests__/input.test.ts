@@ -1,16 +1,18 @@
 import { deepStrictEqual } from 'node:assert/strict';
-import test from 'node:test';
+import { describe, it } from 'node:test';
 import { jsonInput } from '../src/schema.ts';
 
-test('jsonInput', async (t) => {
-  deepStrictEqual(jsonInput.parse('42'), 42);
-  deepStrictEqual(jsonInput.parse('["foo", 42]'), ['foo', 42]);
+describe('jsonInput', () => {
+  it('parses a simple value', () => {
+    deepStrictEqual(jsonInput.parse('42'), 42);
+    deepStrictEqual(jsonInput.parse('["foo", 42]'), ['foo', 42]);
+  });
 
-  await t.test('allows trailing commas', () => {
+  it('allows trailing commas', () => {
     deepStrictEqual(jsonInput.parse('["foo",,, 42,]'), ['foo', 42]);
   });
 
-  await t.test('allows comments in JSON', () => {
+  it('allows comments in JSON', () => {
     deepStrictEqual(
       jsonInput.parse(`
           ["foo",

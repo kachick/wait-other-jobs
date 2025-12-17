@@ -1,18 +1,20 @@
 import assert from 'node:assert';
-import test from 'node:test';
+import { describe, it } from 'node:test';
 import { Temporal } from 'temporal-polyfill';
 import { generateReport, getSummaries, type PollingReport, readableDuration, type Summary } from '../src/report.ts';
 import { omit } from '../src/util.ts';
 import { jsonEqual } from './assert.ts';
 import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './fixtures/snapshot.ts'; // 'undefined/workflow'` came from old snapshots
 
-test('readableDuration', () => {
-  assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 454356 })), 'about 7 minutes 34 seconds');
-  assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 32100 })), 'about 32 seconds');
-  assert.strictEqual(
-    readableDuration(Temporal.Duration.from({ hours: 4, minutes: 100, seconds: 79 })),
-    'about 5 hours 41 minutes 19 seconds',
-  );
+describe('readableDuration', () => {
+  it('formats duration in various units', () => {
+    assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 454356 })), 'about 7 minutes 34 seconds');
+    assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 32100 })), 'about 32 seconds');
+    assert.strictEqual(
+      readableDuration(Temporal.Duration.from({ hours: 4, minutes: 100, seconds: 79 })),
+      'about 5 hours 41 minutes 19 seconds',
+    );
+  });
 });
 
 const exampleSummary = Object.freeze(
@@ -39,8 +41,8 @@ const exampleSummary = Object.freeze(
   } as const satisfies Summary,
 );
 
-test('wait-list', async (t) => {
-  await t.test('basics', (_t) => {
+describe('wait-list', () => {
+  it('basics', () => {
     const trigger = {
       owner: 'kachick',
       repo: 'wait-other-jobs',
@@ -88,7 +90,7 @@ test('wait-list', async (t) => {
     });
   });
 
-  await t.test('prefix mode matches more', (_t) => {
+  it('prefix mode matches more', () => {
     const trigger = Object.freeze({
       owner: 'kachick',
       repo: 'wait-other-jobs',
@@ -183,7 +185,7 @@ test('wait-list', async (t) => {
     });
   });
 
-  await t.test('startupGracePeriod', async (t) => {
+  describe('startupGracePeriod', () => {
     const trigger = Object.freeze({
       owner: 'kachick',
       repo: 'wait-other-jobs',
@@ -192,7 +194,7 @@ test('wait-list', async (t) => {
       jobId: 'wait-success',
       eventName: 'pull_request',
     });
-    await t.test('required slowstarting job and set enough grace period', (_t) => {
+    it('required slowstarting job and set enough grace period', () => {
       const report = generateReport(
         getSummaries(checks92810686811WaitSuccessPolling1, trigger),
         trigger,
@@ -266,7 +268,7 @@ test('wait-list', async (t) => {
       );
     });
 
-    await t.test('slowstarting job has been expired to the given period', (_t) => {
+    it('slowstarting job has been expired to the given period', () => {
       const grace = Temporal.Duration.from({ seconds: 60 });
       const report = generateReport(
         getSummaries(checks92810686811WaitSuccessPolling1, trigger),
@@ -338,7 +340,7 @@ test('wait-list', async (t) => {
       });
     });
 
-    await t.test('judges as expired for same durations', (_t) => {
+    it('judges as expired for same durations', () => {
       const report = generateReport(
         getSummaries(checks92810686811WaitSuccessPolling1, trigger),
         trigger,
@@ -409,7 +411,7 @@ test('wait-list', async (t) => {
       });
     });
 
-    await t.test('mark bad for failures even if several runs are still in progress', (_t) => {
+    it('mark bad for failures even if several runs are still in progress', () => {
       const report = generateReport(
         [{
           ...exampleSummary,
@@ -503,8 +505,8 @@ test('wait-list', async (t) => {
   });
 });
 
-test('skip-list', async (t) => {
-  await t.test('ignores listed jobs', (_t) => {
+describe('skip-list', () => {
+  it('ignores listed jobs', () => {
     const trigger = {
       owner: 'kachick',
       repo: 'wait-other-jobs',
@@ -545,7 +547,7 @@ test('skip-list', async (t) => {
     });
   });
 
-  await t.test('prefix mode ignores more', (_t) => {
+  it('prefix mode ignores more', () => {
     const trigger = Object.freeze({
       owner: 'kachick',
       repo: 'wait-other-jobs',
