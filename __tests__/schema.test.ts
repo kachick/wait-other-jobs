@@ -18,7 +18,7 @@ const defaultOptions = Object.freeze({
 });
 
 describe('Options', () => {
-  it('keep given values', () => {
+  it('preserves given option values', () => {
     jsonEqual({
       apiUrl: 'https://api.github.com',
       isEarlyExitEnabled: true,
@@ -33,7 +33,7 @@ describe('Options', () => {
     }, Options.parse(defaultOptions));
   });
 
-  it('set some default values it cannot be defined in action.yml', () => {
+  it('sets default values for options not definable in action.yml', () => {
     jsonEqual(
       Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }),
       {
@@ -48,7 +48,7 @@ describe('Options', () => {
     );
   });
 
-  it('accept all yaml extensions', () => {
+  it('accepts both .yml and .yaml extensions for workflow files', () => {
     jsonEqual(
       Options.parse({ ...defaultOptions, waitList: [{ workflowFile: 'ci.yml' }] }),
       {
@@ -77,7 +77,7 @@ describe('Options', () => {
     );
   });
 
-  it('can start immediately. GH-994', () => {
+  it('allows starting immediately with zero warmup delay (GH-994)', () => {
     jsonEqual(
       Options.parse({ ...defaultOptions, warmupDelay: Temporal.Duration.from({ seconds: 0 }) }),
       {
@@ -87,7 +87,7 @@ describe('Options', () => {
     );
   });
 
-  it('reject invalid values', () => {
+  it('rejects invalid option values', () => {
     throws(() => Options.parse({ ...defaultOptions, warmupDelay: Temporal.Duration.from({ seconds: -1 }) }), {
       name: 'ZodError',
       message: /Negative intervals are not reasonable for pollings/,
@@ -146,7 +146,7 @@ describe('Options', () => {
 });
 
 describe('Durationable', () => {
-  it('transformed to Temporal.Duration', () => {
+  it('transforms a duration string to a Temporal.Duration object', () => {
     durationEqual(Durationable.parse('PT1M42S'), Temporal.Duration.from({ seconds: 102 }));
     durationEqual(
       Durationable.parse(Temporal.Duration.from({ minutes: 1, seconds: 42 })),
@@ -154,7 +154,7 @@ describe('Durationable', () => {
     );
   });
 
-  it('it raises an error if given an invalid formats', () => {
+  it('raises an error for invalid duration formats', () => {
     throws(
       () => Durationable.parse('42 minutes'),
       {
@@ -165,9 +165,9 @@ describe('Durationable', () => {
   });
 });
 
-describe('wait-list', () => {
+describe('Options with wait-list', () => {
   describe('startupGracePeriod', () => {
-    it('it accepts DurationLike objects', () => {
+    it('accepts Temporal.Duration objects', () => {
       jsonEqual(
         Options.parse({
           ...defaultOptions,
@@ -185,7 +185,7 @@ describe('wait-list', () => {
       );
     });
 
-    it('it raises an error if given an unexpected format', () => {
+    it('raises an error for unexpected duration formats', () => {
       throws(
         () =>
           Options.parse({
@@ -199,7 +199,7 @@ describe('wait-list', () => {
       );
     });
 
-    it('it parses ISO 8601 duration format', () => {
+    it('parses ISO 8601 duration format strings', () => {
       jsonEqual(
         Options.parse({
           ...defaultOptions,
@@ -217,7 +217,7 @@ describe('wait-list', () => {
       );
     });
 
-    it('it raises a ZodError if given value is larger than initial polling time', () => {
+    it('raises an error if grace period is shorter than warmup delay', () => {
       throws(
         () =>
           Options.parse({
@@ -232,7 +232,7 @@ describe('wait-list', () => {
       );
     });
 
-    it('but does not raises errors if given value is as same as default to keep backward compatibility', () => {
+    it('does not raise an error for backward compatibility when grace period is the default', () => {
       jsonEqual(
         Options.parse({
           ...defaultOptions,
@@ -273,7 +273,7 @@ describe('wait-list', () => {
 });
 
 describe('jobMatchMode', () => {
-  it('it accepts exact and prefix mode', () => {
+  it('accepts "exact" and "prefix" match modes', () => {
     jsonEqual(
       Options.parse({
         ...defaultOptions,
@@ -317,7 +317,7 @@ describe('jobMatchMode', () => {
     );
   });
 
-  it('it raises a ZodError if given an unsupported mode', () => {
+  it('raises an error for unsupported match modes', () => {
     throws(
       () =>
         Options.parse({

@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 import { jsonInput } from '../src/schema.ts';
 
 describe('jsonInput', () => {
-  it('parses a simple value', () => {
+  it('parses a valid JSON string for a primitive or an array', () => {
     deepStrictEqual(jsonInput.parse('42'), 42);
     deepStrictEqual(jsonInput.parse('["foo", 42]'), ['foo', 42]);
   });

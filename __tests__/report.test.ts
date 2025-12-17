@@ -8,7 +8,10 @@ import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './fixtur
 
 describe('readableDuration', () => {
   it('formats duration in various units', () => {
-    assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 454356 })), 'about 7 minutes 34 seconds');
+    assert.strictEqual(
+      readableDuration(Temporal.Duration.from({ milliseconds: 454356 })),
+      'about 7 minutes 34 seconds',
+    );
     assert.strictEqual(readableDuration(Temporal.Duration.from({ milliseconds: 32100 })), 'about 32 seconds');
     assert.strictEqual(
       readableDuration(Temporal.Duration.from({ hours: 4, minutes: 100, seconds: 79 })),
@@ -41,8 +44,8 @@ const exampleSummary = Object.freeze(
   } as const satisfies Summary,
 );
 
-describe('wait-list', () => {
-  it('basics', () => {
+describe('generateReport with wait-list', () => {
+  it('reports done when required jobs are met', () => {
     const trigger = {
       owner: 'kachick',
       repo: 'wait-other-jobs',
@@ -90,7 +93,7 @@ describe('wait-list', () => {
     });
   });
 
-  it('prefix mode matches more', () => {
+  it('matches jobs by prefix when specified', () => {
     const trigger = Object.freeze({
       owner: 'kachick',
       repo: 'wait-other-jobs',
@@ -185,7 +188,7 @@ describe('wait-list', () => {
     });
   });
 
-  describe('startupGracePeriod', () => {
+  describe('with startupGracePeriod', () => {
     const trigger = Object.freeze({
       owner: 'kachick',
       repo: 'wait-other-jobs',
@@ -194,7 +197,7 @@ describe('wait-list', () => {
       jobId: 'wait-success',
       eventName: 'pull_request',
     });
-    it('required slowstarting job and set enough grace period', () => {
+    it('waits for a slow-starting job if within its grace period', () => {
       const report = generateReport(
         getSummaries(checks92810686811WaitSuccessPolling1, trigger),
         trigger,
@@ -268,7 +271,7 @@ describe('wait-list', () => {
       );
     });
 
-    it('slowstarting job has been expired to the given period', () => {
+    it('fails if a slow-starting job exceeds its grace period', () => {
       const grace = Temporal.Duration.from({ seconds: 60 });
       const report = generateReport(
         getSummaries(checks92810686811WaitSuccessPolling1, trigger),
@@ -340,7 +343,7 @@ describe('wait-list', () => {
       });
     });
 
-    it('judges as expired for same durations', () => {
+    it('fails if a slow-starting job has the same duration as the grace period', () => {
       const report = generateReport(
         getSummaries(checks92810686811WaitSuccessPolling1, trigger),
         trigger,
@@ -411,7 +414,7 @@ describe('wait-list', () => {
       });
     });
 
-    it('mark bad for failures even if several runs are still in progress', () => {
+    it('reports failure for completed failing jobs even with pending jobs', () => {
       const report = generateReport(
         [{
           ...exampleSummary,
@@ -505,8 +508,8 @@ describe('wait-list', () => {
   });
 });
 
-describe('skip-list', () => {
-  it('ignores listed jobs', () => {
+describe('generateReport with skip-list', () => {
+  it('ignores jobs specified in the skip list', () => {
     const trigger = {
       owner: 'kachick',
       repo: 'wait-other-jobs',
@@ -547,7 +550,7 @@ describe('skip-list', () => {
     });
   });
 
-  it('prefix mode ignores more', () => {
+  it('ignores jobs by prefix when specified', () => {
     const trigger = Object.freeze({
       owner: 'kachick',
       repo: 'wait-other-jobs',

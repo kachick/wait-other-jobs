@@ -20,7 +20,7 @@ describe('wait', () => {
 });
 
 describe('calcExponentialBackoffAndJitter', () => {
-  it('returns interval with backoff and jitter', () => {
+  it('returns an interval with exponential backoff and jitter', () => {
     const minimumInterval = Temporal.Duration.from({ seconds: 100 });
 
     assert(
@@ -96,7 +96,7 @@ describe('calcExponentialBackoffAndJitter', () => {
 });
 
 describe('getInterval', () => {
-  it('returns different value with the given method', () => {
+  it('returns an interval based on the specified retry method', () => {
     const minimumInterval = Temporal.Duration.from({ seconds: 100 });
 
     assert(
