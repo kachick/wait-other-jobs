@@ -44,6 +44,8 @@ const exampleSummary = Object.freeze(
   } as const satisfies Summary,
 );
 
+const exampleEventNames = Object.freeze(new Set(['push', 'pull_request']));
+
 describe('generateReport with wait-list', () => {
   it('reports done when required jobs are met', () => {
     const trigger = {
@@ -59,12 +61,13 @@ describe('generateReport with wait-list', () => {
       trigger,
       Temporal.Duration.from({ seconds: 420 }),
       {
+        eventNames: exampleEventNames,
         waitList: [
           {
             'workflowFile': 'lint.yml',
             jobMatchMode: 'all',
             'optional': false,
-            'eventName': 'pull_request',
+            eventNames: exampleEventNames,
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
           {
@@ -72,12 +75,14 @@ describe('generateReport with wait-list', () => {
             'jobName': 'dependabot',
             jobMatchMode: 'exact',
             'optional': true,
+            eventNames: exampleEventNames,
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
           {
             'workflowFile': 'THERE_ARE_NO_FILES_AS_THIS.yml',
             jobMatchMode: 'all',
             'optional': true,
+            eventNames: exampleEventNames,
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
         ],
@@ -128,12 +133,14 @@ describe('generateReport with wait-list', () => {
       trigger,
       Temporal.Duration.from({ seconds: 60 }),
       {
+        eventNames: exampleEventNames,
         'waitList': [
           {
             'workflowFile': 'ci.yml',
             'jobName': 'quickstarter-',
             jobMatchMode: 'prefix',
             'optional': false,
+            eventNames: exampleEventNames,
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
           },
         ],
@@ -203,12 +210,14 @@ describe('generateReport with wait-list', () => {
         trigger,
         Temporal.Duration.from({ milliseconds: Math.ceil(986.9570700004697) }),
         {
+          eventNames: exampleEventNames,
           'waitList': [
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'quickstarter-success',
               jobMatchMode: 'exact',
               'optional': false,
+              eventNames: exampleEventNames,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
             },
             {
@@ -216,6 +225,7 @@ describe('generateReport with wait-list', () => {
               'jobName': 'slowstarter-success',
               jobMatchMode: 'exact',
               'optional': false,
+              eventNames: exampleEventNames,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
             },
           ],
@@ -255,6 +265,7 @@ describe('generateReport with wait-list', () => {
               message: 'Some expected jobs were not started',
               resource: [
                 {
+                  eventNames: exampleEventNames,
                   found: false,
                   jobName: 'slowstarter-success',
                   jobMatchMode: 'exact',
@@ -278,12 +289,14 @@ describe('generateReport with wait-list', () => {
         trigger,
         grace.add({ milliseconds: 1 }),
         {
+          eventNames: exampleEventNames,
           'waitList': [
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'quickstarter-success',
               jobMatchMode: 'exact',
               'optional': false,
+              eventNames: exampleEventNames,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
             },
             {
@@ -291,6 +304,7 @@ describe('generateReport with wait-list', () => {
               'jobName': 'slowstarter-success',
               jobMatchMode: 'exact',
               'optional': false,
+              eventNames: exampleEventNames,
               'startupGracePeriod': grace,
             },
           ],
@@ -328,6 +342,7 @@ describe('generateReport with wait-list', () => {
             message: 'Failed to meet some runs on your specified wait-list',
             resource: [
               {
+                eventNames: exampleEventNames,
                 found: false,
                 jobName: 'slowstarter-success',
                 jobMatchMode: 'exact',
@@ -349,12 +364,14 @@ describe('generateReport with wait-list', () => {
         trigger,
         Temporal.Duration.from({ seconds: 60 }),
         {
+          eventNames: exampleEventNames,
           'waitList': [
             {
               'workflowFile': 'GH-820-graceperiod.yml',
               'jobName': 'quickstarter-success',
               jobMatchMode: 'exact',
               'optional': false,
+              eventNames: exampleEventNames,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 10 }),
             },
             {
@@ -362,6 +379,7 @@ describe('generateReport with wait-list', () => {
               'jobName': 'slowstarter-success',
               jobMatchMode: 'exact',
               'optional': false,
+              eventNames: exampleEventNames,
               'startupGracePeriod': Temporal.Duration.from({ seconds: 60 }),
             },
           ],
@@ -399,6 +417,7 @@ describe('generateReport with wait-list', () => {
             message: 'Failed to meet some runs on your specified wait-list',
             resource: [
               {
+                eventNames: exampleEventNames,
                 found: false,
                 jobName: 'slowstarter-success',
                 jobMatchMode: 'exact',
@@ -434,12 +453,14 @@ describe('generateReport with wait-list', () => {
         trigger,
         Temporal.Duration.from({ minutes: 2 }),
         {
+          eventNames: exampleEventNames,
           'waitList': [
             {
               'workflowFile': 'ci.yml',
               'jobName': 'quickstarter-success',
               jobMatchMode: 'exact',
               'optional': false,
+              eventNames: exampleEventNames,
               'startupGracePeriod': Temporal.Duration.from({ minutes: 5 }),
             },
             {
@@ -447,6 +468,7 @@ describe('generateReport with wait-list', () => {
               'jobName': 'quickstarter-fail',
               jobMatchMode: 'exact',
               'optional': false,
+              eventNames: exampleEventNames,
               'startupGracePeriod': Temporal.Duration.from({ minutes: 5 }),
             },
             {
@@ -454,6 +476,7 @@ describe('generateReport with wait-list', () => {
               'jobName': 'slowstarter-missing',
               jobMatchMode: 'exact',
               'optional': false,
+              eventNames: exampleEventNames,
               'startupGracePeriod': Temporal.Duration.from({ minutes: 5 }),
             },
           ],
@@ -491,6 +514,7 @@ describe('generateReport with wait-list', () => {
             message: 'Some expected jobs were not started',
             resource: [
               {
+                eventNames: exampleEventNames,
                 found: false,
                 jobName: 'slowstarter-missing',
                 jobMatchMode: 'exact',
@@ -523,20 +547,24 @@ describe('generateReport with skip-list', () => {
       trigger,
       Temporal.Duration.from({ seconds: 420 }),
       {
+        eventNames: exampleEventNames,
         waitList: [],
         skipList: [
           {
             'workflowFile': 'itself.yml',
             jobMatchMode: 'all',
+            eventNames: new Set([]),
           },
           {
             'workflowFile': 'ci.yml',
             jobMatchMode: 'all',
+            eventNames: new Set([]),
           },
           {
             'workflowFile': 'merge-bot-pr.yml',
             'jobName': 'dependabot',
             jobMatchMode: 'exact',
+            eventNames: new Set([]),
           },
         ],
         isSkipSameWorkflowEnabled: false,
@@ -585,12 +613,14 @@ describe('generateReport with skip-list', () => {
       trigger,
       Temporal.Duration.from({ seconds: 60 }),
       {
+        eventNames: exampleEventNames,
         waitList: [],
         'skipList': [
           {
             'workflowFile': 'ci.yml',
             'jobName': 'quickstarter-',
             jobMatchMode: 'prefix',
+            eventNames: new Set([]),
           },
         ],
         isSkipSameWorkflowEnabled: false,

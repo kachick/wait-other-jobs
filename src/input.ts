@@ -54,6 +54,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     attemptLimits,
     waitList: jsonInput.parse(getInput('wait-list', { required: true })),
     skipList: jsonInput.parse(getInput('skip-list', { required: true })),
+    eventNames: jsonInput.parse(getInput('event-list', { required: true })),
     isEarlyExitEnabled,
     isSkipSameWorkflowEnabled,
     isDryRunEnabled,

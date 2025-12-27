@@ -1,6 +1,6 @@
-import { deepStrictEqual } from 'node:assert/strict';
+import { deepStrictEqual, throws } from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { jsonInput } from '../src/schema.ts';
+import { eventNames, jsonInput } from '../src/schema.ts';
 
 describe('jsonInput', () => {
   it('parses a valid JSON string for a primitive or an array', () => {
@@ -20,6 +20,24 @@ describe('jsonInput', () => {
           42]
         `),
       ['foo', 42],
+    );
+  });
+});
+
+describe('event-list', () => {
+  it('parses valid values', () => {
+    deepStrictEqual(eventNames.parse(jsonInput.parse('[]')), new Set());
+
+    deepStrictEqual(eventNames.parse(jsonInput.parse('["push", "pull_request"]')), new Set(['push', 'pull_request']));
+  });
+
+  it('raises error for invalid inputs', () => {
+    throws(
+      () => eventNames.parse(jsonInput.parse('[42]')),
+      {
+        name: 'ZodError',
+        message: /invalid_type/,
+      },
     );
   });
 });

@@ -1,7 +1,9 @@
 import { throws } from 'node:assert';
 import { describe, it } from 'node:test';
 import { Temporal } from 'temporal-polyfill';
+
 import { Durationable, Options } from '../src/schema.ts';
+
 import { durationEqual, jsonEqual } from './assert.ts';
 
 const defaultOptions = Object.freeze({
@@ -13,6 +15,7 @@ const defaultOptions = Object.freeze({
   warmupDelay: Temporal.Duration.from({ seconds: 1 }),
   minimumInterval: Temporal.Duration.from({ seconds: 10 }),
   retryMethod: 'equal_intervals',
+  eventNames: new Set(['push', 'pull_request']),
   isSkipSameWorkflowEnabled: false,
   isDryRunEnabled: false,
 });
@@ -28,6 +31,7 @@ describe('Options', () => {
       warmupDelay: Temporal.Duration.from({ seconds: 1 }),
       minimumInterval: Temporal.Duration.from({ seconds: 10 }),
       retryMethod: 'equal_intervals',
+      eventNames: new Set(['push', 'pull_request']),
       isSkipSameWorkflowEnabled: false,
       isDryRunEnabled: false,
     }, Options.parse(defaultOptions));
@@ -43,6 +47,7 @@ describe('Options', () => {
           jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+          eventNames: new Set([]),
         }],
       },
     );
@@ -58,6 +63,7 @@ describe('Options', () => {
           jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+          eventNames: new Set([]),
         }],
       },
     );
@@ -72,6 +78,7 @@ describe('Options', () => {
           jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+          eventNames: new Set([]),
         }],
       },
     );
@@ -180,6 +187,7 @@ describe('Options with wait-list', () => {
             jobMatchMode: 'all',
             optional: false,
             startupGracePeriod: Temporal.Duration.from({ minutes: 5 }),
+            eventNames: new Set([]),
           }],
         },
       );
@@ -212,6 +220,7 @@ describe('Options with wait-list', () => {
             jobMatchMode: 'all',
             optional: false,
             startupGracePeriod: Temporal.Duration.from({ minutes: 1, seconds: 42 }),
+            eventNames: new Set([]),
           }],
         },
       );
@@ -247,6 +256,7 @@ describe('Options with wait-list', () => {
             jobMatchMode: 'all',
             optional: false,
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+            eventNames: new Set([]),
           }],
         },
       );
@@ -265,10 +275,36 @@ describe('Options with wait-list', () => {
             jobMatchMode: 'all',
             optional: false,
             startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+            eventNames: new Set([]),
           }],
         },
       );
     });
+  });
+});
+
+describe('wait-list item have deprecated eventName field', () => {
+  it('converts to eventNames', () => {
+    jsonEqual(
+      Options.parse({
+        ...defaultOptions,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          startupGracePeriod: Temporal.Duration.from({ minutes: 5 }),
+          eventName: 'push',
+        }],
+      }),
+      {
+        ...defaultOptions,
+        waitList: [{
+          workflowFile: 'ci.yml',
+          jobMatchMode: 'all',
+          optional: false,
+          startupGracePeriod: Temporal.Duration.from({ minutes: 5 }),
+          eventNames: new Set(['push']),
+        }],
+      },
+    );
   });
 });
 
@@ -291,6 +327,7 @@ describe('jobMatchMode', () => {
           workflowFile: 'ci.yml',
           jobName: 'test-',
           jobMatchMode: 'exact',
+          eventNames: new Set([]),
         }],
       },
     );
@@ -312,6 +349,7 @@ describe('jobMatchMode', () => {
           workflowFile: 'ci.yml',
           jobName: 'test-',
           jobMatchMode: 'prefix',
+          eventNames: new Set([]),
         }],
       },
     );

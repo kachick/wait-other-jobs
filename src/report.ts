@@ -171,7 +171,8 @@ function seekWaitList(
   const filtered = summaries.filter((summary) =>
     seeker.some((target) => {
       const isMatchPath = matchPath(target, summary);
-      const isMatchEvent = target.eventName ? (target.eventName === summary.eventName) : true;
+      const targetEvents = target.eventNames;
+      const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary.eventName);
       if (isMatchPath && isMatchEvent) {
         target.found = true;
         return true;
@@ -223,9 +224,9 @@ export function generateReport(
   summaries: readonly Summary[],
   trigger: Trigger,
   elapsed: Temporal.Duration,
-  { waitList, skipList, isSkipSameWorkflowEnabled }: Pick<
+  { waitList, skipList, eventNames, isSkipSameWorkflowEnabled }: Pick<
     Options,
-    'waitList' | 'skipList' | 'isSkipSameWorkflowEnabled'
+    'waitList' | 'skipList' | 'eventNames' | 'isSkipSameWorkflowEnabled'
   >,
 ): PollingReport {
   const others = summaries.filter((summary) =>
@@ -288,7 +289,11 @@ export function generateReport(
     return { ...judge(filtered), summaries: filtered };
   }
 
-  return { ...judge(targets), summaries: targets };
+  const eventFiltered = eventNames.size === 0 ? targets : targets.filter((summary) => {
+    return eventNames.has(summary.eventName);
+  });
+
+  return { ...judge(eventFiltered), summaries: eventFiltered };
 }
 
 export function writeJobSummary(lastPolling: PollingReport, options: Options) {

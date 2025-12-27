@@ -1,9 +1,10 @@
+import { emitWarning } from 'node:process';
 import type { CheckRun, CheckSuite, Workflow, WorkflowRun } from '@octokit/graphql-schema';
 import { parse } from 'jsonc-parser';
 import { Temporal } from 'temporal-polyfill';
 import { z } from 'zod';
 
-const jsonSchema = z.json();
+export const jsonSchema = z.json();
 
 // ref: https://github.com/colinhacks/zod/discussions/2215#discussioncomment-13836018
 export const jsonInput = z.string().transform((str): z.infer<z.ZodJSONSchema> => {
@@ -31,38 +32,85 @@ export const ZeroableDuration = z.instanceof(Temporal.Duration).refine(
 );
 const defaultGrace = Temporal.Duration.from({ seconds: 10 });
 
+// Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
+const eventName = z.string().min(1);
+
+export const eventNames = z.preprocess(
+  (input) => {
+    if (Array.isArray(input)) {
+      return new Set(input);
+    }
+
+    return input;
+  },
+  z.set(eventName).readonly(),
+).default(Object.freeze(new Set([]))).meta({
+  // Initially I thought literal string might be better, however those union types are complex,
+  // and also complex for the parsing user inputs. Only use string array is simple in JSON
+  description: `Empty means "any"`,
+});
+
 const workflowPath = z.string().endsWith('.yml').or(z.string().endsWith('.yaml'));
-const matchAllJobs = z.strictObject({
+
+const commonFilterCondition = {
   workflowFile: workflowPath,
+  eventNames,
+};
+
+const matchAllJobs = z.strictObject({
+  ...commonFilterCondition,
   jobMatchMode: z.literal('all').default('all'),
 });
 const matchPartialJobs = z.strictObject({
-  workflowFile: workflowPath,
+  ...commonFilterCondition,
   jobName: z.string().min(1),
   jobMatchMode: z.enum(['exact', 'prefix']).default('exact'),
 });
 
-const FilterCondition = z.union([matchAllJobs, matchPartialJobs]);
-const SkipFilterCondition = FilterCondition.readonly();
+const commonFilterConditions = [matchAllJobs, matchPartialJobs] as const;
 
 const waitOptions = {
-  optional: z.boolean().default(false).readonly(),
-
-  // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
-  // - Intentionally omitted in skip-list, let me know if you have the use-case
-  eventName: z.string().min(1).optional(),
+  optional: z.boolean().default(false),
 
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
   startupGracePeriod: Durationable.default(defaultGrace),
 };
 
-const WaitFilterCondition = z.union([
-  z.strictObject(matchAllJobs.extend(waitOptions).shape),
-  z.strictObject(matchPartialJobs.extend(waitOptions).shape),
-]).readonly();
-const WaitList = z.array(WaitFilterCondition).readonly();
-const SkipList = z.array(SkipFilterCondition).readonly();
+// Keeping backward compatibility for eventName despite v4 cleanup,
+// since this was changed right before v4 release to avoid major breaking changes.
+const preprocessDeprecatedEventName = (input: Readonly<unknown>) => {
+  if (!(typeof input === 'object' && input !== null)) {
+    throw new Error('Invalid input');
+  }
+
+  if (!('eventName' in input)) {
+    return input;
+  }
+
+  if ('eventNames' in input) {
+    throw new Error("Don't set both eventName and eventNames together. Only use eventNames.");
+  }
+
+  emitWarning(
+    "DEPRECATED: 'eventName' will be removed in v5. Use 'eventNames' instead.",
+  );
+
+  const { eventName, ...rest } = input;
+
+  return { ...rest, eventNames: new Set([eventName]) };
+};
+
+const waitFilterCondition = z.union(
+  commonFilterConditions.map((item) => z.preprocess(preprocessDeprecatedEventName, item.extend(waitOptions))),
+);
+const skipFilterCondition = z.union(commonFilterConditions);
+
+const WaitList = z.array(waitFilterCondition).readonly();
+const SkipList = z.array(skipFilterCondition).readonly();
+
+const FilterCondition = z.union([waitFilterCondition, skipFilterCondition]);
+
 export type FilterCondition = z.infer<typeof FilterCondition>;
 export type WaitList = z.infer<typeof WaitList>;
 
@@ -79,6 +127,7 @@ export const Options = z.strictObject({
   minimumInterval: PositiveDuration,
   retryMethod: retryMethods,
   attemptLimits: z.number().min(1),
+  eventNames,
   isEarlyExitEnabled: z.boolean(),
   isSkipSameWorkflowEnabled: z.boolean(),
   isDryRunEnabled: z.boolean(),

@@ -29755,6 +29755,9 @@ import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 import { env } from "node:process";
 
+// src/schema.ts
+import { emitWarning } from "node:process";
+
 // node_modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/impl/scanner.js
 function createScanner(text, ignoreTrivia = false) {
   const len = text.length;
@@ -43957,33 +43960,64 @@ var ZeroableDuration = external_exports.instanceof(Xn.Duration).refine(
   }
 );
 var defaultGrace = Xn.Duration.from({ seconds: 10 });
+var eventName = external_exports.string().min(1);
+var eventNames = external_exports.preprocess(
+  (input) => {
+    if (Array.isArray(input)) {
+      return new Set(input);
+    }
+    return input;
+  },
+  external_exports.set(eventName).readonly()
+).default(Object.freeze(/* @__PURE__ */ new Set([]))).meta({
+  // Initially I thought literal string might be better, however those union types are complex,
+  // and also complex for the parsing user inputs. Only use string array is simple in JSON
+  description: `Empty means "any"`
+});
 var workflowPath = external_exports.string().endsWith(".yml").or(external_exports.string().endsWith(".yaml"));
-var matchAllJobs = external_exports.strictObject({
+var commonFilterCondition = {
   workflowFile: workflowPath,
+  eventNames
+};
+var matchAllJobs = external_exports.strictObject({
+  ...commonFilterCondition,
   jobMatchMode: external_exports.literal("all").default("all")
 });
 var matchPartialJobs = external_exports.strictObject({
-  workflowFile: workflowPath,
+  ...commonFilterCondition,
   jobName: external_exports.string().min(1),
   jobMatchMode: external_exports.enum(["exact", "prefix"]).default("exact")
 });
-var FilterCondition = external_exports.union([matchAllJobs, matchPartialJobs]);
-var SkipFilterCondition = FilterCondition.readonly();
+var commonFilterConditions = [matchAllJobs, matchPartialJobs];
 var waitOptions = {
-  optional: external_exports.boolean().default(false).readonly(),
-  // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
-  // - Intentionally omitted in skip-list, let me know if you have the use-case
-  eventName: external_exports.string().min(1).optional(),
+  optional: external_exports.boolean().default(false),
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
   startupGracePeriod: Durationable.default(defaultGrace)
 };
-var WaitFilterCondition = external_exports.union([
-  external_exports.strictObject(matchAllJobs.extend(waitOptions).shape),
-  external_exports.strictObject(matchPartialJobs.extend(waitOptions).shape)
-]).readonly();
-var WaitList = external_exports.array(WaitFilterCondition).readonly();
-var SkipList = external_exports.array(SkipFilterCondition).readonly();
+var preprocessDeprecatedEventName = (input) => {
+  if (!(typeof input === "object" && input !== null)) {
+    throw new Error("Invalid input");
+  }
+  if (!("eventName" in input)) {
+    return input;
+  }
+  if ("eventNames" in input) {
+    throw new Error("Don't set both eventName and eventNames together. Only use eventNames.");
+  }
+  emitWarning(
+    "DEPRECATED: 'eventName' will be removed in v5. Use 'eventNames' instead."
+  );
+  const { eventName: eventName2, ...rest } = input;
+  return { ...rest, eventNames: /* @__PURE__ */ new Set([eventName2]) };
+};
+var waitFilterCondition = external_exports.union(
+  commonFilterConditions.map((item) => external_exports.preprocess(preprocessDeprecatedEventName, item.extend(waitOptions)))
+);
+var skipFilterCondition = external_exports.union(commonFilterConditions);
+var WaitList = external_exports.array(waitFilterCondition).readonly();
+var SkipList = external_exports.array(skipFilterCondition).readonly();
+var FilterCondition = external_exports.union([waitFilterCondition, skipFilterCondition]);
 var retryMethods = external_exports.enum(["exponential_backoff", "equal_intervals"]);
 var Options = external_exports.strictObject({
   apiUrl: external_exports.url(),
@@ -43993,6 +44027,7 @@ var Options = external_exports.strictObject({
   minimumInterval: PositiveDuration,
   retryMethod: retryMethods,
   attemptLimits: external_exports.number().min(1),
+  eventNames,
   isEarlyExitEnabled: external_exports.boolean(),
   isSkipSameWorkflowEnabled: external_exports.boolean(),
   isDryRunEnabled: external_exports.boolean()
@@ -44024,7 +44059,7 @@ function parseInput() {
     // https://github.com/orgs/community/discussions/16614
     job: jobId,
     sha,
-    eventName
+    eventName: eventName2
   } = import_github.context;
   const pr2 = payload.pull_request;
   let commitSha = sha;
@@ -44057,11 +44092,12 @@ function parseInput() {
     attemptLimits,
     waitList: jsonInput.parse((0, import_core9.getInput)("wait-list", { required: true })),
     skipList: jsonInput.parse((0, import_core9.getInput)("skip-list", { required: true })),
+    eventNames: jsonInput.parse((0, import_core9.getInput)("event-list", { required: true })),
     isEarlyExitEnabled,
     isSkipSameWorkflowEnabled,
     isDryRunEnabled
   });
-  const trigger = { ...repo, ref: commitSha, runId, jobId, eventName };
+  const trigger = { ...repo, ref: commitSha, runId, jobId, eventName: eventName2 };
   const githubToken = (0, import_core9.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core9.setSecret)(githubToken);
   return { trigger, options, githubToken, tempDir };
@@ -44163,7 +44199,8 @@ function seekWaitList(summaries, waitList, elapsed) {
   const filtered = summaries.filter(
     (summary2) => seeker.some((target) => {
       const isMatchPath = matchPath(target, summary2);
-      const isMatchEvent = target.eventName ? target.eventName === summary2.eventName : true;
+      const targetEvents = target.eventNames;
+      const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary2.eventName);
       if (isMatchPath && isMatchEvent) {
         target.found = true;
         return true;
@@ -44204,7 +44241,7 @@ function judge(summaries) {
     logs
   };
 }
-function generateReport(summaries, trigger, elapsed, { waitList, skipList, isSkipSameWorkflowEnabled }) {
+function generateReport(summaries, trigger, elapsed, { waitList, skipList, eventNames: eventNames2, isSkipSameWorkflowEnabled }) {
   const others = summaries.filter(
     (summary2) => !(summary2.isSameWorkflow && // Ideally this logic should be...
     //
@@ -44258,7 +44295,10 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, isSki
     const filtered = targets.filter((summary2) => !skipList.some((target) => matchPath(target, summary2)));
     return { ...judge(filtered), summaries: filtered };
   }
-  return { ...judge(targets), summaries: targets };
+  const eventFiltered = eventNames2.size === 0 ? targets : targets.filter((summary2) => {
+    return eventNames2.has(summary2.eventName);
+  });
+  return { ...judge(eventFiltered), summaries: eventFiltered };
 }
 function writeJobSummary(lastPolling, options) {
   import_core10.summary.addHeading("wait-other-jobs", 1);
@@ -44287,15 +44327,15 @@ function writeJobSummary(lastPolling, options) {
   ];
   import_core10.summary.addTable([
     headers,
-    ...lastPolling.summaries.toSorted(compareLevel).map(({ severity, workflowPermalink, workflowBasename, jobName, eventName, runStatus, runConclusion, checkRunUrl }) => [{
+    ...lastPolling.summaries.toSorted(compareLevel).map(({ severity, workflowPermalink, workflowBasename, jobName, eventName: eventName2, runStatus, runConclusion, checkRunUrl }) => [{
       data: getEmoji(severity)
     }, {
       // e.g. AFAIK, we can't access and control github provided dependabot workflow except the run logs. The event type is `dynamic`.
-      data: eventName === "dynamic" ? workflowBasename : `<a href="${workflowPermalink}">${workflowBasename}</a>`
+      data: eventName2 === "dynamic" ? workflowBasename : `<a href="${workflowPermalink}">${workflowBasename}</a>`
     }, {
       data: jobName
     }, {
-      data: eventName
+      data: eventName2
     }, {
       data: runStatus
     }, {
