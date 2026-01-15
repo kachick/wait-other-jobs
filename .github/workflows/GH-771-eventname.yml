@@ -45,7 +45,7 @@ jobs:
               {
                 "workflowFile": "GH-771-eventname.yml",
                 "jobName": "echo",
-                "eventNames": "[${{ github.event_name }}]"
+                "eventNames": [ "${{ github.event_name }}" ]
               }
             ]
   backward-cmpat-v3:
