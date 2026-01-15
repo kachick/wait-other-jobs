@@ -45,6 +45,30 @@ jobs:
               {
                 "workflowFile": "GH-771-eventname.yml",
                 "jobName": "echo",
+                "eventNames": "[${{ github.event_name }}]"
+              }
+            ]
+  backward-cmpat-v3:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: |
+          echo 'Triggered by ${{ github.event_name }} event'
+          echo 'See https://github.com/kachick/wait-other-jobs/issues/771 for the detail'
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+      - uses: ./
+        with:
+          retry-method: 'equal_intervals'
+          minimum-interval: 'PT5S'
+          attempt-limits: 30
+          skip-same-workflow: 'false'
+          wait-list: |
+            [
+              {
+                "workflowFile": "GH-771-eventname.yml",
+                "jobName": "echo",
                 "eventName": "${{ github.event_name }}"
               }
             ]
