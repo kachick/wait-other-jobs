@@ -44005,14 +44005,11 @@ var waitOptions = {
   startupGracePeriod: Durationable.default(defaultGrace)
 };
 var preprocessDeprecatedEventName = (input) => {
-  if (!(typeof input === "object" && input !== null)) {
-    throw new Error("Invalid input");
-  }
-  if (!("eventName" in input)) {
+  if (typeof input !== "object" || input === null) {
     return input;
   }
-  if ("eventNames" in input) {
-    throw new Error("Don't set both eventName and eventNames together. Only use eventNames.");
+  if (!("eventName" in input) || "eventNames" in input) {
+    return input;
   }
   emitWarning(
     "DEPRECATED: 'eventName' will be removed in v5. Use 'eventNames' instead."

@@ -90,24 +90,20 @@ const waitOptions = {
 
 // Keeping backward compatibility for eventName despite v4 cleanup,
 // since this was changed right before v4 release to avoid major breaking changes.
-const preprocessDeprecatedEventName = (input: Readonly<unknown>) => {
-  if (!(typeof input === 'object' && input !== null)) {
-    throw new Error('Invalid input');
-  }
-
-  if (!('eventName' in input)) {
+const preprocessDeprecatedEventName = (input: unknown) => {
+  if (typeof input !== 'object' || input === null) {
     return input;
   }
 
-  if ('eventNames' in input) {
-    throw new Error("Don't set both eventName and eventNames together. Only use eventNames.");
+  if (!('eventName' in input) || ('eventNames' in input)) {
+    return input;
   }
 
   emitWarning(
     "DEPRECATED: 'eventName' will be removed in v5. Use 'eventNames' instead.",
   );
 
-  const { eventName, ...rest } = input;
+  const { eventName, ...rest } = input as Record<string, unknown>;
 
   return { ...rest, eventNames: new Set([eventName]) };
 };
