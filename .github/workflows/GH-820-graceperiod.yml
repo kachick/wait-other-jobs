@@ -19,24 +19,24 @@ permissions: {}
 
 jobs:
   quickstarter-success:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     steps:
       - run: echo ':)'
   intermediate:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     steps:
       - run: sleep 15
   slowstarter-success:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     needs: [intermediate]
     steps:
       - run: echo ':)'
   slowstarter-fail:
     if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     needs: [intermediate]
     steps:

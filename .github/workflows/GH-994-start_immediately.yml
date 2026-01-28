@@ -17,14 +17,14 @@ permissions: {}
 
 jobs:
   echo:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     steps:
       - name: Print note
         run: |
           echo 'Triggered by ${{ github.event_name }} event'
   wait:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     steps:
       - run: |
