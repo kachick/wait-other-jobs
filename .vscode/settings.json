@@ -1,5 +1,5 @@
 {
-  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.experimental.useTsgo": true,
   "editor.defaultFormatter": "dprint.dprint",
   "editor.formatOnSave": true,
   "[nix]": {
