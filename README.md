@@ -63,25 +63,25 @@ with:
 
 Full list of the options
 
-| NAME                 | DESCRIPTION                                                                     | TYPE     | DEFAULT                          | OPTIONS                                                         |
-| -------------------- | ------------------------------------------------------------------------------- | -------- | -------------------------------- | --------------------------------------------------------------- |
-| `github-api-url`     | The GitHub API endpoint. Override for GitHub Enterprise usage.                  | `string` | `${{ github.api_url }}`          | `https://api.github.com`, `https://ghe-host.example.net/api/v3` |
-| `github-token`       | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `${{ github.token }}`            |                                                                 |
-| `warmup-delay`       | Wait this interval before first polling                                         | `string` | `PT1S`                           | [ISO 8601 duration format][tc39-temporal-duration]              |
-| `minimum-interval`   | Wait for this or a longer interval between each poll to reduce GitHub API calls | `string` | `PT10S`                          | [ISO 8601 duration format][tc39-temporal-duration]              |
-| `retry-method`       | How to wait for next polling                                                    | `string` | `equal_intervals`                | `exponential_backoff`, `equal_intervals`                        |
-| `early-exit`         | Stop polling as soon as one job fails                                           | `bool`   | `true`                           |                                                                 |
-| `attempt-limits`     | Stop polling if reached to this limit                                           | `number` | `1000`                           |                                                                 |
-| `event-list`         | Wait only listed events. Used as default for wait/skip lists                    | `string` | `[ "${{ github.event_name }}" ]` | JSON Array                                                      |
-| `wait-list`          | Wait only for these jobs                                                        | `string` | `[]`                             | JSON Array                                                      |
-| `skip-list`          | Wait for all jobs except these                                                  | `string` | `[]`                             | JSON Array                                                      |
-| `skip-same-workflow` | Skip jobs defined in the same workflow which using this action                  | `bool`   | `false`                          |                                                                 |
-| `dry-run`            | Avoid requests for tests                                                        | `bool`   | `false`                          |                                                                 |
+| NAME                 | DESCRIPTION                                                                   | TYPE     | DEFAULT                          | OPTIONS                                                         |
+| -------------------- | ----------------------------------------------------------------------------- | -------- | -------------------------------- | --------------------------------------------------------------- |
+| `github-api-url`     | The GitHub API endpoint. Override for GitHub Enterprise usage.                | `string` | `${{ github.api_url }}`          | `https://api.github.com`, `https://ghe-host.example.net/api/v3` |
+| `github-token`       | The GITHUB_TOKEN secret. You can use PAT if you want.                         | `string` | `${{ github.token }}`            |                                                                 |
+| `warmup-delay`       | Wait this interval before first polling                                       | `string` | `PT1S`                           | [ISO 8601 duration format][tc39-temporal-duration]              |
+| `minimum-interval`   | Wait for this interval or longer between each poll to reduce GitHub API calls | `string` | `PT10S`                          | [ISO 8601 duration format][tc39-temporal-duration]              |
+| `retry-method`       | How to wait for next polling                                                  | `string` | `equal_intervals`                | `exponential_backoff`, `equal_intervals`                        |
+| `early-exit`         | Stop polling as soon as one job fails                                         | `bool`   | `true`                           |                                                                 |
+| `attempt-limits`     | Stop polling if reached to this limit                                         | `number` | `1000`                           |                                                                 |
+| `event-list`         | Wait only listed events. Used as default for wait/skip lists                  | `string` | `[ "${{ github.event_name }}" ]` | JSON Array                                                      |
+| `wait-list`          | Wait only for these jobs                                                      | `string` | `[]`                             | JSON Array                                                      |
+| `skip-list`          | Wait for all jobs except these                                                | `string` | `[]`                             | JSON Array                                                      |
+| `skip-same-workflow` | Skip jobs defined in the same workflow which using this action                | `bool`   | `false`                          |                                                                 |
+| `dry-run`            | Avoid requests for tests                                                      | `bool`   | `false`                          |                                                                 |
 
 ## Guide for option syntax and reasonable values
 
-- GitHub API Limit: At least we should consider about `GITHUB_TOKEN`, that is allowed 1000 per hour per repository.\
-  Roughly calculating for long jobs, setting the `minimum-interval` larger than or equal `PT4S` would be safer.
+- GitHub API Limit: We should at least consider the `GITHUB_TOKEN`, which is limited to 1,000 requests per hour per repository.\
+  Roughly calculating for long jobs, setting the `minimum-interval` to `PT4S` or longer would be safer.
   - [Primary Rate Limit for GITHUB_TOKEN](https://github.com/github/docs/blob/c26f36dbabb133b263c0f979f257b31d6c979341/data/reusables/rest-api/primary-rate-limit-github-token-in-actions.md)
   - [Secondary Limit](https://github.com/github/docs/blob/c26f36dbabb133b263c0f979f257b31d6c979341/data/reusables/rest-api/secondary-rate-limit-rest-graphql.md)
 
@@ -93,14 +93,14 @@ Lists should be given with JSON array, do not use both wait-list and skip-list t
 
 - Must specify `workflowFile`
 - Optionally specify `jobName`\
-  If no `jobName` is specified, all the jobs in the workflow will be targeted.
+  If no `jobName` is specified, all jobs in the workflow will be targeted.
 - Optionally specify `eventNames`\
   If no `eventNames` is specified, the global `event-list` will be used (inherited).\
   If empty `[]` is specified, all events will be targeted.
 
 ### `wait-list` spec
 
-- If the checkRun for the specified name is not found, this action raises errors by default.\
+- If the checkRun for the specified name is not found, this action fails by default.\
   You can disable this validation with `"optional": true` or use the [`startupGracePeriod`](#startup-grace-period).
 
 ### `skip-list` spec
@@ -141,7 +141,7 @@ These outputs are for testing and debugging only. The schema is not defined.
 
 ## Examples
 
-I'm using this action for auto-merging bot PRs and wait for deploy.\
+I use this action to auto-merge bot PRs and wait for deployment.\
 See the [docs](docs/examples.md) for further detail.
 
 ## Deadlocks
@@ -153,7 +153,7 @@ If you changed job name from the default, you should set `skip-list` or roughly 
 
 ```yaml
 jobs:
-  your_job: # This will be used default job name if you not specify below "name" field
+  your_job: # This will be used as the default job name if you do not specify the "name" field below
     name: 'Changed at here'
     runs-on: ubuntu-24.04
     steps:
@@ -174,7 +174,7 @@ You need to consider similar problems when using matrix, because GitHub does not
 - <https://github.com/orgs/community/discussions/8945>
 - <https://github.com/orgs/community/discussions/16614>
 
-However you can set `prefix` for `jobMatchMode` to create small skip-list to avoid this problem.
+However, you can set `jobMatchMode` to `prefix` to create a smaller skip-list and avoid this problem.
 
 ```yaml
 jobs:
@@ -225,7 +225,7 @@ This action starts immediately but ignores the job missing in the first 5 minute
 
 - No need to extend `warmup-delay`
 - Disable `optional`, because it is needed to check
-- Set enough value for `startupGracePeriod`.\
+- Set a sufficient value for `startupGracePeriod`.\
   Use the [ISO 8601 duration format][tc39-temporal-duration].
 
 If you're not using `wait-list`, you need to handle this pattern with `warmup-delay`.
@@ -237,7 +237,7 @@ If you're not using `wait-list`, you need to handle this pattern with `warmup-de
 ## Limitations
 
 - If any workflow starts many jobs as 100+, this action does not support it.\
-  Because of nested paging in GraphQL makes complex. See [related docs](https://github.com/octokit/plugin-paginate-graphql.js/blob/a6b12e867466b0c583b002acd1cb1ed90b11841f/README.md?plain=1#L184-L218) for further detail.
+  Because nested paging in GraphQL is complex. See [related docs](https://github.com/octokit/plugin-paginate-graphql.js/blob/a6b12e867466b0c583b002acd1cb1ed90b11841f/README.md?plain=1#L184-L218) for further detail.
 
 ## License
 
