@@ -56,3 +56,11 @@ Map(1) { undefined => 42 }
 ```bash
 act --platform 'ubuntu-24.04=ghcr.io/catthehacker/ubuntu:full-24.04' --workflows .github/workflows/lint.yml
 ```
+
+## Why not?
+
+- Why not oxlint?\
+  oxlint requires extensive configuration, which was the primary reason for the decision in #550. This repository uses Biome for now.
+
+- Why not link to MDN for the Temporal.Duration format?\
+  This will be revisited once [nodejs/node#57127](https://github.com/nodejs/node/issues/57127) is resolved.
