@@ -74,7 +74,7 @@ export function parseInput(): { trigger: Trigger; options: RuntimeOptions; githu
   let commitSha = sha;
   if (pr) {
     const { head: { sha: prSha = sha } } = pr;
-    if (typeof prSha === 'string') {
+    if (typeof prSha == 'string') {
       commitSha = prSha;
     } else {
       error('github context has unexpected format: missing context.payload.pull_request.head.sha');
