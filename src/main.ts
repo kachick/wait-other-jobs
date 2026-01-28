@@ -13,7 +13,7 @@ import {
   readableDuration,
   writeJobSummary,
 } from './report.ts';
-import type { Check, Options, Trigger } from './schema.ts';
+import type { Check, RuntimeOptions, Trigger } from './schema.ts';
 import { jsonReplacerForPrettyPrint } from './util.ts';
 import { getInterval, wait } from './wait.ts';
 
@@ -26,7 +26,7 @@ interface PollingResult {
 // `payload` is intentionally omitted for now: https://github.com/kachick/wait-other-jobs/pull/832#discussion_r1625952633
 interface Dumper {
   trigger: Trigger;
-  options: Options;
+  options: RuntimeOptions;
   // - Do not include all pollings in one file, it might be large size
   results: Record<number, PollingResult>;
 }

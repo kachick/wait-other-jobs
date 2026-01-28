@@ -43961,7 +43961,7 @@ var ZeroableDuration = external_exports.instanceof(Xn.Duration).refine(
 );
 var defaultGrace = Xn.Duration.from({ seconds: 10 });
 var eventName = external_exports.string().min(1);
-var eventNames = external_exports.preprocess(
+var eventNamesBase = external_exports.preprocess(
   (input) => {
     if (Array.isArray(input)) {
       return new Set(input);
@@ -43969,26 +43969,35 @@ var eventNames = external_exports.preprocess(
     return input;
   },
   external_exports.set(eventName).readonly()
-).default(Object.freeze(/* @__PURE__ */ new Set([]))).meta({
+);
+var eventNames = eventNamesBase.default(Object.freeze(/* @__PURE__ */ new Set([]))).meta({
   // Initially I thought literal string might be better, however those union types are complex,
   // and also complex for the parsing user inputs. Only use string array is simple in JSON
   description: `Empty means "any"`
 });
 var workflowPath = external_exports.string().endsWith(".yml").or(external_exports.string().endsWith(".yaml"));
+var commonFilterConditionConfig = {
+  workflowFile: workflowPath,
+  eventNames: eventNamesBase.optional()
+};
 var commonFilterCondition = {
   workflowFile: workflowPath,
-  eventNames
+  eventNames: eventNamesBase
 };
-var matchAllJobs = external_exports.strictObject({
-  ...commonFilterCondition,
-  jobMatchMode: external_exports.literal("all").default("all")
-});
-var matchPartialJobs = external_exports.strictObject({
-  ...commonFilterCondition,
-  jobName: external_exports.string().min(1),
-  jobMatchMode: external_exports.enum(["exact", "prefix"]).default("exact")
-});
-var commonFilterConditions = [matchAllJobs, matchPartialJobs];
+var createMatchSchemas = (base) => {
+  const matchAllJobs = external_exports.strictObject({
+    ...base,
+    jobMatchMode: external_exports.literal("all").default("all")
+  });
+  const matchPartialJobs = external_exports.strictObject({
+    ...base,
+    jobName: external_exports.string().min(1),
+    jobMatchMode: external_exports.enum(["exact", "prefix"]).default("exact")
+  });
+  return [matchAllJobs, matchPartialJobs];
+};
+var commonFilterConditionsConfig = createMatchSchemas(commonFilterConditionConfig);
+var commonFilterConditions = createMatchSchemas(commonFilterCondition);
 var waitOptions = {
   optional: external_exports.boolean().default(false),
   // Do not raise validation errors for the reasonability of max value.
@@ -44011,18 +44020,22 @@ var preprocessDeprecatedEventName = (input) => {
   const { eventName: eventName2, ...rest } = input;
   return { ...rest, eventNames: /* @__PURE__ */ new Set([eventName2]) };
 };
+var waitFilterConditionConfig = external_exports.union(
+  commonFilterConditionsConfig.map((item) => external_exports.preprocess(preprocessDeprecatedEventName, item.extend(waitOptions)))
+);
+var skipFilterConditionConfig = external_exports.union(commonFilterConditionsConfig);
 var waitFilterCondition = external_exports.union(
   commonFilterConditions.map((item) => external_exports.preprocess(preprocessDeprecatedEventName, item.extend(waitOptions)))
 );
 var skipFilterCondition = external_exports.union(commonFilterConditions);
+var WaitListConfig = external_exports.array(waitFilterConditionConfig).readonly();
+var SkipListConfig = external_exports.array(skipFilterConditionConfig).readonly();
 var WaitList = external_exports.array(waitFilterCondition).readonly();
 var SkipList = external_exports.array(skipFilterCondition).readonly();
 var FilterCondition = external_exports.union([waitFilterCondition, skipFilterCondition]);
 var retryMethods = external_exports.enum(["exponential_backoff", "equal_intervals"]);
-var Options = external_exports.strictObject({
+var optionsBase = {
   apiUrl: external_exports.url(),
-  waitList: WaitList,
-  skipList: SkipList,
   warmupDelay: ZeroableDuration,
   minimumInterval: PositiveDuration,
   retryMethod: retryMethods,
@@ -44031,6 +44044,11 @@ var Options = external_exports.strictObject({
   isEarlyExitEnabled: external_exports.boolean(),
   isSkipSameWorkflowEnabled: external_exports.boolean(),
   isDryRunEnabled: external_exports.boolean()
+};
+var ConfigOptions = external_exports.strictObject({
+  ...optionsBase,
+  waitList: WaitListConfig,
+  skipList: SkipListConfig
 }).readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { error: "Do not specify both wait-list and skip-list", path: ["waitList", "skipList"] }
@@ -44046,9 +44064,28 @@ var Options = external_exports.strictObject({
     path: ["warmupDelay", "waitList"]
   }
 );
+var RuntimeOptions = external_exports.strictObject({
+  ...optionsBase,
+  waitList: WaitList,
+  skipList: SkipList
+}).readonly();
 var Path = external_exports.string().min(1);
 
 // src/input.ts
+function resolveRuntimeOptions(configOptions) {
+  const { eventNames: globalEventNames, waitList: waitListConfig, skipList: skipListConfig } = configOptions;
+  return RuntimeOptions.parse({
+    ...configOptions,
+    waitList: waitListConfig.map((item) => ({
+      ...item,
+      eventNames: item.eventNames ?? globalEventNames
+    })),
+    skipList: skipListConfig.map((item) => ({
+      ...item,
+      eventNames: item.eventNames ?? globalEventNames
+    }))
+  });
+}
 function parseInput() {
   const {
     repo,
@@ -44084,7 +44121,7 @@ function parseInput() {
   const isSkipSameWorkflowEnabled = (0, import_core9.getBooleanInput)("skip-same-workflow", { required: true, trimWhitespace: true });
   const isDryRunEnabled = (0, import_core9.getBooleanInput)("dry-run", { required: true, trimWhitespace: true });
   const apiUrl = (0, import_core9.getInput)("github-api-url", { required: true, trimWhitespace: true });
-  const options = Options.parse({
+  const configOptions = ConfigOptions.parse({
     apiUrl,
     warmupDelay,
     minimumInterval,
@@ -44097,10 +44134,11 @@ function parseInput() {
     isSkipSameWorkflowEnabled,
     isDryRunEnabled
   });
+  const runtimeOptions = resolveRuntimeOptions(configOptions);
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName: eventName2 };
   const githubToken = (0, import_core9.getInput)("github-token", { required: true, trimWhitespace: false });
   (0, import_core9.setSecret)(githubToken);
-  return { trigger, options, githubToken, tempDir };
+  return { trigger, options: runtimeOptions, githubToken, tempDir };
 }
 
 // src/report.ts
@@ -44291,13 +44329,20 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, event
     }
     return defaultReport;
   }
-  if (skipList.length > 0) {
-    const filtered = targets.filter((summary2) => !skipList.some((target) => matchPath(target, summary2)));
-    return { ...judge(filtered), summaries: filtered };
-  }
   const eventFiltered = eventNames2.size === 0 ? targets : targets.filter((summary2) => {
     return eventNames2.has(summary2.eventName);
   });
+  if (skipList.length > 0) {
+    const filtered = eventFiltered.filter(
+      (summary2) => !skipList.some((target) => {
+        const isMatchPath = matchPath(target, summary2);
+        const targetEvents = target.eventNames;
+        const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary2.eventName);
+        return isMatchPath && isMatchEvent;
+      })
+    );
+    return { ...judge(filtered), summaries: filtered };
+  }
   return { ...judge(eventFiltered), summaries: eventFiltered };
 }
 function writeJobSummary(lastPolling, options) {

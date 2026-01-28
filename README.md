@@ -72,7 +72,7 @@ Full list of the options
 | `retry-method`       | How to wait for next polling                                                    | `string` | `equal_intervals`                | `exponential_backoff`, `equal_intervals`                        |
 | `early-exit`         | Stop polling as soon as one job fails                                           | `bool`   | `true`                           |                                                                 |
 | `attempt-limits`     | Stop polling if reached to this limit                                           | `number` | `1000`                           |                                                                 |
-| `event-list`         | Wait only listed events. Don't use another list if specified                    | `string` | `[ "${{ github.event_name }}" ]` | JSON Array                                                      |
+| `event-list`         | Wait only listed events. Used as default for wait/skip lists                    | `string` | `[ "${{ github.event_name }}" ]` | JSON Array                                                      |
 | `wait-list`          | Wait only for these jobs                                                        | `string` | `[]`                             | JSON Array                                                      |
 | `skip-list`          | Wait for all jobs except these                                                  | `string` | `[]`                             | JSON Array                                                      |
 | `skip-same-workflow` | Skip jobs defined in the same workflow which using this action                  | `bool`   | `false`                          |                                                                 |
@@ -95,7 +95,8 @@ Lists should be given with JSON array, do not use both wait-list and skip-list t
 - Optionally specify `jobName`\
   If no `jobName` is specified, all the jobs in the workflow will be targeted.
 - Optionally specify `eventNames`\
-  If no `eventNames`, or empty `[]` is specified, all events will be targeted.
+  If no `eventNames` is specified, the global `event-list` will be used (inherited).\
+  If empty `[]` is specified, all events will be targeted.
 
 ### `wait-list` spec
 
@@ -105,6 +106,8 @@ Lists should be given with JSON array, do not use both wait-list and skip-list t
 ### `skip-list` spec
 
 - Subset of `wait-list`. There is no `optional` and `startupGracePeriod`
+- Global `event-list` filtering is applied BEFORE this list.
+- If you specify `eventNames` in an item, that item will only be skipped when the event matches.
 
 ## Required GITHUB_TOKEN permissions
 

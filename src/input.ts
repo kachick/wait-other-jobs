@@ -3,9 +3,25 @@ import { join } from 'node:path';
 import { env } from 'node:process';
 import { error, getBooleanInput, getInput, setSecret } from '@actions/core';
 import { context } from '@actions/github';
-import { Durationable, jsonInput, Options, Path, type Trigger } from './schema.ts';
+import { ConfigOptions, Durationable, jsonInput, Path, RuntimeOptions, type Trigger } from './schema.ts';
 
-export function parseInput(): { trigger: Trigger; options: Options; githubToken: string; tempDir: string } {
+export function resolveRuntimeOptions(configOptions: ConfigOptions): RuntimeOptions {
+  const { eventNames: globalEventNames, waitList: waitListConfig, skipList: skipListConfig } = configOptions;
+
+  return RuntimeOptions.parse({
+    ...configOptions,
+    waitList: waitListConfig.map((item) => ({
+      ...item,
+      eventNames: item.eventNames ?? globalEventNames,
+    })),
+    skipList: skipListConfig.map((item) => ({
+      ...item,
+      eventNames: item.eventNames ?? globalEventNames,
+    })),
+  });
+}
+
+export function parseInput(): { trigger: Trigger; options: RuntimeOptions; githubToken: string; tempDir: string } {
   const {
     repo,
     payload,
@@ -46,7 +62,7 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
   const isDryRunEnabled = getBooleanInput('dry-run', { required: true, trimWhitespace: true });
   const apiUrl = getInput('github-api-url', { required: true, trimWhitespace: true });
 
-  const options = Options.parse({
+  const configOptions = ConfigOptions.parse({
     apiUrl,
     warmupDelay,
     minimumInterval,
@@ -60,11 +76,13 @@ export function parseInput(): { trigger: Trigger; options: Options; githubToken:
     isDryRunEnabled,
   });
 
+  const runtimeOptions = resolveRuntimeOptions(configOptions);
+
   const trigger = { ...repo, ref: commitSha, runId, jobId, eventName } as const satisfies Trigger;
 
   // `getIDToken` does not fit for this purpose. It is provided for OIDC Token
   const githubToken = getInput('github-token', { required: true, trimWhitespace: false });
   setSecret(githubToken);
 
-  return { trigger, options, githubToken, tempDir };
+  return { trigger, options: runtimeOptions, githubToken, tempDir };
 }

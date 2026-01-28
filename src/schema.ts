@@ -35,7 +35,7 @@ const defaultGrace = Temporal.Duration.from({ seconds: 10 });
 // Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
 const eventName = z.string().min(1);
 
-export const eventNames = z.preprocess(
+const eventNamesBase = z.preprocess(
   (input) => {
     if (Array.isArray(input)) {
       return new Set(input);
@@ -44,7 +44,9 @@ export const eventNames = z.preprocess(
     return input;
   },
   z.set(eventName).readonly(),
-).default(Object.freeze(new Set([]))).meta({
+);
+
+export const eventNames = eventNamesBase.default(Object.freeze(new Set([]))).meta({
   // Initially I thought literal string might be better, however those union types are complex,
   // and also complex for the parsing user inputs. Only use string array is simple in JSON
   description: `Empty means "any"`,
@@ -52,22 +54,31 @@ export const eventNames = z.preprocess(
 
 const workflowPath = z.string().endsWith('.yml').or(z.string().endsWith('.yaml'));
 
-const commonFilterCondition = {
+const commonFilterConditionConfig = {
   workflowFile: workflowPath,
-  eventNames,
+  eventNames: eventNamesBase.optional(),
 };
 
-const matchAllJobs = z.strictObject({
-  ...commonFilterCondition,
-  jobMatchMode: z.literal('all').default('all'),
-});
-const matchPartialJobs = z.strictObject({
-  ...commonFilterCondition,
-  jobName: z.string().min(1),
-  jobMatchMode: z.enum(['exact', 'prefix']).default('exact'),
-});
+const commonFilterCondition = {
+  workflowFile: workflowPath,
+  eventNames: eventNamesBase,
+};
 
-const commonFilterConditions = [matchAllJobs, matchPartialJobs] as const;
+const createMatchSchemas = <T extends typeof commonFilterConditionConfig | typeof commonFilterCondition>(base: T) => {
+  const matchAllJobs = z.strictObject({
+    ...base,
+    jobMatchMode: z.literal('all').default('all'),
+  });
+  const matchPartialJobs = z.strictObject({
+    ...base,
+    jobName: z.string().min(1),
+    jobMatchMode: z.enum(['exact', 'prefix']).default('exact'),
+  });
+  return [matchAllJobs, matchPartialJobs] as const;
+};
+
+const commonFilterConditionsConfig = createMatchSchemas(commonFilterConditionConfig);
+const commonFilterConditions = createMatchSchemas(commonFilterCondition);
 
 const waitOptions = {
   optional: z.boolean().default(false),
@@ -101,10 +112,18 @@ const preprocessDeprecatedEventName = (input: Readonly<unknown>) => {
   return { ...rest, eventNames: new Set([eventName]) };
 };
 
+const waitFilterConditionConfig = z.union(
+  commonFilterConditionsConfig.map((item) => z.preprocess(preprocessDeprecatedEventName, item.extend(waitOptions))),
+);
+const skipFilterConditionConfig = z.union(commonFilterConditionsConfig);
+
 const waitFilterCondition = z.union(
   commonFilterConditions.map((item) => z.preprocess(preprocessDeprecatedEventName, item.extend(waitOptions))),
 );
 const skipFilterCondition = z.union(commonFilterConditions);
+
+const WaitListConfig = z.array(waitFilterConditionConfig).readonly();
+const SkipListConfig = z.array(skipFilterConditionConfig).readonly();
 
 const WaitList = z.array(waitFilterCondition).readonly();
 const SkipList = z.array(skipFilterCondition).readonly();
@@ -119,10 +138,8 @@ export type RetryMethod = z.infer<typeof retryMethods>;
 
 // - Do not specify default values with zod. That is an action.yml role
 // - Do not include secrets here, for example githubToken. Even after https://github.com/colinhacks/zod/issues/1783 is resolved
-export const Options = z.strictObject({
+const optionsBase = {
   apiUrl: z.url(),
-  waitList: WaitList,
-  skipList: SkipList,
   warmupDelay: ZeroableDuration,
   minimumInterval: PositiveDuration,
   retryMethod: retryMethods,
@@ -131,6 +148,12 @@ export const Options = z.strictObject({
   isEarlyExitEnabled: z.boolean(),
   isSkipSameWorkflowEnabled: z.boolean(),
   isDryRunEnabled: z.boolean(),
+};
+
+export const ConfigOptions = z.strictObject({
+  ...optionsBase,
+  waitList: WaitListConfig,
+  skipList: SkipListConfig,
 }).readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { error: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },
@@ -150,9 +173,17 @@ export const Options = z.strictObject({
   },
 );
 
+export type ConfigOptions = z.infer<typeof ConfigOptions>;
+
+export const RuntimeOptions = z.strictObject({
+  ...optionsBase,
+  waitList: WaitList,
+  skipList: SkipList,
+}).readonly();
+
 export const Path = z.string().min(1);
 
-export type Options = z.infer<typeof Options>;
+export type RuntimeOptions = z.infer<typeof RuntimeOptions>;
 
 export interface Trigger {
   owner: string;

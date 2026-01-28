@@ -48,7 +48,7 @@ jobs:
                 "eventNames": [ "${{ github.event_name }}" ]
               }
             ]
-  backward-cmpat-v3:
+  backward-compatible-with-v3:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

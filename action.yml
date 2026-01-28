@@ -50,7 +50,7 @@ inputs:
       - Set a JSON array.
       - Wait only listed events.
       - Empty list means "any" events.
-      - This value will be ignored in wait and skip lists.
+      - This value will be used as default in wait and skip lists.
     required: true
     default: '[ "${{ github.event_name }}" ]'
   wait-list:

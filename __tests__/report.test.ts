@@ -2,9 +2,11 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { Temporal } from 'temporal-polyfill';
 import { generateReport, getSummaries, type PollingReport, readableDuration, type Summary } from '../src/report.ts';
+import { RuntimeOptions } from '../src/schema.ts';
 import { omit } from '../src/util.ts';
 import { jsonEqual } from './assert.ts';
 import { checks8679817057, checks92810686811WaitSuccessPolling1 } from './fixtures/snapshot.ts'; // 'undefined/workflow'` came from old snapshots
+import { defaultOptions } from './schema.test.ts';
 
 describe('readableDuration', () => {
   it('formats duration in various units', () => {
@@ -533,6 +535,61 @@ describe('generateReport with wait-list', () => {
 });
 
 describe('generateReport with skip-list', () => {
+  it('applies global event filter before skip-list processing', () => {
+    const trigger = Object.freeze({
+      owner: 'kachick',
+      repo: 'wait-other-jobs',
+      runId: 12345,
+      ref: 'HEAD',
+      jobId: 'skip-list',
+      eventName: 'push',
+    });
+
+    const summaries = [
+      {
+        ...exampleSummary,
+        eventName: 'pull_request',
+        jobName: 'job-pr',
+        isCompleted: false,
+        isAcceptable: false,
+        workflowBasename: 'ci.yml',
+      },
+      {
+        ...exampleSummary,
+        eventName: 'push',
+        jobName: 'job-push',
+        isCompleted: true,
+        isAcceptable: true,
+        workflowBasename: 'ci.yml',
+      },
+    ];
+
+    const options = RuntimeOptions.parse({
+      ...defaultOptions,
+      eventNames: new Set(['push']),
+      waitList: [],
+      skipList: [
+        {
+          workflowFile: 'other.yml',
+          jobMatchMode: 'all',
+          eventNames: new Set(['push']),
+        },
+      ],
+    });
+
+    const report = generateReport(
+      summaries,
+      trigger,
+      Temporal.Duration.from({ seconds: 10 }),
+      options,
+    );
+
+    jsonEqual(omit<PollingReport, 'summaries'>(report, ['summaries']), {
+      done: true,
+      logs: [],
+      ok: true,
+    });
+  });
   it('ignores jobs specified in the skip list', () => {
     const trigger = {
       owner: 'kachick',
