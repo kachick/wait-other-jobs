@@ -65,7 +65,7 @@ Full list of the options
 
 | NAME                 | DESCRIPTION                                                                     | TYPE     | DEFAULT                          | OPTIONS                                                         |
 | -------------------- | ------------------------------------------------------------------------------- | -------- | -------------------------------- | --------------------------------------------------------------- |
-| `github-api-url`     | The Github API endpoint. Override for Github Enterprise usage.                  | `string` | `${{ github.api_url }}`          | `https://api.github.com`, `https://ghe-host.example.net/api/v3` |
+| `github-api-url`     | The GitHub API endpoint. Override for GitHub Enterprise usage.                  | `string` | `${{ github.api_url }}`          | `https://api.github.com`, `https://ghe-host.example.net/api/v3` |
 | `github-token`       | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `${{ github.token }}`            |                                                                 |
 | `warmup-delay`       | Wait this interval before first polling                                         | `string` | `PT1S`                           | [ISO 8601 duration format][tc39-temporal-duration]              |
 | `minimum-interval`   | Wait for this or a longer interval between each poll to reduce GitHub API calls | `string` | `PT10S`                          | [ISO 8601 duration format][tc39-temporal-duration]              |
@@ -100,7 +100,7 @@ Lists should be given with JSON array, do not use both wait-list and skip-list t
 
 ### `wait-list` spec
 
-- If the checkRun for the specified name is not found, this action raise errors by default.\
+- If the checkRun for the specified name is not found, this action raises errors by default.\
   You can disable this validation with `"optional": true` or use the [`startupGracePeriod`](#startup-grace-period).
 
 ### `skip-list` spec
@@ -120,9 +120,9 @@ permissions:
   actions: read
 ```
 
-## Support for Github Enterprise
+## Support for GitHub Enterprise
 
-To run this action in your Github Enterprise (GHE) instance you need to override `github-api-url`:
+To run this action in your GitHub Enterprise (GHE) instance you need to override `github-api-url`:
 
 ```yaml
 with:

@@ -10,7 +10,7 @@ inputs:
     required: false
     default: '${{ github.token }}'
   github-api-url:
-    description: 'Github API URL'
+    description: 'GitHub API URL'
     required: true
     default: '${{ github.api_url }}'
   warmup-delay:
