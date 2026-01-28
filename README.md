@@ -10,10 +10,6 @@ This GitHub Action waits for all jobs by default even if they run in other workf
 You can also choose to wait for specific jobs.\
 If any of the jobs fail, this action fails too.
 
-## v4 and v3
-
-Latest stable versions are [v3.x](https://github.com/kachick/wait-other-jobs/tree/v3), and developing v4.x in main branch.
-
 ## Usage
 
 It works with zero or little configuration.
@@ -28,7 +24,7 @@ jobs:
     #   actions: read
     runs-on: ubuntu-24.04
     steps:
-      - uses: kachick/wait-other-jobs@v3.8.1
+      - uses: kachick/wait-other-jobs@v4.0.0
         timeout-minutes: 15 # Recommended to be enabled with your appropriate value for fail-safe use
 ```
 
@@ -157,7 +153,7 @@ jobs:
     name: 'Changed at here'
     runs-on: ubuntu-24.04
     steps:
-      - uses: kachick/wait-other-jobs@v3.8.1
+      - uses: kachick/wait-other-jobs@v4.0.0
         with:
           skip-list: |
             [
@@ -189,7 +185,7 @@ jobs:
           - windows-2025
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: kachick/wait-other-jobs@v3.8.1
+      - uses: kachick/wait-other-jobs@v4.0.0
         with:
           skip-list: |
             [
