@@ -10,7 +10,7 @@
     "npm"
   ],
   "extends": [
-    "schedule:monthly",
+    "schedule:weekdays",
     "github>kachick/renovate-config-dprint#1.3.0",
     "github>kachick/renovate-config-dprint:self"
   ],
@@ -19,7 +19,7 @@
   },
   "rangeStrategy": "bump",
   "ignoreDeps": ["node", "pnpm"],
-  "minimumReleaseAge": "7 days",
+  "minimumReleaseAge": "3 days",
   "packageRules": [
     {
       "matchDatasources": [
