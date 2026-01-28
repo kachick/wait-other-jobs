@@ -42,6 +42,7 @@
                 (pnpm_10.override {
                   withNode = false;
                 })
+                typescript-go
                 deno
                 biome
                 dprint

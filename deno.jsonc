@@ -6,7 +6,7 @@
       "command": "echo '🎉'"
     },
     "test": "./scripts/run_tests.ts",
-    "typecheck": "pnpm tsc",
+    "typecheck": "tsgo",
     "cleanup_build": "rm -rf ./lib ./dist",
     "build": {
       "dependencies": ["cleanup_build"],

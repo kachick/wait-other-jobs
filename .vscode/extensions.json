@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "github.vscode-github-actions",
+    "TypeScriptTeam.native-preview",
     "editorconfig.editorconfig",
     "dprint.dprint",
     "tekumara.typos-vscode",
