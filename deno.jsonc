@@ -14,7 +14,7 @@
     },
     "update_flake": "nix flake update --commit-lock-file",
     "sync_workflow_deps": {
-      "command": "git ls-files '.github' | xargs nix run 'github:kachick/selfup/v1.2.0' -- run"
+      "command": "git ls-files '.github' | xargs nix run 'github:kachick/selfup/v1.3.0' -- run"
     },
     "check_no_git_diff": {
       "description": "Prevent unexpected commits",
