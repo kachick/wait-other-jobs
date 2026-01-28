@@ -39,6 +39,9 @@ jobs:
             [
               {
                 "workflowFile": "GH-820-graceperiod.yml"
+              },
+              {
+                "workflowFile": "merge-bot-pr.yml"
               }
             ]
   validation_example_basic_errors_allow_failure:
@@ -108,6 +111,9 @@ jobs:
             [
               {
                 "workflowFile": "GH-820-graceperiod.yml"
+              },
+              {
+                "workflowFile": "merge-bot-pr.yml"
               }
             ]
   equal_intervals:
@@ -130,6 +136,9 @@ jobs:
             [
               {
                 "workflowFile": "GH-820-graceperiod.yml"
+              },
+              {
+                "workflowFile": "merge-bot-pr.yml"
               }
             ]
   wait-list:
