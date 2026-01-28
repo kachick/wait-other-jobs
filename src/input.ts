@@ -1,23 +1,60 @@
 import { mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
 import { env } from 'node:process';
-import { error, getBooleanInput, getInput, setSecret } from '@actions/core';
+import { error, getBooleanInput, getInput, setSecret, warning } from '@actions/core';
 import { context } from '@actions/github';
-import { ConfigOptions, Durationable, jsonInput, Path, RuntimeOptions, type Trigger } from './schema.ts';
+import {
+  ConfigOptions,
+  Durationable,
+  jsonInput,
+  Path,
+  RuntimeOptions,
+  type SkipList,
+  type SkipListConfig,
+  type Trigger,
+  type WaitList,
+  type WaitListConfig,
+} from './schema.ts';
+
+// Helper to handle deprecation and inheritance
+export function resolveFilterList(list: WaitListConfig, defaultEventNames: ReadonlySet<string>): WaitList;
+export function resolveFilterList(list: SkipListConfig, defaultEventNames: ReadonlySet<string>): SkipList;
+export function resolveFilterList(
+  list: WaitListConfig | SkipListConfig,
+  defaultEventNames: ReadonlySet<string>,
+): WaitList | SkipList {
+  return list.map((item) => {
+    // Physically exclude eventName from the object by destructuring
+    const { eventName, eventNames, ...rest } = item;
+
+    let resolvedEventNames: ReadonlySet<string>;
+
+    if (eventName) {
+      if (eventNames) {
+        throw new Error("Don't set both eventName and eventNames together. Only use eventNames.");
+      }
+
+      warning("DEPRECATED: 'eventName' will be removed in v5. Use 'eventNames' instead.");
+      resolvedEventNames = new Set([eventName]);
+    } else {
+      resolvedEventNames = eventNames ?? defaultEventNames;
+    }
+
+    // Return an object that matches the Runtime schema (without eventName)
+    return {
+      ...rest,
+      eventNames: resolvedEventNames,
+    };
+  }) as WaitList | SkipList; // This cast is safe because we manually constructed the shape to match Runtime schemas
+}
 
 export function resolveRuntimeOptions(configOptions: ConfigOptions): RuntimeOptions {
-  const { eventNames: globalEventNames, waitList: waitListConfig, skipList: skipListConfig } = configOptions;
+  const { eventNames: defaultEventNames, waitList: waitListConfig, skipList: skipListConfig } = configOptions;
 
   return RuntimeOptions.parse({
     ...configOptions,
-    waitList: waitListConfig.map((item) => ({
-      ...item,
-      eventNames: item.eventNames ?? globalEventNames,
-    })),
-    skipList: skipListConfig.map((item) => ({
-      ...item,
-      eventNames: item.eventNames ?? globalEventNames,
-    })),
+    waitList: resolveFilterList(waitListConfig, defaultEventNames),
+    skipList: resolveFilterList(skipListConfig, defaultEventNames),
   });
 }
 

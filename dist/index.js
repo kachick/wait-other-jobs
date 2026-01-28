@@ -19839,7 +19839,7 @@ var require_core = __commonJS({
     exports.isDebug = isDebug;
     exports.debug = debug;
     exports.error = error47;
-    exports.warning = warning;
+    exports.warning = warning2;
     exports.notice = notice;
     exports.info = info2;
     exports.startGroup = startGroup2;
@@ -19932,7 +19932,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
     function error47(message, properties = {}) {
       (0, command_1.issueCommand)("error", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
     }
-    function warning(message, properties = {}) {
+    function warning2(message, properties = {}) {
       (0, command_1.issueCommand)("warning", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
     }
     function notice(message, properties = {}) {
@@ -29754,9 +29754,6 @@ var import_github = __toESM(require_github(), 1);
 import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 import { env } from "node:process";
-
-// src/schema.ts
-import { emitWarning } from "node:process";
 
 // node_modules/.pnpm/jsonc-parser@3.3.1/node_modules/jsonc-parser/lib/esm/impl/scanner.js
 function createScanner(text, ignoreTrivia = false) {
@@ -43978,7 +43975,8 @@ var eventNames = eventNamesBase.default(Object.freeze(/* @__PURE__ */ new Set([]
 var workflowPath = external_exports.string().endsWith(".yml").or(external_exports.string().endsWith(".yaml"));
 var commonFilterConditionConfig = {
   workflowFile: workflowPath,
-  eventNames: eventNamesBase.optional()
+  eventNames: eventNamesBase.optional(),
+  eventName: external_exports.string().min(1).meta({ deprecated: true, description: "Use `eventNames` instead." }).optional()
 };
 var commonFilterCondition = {
   workflowFile: workflowPath,
@@ -44004,25 +44002,12 @@ var waitOptions = {
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
   startupGracePeriod: Durationable.default(defaultGrace)
 };
-var preprocessDeprecatedEventName = (input) => {
-  if (typeof input !== "object" || input === null) {
-    return input;
-  }
-  if (!("eventName" in input) || "eventNames" in input) {
-    return input;
-  }
-  emitWarning(
-    "DEPRECATED: 'eventName' will be removed in v5. Use 'eventNames' instead."
-  );
-  const { eventName: eventName2, ...rest } = input;
-  return { ...rest, eventNames: /* @__PURE__ */ new Set([eventName2]) };
-};
 var waitFilterConditionConfig = external_exports.union(
-  commonFilterConditionsConfig.map((item) => external_exports.preprocess(preprocessDeprecatedEventName, item.extend(waitOptions)))
+  commonFilterConditionsConfig.map((item) => item.extend(waitOptions))
 );
 var skipFilterConditionConfig = external_exports.union(commonFilterConditionsConfig);
 var waitFilterCondition = external_exports.union(
-  commonFilterConditions.map((item) => external_exports.preprocess(preprocessDeprecatedEventName, item.extend(waitOptions)))
+  commonFilterConditions.map((item) => item.extend(waitOptions))
 );
 var skipFilterCondition = external_exports.union(commonFilterConditions);
 var WaitListConfig = external_exports.array(waitFilterConditionConfig).readonly();
@@ -44069,18 +44054,31 @@ var RuntimeOptions = external_exports.strictObject({
 var Path = external_exports.string().min(1);
 
 // src/input.ts
+function resolveFilterList(list, defaultEventNames) {
+  return list.map((item) => {
+    const { eventName: eventName2, eventNames: eventNames2, ...rest } = item;
+    let resolvedEventNames;
+    if (eventName2) {
+      if (eventNames2) {
+        throw new Error("Don't set both eventName and eventNames together. Only use eventNames.");
+      }
+      (0, import_core9.warning)("DEPRECATED: 'eventName' will be removed in v5. Use 'eventNames' instead.");
+      resolvedEventNames = /* @__PURE__ */ new Set([eventName2]);
+    } else {
+      resolvedEventNames = eventNames2 ?? defaultEventNames;
+    }
+    return {
+      ...rest,
+      eventNames: resolvedEventNames
+    };
+  });
+}
 function resolveRuntimeOptions(configOptions) {
-  const { eventNames: globalEventNames, waitList: waitListConfig, skipList: skipListConfig } = configOptions;
+  const { eventNames: defaultEventNames, waitList: waitListConfig, skipList: skipListConfig } = configOptions;
   return RuntimeOptions.parse({
     ...configOptions,
-    waitList: waitListConfig.map((item) => ({
-      ...item,
-      eventNames: item.eventNames ?? globalEventNames
-    })),
-    skipList: skipListConfig.map((item) => ({
-      ...item,
-      eventNames: item.eventNames ?? globalEventNames
-    }))
+    waitList: resolveFilterList(waitListConfig, defaultEventNames),
+    skipList: resolveFilterList(skipListConfig, defaultEventNames)
   });
 }
 function parseInput() {

@@ -1,7 +1,7 @@
 import { deepStrictEqual, throws } from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { Temporal } from 'temporal-polyfill';
-import { resolveRuntimeOptions } from '../src/input.ts';
+import { resolveFilterList, resolveRuntimeOptions } from '../src/input.ts';
 import { ConfigOptions, eventNames, jsonInput } from '../src/schema.ts';
 import { defaultOptions } from './schema.test.ts';
 
@@ -102,5 +102,86 @@ describe('resolveRuntimeOptions', () => {
     const runtimeOptions = resolveRuntimeOptions(configOptions);
 
     deepStrictEqual(runtimeOptions.waitList[0]?.eventNames, new Set(['pull_request']));
+  });
+
+  it('converts deprecated eventName to eventNames', () => {
+    const configOptions = ConfigOptions.parse({
+      ...defaultOptions,
+      eventNames: new Set(['push']),
+      waitList: [
+        {
+          workflowFile: 'ci.yml',
+          jobMatchMode: 'all',
+          optional: false,
+          startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+          eventName: 'pull_request',
+        },
+      ],
+    });
+
+    const runtimeOptions = resolveRuntimeOptions(configOptions);
+
+    deepStrictEqual(runtimeOptions.waitList[0]?.eventNames, new Set(['pull_request']));
+  });
+
+  it('throws error if both eventName and eventNames are specified', () => {
+    const configOptions = ConfigOptions.parse({
+      ...defaultOptions,
+      eventNames: new Set(['push']),
+      waitList: [
+        {
+          workflowFile: 'ci.yml',
+          jobMatchMode: 'all',
+          optional: false,
+          startupGracePeriod: Temporal.Duration.from({ seconds: 10 }),
+          eventName: 'pull_request',
+          eventNames: new Set(['pull_request']),
+        },
+      ],
+    });
+
+    throws(
+      () => resolveRuntimeOptions(configOptions),
+      {
+        message: "Don't set both eventName and eventNames together. Only use eventNames.",
+      },
+    );
+  });
+});
+
+describe('resolveFilterList', () => {
+  const defaultEventNames = new Set(['push']);
+
+  it('inherits global event names for items without specific event settings', () => {
+    const list = [{ workflowFile: 'a.yml', jobMatchMode: 'all' }] as const;
+    const resolved = resolveFilterList(list, defaultEventNames);
+    deepStrictEqual(resolved[0]?.eventNames, defaultEventNames);
+  });
+
+  it('converts deprecated eventName to eventNames', () => {
+    const list = [{ workflowFile: 'a.yml', jobMatchMode: 'all', eventName: 'workflow_dispatch' }] as const;
+    const resolved = resolveFilterList(list, defaultEventNames);
+    deepStrictEqual(resolved[0]?.eventNames, new Set(['workflow_dispatch']));
+  });
+
+  it('preserves existing eventNames', () => {
+    const list = [{ workflowFile: 'a.yml', jobMatchMode: 'all', eventNames: new Set(['pull_request']) }] as const;
+    const resolved = resolveFilterList(list, defaultEventNames);
+    deepStrictEqual(resolved[0]?.eventNames, new Set(['pull_request']));
+  });
+
+  it('throws error if both eventName and eventNames are present', () => {
+    const list = [
+      {
+        workflowFile: 'a.yml',
+        jobMatchMode: 'all',
+        eventName: 'push',
+        eventNames: new Set(['push']),
+      },
+    ] as const;
+    throws(
+      () => resolveFilterList(list, defaultEventNames),
+      { message: "Don't set both eventName and eventNames together. Only use eventNames." },
+    );
   });
 });

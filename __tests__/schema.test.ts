@@ -294,7 +294,7 @@ describe('wait-list item have deprecated eventName field', () => {
           jobMatchMode: 'all',
           optional: false,
           startupGracePeriod: Temporal.Duration.from({ minutes: 5 }),
-          eventNames: new Set(['push']),
+          eventName: 'push',
         }],
       },
     );

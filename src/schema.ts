@@ -1,4 +1,3 @@
-import { emitWarning } from 'node:process';
 import type { CheckRun, CheckSuite, Workflow, WorkflowRun } from '@octokit/graphql-schema';
 import { parse } from 'jsonc-parser';
 import { Temporal } from 'temporal-polyfill';
@@ -57,6 +56,7 @@ const workflowPath = z.string().endsWith('.yml').or(z.string().endsWith('.yaml')
 const commonFilterConditionConfig = {
   workflowFile: workflowPath,
   eventNames: eventNamesBase.optional(),
+  eventName: z.string().min(1).meta({ deprecated: true, description: 'Use `eventNames` instead.' }).optional(),
 };
 
 const commonFilterCondition = {
@@ -88,46 +88,32 @@ const waitOptions = {
   startupGracePeriod: Durationable.default(defaultGrace),
 };
 
-// Keeping backward compatibility for eventName despite v4 cleanup,
-// since this was changed right before v4 release to avoid major breaking changes.
-const preprocessDeprecatedEventName = (input: unknown) => {
-  if (typeof input !== 'object' || input === null) {
-    return input;
-  }
-
-  if (!('eventName' in input) || ('eventNames' in input)) {
-    return input;
-  }
-
-  emitWarning(
-    "DEPRECATED: 'eventName' will be removed in v5. Use 'eventNames' instead.",
-  );
-
-  const { eventName, ...rest } = input as Record<string, unknown>;
-
-  return { ...rest, eventNames: new Set([eventName]) };
-};
-
 const waitFilterConditionConfig = z.union(
-  commonFilterConditionsConfig.map((item) => z.preprocess(preprocessDeprecatedEventName, item.extend(waitOptions))),
+  commonFilterConditionsConfig.map((item) => item.extend(waitOptions)),
 );
 const skipFilterConditionConfig = z.union(commonFilterConditionsConfig);
 
 const waitFilterCondition = z.union(
-  commonFilterConditions.map((item) => z.preprocess(preprocessDeprecatedEventName, item.extend(waitOptions))),
+  commonFilterConditions.map((item) => item.extend(waitOptions)),
 );
 const skipFilterCondition = z.union(commonFilterConditions);
 
-const WaitListConfig = z.array(waitFilterConditionConfig).readonly();
-const SkipListConfig = z.array(skipFilterConditionConfig).readonly();
+// Input Lists (optional eventNames)
+export const WaitListConfig = z.array(waitFilterConditionConfig).readonly();
+export const SkipListConfig = z.array(skipFilterConditionConfig).readonly();
 
-const WaitList = z.array(waitFilterCondition).readonly();
-const SkipList = z.array(skipFilterCondition).readonly();
+export type WaitListConfig = z.infer<typeof WaitListConfig>;
+export type SkipListConfig = z.infer<typeof SkipListConfig>;
+
+// Normalized Lists (required eventNames)
+export const WaitList = z.array(waitFilterCondition).readonly();
+export const SkipList = z.array(skipFilterCondition).readonly();
 
 const FilterCondition = z.union([waitFilterCondition, skipFilterCondition]);
 
 export type FilterCondition = z.infer<typeof FilterCondition>;
 export type WaitList = z.infer<typeof WaitList>;
+export type SkipList = z.infer<typeof SkipList>;
 
 const retryMethods = z.enum(['exponential_backoff', 'equal_intervals']);
 export type RetryMethod = z.infer<typeof retryMethods>;
