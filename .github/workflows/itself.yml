@@ -184,8 +184,7 @@ jobs:
                 "workflowFile": "ci.yml"
               },
               {
-                "workflowFile": "merge-bot-pr.yml",
-                "jobName": "dependabot"
+                "workflowFile": "merge-bot-pr.yml"
               },
               {
                 "workflowFile": "GH-820-graceperiod.yml"
