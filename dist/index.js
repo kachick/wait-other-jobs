@@ -41,9 +41,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/utils.js
+// node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/utils.js
 var require_utils = __commonJS({
-  "node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/utils.js"(exports) {
+  "node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/utils.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.toCommandValue = toCommandValue;
@@ -72,9 +72,9 @@ var require_utils = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/command.js
+// node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/command.js
 var require_command = __commonJS({
-  "node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/command.js"(exports) {
+  "node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/command.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o2, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
@@ -167,9 +167,9 @@ var require_command = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/file-command.js
+// node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/file-command.js
 var require_file_command = __commonJS({
-  "node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/file-command.js"(exports) {
+  "node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/file-command.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o2, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
@@ -241,9 +241,9 @@ var require_file_command = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@actions+http-client@3.0.0/node_modules/@actions/http-client/lib/proxy.js
+// node_modules/.pnpm/@actions+http-client@3.0.1/node_modules/@actions/http-client/lib/proxy.js
 var require_proxy = __commonJS({
-  "node_modules/.pnpm/@actions+http-client@3.0.0/node_modules/@actions/http-client/lib/proxy.js"(exports) {
+  "node_modules/.pnpm/@actions+http-client@3.0.1/node_modules/@actions/http-client/lib/proxy.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getProxyUrl = getProxyUrl;
@@ -17316,9 +17316,9 @@ var require_undici = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@actions+http-client@3.0.0/node_modules/@actions/http-client/lib/index.js
+// node_modules/.pnpm/@actions+http-client@3.0.1/node_modules/@actions/http-client/lib/index.js
 var require_lib = __commonJS({
-  "node_modules/.pnpm/@actions+http-client@3.0.0/node_modules/@actions/http-client/lib/index.js"(exports) {
+  "node_modules/.pnpm/@actions+http-client@3.0.1/node_modules/@actions/http-client/lib/index.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o2, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
@@ -17506,7 +17506,7 @@ var require_lib = __commonJS({
         this._maxRetries = 1;
         this._keepAlive = false;
         this._disposed = false;
-        this.userAgent = userAgent2;
+        this.userAgent = this._getUserAgentWithOrchestrationId(userAgent2);
         this.handlers = handlers || [];
         this.requestOptions = requestOptions;
         if (requestOptions) {
@@ -17931,6 +17931,15 @@ var require_lib = __commonJS({
         }
         return proxyAgent;
       }
+      _getUserAgentWithOrchestrationId(userAgent2) {
+        const baseUserAgent = userAgent2 || "actions/http-client";
+        const orchId = process.env["ACTIONS_ORCHESTRATION_ID"];
+        if (orchId) {
+          const sanitizedId = orchId.replace(/[^a-z0-9_.-]/gi, "_");
+          return `${baseUserAgent} actions_orchestration_id/${sanitizedId}`;
+        }
+        return baseUserAgent;
+      }
       _performExponentialBackoff(retryNumber) {
         return __awaiter(this, void 0, void 0, function* () {
           retryNumber = Math.min(ExponentialBackoffCeiling, retryNumber);
@@ -17998,9 +18007,9 @@ var require_lib = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@actions+http-client@3.0.0/node_modules/@actions/http-client/lib/auth.js
+// node_modules/.pnpm/@actions+http-client@3.0.1/node_modules/@actions/http-client/lib/auth.js
 var require_auth = __commonJS({
-  "node_modules/.pnpm/@actions+http-client@3.0.0/node_modules/@actions/http-client/lib/auth.js"(exports) {
+  "node_modules/.pnpm/@actions+http-client@3.0.1/node_modules/@actions/http-client/lib/auth.js"(exports) {
     "use strict";
     var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P2, generator) {
       function adopt(value) {
@@ -18102,9 +18111,9 @@ var require_auth = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/oidc-utils.js
+// node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/oidc-utils.js
 var require_oidc_utils = __commonJS({
-  "node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/oidc-utils.js"(exports) {
+  "node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/oidc-utils.js"(exports) {
     "use strict";
     var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P2, generator) {
       function adopt(value) {
@@ -18200,9 +18209,9 @@ var require_oidc_utils = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/summary.js
+// node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/summary.js
 var require_summary = __commonJS({
-  "node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/summary.js"(exports) {
+  "node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/summary.js"(exports) {
     "use strict";
     var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P2, generator) {
       function adopt(value) {
@@ -18494,9 +18503,9 @@ var require_summary = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/path-utils.js
+// node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/path-utils.js
 var require_path_utils = __commonJS({
-  "node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/path-utils.js"(exports) {
+  "node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/path-utils.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o2, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
@@ -19628,9 +19637,9 @@ var require_exec = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/platform.js
+// node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/platform.js
 var require_platform = __commonJS({
-  "node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/platform.js"(exports) {
+  "node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/platform.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o2, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
@@ -19757,9 +19766,9 @@ var require_platform = __commonJS({
   }
 });
 
-// node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/core.js
+// node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/core.js
 var require_core = __commonJS({
-  "node_modules/.pnpm/@actions+core@2.0.1/node_modules/@actions/core/lib/core.js"(exports) {
+  "node_modules/.pnpm/@actions+core@2.0.2/node_modules/@actions/core/lib/core.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o2, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
