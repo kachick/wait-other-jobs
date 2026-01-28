@@ -8,7 +8,7 @@ jobs:
   gitleaks:
     timeout-minutes: 15
     name: gitleaks
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     env:
       CLI_VERSION: '8.30.0' # selfup {"extract":"\\d[^']+","replacer":["gitleaks", "version"]}
       ASSET_SHA256: '5bc41815076e6ed6ef8fbecc9d9b75bcae31f39029ceb55da08086315316e3ba'

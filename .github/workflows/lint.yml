@@ -14,7 +14,7 @@ permissions:
 jobs:
   dprint:
     timeout-minutes: 15
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -24,7 +24,7 @@ jobs:
           dprint-version: '0.51.1' # selfup { "extract": "\\d[^']+", "replacer": ["dprint", "--version"], "nth": 2 }
   typos:
     timeout-minutes: 15
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
