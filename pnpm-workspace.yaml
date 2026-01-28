@@ -2,3 +2,6 @@ ignoredBuiltDependencies:
   - esbuild
 
 minimumReleaseAge: 4320 # Minutes. 3 x day(1440)s
+minimumReleaseAgeExclude:
+  - '@actions/*'
+  - '@octokit/*'
