@@ -135,11 +135,6 @@ These outputs are for testing and debugging only. The schema is not defined.
 - `dump`\
   A file path for collected resources which keeps fields than logged.
 
-## Examples
-
-I use this action to auto-merge bot PRs and wait for deployment.\
-See the [docs](docs/examples.md) for further detail.
-
 ## Deadlocks
 
 When using this action in multiple jobs within the same repository, be careful to avoid deadlocks.\
