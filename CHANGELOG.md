@@ -3,9 +3,9 @@
 This file only records notable changes. Not synchronized with all releases and tags.
 
 - v4.0.0 # See also [migration guide](docs/migration-v4.md)
+  - Support `event-list` to wait only for same event jobs by default (e.g. `push` -> `push`): [#998](https://github.com/kachick/wait-other-jobs/issues/998)
   - Change default delay and intervals: [#1148](https://github.com/kachick/wait-other-jobs/pull/1148)
-  - Drop to support key-value format in startupGracePeriod: [GH-1149](https://github.com/kachick/wait-other-jobs/pull/1149)
-  - Support `event-list` to wait only for same event jobs by default (e.g. `push` -> `push`): [GH-998](https://github.com/kachick/wait-other-jobs/issues/998)
+  - Drop to support key-value format in startupGracePeriod: [#1149](https://github.com/kachick/wait-other-jobs/pull/1149)
   - Drop deprecated options: `wait-seconds-before-first-polling` and `min-interval-seconds`
   - Deprecate `eventName` in favor of `eventNames` in `wait-list` and `skip-list`
   - Update action engine to Node.js v24
