@@ -3,7 +3,7 @@ import { parse } from 'jsonc-parser';
 import { Temporal } from 'temporal-polyfill';
 import { z } from 'zod';
 
-const jsonSchema = z.json();
+export const jsonSchema = z.json();
 
 // ref: https://github.com/colinhacks/zod/discussions/2215#discussioncomment-13836018
 export const jsonInput = z.string().transform((str): z.infer<z.ZodJSONSchema> => {
@@ -31,57 +31,111 @@ export const ZeroableDuration = z.instanceof(Temporal.Duration).refine(
 );
 const defaultGrace = Temporal.Duration.from({ seconds: 10 });
 
-const workflowPath = z.string().endsWith('.yml').or(z.string().endsWith('.yaml'));
-const matchAllJobs = z.strictObject({
-  workflowFile: workflowPath,
-  jobMatchMode: z.literal('all').default('all'),
-});
-const matchPartialJobs = z.strictObject({
-  workflowFile: workflowPath,
-  jobName: z.string().min(1),
-  jobMatchMode: z.enum(['exact', 'prefix']).default('exact'),
+// Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
+const eventName = z.string().min(1);
+
+const eventNamesBase = z.preprocess(
+  (input) => {
+    if (Array.isArray(input)) {
+      return new Set(input);
+    }
+
+    return input;
+  },
+  z.set(eventName).readonly(),
+);
+
+export const eventNames = eventNamesBase.default(Object.freeze(new Set([]))).meta({
+  // Initially I thought literal string might be better, however those union types are complex,
+  // and also complex for the parsing user inputs. Only use string array is simple in JSON
+  description: `Empty means "any"`,
 });
 
-const FilterCondition = z.union([matchAllJobs, matchPartialJobs]);
-const SkipFilterCondition = FilterCondition.readonly();
+const workflowPath = z.string().endsWith('.yml').or(z.string().endsWith('.yaml'));
+
+const commonFilterConditionConfig = {
+  workflowFile: workflowPath,
+  eventNames: eventNamesBase.optional(),
+  eventName: z.string().min(1).meta({ deprecated: true, description: 'Use `eventNames` instead.' }).optional(),
+};
+
+const commonFilterCondition = {
+  workflowFile: workflowPath,
+  eventNames: eventNamesBase,
+};
+
+const createMatchSchemas = <T extends typeof commonFilterConditionConfig | typeof commonFilterCondition>(base: T) => {
+  const matchAllJobs = z.strictObject({
+    ...base,
+    jobMatchMode: z.literal('all').default('all'),
+  });
+  const matchPartialJobs = z.strictObject({
+    ...base,
+    jobName: z.string().min(1),
+    jobMatchMode: z.enum(['exact', 'prefix']).default('exact'),
+  });
+  return [matchAllJobs, matchPartialJobs] as const;
+};
+
+const commonFilterConditionsConfig = createMatchSchemas(commonFilterConditionConfig);
+const commonFilterConditions = createMatchSchemas(commonFilterCondition);
 
 const waitOptions = {
-  optional: z.boolean().default(false).readonly(),
-
-  // - Intentionally avoided to use enum for now. Only GitHub knows whole eventNames and the adding plans
-  // - Intentionally omitted in skip-list, let me know if you have the use-case
-  eventName: z.string().min(1).optional(),
+  optional: z.boolean().default(false),
 
   // Do not raise validation errors for the reasonability of max value.
   // Even in equal_intervals mode, we can't enforce the possibility of the whole running time
   startupGracePeriod: Durationable.default(defaultGrace),
 };
 
-const WaitFilterCondition = z.union([
-  z.strictObject(matchAllJobs.extend(waitOptions).shape),
-  z.strictObject(matchPartialJobs.extend(waitOptions).shape),
-]).readonly();
-const WaitList = z.array(WaitFilterCondition).readonly();
-const SkipList = z.array(SkipFilterCondition).readonly();
+const waitFilterConditionConfig = z.union(
+  commonFilterConditionsConfig.map((item) => item.extend(waitOptions)),
+);
+const skipFilterConditionConfig = z.union(commonFilterConditionsConfig);
+
+const waitFilterCondition = z.union(
+  commonFilterConditions.map((item) => item.extend(waitOptions)),
+);
+const skipFilterCondition = z.union(commonFilterConditions);
+
+// Input Lists (optional eventNames)
+export const WaitListConfig = z.array(waitFilterConditionConfig).readonly();
+export const SkipListConfig = z.array(skipFilterConditionConfig).readonly();
+
+export type WaitListConfig = z.infer<typeof WaitListConfig>;
+export type SkipListConfig = z.infer<typeof SkipListConfig>;
+
+// Normalized Lists (required eventNames)
+export const WaitList = z.array(waitFilterCondition).readonly();
+export const SkipList = z.array(skipFilterCondition).readonly();
+
+const FilterCondition = z.union([waitFilterCondition, skipFilterCondition]);
+
 export type FilterCondition = z.infer<typeof FilterCondition>;
 export type WaitList = z.infer<typeof WaitList>;
+export type SkipList = z.infer<typeof SkipList>;
 
 const retryMethods = z.enum(['exponential_backoff', 'equal_intervals']);
 export type RetryMethod = z.infer<typeof retryMethods>;
 
 // - Do not specify default values with zod. That is an action.yml role
 // - Do not include secrets here, for example githubToken. Even after https://github.com/colinhacks/zod/issues/1783 is resolved
-export const Options = z.strictObject({
+const optionsBase = {
   apiUrl: z.url(),
-  waitList: WaitList,
-  skipList: SkipList,
   warmupDelay: ZeroableDuration,
   minimumInterval: PositiveDuration,
   retryMethod: retryMethods,
   attemptLimits: z.number().min(1),
+  eventNames,
   isEarlyExitEnabled: z.boolean(),
   isSkipSameWorkflowEnabled: z.boolean(),
   isDryRunEnabled: z.boolean(),
+};
+
+export const ConfigOptions = z.strictObject({
+  ...optionsBase,
+  waitList: WaitListConfig,
+  skipList: SkipListConfig,
 }).readonly().refine(
   ({ waitList, skipList }) => !(waitList.length > 0 && skipList.length > 0),
   { error: 'Do not specify both wait-list and skip-list', path: ['waitList', 'skipList'] },
@@ -101,9 +155,17 @@ export const Options = z.strictObject({
   },
 );
 
+export type ConfigOptions = z.infer<typeof ConfigOptions>;
+
+export const RuntimeOptions = z.strictObject({
+  ...optionsBase,
+  waitList: WaitList,
+  skipList: SkipList,
+}).readonly();
+
 export const Path = z.string().min(1);
 
-export type Options = z.infer<typeof Options>;
+export type RuntimeOptions = z.infer<typeof RuntimeOptions>;
 
 export interface Trigger {
   owner: string;

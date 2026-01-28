@@ -10,7 +10,7 @@ This GitHub Action waits for all jobs by default even if they run in other workf
 You can also choose to wait for specific jobs.\
 If any of the jobs fail, this action fails too.
 
-## v4 or v3
+## v4 and v3
 
 Latest stable versions are [v3.x](https://github.com/kachick/wait-other-jobs/tree/v3), and developing v4.x in main branch.
 
@@ -46,7 +46,7 @@ with:
       {
         "workflowFile": "ci.yml",
         "jobName": "test",
-        "eventName": "${{ github.event_name }}"
+        "eventNames": [ "push", "pull_request" ]
       },
       {
         "workflowFile": "release.yml",
@@ -63,19 +63,20 @@ with:
 
 Full list of the options
 
-| NAME                 | DESCRIPTION                                                                     | TYPE     | DEFAULT                 | OPTIONS                                                         |
-| -------------------- | ------------------------------------------------------------------------------- | -------- | ----------------------- | --------------------------------------------------------------- |
-| `github-api-url`     | The Github API endpoint. Override for Github Enterprise usage.                  | `string` | `${{ github.api_url }}` | `https://api.github.com`, `https://ghe-host.example.net/api/v3` |
-| `github-token`       | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `${{ github.token }}`   |                                                                 |
-| `warmup-delay`       | Wait this interval before first polling                                         | `string` | `PT1S`                  | [ISO 8601 duration format][tc39-temporal-duration]              |
-| `minimum-interval`   | Wait for this or a longer interval between each poll to reduce GitHub API calls | `string` | `PT10S`                 | [ISO 8601 duration format][tc39-temporal-duration]              |
-| `retry-method`       | How to wait for next polling                                                    | `string` | `equal_intervals`       | `exponential_backoff`, `equal_intervals`                        |
-| `early-exit`         | Stop polling as soon as one job fails                                           | `bool`   | `true`                  |                                                                 |
-| `attempt-limits`     | Stop polling if reached to this limit                                           | `number` | `1000`                  |                                                                 |
-| `wait-list`          | Wait only for these jobs                                                        | `string` | `[]`                    | JSON Array                                                      |
-| `skip-list`          | Wait for all jobs except these                                                  | `string` | `[]`                    | JSON Array                                                      |
-| `skip-same-workflow` | Skip jobs defined in the same workflow which using this action                  | `bool`   | `false`                 |                                                                 |
-| `dry-run`            | Avoid requests for tests                                                        | `bool`   | `false`                 |                                                                 |
+| NAME                 | DESCRIPTION                                                                     | TYPE     | DEFAULT                          | OPTIONS                                                         |
+| -------------------- | ------------------------------------------------------------------------------- | -------- | -------------------------------- | --------------------------------------------------------------- |
+| `github-api-url`     | The GitHub API endpoint. Override for GitHub Enterprise usage.                  | `string` | `${{ github.api_url }}`          | `https://api.github.com`, `https://ghe-host.example.net/api/v3` |
+| `github-token`       | The GITHUB_TOKEN secret. You can use PAT if you want.                           | `string` | `${{ github.token }}`            |                                                                 |
+| `warmup-delay`       | Wait this interval before first polling                                         | `string` | `PT1S`                           | [ISO 8601 duration format][tc39-temporal-duration]              |
+| `minimum-interval`   | Wait for this or a longer interval between each poll to reduce GitHub API calls | `string` | `PT10S`                          | [ISO 8601 duration format][tc39-temporal-duration]              |
+| `retry-method`       | How to wait for next polling                                                    | `string` | `equal_intervals`                | `exponential_backoff`, `equal_intervals`                        |
+| `early-exit`         | Stop polling as soon as one job fails                                           | `bool`   | `true`                           |                                                                 |
+| `attempt-limits`     | Stop polling if reached to this limit                                           | `number` | `1000`                           |                                                                 |
+| `event-list`         | Wait only listed events. Used as default for wait/skip lists                    | `string` | `[ "${{ github.event_name }}" ]` | JSON Array                                                      |
+| `wait-list`          | Wait only for these jobs                                                        | `string` | `[]`                             | JSON Array                                                      |
+| `skip-list`          | Wait for all jobs except these                                                  | `string` | `[]`                             | JSON Array                                                      |
+| `skip-same-workflow` | Skip jobs defined in the same workflow which using this action                  | `bool`   | `false`                          |                                                                 |
+| `dry-run`            | Avoid requests for tests                                                        | `bool`   | `false`                          |                                                                 |
 
 ## Guide for option syntax and reasonable values
 
@@ -88,12 +89,25 @@ Full list of the options
 
 Lists should be given with JSON array, do not use both wait-list and skip-list together
 
-- Each item should have a "workflowFile" field, and they can optionally have a "jobName" field.
-- If no jobName is specified, all the jobs in the workflow will be targeted.
-- wait-list:
-  - If the checkRun for the specified name is not found, this action raise errors by default.\
-    You can disable this validation with `"optional": true` or use the `startupGracePeriod` that described in following section
-  - Wait for all event types by default, you can change with `"eventName": "EVENT_NAME_AS_push"`.
+### Common spec
+
+- Must specify `workflowFile`
+- Optionally specify `jobName`\
+  If no `jobName` is specified, all the jobs in the workflow will be targeted.
+- Optionally specify `eventNames`\
+  If no `eventNames` is specified, the global `event-list` will be used (inherited).\
+  If empty `[]` is specified, all events will be targeted.
+
+### `wait-list` spec
+
+- If the checkRun for the specified name is not found, this action raises errors by default.\
+  You can disable this validation with `"optional": true` or use the [`startupGracePeriod`](#startup-grace-period).
+
+### `skip-list` spec
+
+- Subset of `wait-list`. There is no `optional` and `startupGracePeriod`
+- Global `event-list` filtering is applied BEFORE this list.
+- If you specify `eventNames` in an item, that item will only be skipped when the event matches.
 
 ## Required GITHUB_TOKEN permissions
 
@@ -106,9 +120,9 @@ permissions:
   actions: read
 ```
 
-## Support for Github Enterprise
+## Support for GitHub Enterprise
 
-To run this action in your Github Enterprise (GHE) instance you need to override `github-api-url`:
+To run this action in your GitHub Enterprise (GHE) instance you need to override `github-api-url`:
 
 ```yaml
 with:

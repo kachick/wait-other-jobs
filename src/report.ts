@@ -3,7 +3,7 @@ import { styleText } from 'node:util';
 import { summary } from '@actions/core';
 import type { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
 import { Temporal } from 'temporal-polyfill';
-import type { Check, FilterCondition, Options, Trigger, WaitList } from './schema.ts';
+import type { Check, FilterCondition, RuntimeOptions, Trigger, WaitList } from './schema.ts';
 
 interface Meta {
   color: Parameters<typeof styleText>[0] | null;
@@ -171,7 +171,8 @@ function seekWaitList(
   const filtered = summaries.filter((summary) =>
     seeker.some((target) => {
       const isMatchPath = matchPath(target, summary);
-      const isMatchEvent = target.eventName ? (target.eventName === summary.eventName) : true;
+      const targetEvents = target.eventNames;
+      const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary.eventName);
       if (isMatchPath && isMatchEvent) {
         target.found = true;
         return true;
@@ -223,9 +224,9 @@ export function generateReport(
   summaries: readonly Summary[],
   trigger: Trigger,
   elapsed: Temporal.Duration,
-  { waitList, skipList, isSkipSameWorkflowEnabled }: Pick<
-    Options,
-    'waitList' | 'skipList' | 'isSkipSameWorkflowEnabled'
+  { waitList, skipList, eventNames, isSkipSameWorkflowEnabled }: Pick<
+    RuntimeOptions,
+    'waitList' | 'skipList' | 'eventNames' | 'isSkipSameWorkflowEnabled'
   >,
 ): PollingReport {
   const others = summaries.filter((summary) =>
@@ -282,16 +283,28 @@ export function generateReport(
 
     return defaultReport;
   }
+
+  const eventFiltered = eventNames.size === 0 ? targets : targets.filter((summary) => {
+    return eventNames.has(summary.eventName);
+  });
+
   if (skipList.length > 0) {
-    const filtered = targets.filter((summary) => !skipList.some((target) => matchPath(target, summary)));
+    const filtered = eventFiltered.filter((summary) =>
+      !skipList.some((target) => {
+        const isMatchPath = matchPath(target, summary);
+        const targetEvents = target.eventNames;
+        const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary.eventName);
+        return isMatchPath && isMatchEvent;
+      })
+    );
 
     return { ...judge(filtered), summaries: filtered };
   }
 
-  return { ...judge(targets), summaries: targets };
+  return { ...judge(eventFiltered), summaries: eventFiltered };
 }
 
-export function writeJobSummary(lastPolling: PollingReport, options: Options) {
+export function writeJobSummary(lastPolling: PollingReport, options: RuntimeOptions) {
   summary.addHeading('wait-other-jobs', 1);
 
   summary.addHeading('Conclusion', 2);

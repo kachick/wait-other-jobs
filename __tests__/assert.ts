@@ -2,6 +2,8 @@ import { deepStrictEqual, strictEqual } from 'node:assert';
 import { Temporal } from 'temporal-polyfill';
 import { jsonReplacerForPrettyPrint } from '../src/util.ts';
 
+//   - Object.is() returns `false` even for same total, because they are not identical
+//   - deepStrictEqual returns `true` even for different total because of no properties :<
 export function jsonEqual(actual: unknown, expected: unknown) {
   deepStrictEqual(
     JSON.parse(JSON.stringify(actual, jsonReplacerForPrettyPrint)),
