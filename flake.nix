@@ -1,8 +1,6 @@
 {
   inputs = {
-    # Avoid using the unstable channel until issue GH-998 is resolved.
-    # Using it may cause issues GH-1106 and GH-749.
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz";
   };
 
   outputs =
@@ -11,10 +9,7 @@
       nixpkgs,
     }:
     let
-      forAllSystems = nixpkgs.lib.genAttrs [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
+      forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
     in
     {
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
@@ -40,7 +35,8 @@
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
                 nixd
-                nixfmt-rfc-style
+                nixfmt
+                nixfmt-tree
 
                 nodejs_24
                 (pnpm_10.override {
