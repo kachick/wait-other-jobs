@@ -43,14 +43,14 @@ jobs:
         id: get-pnpm-path
         run: |
           echo "pnpm-store-path=$(nix develop --command pnpm store path --silent)" | tee -a "$GITHUB_OUTPUT"
-      - uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+      - uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         name: Cache pnpm store
         with:
           path: |
             ${{ steps.get-pnpm-path.outputs.pnpm-store-path }}
           key: |
             pnpm_store-pnpm_${{ hashFiles('pnpm-lock.*') }}-flake_${{ hashFiles('flake.lock') }}-${{ runner.arch }}-${{ runner.os }}
-      - uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+      - uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         name: Cache deno modules
         with:
           # Using `deno info --json` prints accurate data. However this is a simple solution in this workflow
