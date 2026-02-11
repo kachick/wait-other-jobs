@@ -46,7 +46,7 @@ body:
       label: Parameters
       description: |
         Actual parameters in your job
-        See https://github.com/kachick/wait-other-jobs/blob/main/assets/parameters.png for the place
+        See https://github.com/kachick/wait-other-jobs/blob/v2.0.4/assets/parameters.png for the place
         They are parsed values from your inputs
       placeholder: |
         Copy from your job log's "Parameters" section.
