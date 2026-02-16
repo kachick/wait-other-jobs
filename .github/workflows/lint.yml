@@ -31,7 +31,7 @@ jobs:
           persist-credentials: false
       # Intentionally point to the latest version, not the version bound by nix.
       # Because getting commit ref from version string requires network access.
-      - uses: crate-ci/typos@v1.42.3 # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["typos", "--version"], "nth": 2}
+      - uses: crate-ci/typos@v1.43.4 # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["typos", "--version"], "nth": 2}
         with:
           files: |-
             .
