@@ -7,6 +7,6 @@
     "tekumara.typos-vscode",
     "jnoortheen.nix-ide",
     "denoland.vscode-deno",
-    "biomejs.biome"
+    "oxc.oxc-vscode"
   ]
 }

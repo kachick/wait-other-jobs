@@ -17,6 +17,8 @@ import type { Check, RuntimeOptions, Trigger } from './schema.ts';
 import { jsonReplacerForPrettyPrint } from './util.ts';
 import { getInterval, wait } from './wait.ts';
 
+// oxlint-disable no-await-in-loop -- Polling logic requires sequential checks
+
 interface PollingResult {
   elapsed: Temporal.Duration;
   checks: Check[];
@@ -35,7 +37,6 @@ async function run(): Promise<void> {
   // Workaround for https://github.com/actions/runner/issues/241 and https://github.com/nodejs/node/pull/56722
   // Don't use `core.exportVariable`, we only use this ENV in this action.
   if (!('FORCE_COLOR' in env)) {
-    // biome-ignore lint/complexity/useLiteralKeys: https://github.com/biomejs/biome/issues/463
     env['FORCE_COLOR'] = 'true';
   }
   const startedAt = performance.now();
