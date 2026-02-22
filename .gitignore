@@ -38,3 +38,4 @@ __tests__/runner/*
 lib/
 
 .direnv/
+!.vscode/oxlint

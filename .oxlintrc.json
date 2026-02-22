@@ -1,0 +1,33 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/refs/heads/main/npm/oxlint/configuration_schema.json",
+  // Policy:
+  // 1. Focus on correctness and performance. (correctness, suspicious, perf)
+  // 2. Avoid opinionated style rules. Let dprint handle formatting. (style: allow)
+  // 3. Enable specific rules that are critical for modern JS/TS development.
+  "categories": {
+    "correctness": "deny",
+    "suspicious": "deny",
+    "perf": "deny",
+    "style": "allow"
+  },
+  "rules": {
+    "eqeqeq": "deny",
+    "no-var": "deny",
+    "prefer-const": "deny",
+    "no-const-assign": "deny",
+    "no-console": "deny",
+    "no-debugger": "deny",
+    "typescript/no-explicit-any": "deny",
+    "unicorn/filename-case": "deny",
+    "no-param-reassign": "deny"
+  },
+  "ignorePatterns": ["dist/**", "dependencies/**", "node_modules/**"],
+  "overrides": [
+    {
+      "files": ["scripts/**", "__tests__/**"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ]
+}

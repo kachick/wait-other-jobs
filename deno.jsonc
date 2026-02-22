@@ -5,7 +5,7 @@
       "dependencies": ["typecheck", "test", "lint", "build"],
       "command": "echo '🎉'"
     },
-    "test": "./scripts/run_tests.ts",
+    "test": "./scripts/run-tests.ts",
     "typecheck": "tsgo",
     "cleanup_build": "rm -rf ./lib ./dist",
     "build": {

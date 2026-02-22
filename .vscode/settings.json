@@ -6,7 +6,7 @@
     "editor.defaultFormatter": "jnoortheen.nix-ide"
   },
   "editor.codeActionsOnSave": {
-    "source.organizeImports.biome": "explicit"
+    "source.fixAll.oxc": "explicit"
   },
   "nix.enableLanguageServer": true,
   "nix.serverPath": "nixd",
@@ -19,6 +19,6 @@
   "deno.enablePaths": [
     "scripts"
   ],
-  "biome.enabled": true,
-  "biome.suggestInstallingGlobally": false
+  "oxc.enable.oxlint": true,
+  "oxc.path.oxlint": "./.vscode/oxlint" // Refer node_modules by default. This is workaround for Nix devshell because oxc plugin does not have option to use the oxlint from devshell($PATH)
 }

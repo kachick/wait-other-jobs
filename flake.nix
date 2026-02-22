@@ -44,7 +44,7 @@
                 })
                 typescript-go
                 deno
-                biome
+                oxlint # Including tsgolint
                 dprint
                 typos
 

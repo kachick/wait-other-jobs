@@ -81,7 +81,6 @@ export function parseInput(): { trigger: Trigger; options: RuntimeOptions; githu
     }
   }
   // Do not use `tmpdir` from `node:os` in action: See https://github.com/actions/toolkit/issues/518
-  // biome-ignore lint/complexity/useLiteralKeys: https://github.com/biomejs/biome/issues/463
   const tempRoot = Path.parse(env['RUNNER_TEMP']);
   const tempDir = mkdtempSync(join(tempRoot, 'wait-other-jobs-'));
 
