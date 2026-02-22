@@ -39,4 +39,3 @@ lib/
 
 .direnv/
 !.vscode/oxlint
-dependencies/.oxlintrc.json.tmp

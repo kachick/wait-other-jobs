@@ -1,5 +1,5 @@
 {
-  "$schema": "./dependencies/oxlint-schema.json",
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/refs/heads/main/npm/oxlint/configuration_schema.json",
   // Policy:
   // 1. Focus on correctness and performance. (correctness, suspicious, perf)
   // 2. Avoid opinionated style rules. Let dprint handle formatting. (style: allow)
@@ -18,11 +18,6 @@
     "no-console": "deny",
     "no-debugger": "deny",
     "typescript/no-explicit-any": "deny",
-    "typescript/no-floating-promises": "deny",
-    "typescript/no-misused-promises": "deny",
-    "typescript/await-thenable": "deny",
-    "typescript/no-base-to-string": "deny",
-    "typescript/no-unnecessary-type-assertion": "deny",
     "unicorn/filename-case": "deny",
     "no-param-reassign": "deny"
   },
