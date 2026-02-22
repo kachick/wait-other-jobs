@@ -1,5 +1,5 @@
 {
-  "version": "4",
+  "version": "5",
   "specifiers": {
     "jsr:@david/dax@*": "0.43.1",
     "jsr:@david/dax@~0.43.1": "0.43.1",
@@ -9,6 +9,7 @@
     "jsr:@std/fmt@1": "1.0.5",
     "jsr:@std/fs@1": "1.0.13",
     "jsr:@std/io@0.225": "0.225.2",
+    "jsr:@std/jsonc@0.224": "0.224.3",
     "jsr:@std/path@*": "1.0.8",
     "jsr:@std/path@1": "1.0.8",
     "jsr:@std/path@^1.0.8": "1.0.8"
@@ -52,6 +53,9 @@
       "dependencies": [
         "jsr:@std/bytes"
       ]
+    },
+    "@std/jsonc@0.224.3": {
+      "integrity": "c10770a31489f5b85a3562d9b107c497666d8b6a49291ee2711d84da2616c2d6"
     },
     "@std/path@1.0.8": {
       "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"

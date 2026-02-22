@@ -38,3 +38,5 @@ __tests__/runner/*
 lib/
 
 .direnv/
+!.vscode/oxlint
+dependencies/.oxlintrc.json.tmp

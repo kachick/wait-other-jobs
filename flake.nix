@@ -45,6 +45,7 @@
                 typescript-go
                 deno
                 oxlint # Including tsgolint
+                jsonschema-cli
                 dprint
                 typos
 
