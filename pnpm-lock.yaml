@@ -40,8 +40,8 @@ importers:
         specifier: ^1.0.23
         version: 1.0.23
       '@types/node':
-        specifier: ^24.10.13
-        version: 24.10.13
+        specifier: ^24.10.15
+        version: 24.10.15
 
 packages:
 
@@ -281,8 +281,8 @@ packages:
   '@tsconfig/bases@1.0.23':
     resolution: {integrity: sha512-9DY5I2D/MC7/ug10yRx11pxFSTbAgvrueOkrFqeoJZAUxK68761RLvfUJcTK4HmEtmHblJ3yHGbTlozo690gKA==}
 
-  '@types/node@24.10.13':
-    resolution: {integrity: sha512-oH72nZRfDv9lADUBSo104Aq7gPHpQZc4BTx38r9xf9pg5LfP6EzSyH2n7qFmmxRQXh7YlUXODcYsg6PuTDSxGg==}
+  '@types/node@24.10.15':
+    resolution: {integrity: sha512-BgjLoRuSr0MTI5wA6gMw9Xy0sFudAaUuvrnjgGx9wZ522fYYLA5SYJ+1Y30vTcJEG+DRCyDHx/gzQVfofYzSdg==}
 
   before-after-hook@4.0.0:
     resolution: {integrity: sha512-q6tR3RPqIB1pMiTRMFcZwuG5T8vwp+vUvEG0vuI6B+Rikh5BfPp2fQ82c925FOs+b0lcFQ8CFrL+KbilfZFhOQ==}
@@ -519,7 +519,7 @@ snapshots:
 
   '@tsconfig/bases@1.0.23': {}
 
-  '@types/node@24.10.13':
+  '@types/node@24.10.15':
     dependencies:
       undici-types: 7.16.0
 
