@@ -26,8 +26,8 @@ await build({
     // https://github.com/vercel/vercel/pull/13263
     {
       name: 'jsonc-parser-module-first',
-      setup(build) {
-        build.onResolve({ filter: /^jsonc-parser$/ }, args => {
+      setup(pluginBuild) {
+        pluginBuild.onResolve({ filter: /^jsonc-parser$/ }, args => {
           const pkgJsonPath = require.resolve('jsonc-parser/package.json', {
             paths: [args.resolveDir],
           });
