@@ -1,6 +1,6 @@
 import { join, relative } from 'node:path';
 import { styleText } from 'node:util';
-import { summary } from '@actions/core';
+import * as core from '@actions/core';
 import type { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
 import { Temporal } from 'temporal-polyfill';
 import type { Check, FilterCondition, RuntimeOptions, Trigger, WaitList } from './schema.ts';
@@ -305,25 +305,25 @@ export function generateReport(
 }
 
 export function writeJobSummary(lastPolling: PollingReport, options: RuntimeOptions) {
-  summary.addHeading('wait-other-jobs', 1);
+  core.summary.addHeading('wait-other-jobs', 1);
 
-  summary.addHeading('Conclusion', 2);
+  core.summary.addHeading('Conclusion', 2);
 
   if (lastPolling.ok) {
-    summary.addRaw(`${getEmoji('notice')} All jobs passed`, true);
+    core.summary.addRaw(`${getEmoji('notice')} All jobs passed`, true);
   } else {
-    summary.addRaw(`${getEmoji('error')} Failed`, true);
+    core.summary.addRaw(`${getEmoji('error')} Failed`, true);
 
     if (options.isEarlyExitEnabled) {
-      summary.addHeading('Note', 3);
-      summary.addRaw(
+      core.summary.addHeading('Note', 3);
+      core.summary.addRaw(
         `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
         true,
       );
     }
   }
 
-  summary.addHeading('Details', 2);
+  core.summary.addHeading('Details', 2);
 
   const headers = [
     { data: 'Severity', header: true },
@@ -335,7 +335,7 @@ export function writeJobSummary(lastPolling: PollingReport, options: RuntimeOpti
     { data: 'Log', header: true },
   ];
 
-  summary.addTable([
+  core.summary.addTable([
     headers,
     ...(lastPolling.summaries.toSorted(compareLevel).map((
       { severity, workflowPermalink, workflowBasename, jobName, eventName, runStatus, runConclusion, checkRunUrl },
@@ -357,5 +357,5 @@ export function writeJobSummary(lastPolling: PollingReport, options: RuntimeOpti
     }])),
   ]);
 
-  summary.write();
+  core.summary.write();
 }
