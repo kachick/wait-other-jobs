@@ -58,7 +58,7 @@
                 gh
                 jq
                 yq-go
-                gitleaks
+                betterleaks
                 act
               ]
             );
