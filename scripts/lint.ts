@@ -6,6 +6,6 @@ await Promise.all([
   $`dprint check`,
   $`oxlint -c .oxlintrc.json --deny-warnings`,
   $`typos . .github .vscode`,
-  $`gitleaks dir .`,
+  $`betterleaks dir .`,
   $`git ls-files '*.nix' | xargs nixfmt --check`,
 ]);
