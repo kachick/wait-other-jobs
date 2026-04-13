@@ -1,0 +1,69 @@
+name: ❄️ Nix Diff
+on:
+  pull_request:
+    paths:
+      - 'flake.lock'
+      - '.github/workflows/nix-diff.yml'
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  diff:
+    timeout-minutes: 60
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4.2.2
+        with:
+          fetch-depth: 0 # Required for the base SHA to exist in local git
+          persist-credentials: false
+
+      - uses: NixOS/nix-installer-action@main
+        with:
+          extra-conf: |
+            sandbox = true
+            accept-flake-config = true
+
+      - name: Diff closures
+        id: diff
+        run: |
+          set -euo pipefail
+          SYSTEM=$(nix eval --raw --impure --expr "builtins.currentSystem")
+
+          echo "Evaluating PR derivation..."
+          PR_DRV=$(nix path-info --derivation ".#devShells.${SYSTEM}.default")
+
+          echo "Evaluating base derivation..."
+          # Use local git repository and the base SHA to evaluate without switching branches
+          BASE_DRV=$(nix path-info --derivation "git+file://${{ github.workspace }}?rev=${{ github.event.pull_request.base.sha }}#devShells.${SYSTEM}.default")
+
+          if [ "$PR_DRV" = "$BASE_DRV" ]; then
+            echo "No changes in derivation."
+            echo "diff=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Generating diff..."
+          # nix store diff-closures compares the closures of the two derivations.
+          DIFF=$(nix store diff-closures "$BASE_DRV" "$PR_DRV")
+
+          {
+            echo "diff<<EOF"
+            echo "$DIFF"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post comment
+        if: ${{ steps.diff.outputs.diff != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat <<EOF > comment.md
+          ### ❄️ Nix Store Diff (flake.lock update)
+
+          \`\`\`text
+          ${{ steps.diff.outputs.diff }}
+          \`\`\`
+          EOF
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file comment.md
