@@ -59,12 +59,30 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DIFF_CONTENT: ${{ steps.diff.outputs.diff }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
+          set -euo pipefail
+
+          # Minimize previous comments to reduce noise
+          # https://github.com/kachick/dotfiles/blob/2efec539ec0581ba9e5833c8d4fb3104fe1c9633/.github/workflows/nix-diff.yml#L101-L121
+          gh api -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "repos/{owner}/{repo}/issues/${PR_NUMBER}/comments" --paginate | \
+              jq --raw-output '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("nix-diff-report"))) | .node_id' | \
+              xargs --no-run-if-empty --replace='{node_id}' \
+                gh api graphql --raw-field subjectId="{node_id}" \
+                  --raw-field query='mutation($subjectId:ID!) {
+                    minimizeComment(input: { subjectId: $subjectId, classifier: OUTDATED }) {
+                      minimizedComment { isMinimized }
+                    }
+                  }'
+
           cat <<EOF > comment.md
           ### ❄️ Nix Store Diff (flake.lock update)
+          <!-- nix-diff-report -->
 
           \`\`\`text
           $DIFF_CONTENT
           \`\`\`
           EOF
-          gh pr comment "${{ github.event.pull_request.number }}" --body-file comment.md
+          gh pr comment "$PR_NUMBER" --body-file comment.md
