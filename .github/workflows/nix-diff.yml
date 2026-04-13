@@ -58,12 +58,13 @@ jobs:
         if: ${{ steps.diff.outputs.diff != '' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          DIFF_CONTENT: ${{ steps.diff.outputs.diff }}
         run: |
           cat <<EOF > comment.md
           ### ❄️ Nix Store Diff (flake.lock update)
 
           \`\`\`text
-          ${{ steps.diff.outputs.diff }}
+          $DIFF_CONTENT
           \`\`\`
           EOF
           gh pr comment "${{ github.event.pull_request.number }}" --body-file comment.md
