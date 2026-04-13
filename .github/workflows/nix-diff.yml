@@ -1,4 +1,4 @@
-name: ❄️ Nix Diff
+name: ❄️
 on:
   pull_request:
     paths:
