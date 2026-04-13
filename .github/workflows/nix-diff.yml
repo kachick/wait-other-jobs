@@ -1,4 +1,4 @@
-name: ❄️
+name: ❄️🔍
 on:
   pull_request:
     paths:
