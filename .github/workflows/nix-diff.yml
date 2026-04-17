@@ -20,10 +20,6 @@ jobs:
           persist-credentials: false
 
       - uses: NixOS/nix-installer-action@main
-        with:
-          extra-conf: |
-            sandbox = true
-            accept-flake-config = true
 
       - name: Diff closures
         id: diff

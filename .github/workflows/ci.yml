@@ -33,10 +33,6 @@ jobs:
         with:
           persist-credentials: false
       - uses: NixOS/nix-installer-action@main # There are no tagged releases
-        with:
-          extra-conf: |
-            sandbox = true
-            accept-flake-config = true
       - name: Install direnv
         run: |
           url="$(nix eval --raw --impure --expr '(builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked.url')"
