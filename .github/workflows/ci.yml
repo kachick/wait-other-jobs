@@ -33,11 +33,15 @@ jobs:
         with:
           persist-credentials: false
       - uses: NixOS/nix-installer-action@main # There are no tagged releases
-        with:
-          extra-conf: |
-            sandbox = true
-            accept-flake-config = true
-      - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
+      - name: Install direnv
+        run: |
+          url="$(nix eval --raw --impure --expr '(builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked.url')"
+          nix profile add "${url}#direnv"
+      - name: Load environment variables
+        run: |
+          direnv allow .
+          direnv export gha > "$GITHUB_ENV"
+
       # See https://github.com/actions/setup-node/blob/802632921f8532d2409ae6eac3313b6f81f11122/src/cache-utils.ts#L30-L38
       - name: Get pnpm store path
         id: get-pnpm-path
@@ -61,10 +65,10 @@ jobs:
             deno_store-deno_${{ hashFiles('deno.lock') }}-flake_${{ hashFiles('flake.lock') }}-${{ runner.arch }}-${{ runner.os }}
       - name: Setup
         run: |
-          nix develop --command deno task setup
+          deno task setup
       - name: Test, build, lint
         run: |
-          nix develop --command deno task all
+          deno task all
       - name: Make sure there is no diff after build
         run: |
-          nix develop --command deno task check_no_git_diff
+          deno task check_no_git_diff
