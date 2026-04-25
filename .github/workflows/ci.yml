@@ -29,9 +29,17 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-24.04
     steps:
+      - name: Generate token
+        id: generate-token
+        if: github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.APP_ID }} # TODO: Switch to client-id
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          persist-credentials: false
+          token: ${{ steps.generate-token.outputs.token || github.token }}
+          persist-credentials: true
       - uses: NixOS/nix-installer-action@main # There are no tagged releases
       - name: Install direnv
         run: |
@@ -69,13 +77,6 @@ jobs:
       - name: Test, build, lint
         run: |
           deno task all
-      - name: Generate token
-        id: generate-token
-        if: github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork
-        uses: actions/create-github-app-token@v3
-        with:
-          app-id: ${{ vars.APP_ID }} # TODO: Switch to client-id
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - name: Fix and commit if diff exists
         if: steps.generate-token.outputs.token != ''
         shell: bash
