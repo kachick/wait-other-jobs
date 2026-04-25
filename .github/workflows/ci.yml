@@ -32,7 +32,7 @@ jobs:
       - name: Generate token
         id: generate-token
         if: github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@v3.1.1
         with:
           app-id: ${{ vars.APP_ID }} # TODO: Switch to client-id
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
@@ -90,6 +90,8 @@ jobs:
             git add .
             git commit -m "Fix lint or build diff"
             git push origin HEAD
+            echo "Pushed fixes. Failing this run to wait for the next CI run and prevent premature auto-merge."
+            exit 1
           fi
       - name: Make sure there is no diff after build
         if: steps.generate-token.outputs.token == ''
