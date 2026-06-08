@@ -27,6 +27,6 @@
   },
   "devDependencies": {
     "@tsconfig/bases": "^1.0.25",
-    "@types/node": "^24.12.4"
+    "@types/node": "^24.13.0"
   }
 }
