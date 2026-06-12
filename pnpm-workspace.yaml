@@ -5,3 +5,5 @@ minimumReleaseAge: 4320 # Minutes. 3 x day(1440)s
 minimumReleaseAgeExclude:
   - '@actions/*'
   - '@octokit/*'
+  # Renovate security update: esbuild@0.28.1
+  - esbuild@0.28.1
