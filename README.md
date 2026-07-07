@@ -177,7 +177,7 @@ jobs:
           - ubuntu-26.04-arm
           - ubuntu-slim # Limited to 15 minutes by GitHub
           - macos-26
-          - windows-2025
+          - windows-2025-vs2026
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: kachick/wait-other-jobs@v4.0.0
