@@ -19,7 +19,8 @@
     "no-debugger": "deny",
     "typescript/no-explicit-any": "deny",
     "unicorn/filename-case": "deny",
-    "no-param-reassign": "deny"
+    "no-param-reassign": "deny",
+    "no-underscore-dangle": "off"
   },
   "ignorePatterns": ["dist/**", "dependencies/**", "node_modules/**"],
   "overrides": [
