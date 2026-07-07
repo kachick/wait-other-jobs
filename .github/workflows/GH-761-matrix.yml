@@ -29,8 +29,8 @@ jobs:
       fail-fast: false
       matrix:
         runner:
-          - ubuntu-24.04
-          - ubuntu-24.04-arm
+          - ubuntu-26.04
+          - ubuntu-26.04-arm
           - ubuntu-slim # Limited to 15 minutes by GitHub
           - macos-26
           - windows-2025

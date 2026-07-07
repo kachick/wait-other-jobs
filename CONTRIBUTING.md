@@ -54,7 +54,7 @@ Map(1) { undefined => 42 }
 ## [act](https://github.com/nektos/act)
 
 ```bash
-act --platform 'ubuntu-24.04=ghcr.io/catthehacker/ubuntu:full-24.04' --workflows .github/workflows/lint.yml
+act --platform 'ubuntu-26.04=ghcr.io/catthehacker/ubuntu:full-26.04' --workflows .github/workflows/lint.yml
 ```
 
 ## Why not?

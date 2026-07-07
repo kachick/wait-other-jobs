@@ -7,7 +7,7 @@ jobs:
       contents: read
       pull-requests: read
     timeout-minutes: 5
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       merge: ${{ steps.conclusion.outputs.merge }}
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
@@ -27,7 +27,7 @@ jobs:
     needs: [judge-dependabot]
     if: ${{ needs.judge-dependabot.outputs.merge == 'true' }}
     timeout-minutes: 30
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -56,7 +56,7 @@ jobs:
       contents: write
       pull-requests: write
     timeout-minutes: 30
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: ${{ github.event.pull_request.user.login == 'renovate[bot]' }}
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
@@ -82,7 +82,7 @@ jobs:
       contents: write
       pull-requests: write
     timeout-minutes: 30
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: ${{ github.event.pull_request.user.login == 'selfup-runner[bot]' }}
     steps:
       # Required for checkout before referring to your own action as `uses: ./`.
