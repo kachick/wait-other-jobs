@@ -22,7 +22,7 @@ jobs:
     #   contents: read
     #   checks: read
     #   actions: read
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: kachick/wait-other-jobs@v4.0.0
         timeout-minutes: 15 # Recommended to be enabled with your appropriate value for fail-safe use
@@ -146,7 +146,7 @@ If you changed job name from the default, you should set `skip-list` or roughly 
 jobs:
   your_job: # This will be used as the default job name if you do not specify the "name" field below
     name: 'Changed at here'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: kachick/wait-other-jobs@v4.0.0
         with:
@@ -173,11 +173,11 @@ jobs:
     strategy:
       matrix:
         runner:
-          - ubuntu-24.04
-          - ubuntu-24.04-arm
+          - ubuntu-26.04
+          - ubuntu-26.04-arm
           - ubuntu-slim # Limited to 15 minutes by GitHub
           - macos-26
-          - windows-2025
+          - windows-2025-vs2026
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: kachick/wait-other-jobs@v4.0.0
