@@ -59,7 +59,6 @@
                 jq
                 yq-go
                 betterleaks
-                act
               ]
             );
           };
