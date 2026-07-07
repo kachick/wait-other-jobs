@@ -30,6 +30,16 @@
       ],
       "matchUpdateTypes": ["major"],
       "enabled": false
+    },
+    {
+      "matchDatasources": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "undici"
+      ],
+      "matchUpdateTypes": ["major", "minor"],
+      "enabled": false
     }
   ]
 }
