@@ -3,6 +3,9 @@ allowBuilds:
 ignoredBuiltDependencies:
   - esbuild
 
+overrides:
+  undici@<6.27.0: ^6.27.0
+
 minimumReleaseAge: 4320 # Minutes. 3 x day(1440)s
 minimumReleaseAgeExclude:
   - '@actions/*'
