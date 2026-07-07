@@ -161,8 +161,8 @@ jobs:
                 "optional": ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
               },
               {
-                "workflowFile": "merge-bot-pr.yml",
-                "jobName": "dependabot",
+                "workflowFile": "update-nixpkgs-and-versions-in-ci.yml",
+                "jobName": "update-nixpkgs",
                 "optional": true
               },
               {
