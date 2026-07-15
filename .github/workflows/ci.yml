@@ -40,7 +40,7 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token || github.token }}
           persist-credentials: true
-      - uses: NixOS/nix-installer-action@main # There are no tagged releases
+      - uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6 # v1.0.0
       - name: Install direnv
         run: |
           url="$(nix eval --raw --impure --expr '(builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked.url')"

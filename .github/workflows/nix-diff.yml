@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0 # Required for the base SHA to exist in local git
           persist-credentials: false
 
-      - uses: NixOS/nix-installer-action@main
+      - uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6 # v1.0.0
 
       - name: Diff closures
         id: diff
