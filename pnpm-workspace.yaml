@@ -2,7 +2,7 @@ ignoredBuiltDependencies:
   - esbuild
 
 overrides:
-  undici@<6.27.0: ^6.27.0
+  undici@<6.27.0: ^6.28.0
 
 minimumReleaseAge: 4320 # Minutes. 3 x day(1440)s
 minimumReleaseAgeExclude:
@@ -10,3 +10,5 @@ minimumReleaseAgeExclude:
   - '@octokit/*'
   # Renovate security update: esbuild@0.28.1
   - esbuild@0.28.1
+  # Renovate security update: undici@6.28.0
+  - undici@6.28.0
