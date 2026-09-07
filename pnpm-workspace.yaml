@@ -2,7 +2,7 @@ ignoredBuiltDependencies:
   - esbuild
 
 overrides:
-  undici@<6.27.0: ^6.28.0
+  undici@<6.27.0: ^6.28.1
 
 minimumReleaseAge: 4320 # Minutes. 3 x day(1440)s
 minimumReleaseAgeExclude:
