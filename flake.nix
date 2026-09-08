@@ -42,7 +42,7 @@
                 (pnpm_10.override {
                   withNode = false;
                 })
-                typescript-go
+                typescript
                 deno
                 oxlint # Including tsgolint
                 dprint
