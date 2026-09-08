@@ -38,5 +38,6 @@ jobs:
           persist-credentials: false
       - name: Run
         # For CI use in public repositories, ensuring full-redact does not ensure to avoid actual problems, should not forget it :)
+        # `generic-password` introduced in betterleaks 1.8.0 reports false positives for the bundled "*.js".
         run: |
-          betterleaks git . --redact=100
+          betterleaks git . --redact=100 --disable-rule generic-password
