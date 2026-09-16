@@ -26,7 +26,7 @@
     "zod": "^4.5.4"
   },
   "devDependencies": {
-    "@tsconfig/bases": "^1.0.27",
+    "@tsconfig/bases": "^1.0.28",
     "@types/node": "^24.13.4"
   }
 }
