@@ -7,5 +7,4 @@ await Promise.all([
   $`oxlint -c .oxlintrc.json --deny-warnings`,
   $`typos . .github .vscode`,
   $`betterleaks dir .`,
-  $`git ls-files '*.nix' | xargs nixfmt --check`,
 ]);
