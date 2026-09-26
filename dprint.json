@@ -12,7 +12,7 @@
   },
   "markdown": {},
   "yaml": { "quotes": "preferSingle" },
-  "excludes": ["**/node_modules", "**/*-lock.json", "lib/**", "dist/**", "pnpm-lock.yaml", "logs/**"],
+  "excludes": ["dist", "pnpm-lock.yaml"],
   "plugins": [
     "npm:@dprint/typescript@0.96.1",
     "npm:@dprint/json@0.24.0",
