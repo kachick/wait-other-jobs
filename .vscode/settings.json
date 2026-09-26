@@ -2,9 +2,6 @@
   "typescript.experimental.useTsgo": true,
   "editor.defaultFormatter": "dprint.dprint",
   "editor.formatOnSave": true,
-  "[nix]": {
-    "editor.defaultFormatter": "jnoortheen.nix-ide"
-  },
   "editor.codeActionsOnSave": {
     "source.fixAll.oxc": "explicit"
   },
