@@ -2,18 +2,15 @@
   "name": "wait-other-jobs",
   "version": "1.0.0",
   "description": "",
-  "main": "lib/main.js",
-  "engines": {
-    "node": ">=24.x"
-  },
-  "type": "module",
+  "keywords": [],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kachick/wait-other-jobs.git"
   },
-  "keywords": [],
-  "author": "Kenichi Kamiya <kachick1@gmail.com>",
   "license": "MIT",
+  "author": "Kenichi Kamiya <kachick1@gmail.com>",
+  "type": "module",
+  "main": "lib/main.js",
   "dependencies": {
     "@actions/core": "^3.0.1",
     "@actions/github": "^9.1.1",
@@ -28,5 +25,8 @@
   "devDependencies": {
     "@tsconfig/bases": "^1.0.28",
     "@types/node": "^24.13.6"
+  },
+  "engines": {
+    "node": ">=24.x"
   }
 }
