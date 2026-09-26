@@ -12,7 +12,16 @@
       forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
     in
     {
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
+      formatter = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        pkgs.writeShellScriptBin "dprint-fmt" ''
+          exec "${pkgs.lib.getExe pkgs.dprint}" fmt "$@"
+        ''
+      );
+
       devShells = forAllSystems (
         system:
         let
@@ -35,8 +44,6 @@
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
                 nixd
-                nixfmt
-                nixfmt-tree
 
                 nodejs_24
                 (pnpm_10.override {

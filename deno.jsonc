@@ -20,7 +20,7 @@
       "description": "Prevent unexpected commits",
       "command": "(git add --intent-to-add . && git diff --exit-code) || (echo 'You should commit all diff before running tests'; exit 1)"
     },
-    "fmt": "dprint fmt && git ls-files '*.nix' | xargs nixfmt",
+    "fmt": "dprint fmt",
     "lint": "./scripts/lint.ts",
     "repl": "pnpm dlx tsx" // Don't use deno REPL for this purpose. Finally the code will work on Node.js.
   },
