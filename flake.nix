@@ -30,9 +30,6 @@
         {
           default = pkgs.mkShellNoCC {
             env = {
-              # https://github.com/denoland/deno/issues/17916
-              DENO_NO_PACKAGE_JSON = "1";
-
               # Correct nixd inlay hints
               NIX_PATH = "nixpkgs=${nixpkgs.outPath}";
             };
@@ -50,7 +47,6 @@
                   withNode = false;
                 })
                 typescript
-                deno
                 oxlint # Including tsgolint
                 dprint
                 typos

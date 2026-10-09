@@ -6,6 +6,5 @@
     "allowImportingTsExtensions": true,
     "types": ["node"]
   },
-  "include": ["**/*.ts"],
-  "exclude": ["scripts"]
+  "include": ["**/*.ts"]
 }

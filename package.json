@@ -11,6 +11,20 @@
   "author": "Kenichi Kamiya <kachick1@gmail.com>",
   "type": "module",
   "main": "lib/main.js",
+  "scripts": {
+    "setup": "pnpm install --frozen-lockfile",
+    "test": "node --test '__tests__/**/*.test.ts'",
+    "typecheck": "tsc",
+    "cleanup_build": "rm -rf ./lib ./dist",
+    "build": "pnpm run cleanup_build && node esbuild.config.ts",
+    "fmt": "dprint fmt",
+    "lint": "node scripts/lint.ts",
+    "check_no_git_diff": "(git add --intent-to-add . && git diff --exit-code) || (echo 'You should commit all diff before running tests'; exit 1)",
+    "all": "pnpm run typecheck && pnpm run test && pnpm run lint && pnpm run build",
+    "repl": "pnpm dlx tsx",
+    "update_flake": "nix flake update --commit-lock-file",
+    "sync_workflow_deps": "git ls-files '.github' | xargs nix run 'github:kachick/selfup/v1.3.1' -- run"
+  },
   "dependencies": {
     "@actions/core": "^3.0.1",
     "@actions/github": "^9.1.1",

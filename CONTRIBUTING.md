@@ -1,33 +1,30 @@
 # How to develop
 
-We can only use Node.js for JavaScript actions in GitHub Hosted runners.\
-However, managing the Node.js toolset is a pain for me, so this repository prefers Deno for the development tasks.\
-And finally, it transpiles and bundles into [dist](dist), which will be loaded in Node.js.
-
-In short, [scripts](scripts) can only be adjusted for Deno.\
-Other `*.ts` and `*.js` files should be considered for use with Node.js.
+GitHub Actions runs JavaScript actions on Node.js.\
+This repository uses Node.js 24 and pnpm for development and runtime.\
+The code transpiles and bundles into [dist](dist) with esbuild.
 
 ## Dependency management
 
-It will be done in [Nix](https://nixos.org/) and [pnpm](https://github.com/pnpm/pnpm).
+Dependencies are managed with [Nix](https://nixos.org/) and [pnpm](https://github.com/pnpm/pnpm).
 
 1. Run `nix develop` or `direnv allow .`
-2. `deno task setup`
+2. `pnpm run setup`
 
 ## Tasks
 
 ```console
-> deno task
+> pnpm run
 # Print all tasks
 
-> deno task all
+> pnpm run all
 ...tests, typechecks, linters, build
 ```
 
 ## REPL
 
 ```bash
-deno task repl
+pnpm run repl
 ```
 
 ```typescript
