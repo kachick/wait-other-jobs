@@ -6,7 +6,6 @@
     "dprint.dprint",
     "tekumara.typos-vscode",
     "jnoortheen.nix-ide",
-    "denoland.vscode-deno",
     "oxc.oxc-vscode"
   ]
 }

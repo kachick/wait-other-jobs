@@ -1,10 +1,25 @@
-#!/usr/bin/env -S deno run --allow-all
-import $ from 'jsr:@david/dax@^0.43.1';
+import { spawn } from 'node:child_process';
 
-await Promise.all([
-  $`dprint fmt`,
-  $`dprint check`,
-  $`oxlint -c .oxlintrc.json --deny-warnings`,
-  $`typos . .github .vscode`,
-  $`betterleaks dir .`,
-]);
+const commands: [string, string[]][] = [
+  ['dprint', ['fmt']],
+  ['dprint', ['check']],
+  ['oxlint', ['-c', '.oxlintrc.json', '--deny-warnings']],
+  ['typos', ['.', '.github', '.vscode']],
+  ['betterleaks', ['dir', '.']],
+];
+
+function runCommand(command: string, args: string[]): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { stdio: 'inherit' });
+    child.on('error', reject);
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`Command failed with code ${code}: ${command} ${args.join(' ')}`));
+      }
+    });
+  });
+}
+
+await Promise.all(commands.map(([cmd, args]) => runCommand(cmd, args)));

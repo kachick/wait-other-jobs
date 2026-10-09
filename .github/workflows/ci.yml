@@ -62,21 +62,12 @@ jobs:
             ${{ steps.get-pnpm-path.outputs.pnpm-store-path }}
           key: |
             pnpm_store-pnpm_${{ hashFiles('pnpm-lock.*') }}-flake_${{ hashFiles('flake.lock') }}-${{ runner.arch }}-${{ runner.os }}
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        name: Cache deno modules
-        with:
-          # Using `deno info --json` prints accurate data. However this is a simple solution in this workflow
-          # See https://github.com/actions/cache/blob/1bd1e32a3bdc45362d1e726936510720a7c30a57/examples.md?plain=1#L144-L155
-          path: |
-            ~/.cache/deno
-          key: |
-            deno_store-deno_${{ hashFiles('deno.lock') }}-flake_${{ hashFiles('flake.lock') }}-${{ runner.arch }}-${{ runner.os }}
       - name: Setup
         run: |
-          deno task setup
+          pnpm run setup
       - name: Test, build, lint
         run: |
-          deno task all
+          pnpm run all
       - name: Fix and commit if diff exists
         if: steps.generate-token.outputs.token != ''
         shell: bash
@@ -96,4 +87,4 @@ jobs:
       - name: Make sure there is no diff after build
         if: steps.generate-token.outputs.token == ''
         run: |
-          deno task check_no_git_diff
+          pnpm run check_no_git_diff
