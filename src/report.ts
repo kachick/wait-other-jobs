@@ -129,10 +129,14 @@ export type PollingReport = {
   summaries: readonly Summary[];
 };
 
-function matchPath(condition: FilterCondition, summary: Summary): boolean {
-  const { workflowFile, jobMatchMode, ...restCondition } = condition;
+function matchesCondition(condition: FilterCondition, summary: Summary): boolean {
+  const { workflowFile, jobMatchMode, eventNames, ...restCondition } = condition;
 
   if (workflowFile !== summary.workflowBasename) {
+    return false;
+  }
+
+  if (eventNames.size > 0 && !eventNames.has(summary.eventName)) {
     return false;
   }
 
@@ -168,10 +172,7 @@ function seekWaitList(
   const seeker = waitList.map((condition) => ({ ...condition, found: false }));
   const filtered = summaries.filter((summary) =>
     seeker.some((target) => {
-      const isMatchPath = matchPath(target, summary);
-      const targetEvents = target.eventNames;
-      const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary.eventName);
-      if (isMatchPath && isMatchEvent) {
+      if (matchesCondition(target, summary)) {
         target.found = true;
         return true;
       } else {
@@ -287,14 +288,7 @@ export function generateReport(
   });
 
   if (skipList.length > 0) {
-    const filtered = eventFiltered.filter((summary) =>
-      !skipList.some((target) => {
-        const isMatchPath = matchPath(target, summary);
-        const targetEvents = target.eventNames;
-        const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary.eventName);
-        return isMatchPath && isMatchEvent;
-      })
-    );
+    const filtered = eventFiltered.filter((summary) => !skipList.some((target) => matchesCondition(target, summary)));
 
     return { ...judge(filtered), summaries: filtered };
   }

@@ -49126,9 +49126,12 @@ function getSummaries(checks, trigger) {
     (a, b) => join2(a.workflowBasename, a.jobName).localeCompare(join2(b.workflowBasename, b.jobName))
   );
 }
-function matchPath(condition, summary2) {
-  const { workflowFile, jobMatchMode, ...restCondition } = condition;
+function matchesCondition(condition, summary2) {
+  const { workflowFile, jobMatchMode, eventNames: eventNames2, ...restCondition } = condition;
   if (workflowFile !== summary2.workflowBasename) {
+    return false;
+  }
+  if (eventNames2.size > 0 && !eventNames2.has(summary2.eventName)) {
     return false;
   }
   if (jobMatchMode === "all") {
@@ -49155,10 +49158,7 @@ function seekWaitList(summaries, waitList, elapsed) {
   const seeker = waitList.map((condition) => ({ ...condition, found: false }));
   const filtered = summaries.filter(
     (summary2) => seeker.some((target) => {
-      const isMatchPath = matchPath(target, summary2);
-      const targetEvents = target.eventNames;
-      const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary2.eventName);
-      if (isMatchPath && isMatchEvent) {
+      if (matchesCondition(target, summary2)) {
         target.found = true;
         return true;
       } else {
@@ -49252,14 +49252,7 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, event
     return eventNames2.has(summary2.eventName);
   });
   if (skipList.length > 0) {
-    const filtered = eventFiltered.filter(
-      (summary2) => !skipList.some((target) => {
-        const isMatchPath = matchPath(target, summary2);
-        const targetEvents = target.eventNames;
-        const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary2.eventName);
-        return isMatchPath && isMatchEvent;
-      })
-    );
+    const filtered = eventFiltered.filter((summary2) => !skipList.some((target) => matchesCondition(target, summary2)));
     return { ...judge(filtered), summaries: filtered };
   }
   return { ...judge(eventFiltered), summaries: eventFiltered };
