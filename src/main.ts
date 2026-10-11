@@ -7,6 +7,7 @@ import { fetchChecks } from './github-api.ts';
 import { parseInput } from './input.ts';
 import {
   colorize,
+  formatSummary,
   generateReport,
   getSummaries,
   type PollingReport,
@@ -102,7 +103,7 @@ async function run(): Promise<void> {
     }
 
     for (const pollingSummary of pollingReport.summaries) {
-      info(pollingSummary.format());
+      info(formatSummary(pollingSummary));
     }
 
     const { ok, done, logs } = pollingReport;

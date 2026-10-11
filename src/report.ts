@@ -69,8 +69,16 @@ export interface Summary {
   checkRunUrl: CheckRun['detailsUrl'];
   runStatus: CheckRun['status'];
   runConclusion: CheckRun['conclusion']; // null if status is in progress
+}
 
-  format: () => string;
+export function formatSummary(summary: Summary): string {
+  const nullStr = '(null)';
+
+  return `${summary.workflowBasename}(${
+    colorize(summary.severity, summary.jobName)
+  }): [eventName: ${summary.eventName}][runStatus: ${summary.runStatus}][runConclusion: ${
+    summary.runConclusion ?? nullStr
+  }][runURL: ${summary.checkRunUrl}]`;
 }
 
 function summarize(check: Check, trigger: Trigger): Summary {
@@ -99,16 +107,6 @@ function summarize(check: Check, trigger: Trigger): Summary {
     checkRunUrl: run.detailsUrl,
     runStatus: run.status,
     runConclusion: run.conclusion,
-
-    format: function() {
-      const nullStr = '(null)';
-
-      return `${this.workflowBasename}(${
-        colorize(this.severity, this.jobName)
-      }): [eventName: ${this.eventName}][runStatus: ${this.runStatus}][runConclusion: ${
-        this.runConclusion ?? nullStr
-      }][runURL: ${this.checkRunUrl}]`;
-    },
   };
 }
 

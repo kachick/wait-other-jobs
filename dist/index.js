@@ -49094,6 +49094,10 @@ function readableDuration(duration3) {
   }
   return `about ${eachUnit.join(" ")}`;
 }
+function formatSummary(summary2) {
+  const nullStr = "(null)";
+  return `${summary2.workflowBasename}(${colorize(summary2.severity, summary2.jobName)}): [eventName: ${summary2.eventName}][runStatus: ${summary2.runStatus}][runConclusion: ${summary2.runConclusion ?? nullStr}][runURL: ${summary2.checkRunUrl}]`;
+}
 function summarize(check2, trigger) {
   const { checkRun: run2, checkSuite: suite, workflow, workflowRun } = check2;
   const isCompleted = run2.status === "COMPLETED";
@@ -49114,11 +49118,7 @@ function summarize(check2, trigger) {
     jobName: run2.name,
     checkRunUrl: run2.detailsUrl,
     runStatus: run2.status,
-    runConclusion: run2.conclusion,
-    format: function() {
-      const nullStr = "(null)";
-      return `${this.workflowBasename}(${colorize(this.severity, this.jobName)}): [eventName: ${this.eventName}][runStatus: ${this.runStatus}][runConclusion: ${this.runConclusion ?? nullStr}][runURL: ${this.checkRunUrl}]`;
-    }
+    runConclusion: run2.conclusion
   };
 }
 function getSummaries(checks, trigger) {
@@ -49440,7 +49440,7 @@ async function run() {
       dumper.results[attempts] = { elapsed, checks, pollingReport };
     }
     for (const pollingSummary of pollingReport.summaries) {
-      info(pollingSummary.format());
+      info(formatSummary(pollingSummary));
     }
     const { ok, done, logs } = pollingReport;
     for (const { severity, message, resource } of logs) {
