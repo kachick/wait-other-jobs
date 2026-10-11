@@ -49077,12 +49077,6 @@ function colorize(severity, message) {
   }
   return message;
 }
-function getEmoji(severity) {
-  return severities[severity].emoji;
-}
-function compareLevel(a, b) {
-  return severities[a.severity].level - severities[b.severity].level;
-}
 function readableDuration(duration3) {
   const { hours, minutes, seconds } = duration3.round({ largestUnit: "hours" });
   const eachUnit = [`${seconds} seconds`];
@@ -49257,6 +49251,14 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, event
   }
   return { ...judge(eventFiltered), summaries: eventFiltered };
 }
+
+// src/job-summary.ts
+function getEmoji(severity) {
+  return severities[severity].emoji;
+}
+function compareLevel(a, b) {
+  return severities[a.severity].level - severities[b.severity].level;
+}
 function writeJobSummary(lastPolling, options) {
   summary.addHeading("wait-other-jobs", 1);
   summary.addHeading("Conclusion", 2);
@@ -49267,7 +49269,7 @@ function writeJobSummary(lastPolling, options) {
     if (options.isEarlyExitEnabled) {
       summary.addHeading("Note", 3);
       summary.addRaw(
-        `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
+        "This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.",
         true
       );
     }
