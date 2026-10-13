@@ -26,14 +26,14 @@
     "sync_workflow_deps": "git ls-files '.github' | xargs nix run 'github:kachick/selfup/v1.3.1' -- run"
   },
   "dependencies": {
-    "@actions/core": "^3.0.1",
-    "@actions/github": "^9.1.1",
-    "@octokit/core": "^7.0.8",
-    "@octokit/graphql-schema": "^15.26.1",
-    "@octokit/plugin-paginate-graphql": "^6.0.0",
-    "esbuild": "^0.28.2",
-    "jsonc-parser": "^3.3.1",
-    "temporal-polyfill": "^1.0.5",
+    "@actions/core": "3.0.1",
+    "@actions/github": "9.1.1",
+    "@octokit/core": "7.0.8",
+    "@octokit/graphql-schema": "15.26.1",
+    "@octokit/plugin-paginate-graphql": "6.0.0",
+    "esbuild": "0.28.2",
+    "jsonc-parser": "3.3.1",
+    "temporal-polyfill": "1.0.5",
     "zod": "4.6.5"
   },
   "devDependencies": {
