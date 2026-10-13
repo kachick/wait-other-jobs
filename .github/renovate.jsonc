@@ -39,6 +39,18 @@
       ],
       "matchUpdateTypes": ["major", "minor"],
       "enabled": false
+    },
+    // Temporarily pause zod updates until the root cause is clear and resolved:
+    // - https://github.com/orgs/community/discussions/208477
+    // - https://github.com/kachick/wait-other-jobs/issues/1420
+    {
+      "matchDatasources": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "zod"
+      ],
+      "enabled": false
     }
   ]
 }
