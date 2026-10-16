@@ -20272,7 +20272,7 @@ function endGroup() {
   issue("endgroup");
 }
 
-// node_modules/.pnpm/temporal-polyfill@1.0.5/node_modules/temporal-polyfill/chunks/root.js
+// node_modules/.pnpm/temporal-polyfill@1.0.6/node_modules/temporal-polyfill/chunks/root.js
 var NativeTemporal = globalThis.Temporal;
 
 // node_modules/.pnpm/temporal-utils@1.0.3/node_modules/temporal-utils/dist/errorMessages.js
@@ -20330,205 +20330,7 @@ function requireObjectLike(arg) {
   return arg;
 }
 
-// node_modules/.pnpm/temporal-polyfill@1.0.5/node_modules/temporal-polyfill/chunks/options.js
-function normalizeOptionsOrString(options, optionName) {
-  return "string" == typeof options ? ((optionName2, optionVal) => {
-    const res = /* @__PURE__ */ Object.create(null);
-    return res[optionName2] = optionVal, res;
-  })(optionName, options) : requireObjectLike(options);
-}
-var smallestUnitStr = "smallestUnit";
-var overflowMap = {
-  constrain: 0,
-  reject: 1
-};
-var epochDisambigMap = {
-  compatible: 0,
-  reject: 1,
-  earlier: 2,
-  later: 3
-};
-var offsetDisambigMap = {
-  reject: 0,
-  use: 1,
-  prefer: 2,
-  ignore: 3
-};
-var calendarDisplayMap = {
-  auto: 0,
-  never: 1,
-  critical: 2,
-  always: 3
-};
-var timeZoneDisplayMap = {
-  auto: 0,
-  never: 1,
-  critical: 2
-};
-var offsetDisplayMap = {
-  auto: 0,
-  never: 1
-};
-var roundingModeMap = {
-  floor: 0,
-  halfFloor: 1,
-  ceil: 2,
-  halfCeil: 3,
-  trunc: 4,
-  halfTrunc: 5,
-  expand: 6,
-  halfExpand: 7,
-  halfEven: 8
-};
-var roundingModeFuncs = [Math.floor, roundHalfFloor, Math.ceil, roundHalfCeil, Math.trunc, roundHalfTrunc, roundExpand, roundHalfExpand, roundHalfEven];
-var directionMap = {
-  previous: -1,
-  next: 1
-};
-function coerceRoundingIncInteger(options) {
-  const roundingInc = options.roundingIncrement;
-  return void 0 === roundingInc ? 1 : toIntegerWithTrunc(roundingInc, "roundingIncrement");
-}
-function coerceFractionalSecondDigits(options) {
-  let subsecDigits = options.fractionalSecondDigits;
-  if (void 0 !== subsecDigits) {
-    if ("number" != typeof subsecDigits) {
-      if ("auto" === toString(subsecDigits)) {
-        return;
-      }
-      throwRangeError(invalidEntity2("fractionalSecondDigits", subsecDigits));
-    }
-    subsecDigits = clampEntity("fractionalSecondDigits", Math.floor(subsecDigits), 0, 9, 1);
-  }
-  return subsecDigits;
-}
-function coerceUnitOption(optionName, options, minUnit = 0, ensureDefined) {
-  let unitStr = options[optionName];
-  if (void 0 === unitStr) {
-    return ensureDefined ? minUnit : void 0;
-  }
-  if (unitStr = toString(unitStr), "auto" === unitStr) {
-    return ensureDefined ? minUnit : null;
-  }
-  let unit = unitNameMap[unitStr];
-  return void 0 === unit && (unit = durationFieldNamesAsc.indexOf(unitStr)), unit < 0 && throwRangeError(invalidChoice(optionName, unitStr, unitNameMap)), unit;
-}
-function coerceChoiceOption(optionName, enumNameMap, options, defaultChoice = 0) {
-  const enumArg = options[optionName];
-  if (void 0 === enumArg) {
-    return defaultChoice;
-  }
-  const enumStr = toString(enumArg);
-  const enumNum = enumNameMap[enumStr];
-  return void 0 === enumNum && throwRangeError(invalidChoice(optionName, enumStr, enumNameMap)), enumNum;
-}
-var coerceSmallestUnit = /* @__PURE__ */ bindArgs(coerceUnitOption, smallestUnitStr);
-var coerceLargestUnit = /* @__PURE__ */ bindArgs(coerceUnitOption, "largestUnit");
-var coerceTotalUnit = /* @__PURE__ */ bindArgs(coerceUnitOption, "unit");
-var coerceOverflow = /* @__PURE__ */ bindArgs(coerceChoiceOption, "overflow", overflowMap);
-var coerceEpochDisambig = /* @__PURE__ */ bindArgs(coerceChoiceOption, "disambiguation", epochDisambigMap);
-var coerceOffsetDisambig = /* @__PURE__ */ bindArgs(coerceChoiceOption, "offset", offsetDisambigMap);
-var coerceCalendarDisplay = /* @__PURE__ */ bindArgs(coerceChoiceOption, "calendarName", calendarDisplayMap);
-var coerceTimeZoneDisplay = /* @__PURE__ */ bindArgs(coerceChoiceOption, "timeZoneName", timeZoneDisplayMap);
-var coerceOffsetDisplay = /* @__PURE__ */ bindArgs(coerceChoiceOption, "offset", offsetDisplayMap);
-var coerceRoundingMode = /* @__PURE__ */ bindArgs(coerceChoiceOption, "roundingMode", roundingModeMap);
-var coerceDirection = /* @__PURE__ */ bindArgs(coerceChoiceOption, "direction", directionMap);
-function validateRoundingInc(roundingInc, smallestUnit, allowManyLargeUnits, solarMode) {
-  const upUnitNano = solarMode ? nanoInUtcDay : unitNanoMap[smallestUnit + 1];
-  if (upUnitNano) {
-    const unitNano = unitNanoMap[smallestUnit];
-    upUnitNano % ((roundingInc = clampEntity("roundingIncrement", roundingInc, 1, upUnitNano / unitNano - (solarMode ? 0 : 1), 1)) * unitNano) && throwRangeError(invalidEntity2("roundingIncrement", roundingInc));
-  } else {
-    roundingInc = clampEntity("roundingIncrement", roundingInc, 1, allowManyLargeUnits ? 10 ** 9 : 1, 1);
-  }
-  return roundingInc;
-}
-function validateUnitRange(optionName, unit, minUnit, maxUnit) {
-  return null != unit && clampEntity(optionName, unit, minUnit, maxUnit, 1, unitNamesAsc), unit;
-}
-function checkLargestSmallestUnit(largestUnit, smallestUnit) {
-  smallestUnit > largestUnit && throwRangeError(flippedSmallestLargestUnit);
-}
-function refineDiffOptions(roundingModeInvert, options, defaultLargestUnit, maxUnit = 9, minUnit = 0, defaultRoundingMode = 4) {
-  options = normalizeOptions(options);
-  let largestUnit = coerceLargestUnit(options, minUnit);
-  let roundingInc = coerceRoundingIncInteger(options);
-  let roundingMode = coerceRoundingMode(options, defaultRoundingMode);
-  let smallestUnit = coerceSmallestUnit(options, minUnit, 1);
-  return largestUnit = validateUnitRange("largestUnit", largestUnit, minUnit, maxUnit), smallestUnit = validateUnitRange(smallestUnitStr, smallestUnit, minUnit, maxUnit), null == largestUnit ? largestUnit = Math.max(defaultLargestUnit, smallestUnit) : checkLargestSmallestUnit(largestUnit, smallestUnit), roundingInc = validateRoundingInc(roundingInc, smallestUnit, 1), roundingModeInvert && (roundingMode = ((roundingMode2) => roundingMode2 < 4 ? (roundingMode2 + 2) % 4 : roundingMode2)(roundingMode)), [largestUnit, smallestUnit, roundingInc, roundingMode];
-}
-function refineDurationRoundOptions(options, defaultLargestUnit, refineRelativeTo) {
-  options = normalizeOptionsOrString(options, smallestUnitStr);
-  let largestUnit = coerceLargestUnit(options);
-  const relativeToInternals = refineRelativeTo(options.relativeTo);
-  let roundingInc = coerceRoundingIncInteger(options);
-  const roundingMode = coerceRoundingMode(options, 7);
-  let smallestUnit = coerceSmallestUnit(options);
-  return void 0 === largestUnit && void 0 === smallestUnit && throwRangeError(missingSmallestLargestUnit), null == smallestUnit && (smallestUnit = 0), null == largestUnit && (largestUnit = Math.max(smallestUnit, defaultLargestUnit)), checkLargestSmallestUnit(largestUnit, smallestUnit), roundingInc = validateRoundingInc(roundingInc, smallestUnit, 1), roundingInc > 1 && smallestUnit > 5 && largestUnit !== smallestUnit && throwRangeError("For calendar units with roundingIncrement > 1, use largestUnit = smallestUnit"), [largestUnit, smallestUnit, roundingInc, roundingMode, relativeToInternals];
-}
-function refineRoundingOptions(options, maxUnit = 6, solarMode) {
-  let roundingInc = coerceRoundingIncInteger(options = normalizeOptionsOrString(options, smallestUnitStr));
-  const roundingMode = coerceRoundingMode(options, 7);
-  let smallestUnit = coerceSmallestUnit(options);
-  return smallestUnit = requirePropDefined(smallestUnitStr, smallestUnit), smallestUnit = validateUnitRange(smallestUnitStr, smallestUnit, 0, maxUnit), roundingInc = validateRoundingInc(roundingInc, smallestUnit, void 0, solarMode), [smallestUnit, roundingInc, roundingMode];
-}
-function refineTotalOptions(options, refineRelativeTo) {
-  const relativeToInternals = refineRelativeTo((options = normalizeOptionsOrString(options, "unit")).relativeTo);
-  let totalUnit = coerceTotalUnit(options);
-  return totalUnit = requirePropDefined("unit", totalUnit), [totalUnit, relativeToInternals];
-}
-function refineOverflowOptions(options) {
-  return void 0 === options ? 0 : coerceOverflow(requireObjectLike(options));
-}
-function refineZonedFieldOptions(options, defaultOffsetDisambig = 0) {
-  options = normalizeOptions(options);
-  const epochDisambig = coerceEpochDisambig(options);
-  const offsetDisambig = coerceOffsetDisambig(options, defaultOffsetDisambig);
-  return [coerceOverflow(options), offsetDisambig, epochDisambig];
-}
-function refineEpochDisambigOptions(options) {
-  return coerceEpochDisambig(normalizeOptions(options));
-}
-function refineTimeDisplayTuple(options, maxSmallestUnit = 4) {
-  const subsecDigits = coerceFractionalSecondDigits(options);
-  const roundingMode = coerceRoundingMode(options, 4);
-  const smallestUnit = coerceSmallestUnit(options);
-  return [roundingMode, ...resolveSmallestUnitAndSubsecDigits(validateUnitRange(smallestUnitStr, smallestUnit, 0, maxSmallestUnit), subsecDigits)];
-}
-function refineDateTimeDisplayOptions(options) {
-  return options = normalizeOptions(options), [coerceCalendarDisplay(options), ...refineTimeDisplayTuple(options)];
-}
-function refineDateDisplayOptions(options) {
-  return coerceCalendarDisplay(normalizeOptions(options));
-}
-function refineTimeDisplayOptions(options, maxSmallestUnit) {
-  return refineTimeDisplayTuple(normalizeOptions(options), maxSmallestUnit);
-}
-function refineZonedDateTimeDisplayOptions(options) {
-  options = normalizeOptions(options);
-  const calendarDisplay = coerceCalendarDisplay(options);
-  const subsecDigits = coerceFractionalSecondDigits(options);
-  const offsetDisplay = coerceOffsetDisplay(options);
-  const roundingMode = coerceRoundingMode(options, 4);
-  const smallestUnit = coerceSmallestUnit(options);
-  return [calendarDisplay, coerceTimeZoneDisplay(options), offsetDisplay, roundingMode, ...resolveSmallestUnitAndSubsecDigits(validateUnitRange(smallestUnitStr, smallestUnit, 0, 4), subsecDigits)];
-}
-function refineInstantDisplayOptions(options) {
-  const subsecDigits = coerceFractionalSecondDigits(options = normalizeOptions(options));
-  const roundingMode = coerceRoundingMode(options, 4);
-  const smallestUnit = coerceSmallestUnit(options);
-  return [options.timeZone, roundingMode, ...resolveSmallestUnitAndSubsecDigits(validateUnitRange(smallestUnitStr, smallestUnit, 0, 4), subsecDigits)];
-}
-function resolveSmallestUnitAndSubsecDigits(smallestUnit, subsecDigits) {
-  return null != smallestUnit ? [unitNanoMap[smallestUnit], smallestUnit < 4 ? 9 - 3 * smallestUnit : -1] : [void 0 === subsecDigits ? 1 : 10 ** (9 - subsecDigits), subsecDigits];
-}
-function refineDirectionOptions(options) {
-  const normalizedOptions = normalizeOptionsOrString(options, "direction");
-  const res = coerceDirection(normalizedOptions, 0);
-  return res || throwRangeError(invalidEntity2("direction", res)), res;
-}
-
-// node_modules/.pnpm/temporal-polyfill@1.0.5/node_modules/temporal-polyfill/chunks/internal.js
+// node_modules/.pnpm/temporal-polyfill@1.0.6/node_modules/temporal-polyfill/chunks/internal.js
 var invalidEntity2 = invalidEntity;
 var missingField = (fieldName) => `Missing ${fieldName}`;
 var noValidFields = (validFields) => "No valid fields: " + validFields.join();
@@ -20542,8 +20344,6 @@ var invalidCalendar = (calendarId) => invalidEntity("Calendar", calendarId);
 var exoticCalendarRequired = (calendarId, remedy) => `Unknown calendar ${calendarId}; might need ${remedy}`;
 var invalidTimeZone = (calendarId) => invalidEntity("TimeZone", calendarId);
 var outOfBoundsDate = "Out-of-bounds date";
-var missingSmallestLargestUnit = "Required smallestUnit or largestUnit";
-var flippedSmallestLargestUnit = "smallestUnit > largestUnit";
 var failedParse = (s) => `Cannot parse: ${s}`;
 var invalidSubstring = (substring) => `Invalid substring: ${substring}`;
 var constrainToRange2 = constrainToRange;
@@ -20685,26 +20485,8 @@ function divTrunc(num, divisor) {
 function modTrunc(num, divisor) {
   return num % divisor || 0;
 }
-function roundExpand(num) {
-  return num < 0 ? Math.floor(num) : Math.ceil(num);
-}
 function fabricateNearHalfFraction(halfCompare, sign = 1) {
   return sign * (0.5 + halfCompare / 5);
-}
-function roundHalfExpand(num) {
-  return Math.sign(num) * Math.round(Math.abs(num)) || 0;
-}
-function roundHalfFloor(num) {
-  return hasHalf(num) ? Math.floor(num) : Math.round(num);
-}
-function roundHalfCeil(num) {
-  return hasHalf(num) ? Math.ceil(num) : Math.round(num);
-}
-function roundHalfTrunc(num) {
-  return hasHalf(num) ? Math.trunc(num) || 0 : Math.round(num);
-}
-function roundHalfEven(num) {
-  return hasHalf(num) ? (num = Math.trunc(num) || 0) + num % 2 : Math.round(num);
 }
 function hasHalf(num) {
   return 0.5 === Math.abs(num % 1);
@@ -21075,6 +20857,138 @@ function toBigInt(bi) {
 function toStrictInteger(arg, entityName) {
   return requireNumberIsInteger(toFiniteNumber(arg, entityName), entityName);
 }
+var smallestUnitStr = "smallestUnit";
+var overflowMap = {
+  constrain: 0,
+  reject: 1
+};
+var epochDisambigMap = {
+  compatible: 0,
+  reject: 1,
+  earlier: 2,
+  later: 3
+};
+var offsetDisambigMap = {
+  reject: 0,
+  use: 1,
+  prefer: 2,
+  ignore: 3
+};
+var calendarDisplayMap = {
+  auto: 0,
+  never: 1,
+  critical: 2,
+  always: 3
+};
+var timeZoneDisplayMap = {
+  auto: 0,
+  never: 1,
+  critical: 2
+};
+var offsetDisplayMap = {
+  auto: 0,
+  never: 1
+};
+var roundingModeMap = {
+  floor: 0,
+  halfFloor: 1,
+  ceil: 2,
+  halfCeil: 3,
+  trunc: 4,
+  halfTrunc: 5,
+  expand: 6,
+  halfExpand: 7,
+  halfEven: 8
+};
+var roundingModeFuncs = [Math.floor, (num) => hasHalf(num) ? Math.floor(num) : Math.round(num), Math.ceil, (num) => hasHalf(num) ? Math.ceil(num) : Math.round(num), Math.trunc, (num) => hasHalf(num) ? Math.trunc(num) || 0 : Math.round(num), (num) => num < 0 ? Math.floor(num) : Math.ceil(num), (num) => Math.sign(num) * Math.round(Math.abs(num)) || 0, (num) => hasHalf(num) ? (num = Math.trunc(num) || 0) + num % 2 : Math.round(num)];
+var directionMap = {
+  previous: -1,
+  next: 1
+};
+function coerceRoundingIncInteger(options) {
+  const roundingInc = options.roundingIncrement;
+  return void 0 === roundingInc ? 1 : toIntegerWithTrunc(roundingInc, "roundingIncrement");
+}
+function coerceFractionalSecondDigits(options) {
+  let subsecDigits = options.fractionalSecondDigits;
+  if (void 0 !== subsecDigits) {
+    if ("number" != typeof subsecDigits) {
+      if ("auto" === toString(subsecDigits)) {
+        return;
+      }
+      throwRangeError(invalidEntity2("fractionalSecondDigits", subsecDigits));
+    }
+    subsecDigits = clampEntity("fractionalSecondDigits", Math.floor(subsecDigits), 0, 9, 1);
+  }
+  return subsecDigits;
+}
+function coerceUnitOption(optionName, options, minUnit = 0, ensureDefined) {
+  let unitStr = options[optionName];
+  if (void 0 === unitStr) {
+    return ensureDefined ? minUnit : void 0;
+  }
+  if (unitStr = toString(unitStr), "auto" === unitStr) {
+    return ensureDefined ? minUnit : null;
+  }
+  let unit = unitNameMap[unitStr];
+  return void 0 === unit && (unit = durationFieldNamesAsc.indexOf(unitStr)), unit < 0 && throwRangeError(invalidChoice(optionName, unitStr, unitNameMap)), unit;
+}
+function coerceChoiceOption(optionName, enumNameMap, options, defaultChoice = 0) {
+  const enumArg = options[optionName];
+  if (void 0 === enumArg) {
+    return defaultChoice;
+  }
+  const enumStr = toString(enumArg);
+  const enumNum = enumNameMap[enumStr];
+  return void 0 === enumNum && throwRangeError(invalidChoice(optionName, enumStr, enumNameMap)), enumNum;
+}
+var coerceSmallestUnit = /* @__PURE__ */ bindArgs(coerceUnitOption, smallestUnitStr);
+var coerceLargestUnit = /* @__PURE__ */ bindArgs(coerceUnitOption, "largestUnit");
+var coerceTotalUnit = /* @__PURE__ */ bindArgs(coerceUnitOption, "unit");
+var coerceOverflow = /* @__PURE__ */ bindArgs(coerceChoiceOption, "overflow", overflowMap);
+var coerceEpochDisambig = /* @__PURE__ */ bindArgs(coerceChoiceOption, "disambiguation", epochDisambigMap);
+var coerceOffsetDisambig = /* @__PURE__ */ bindArgs(coerceChoiceOption, "offset", offsetDisambigMap);
+var coerceCalendarDisplay = /* @__PURE__ */ bindArgs(coerceChoiceOption, "calendarName", calendarDisplayMap);
+var coerceTimeZoneDisplay = /* @__PURE__ */ bindArgs(coerceChoiceOption, "timeZoneName", timeZoneDisplayMap);
+var coerceOffsetDisplay = /* @__PURE__ */ bindArgs(coerceChoiceOption, "offset", offsetDisplayMap);
+var coerceRoundingMode = /* @__PURE__ */ bindArgs(coerceChoiceOption, "roundingMode", roundingModeMap);
+var coerceDirection = /* @__PURE__ */ bindArgs(coerceChoiceOption, "direction", directionMap);
+function normalizeOptionsOrString(options, optionName) {
+  return "string" == typeof options ? ((optionName2, optionVal) => {
+    const res = /* @__PURE__ */ Object.create(null);
+    return res[optionName2] = optionVal, res;
+  })(optionName, options) : requireObjectLike(options);
+}
+function validateRoundingInc(roundingInc, smallestUnit, allowManyLargeUnits, solarMode) {
+  const upUnitNano = solarMode ? nanoInUtcDay : unitNanoMap[smallestUnit + 1];
+  if (upUnitNano) {
+    const unitNano = unitNanoMap[smallestUnit];
+    upUnitNano % ((roundingInc = clampEntity("roundingIncrement", roundingInc, 1, upUnitNano / unitNano - (solarMode ? 0 : 1), 1)) * unitNano) && throwRangeError(invalidEntity2("roundingIncrement", roundingInc));
+  } else {
+    roundingInc = clampEntity("roundingIncrement", roundingInc, 1, allowManyLargeUnits ? 10 ** 9 : 1, 1);
+  }
+  return roundingInc;
+}
+function validateUnitRange(optionName, unit, minUnit, maxUnit) {
+  return null != unit && clampEntity(optionName, unit, minUnit, maxUnit, 1, unitNamesAsc), unit;
+}
+function checkLargestSmallestUnit(largestUnit, smallestUnit) {
+  smallestUnit > largestUnit && throwRangeError("smallestUnit > largestUnit");
+}
+function refineDiffOptions(roundingModeInvert, options, defaultLargestUnit, maxUnit = 9, minUnit = 0, defaultRoundingMode = 4) {
+  options = normalizeOptions(options);
+  let largestUnit = coerceLargestUnit(options, minUnit);
+  let roundingInc = coerceRoundingIncInteger(options);
+  let roundingMode = coerceRoundingMode(options, defaultRoundingMode);
+  let smallestUnit = coerceSmallestUnit(options, minUnit, 1);
+  return largestUnit = validateUnitRange("largestUnit", largestUnit, minUnit, maxUnit), smallestUnit = validateUnitRange(smallestUnitStr, smallestUnit, minUnit, maxUnit), null == largestUnit ? largestUnit = Math.max(defaultLargestUnit, smallestUnit) : checkLargestSmallestUnit(largestUnit, smallestUnit), roundingInc = validateRoundingInc(roundingInc, smallestUnit, 1), roundingModeInvert && (roundingMode = ((roundingMode2) => roundingMode2 < 4 ? (roundingMode2 + 2) % 4 : roundingMode2)(roundingMode)), [largestUnit, smallestUnit, roundingInc, roundingMode];
+}
+function refineRoundingOptions(options, maxUnit = 6, solarMode) {
+  let roundingInc = coerceRoundingIncInteger(options = normalizeOptionsOrString(options, smallestUnitStr));
+  const roundingMode = coerceRoundingMode(options, 7);
+  let smallestUnit = coerceSmallestUnit(options);
+  return smallestUnit = requirePropDefined(smallestUnitStr, smallestUnit), smallestUnit = validateUnitRange(smallestUnitStr, smallestUnit, 0, maxUnit), roundingInc = validateRoundingInc(roundingInc, smallestUnit, void 0, solarMode), [smallestUnit, roundingInc, roundingMode];
+}
 function combineDateAndTime(isoDate, time3) {
   return pluckProps(calendarDateFieldNamesAsc, isoDate, pluckProps(timeFieldNamesAsc, time3));
 }
@@ -21362,7 +21276,7 @@ function getStartOfDayInstantFor(timeZone, isoDateTime) {
   return timeZone.C(zonedEpochNanoDayBefore, 1);
 }
 function moveYearMonth(calendar, isoDate, durationSlots, overflow = 0) {
-  computeDurationSign(durationSlots) && getMaxDurationUnit(durationSlots) < 8 && throwRangeError("Cannot use small units");
+  computeDurationSign(durationSlots) && clampEntity("unit", getMaxDurationUnit(durationSlots), 8, 9, 1, durationFieldNamesAsc);
   const first = checkIsoDateInBounds(moveToStartOfMonth(calendar, isoDate));
   return moveToStartOfMonth(calendar, moveDate(calendar, first, durationSlots, overflow));
 }
@@ -21396,7 +21310,7 @@ function moveTime(timeFields, durationFields) {
   return moveTimeByNano(timeFields, durationTimeToBigNano(durationFields));
 }
 function moveEpochNano(epochNano, durationFields) {
-  return moveEpochNanoByNano(epochNano, (durationHasDateParts(fields = durationFields) && throwRangeError("Cannot use large units"), durationTimeToBigNano(fields)));
+  return moveEpochNanoByNano(epochNano, (clampEntity("unit", getMaxDurationUnit(fields = durationFields), 0, 5, 1, durationFieldNamesAsc), durationTimeToBigNano(fields)));
   var fields;
 }
 function moveDate(calendar, isoDate, durationFields, overflow = 0) {
@@ -21690,7 +21604,7 @@ function nanoToGivenFields(nano, largestUnit, fieldNames) {
 var maxDurationSeconds = 2 ** 53;
 function addDurationsWithoutRelativeTo(doSubtract, slots, otherSlots) {
   const maxUnit = Math.max(getMaxDurationUnit(slots), getMaxDurationUnit(otherSlots));
-  return maxUnit > 6 && throwRangeError("Cannot use large units"), ((doSubtract2, slots2, otherSlots2, maxUnit2) => createDurationSlots(validateDurationFields(((a, b, largestUnit, doSubtract3) => {
+  return clampEntity("unit", maxUnit, 0, 6, 1, durationFieldNamesAsc), ((doSubtract2, slots2, otherSlots2, maxUnit2) => createDurationSlots(validateDurationFields(((a, b, largestUnit, doSubtract3) => {
     const combined = durationDayTimeToBigNano(a) + durationDayTimeToBigNano(b) * BigInt(doSubtract3 ? -1 : 1);
     return Number.isFinite(Number(combined / bigNanoInUtcDay)) || throwRangeError(outOfBoundsDate), {
       ...durationFieldDefaults,
@@ -21700,7 +21614,15 @@ function addDurationsWithoutRelativeTo(doSubtract, slots, otherSlots) {
 }
 function roundDuration(refineRelativeTo, slots, options) {
   const durationLargestUnit = getMaxDurationUnit(slots);
-  const [largestUnit, smallestUnit, roundingInc, roundingMode, relativeToSlots] = refineDurationRoundOptions(options, durationLargestUnit, refineRelativeTo);
+  const [largestUnit, smallestUnit, roundingInc, roundingMode, relativeToSlots] = ((options2, defaultLargestUnit, refineRelativeTo2) => {
+    options2 = normalizeOptionsOrString(options2, smallestUnitStr);
+    let largestUnit2 = coerceLargestUnit(options2);
+    const relativeToInternals = refineRelativeTo2(options2.relativeTo);
+    let roundingInc2 = coerceRoundingIncInteger(options2);
+    const roundingMode2 = coerceRoundingMode(options2, 7);
+    let smallestUnit2 = coerceSmallestUnit(options2);
+    return void 0 === largestUnit2 && void 0 === smallestUnit2 && throwRangeError("Required smallestUnit or largestUnit"), null == smallestUnit2 && (smallestUnit2 = 0), null == largestUnit2 && (largestUnit2 = Math.max(smallestUnit2, defaultLargestUnit)), checkLargestSmallestUnit(largestUnit2, smallestUnit2), roundingInc2 = validateRoundingInc(roundingInc2, smallestUnit2, 1), roundingInc2 > 1 && smallestUnit2 > 5 && largestUnit2 !== smallestUnit2 && throwRangeError("For calendar units with roundingIncrement > 1, use largestUnit = smallestUnit"), [largestUnit2, smallestUnit2, roundingInc2, roundingMode2, relativeToInternals];
+  })(options, durationLargestUnit, refineRelativeTo);
   if (!relativeToSlots && Math.max(durationLargestUnit, largestUnit) <= 6) {
     return createDurationSlots(validateDurationFields(((durationFields, largestUnit2, smallestUnit2, roundingInc2, roundingMode2) => {
       const roundedBigNano = roundBigNanoToInc(durationDayTimeToBigNano(durationFields), computeBigNanoInc(smallestUnit2, roundingInc2), roundingMode2);
@@ -21928,6 +21850,18 @@ function readAndRefineBagFields(bag, validFieldNames, fieldRefiners, requiredFie
   }
   return disallowEmpty && !anyMatching && throwTypeError(noValidFields(validFieldNames)), res;
 }
+function refineOverflowOptions(options) {
+  return void 0 === options ? 0 : coerceOverflow(requireObjectLike(options));
+}
+function refineZonedFieldOptions(options, defaultOffsetDisambig = 0) {
+  options = normalizeOptions(options);
+  const epochDisambig = coerceEpochDisambig(options);
+  const offsetDisambig = coerceOffsetDisambig(options, defaultOffsetDisambig);
+  return [coerceOverflow(options), offsetDisambig, epochDisambig];
+}
+function refineEpochDisambigOptions(options) {
+  return coerceEpochDisambig(normalizeOptions(options));
+}
 function refineCalendarDateFields(fields, calendar, allowMissingDay) {
   const eraOrigins = getCalendarEraOrigins(calendar);
   void 0 !== fields.year || void 0 !== fields.era && void 0 !== fields.eraYear || throwTypeError(missingYear(eraOrigins)), void 0 === fields.monthCode && void 0 === fields.month && throwTypeError("Missing month/monthCode"), allowMissingDay || void 0 !== fields.day || throwTypeError(missingField("day"));
@@ -22021,8 +21955,28 @@ var timeZonePeriodDaysByName = {
   "DeNoronha": 6
 };
 var minPossibleTransitionSec = -388152e4;
+function refineTimeDisplayTuple(options, maxSmallestUnit = 4) {
+  const subsecDigits = coerceFractionalSecondDigits(options);
+  const roundingMode = coerceRoundingMode(options, 4);
+  const smallestUnit = coerceSmallestUnit(options);
+  return [roundingMode, ...resolveSmallestUnitAndSubsecDigits(validateUnitRange(smallestUnitStr, smallestUnit, 0, maxSmallestUnit), subsecDigits)];
+}
+function refineDateDisplayOptions(options) {
+  return coerceCalendarDisplay(normalizeOptions(options));
+}
+function refineTimeDisplayOptions(options, maxSmallestUnit) {
+  return refineTimeDisplayTuple(normalizeOptions(options), maxSmallestUnit);
+}
+function resolveSmallestUnitAndSubsecDigits(smallestUnit, subsecDigits) {
+  return null != smallestUnit ? [unitNanoMap[smallestUnit], smallestUnit < 4 ? 9 - 3 * smallestUnit : -1] : [void 0 === subsecDigits ? 1 : 10 ** (9 - subsecDigits), subsecDigits];
+}
 function formatInstantIso(refineTimeZoneString, instantSlots, options) {
-  const [timeZoneArg, roundingMode, nanoInc, subsecDigits] = refineInstantDisplayOptions(options);
+  const [timeZoneArg, roundingMode, nanoInc, subsecDigits] = ((options2) => {
+    const subsecDigits2 = coerceFractionalSecondDigits(options2 = normalizeOptions(options2));
+    const roundingMode2 = coerceRoundingMode(options2, 4);
+    const smallestUnit = coerceSmallestUnit(options2);
+    return [options2.timeZone, roundingMode2, ...resolveSmallestUnitAndSubsecDigits(validateUnitRange(smallestUnitStr, smallestUnit, 0, 4), subsecDigits2)];
+  })(options);
   const providedTimeZone = void 0 !== timeZoneArg;
   return ((providedTimeZone2, timeZone, epochNano, roundingMode2, nanoInc2, subsecDigits2) => {
     epochNano = roundBigNanoToDayOriginInc(epochNano, BigInt(nanoInc2), roundingMode2);
@@ -22031,7 +21985,15 @@ function formatInstantIso(refineTimeZoneString, instantSlots, options) {
   })(providedTimeZone, queryTimeZone(providedTimeZone ? refineTimeZoneString(timeZoneArg) : "UTC"), instantSlots.epochNanoseconds, roundingMode, nanoInc, subsecDigits);
 }
 function formatZonedDateTimeIso(zonedDateTimeSlots0, options) {
-  const displayOptions = refineZonedDateTimeDisplayOptions(options);
+  const displayOptions = ((options2) => {
+    options2 = normalizeOptions(options2);
+    const calendarDisplay = coerceCalendarDisplay(options2);
+    const subsecDigits = coerceFractionalSecondDigits(options2);
+    const offsetDisplay = coerceOffsetDisplay(options2);
+    const roundingMode = coerceRoundingMode(options2, 4);
+    const smallestUnit = coerceSmallestUnit(options2);
+    return [calendarDisplay, coerceTimeZoneDisplay(options2), offsetDisplay, roundingMode, ...resolveSmallestUnitAndSubsecDigits(validateUnitRange(smallestUnitStr, smallestUnit, 0, 4), subsecDigits)];
+  })(options);
   return ((calendar, timeZoneId, timeZone, epochNano, calendarDisplay, timeZoneDisplay, offsetDisplay, roundingMode, nanoInc, subsecDigits) => {
     epochNano = roundBigNanoToDayOriginInc(epochNano, BigInt(nanoInc), roundingMode);
     const offsetNano = timeZone.B(epochNano);
@@ -22039,7 +22001,7 @@ function formatZonedDateTimeIso(zonedDateTimeSlots0, options) {
   })(zonedDateTimeSlots0.calendar, zonedDateTimeSlots0.timeZone.id, zonedDateTimeSlots0.timeZone, zonedDateTimeSlots0.epochNanoseconds, ...displayOptions);
 }
 function formatPlainDateTimeIso(plainDateTimeSlots0, options) {
-  const displayOptions = refineDateTimeDisplayOptions(options);
+  const displayOptions = ((options2) => (options2 = normalizeOptions(options2), [coerceCalendarDisplay(options2), ...refineTimeDisplayTuple(options2)]))(options);
   return ((calendar, isoDateTime, calendarDisplay, roundingMode, nanoInc, subsecDigits) => formatIsoDateTimeFields(roundDateTimeToInc(isoDateTime, nanoInc, roundingMode), subsecDigits) + formatCalendar(calendar, calendarDisplay))(plainDateTimeSlots0.calendar, plainDateTimeSlots0, ...displayOptions);
 }
 function formatPlainDateIso(plainDateSlots, options) {
@@ -22732,7 +22694,11 @@ function computeMonthCode(calendar, year, month) {
   return formatMonthCode(monthCodeNumber, isLeapMonth);
 }
 function totalDuration(refineRelativeTo, slots, options) {
-  const [totalUnit, relativeToSlots] = refineTotalOptions(options, refineRelativeTo);
+  const [totalUnit, relativeToSlots] = ((options2, refineRelativeTo2) => {
+    const relativeToInternals = refineRelativeTo2((options2 = normalizeOptionsOrString(options2, "unit")).relativeTo);
+    let totalUnit2 = coerceTotalUnit(options2);
+    return totalUnit2 = requirePropDefined("unit", totalUnit2), [totalUnit2, relativeToInternals];
+  })(options, refineRelativeTo);
   const maxDurationUnit = getMaxDurationUnit(slots);
   const maxUnit = Math.max(totalUnit, maxDurationUnit);
   const isZoned = relativeToSlots && isZonedEpochSlots(relativeToSlots);
@@ -22916,6 +22882,11 @@ function zonedDateTimeWithPlainTime(zonedDateTimeSlots, plainTimeFields) {
   let epochNano;
   return epochNano = plainTimeFields ? getMatchingInstantFor(timeZone, combineDateAndTime(isoDateTime, time3), offsetNanoseconds, 2) : getStartOfDayInstantFor(timeZone, combineDateAndTime(isoDateTime, time3)), createZonedEpochNanoSlots(epochNano, timeZone, zonedDateTimeSlots.calendar);
 }
+function refineDirectionOptions(options) {
+  const normalizedOptions = normalizeOptionsOrString(options, "direction");
+  const res = coerceDirection(normalizedOptions, 0);
+  return res || throwRangeError(invalidEntity2("direction", res)), res;
+}
 function getCurrentIsoDateTime(timeZone) {
   const epochNano = getCurrentEpochNano();
   const offsetNano = timeZone.B(epochNano);
@@ -22928,7 +22899,7 @@ function getCurrentTimeZoneId() {
   return new RawDateTimeFormat().resolvedOptions().timeZone;
 }
 
-// node_modules/.pnpm/temporal-polyfill@1.0.5/node_modules/temporal-polyfill/chunks/apiHelpers.js
+// node_modules/.pnpm/temporal-polyfill@1.0.6/node_modules/temporal-polyfill/chunks/apiHelpers.js
 var PlainYearMonthBranding = "PlainYearMonth";
 var PlainMonthDayBranding = "PlainMonthDay";
 var PlainDateBranding = "PlainDate";
@@ -23116,7 +23087,7 @@ function withZonedDateTimeFields(slots, modFields, options) {
   return createZonedDateTimeFromMergedFields(slots, mergedFields, calendarFields, year, monthCodeParts, overflow, offsetDisambig, epochDisambig);
 }
 
-// node_modules/.pnpm/temporal-polyfill@1.0.5/node_modules/temporal-polyfill/chunks/classApi-basic.js
+// node_modules/.pnpm/temporal-polyfill@1.0.6/node_modules/temporal-polyfill/chunks/classApi-basic.js
 function resolveBasicCalendarId(rawCalendarId) {
   const lowerRawCalendarId = requireString(rawCalendarId).toLowerCase();
   return lowerRawCalendarId === isoCalendarId ? isoCalendarImpl : lowerRawCalendarId === gregoryCalendarId ? gregoryCalendarImpl : void throwRangeError(exoticCalendarRequired(rawCalendarId, "temporal-polyfill/full"));
@@ -24034,7 +24005,7 @@ var Temporal = /* @__PURE__ */ Object.defineProperties({}, {
   })
 });
 
-// node_modules/.pnpm/temporal-polyfill@1.0.5/node_modules/temporal-polyfill/index.js
+// node_modules/.pnpm/temporal-polyfill@1.0.6/node_modules/temporal-polyfill/index.js
 var Temporal2 = NativeTemporal || Temporal;
 var toTemporalInstant2 = NativeTemporal ? Date.prototype.toTemporalInstant : toTemporalInstant;
 
