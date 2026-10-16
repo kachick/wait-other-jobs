@@ -33,7 +33,7 @@
     "@octokit/plugin-paginate-graphql": "6.0.0",
     "esbuild": "0.28.2",
     "jsonc-parser": "3.3.1",
-    "temporal-polyfill": "1.0.5",
+    "temporal-polyfill": "1.0.6",
     "zod": "4.6.5"
   },
   "devDependencies": {
