@@ -64,7 +64,7 @@ jobs:
                 "jobMatchMode": "prefix"
               },
               {
-                "workflowFile": "merge-bot-pr.yml"
+                "workflowFile": "test-deadlock-hazard.yml"
               }
             ]
       - name: Upload dumps as an artifact
