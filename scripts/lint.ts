@@ -5,7 +5,7 @@ const commands: [string, string[]][] = [
   ['dprint', ['check']],
   ['oxlint', ['-c', '.oxlintrc.json', '--deny-warnings']],
   ['typos', ['.', '.github', '.vscode']],
-  ['betterleaks', ['dir', '.']],
+  ['betterleaks', ['git', '.', '-c', '.betterleaks.toml']],
 ];
 
 function runCommand(command: string, args: string[]): Promise<void> {

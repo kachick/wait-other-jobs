@@ -1,0 +1,13 @@
+title = "betterleaks config for wait-other-jobs"
+
+[extend]
+useDefault = true
+
+# The dist/ directory only contains bundled JavaScript built from src/ by esbuild.
+# Source files in src/ are already scanned, so scanning dist/ is not needed.
+# Bundled code and old sourcemaps in git history cause false positives
+# (such as generic-password in betterleaks >= 1.8.0).
+[allowlist]
+paths = [
+  "^dist/",
+]
