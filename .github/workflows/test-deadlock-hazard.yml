@@ -1,0 +1,39 @@
+name: Test Deadlock Hazard
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/test-deadlock-hazard.yml'
+      - '.github/workflows/itself.yml'
+      - 'action.yml'
+      - 'dist/**'
+  pull_request:
+    paths:
+      - '.github/workflows/test-deadlock-hazard.yml'
+      - '.github/workflows/itself.yml'
+      - 'action.yml'
+      - 'dist/**'
+
+permissions: {}
+
+jobs:
+  hazard_waiter:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Wait for itself.yml's skip-list job
+        uses: ./
+        with:
+          retry-method: 'equal_intervals'
+          minimum-interval: 'PT3S'
+          attempt-limits: 30
+          wait-list: |
+            [
+              {
+                "workflowFile": "itself.yml",
+                "jobName": "skip-list"
+              }
+            ]

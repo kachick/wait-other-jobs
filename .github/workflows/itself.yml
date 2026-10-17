@@ -41,7 +41,7 @@ jobs:
                 "workflowFile": "GH-820-graceperiod.yml"
               },
               {
-                "workflowFile": "merge-bot-pr.yml"
+                "workflowFile": "test-deadlock-hazard.yml"
               }
             ]
   validation_example_basic_errors_allow_failure:
@@ -113,7 +113,7 @@ jobs:
                 "workflowFile": "GH-820-graceperiod.yml"
               },
               {
-                "workflowFile": "merge-bot-pr.yml"
+                "workflowFile": "test-deadlock-hazard.yml"
               }
             ]
   equal_intervals:
@@ -138,7 +138,7 @@ jobs:
                 "workflowFile": "GH-820-graceperiod.yml"
               },
               {
-                "workflowFile": "merge-bot-pr.yml"
+                "workflowFile": "test-deadlock-hazard.yml"
               }
             ]
   wait-list:
@@ -193,7 +193,7 @@ jobs:
                 "workflowFile": "ci.yml"
               },
               {
-                "workflowFile": "merge-bot-pr.yml"
+                "workflowFile": "test-deadlock-hazard.yml"
               },
               {
                 "workflowFile": "GH-820-graceperiod.yml"

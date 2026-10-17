@@ -21,25 +21,15 @@ on:
 
 permissions:
   contents: read
-  checks: read
-  actions: read
 
 jobs:
   all:
     timeout-minutes: 15
     runs-on: ubuntu-26.04
     steps:
-      - name: Generate token
-        id: generate-token
-        if: github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          app-id: ${{ vars.APP_ID }} # TODO: Switch to client-id
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          token: ${{ steps.generate-token.outputs.token || github.token }}
-          persist-credentials: true
+          persist-credentials: false
       - uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6 # v1.0.0
       - name: Install direnv
         run: |
@@ -68,23 +58,6 @@ jobs:
       - name: Test, build, lint
         run: |
           pnpm run all
-      - name: Fix and commit if diff exists
-        if: steps.generate-token.outputs.token != ''
-        shell: bash
-        env:
-          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
-        run: |
-          if ! (git add --intent-to-add . && git diff --exit-code); then
-            gh pr checkout ${{ github.event.pull_request.number }}
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add .
-            git commit -m "Fix lint or build diff"
-            git push origin HEAD
-            echo "Pushed fixes. Failing this run to wait for the next CI run and prevent premature auto-merge."
-            exit 1
-          fi
       - name: Make sure there is no diff after build
-        if: steps.generate-token.outputs.token == ''
         run: |
           pnpm run check_no_git_diff
