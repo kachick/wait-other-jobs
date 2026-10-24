@@ -1,0 +1,51 @@
+name: 🎯 (E2E Subject)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/e2e-subject.yml'
+      - '.github/workflows/e2e-observer.yml'
+      - 'action.yml'
+      - 'dist/**'
+  pull_request:
+    paths:
+      - '.github/workflows/e2e-subject.yml'
+      - '.github/workflows/e2e-observer.yml'
+      - 'action.yml'
+      - 'dist/**'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  echo:
+    runs-on: ubuntu-slim
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
+    timeout-minutes: 5
+    steps:
+      - run: echo 'subject - echo'
+  delayed:
+    runs-on: ubuntu-slim
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
+    timeout-minutes: 5
+    steps:
+      - run: sleep 8
+      - run: echo 'subject - delayed completed'
+  intermediate:
+    runs-on: ubuntu-slim
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
+    timeout-minutes: 5
+    steps:
+      - run: sleep 10
+  slowstarter-success:
+    runs-on: ubuntu-slim
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
+    timeout-minutes: 5
+    needs: [intermediate]
+    steps:
+      - run: echo 'subject - slow starter completed'

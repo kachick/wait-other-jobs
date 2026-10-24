@@ -1,8 +1,7 @@
 # wait-other-jobs
 
-[![Itself](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/itself.yml?query=branch%3Amain)\
-[![gracePeriod](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-820-graceperiod.yml?query=branch%3Amain)
-[![eventName](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-771-eventname.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-771-eventname.yml?query=branch%3Amain)
+[![Subject](https://github.com/kachick/wait-other-jobs/actions/workflows/e2e-subject.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/e2e-subject.yml?query=branch%3Amain)\
+[![Observer](https://github.com/kachick/wait-other-jobs/actions/workflows/e2e-observer.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/e2e-observer.yml?query=branch%3Amain)\
 [![matrix](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-761-matrix.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/GH-761-matrix.yml?query=branch%3Amain)\
 [![CI](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/wait-other-jobs/actions/workflows/ci.yml?query=branch%3Amain)
 
