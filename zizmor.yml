@@ -5,6 +5,3 @@ rules:
         kachick/*: any
         actions/*: any
         crate-ci/*: any
-  template-injection:
-    ignore:
-      - outputs.yml

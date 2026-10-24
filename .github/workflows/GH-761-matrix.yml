@@ -11,6 +11,11 @@ on:
       - '**GH-761**'
       - 'action.yml'
       - 'dist/**'
+  schedule:
+    # Every 11:30 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '30 2 * * *'
+  workflow_dispatch:
 
 # Disable all permissions in workflow global as to setup clean room
 # However PRs will have read permissions because this project is on a public repository
@@ -23,6 +28,7 @@ concurrency:
 jobs:
   echo:
     runs-on: ubuntu-slim
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 5
     steps:
       - run: |
@@ -32,16 +38,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner:
-          - ubuntu-26.04
-          - ubuntu-26.04-arm
-          - ubuntu-slim # Limited to 15 minutes by GitHub
-          - macos-26
-          - windows-2025-vs2026
-        warmup-delay:
-          - 'PT3S'
-          - 'PT7S'
+        runner: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && fromJSON('["ubuntu-26.04", "ubuntu-26.04-arm", "ubuntu-slim", "macos-26", "windows-2025-vs2026"]') || fromJSON('["ubuntu-slim"]') }}
+        warmup-delay: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && fromJSON('["PT3S", "PT7S"]') || fromJSON('["PT3S"]') }}
     runs-on: ${{ matrix.runner }}
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     # name: # By default, GitHub sets with `github.job` and the matrix values
     timeout-minutes: 10
     steps:
@@ -60,7 +60,10 @@ jobs:
           skip-list: |
             [
               {
-                "workflowFile": "itself.yml"
+                "workflowFile": "e2e-observer.yml"
+              },
+              {
+                "workflowFile": "e2e-subject.yml"
               },
               {
                 "workflowFile": "GH-761-matrix.yml",
@@ -68,7 +71,7 @@ jobs:
                 "jobMatchMode": "prefix"
               },
               {
-                "workflowFile": "test-deadlock-hazard.yml"
+                "workflowFile": "e2e-deadlock-hazard.yml"
               }
             ]
       - name: Upload dumps as an artifact

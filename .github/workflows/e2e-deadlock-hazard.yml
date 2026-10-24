@@ -1,16 +1,16 @@
-name: Test Deadlock Hazard
+name: ⚠️ (E2E Deadlock Hazard)
 on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/test-deadlock-hazard.yml'
-      - '.github/workflows/itself.yml'
+      - '.github/workflows/e2e-deadlock-hazard.yml'
+      - '.github/workflows/e2e-observer.yml'
       - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
-      - '.github/workflows/test-deadlock-hazard.yml'
-      - '.github/workflows/itself.yml'
+      - '.github/workflows/e2e-deadlock-hazard.yml'
+      - '.github/workflows/e2e-observer.yml'
       - 'action.yml'
       - 'dist/**'
 
@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Wait for itself.yml's skip-list job
+      - name: Wait for e2e-observer.yml's skip-list job
         uses: ./
         with:
           retry-method: 'equal_intervals'
@@ -38,7 +38,7 @@ jobs:
           wait-list: |
             [
               {
-                "workflowFile": "itself.yml",
+                "workflowFile": "e2e-observer.yml",
                 "jobName": "skip-list"
               }
             ]

@@ -1,14 +1,16 @@
-name: Itself
+name: 👀 (E2E Observer)
 on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/itself.yml'
+      - '.github/workflows/e2e-subject.yml'
+      - '.github/workflows/e2e-observer.yml'
       - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
-      - '.github/workflows/itself.yml'
+      - '.github/workflows/e2e-subject.yml'
+      - '.github/workflows/e2e-observer.yml'
       - 'action.yml'
       - 'dist/**'
   schedule:
@@ -42,10 +44,10 @@ jobs:
           skip-list: |
             [
               {
-                "workflowFile": "GH-820-graceperiod.yml"
+                "workflowFile": "e2e-deadlock-hazard.yml"
               },
               {
-                "workflowFile": "test-deadlock-hazard.yml"
+                "workflowFile": "GH-761-matrix.yml"
               }
             ]
   validation_example_basic_errors_allow_failure:
@@ -114,10 +116,10 @@ jobs:
           skip-list: |
             [
               {
-                "workflowFile": "GH-820-graceperiod.yml"
+                "workflowFile": "e2e-deadlock-hazard.yml"
               },
               {
-                "workflowFile": "test-deadlock-hazard.yml"
+                "workflowFile": "GH-761-matrix.yml"
               }
             ]
   equal_intervals:
@@ -139,10 +141,10 @@ jobs:
           skip-list: |
             [
               {
-                "workflowFile": "GH-820-graceperiod.yml"
+                "workflowFile": "e2e-deadlock-hazard.yml"
               },
               {
-                "workflowFile": "test-deadlock-hazard.yml"
+                "workflowFile": "GH-761-matrix.yml"
               }
             ]
   wait-list:
@@ -156,10 +158,16 @@ jobs:
       - uses: ./
         with:
           retry-method: 'equal_intervals'
+          warmup-delay: 'PT0S' # Merged from GH-994
           minimum-interval: 'PT5S'
           attempt-limits: 30
           wait-list: |
             [
+              {
+                "workflowFile": "e2e-subject.yml",
+                "jobName": "echo",
+                "eventNames": [ "${{ github.event_name }}" ]
+              },
               {
                 "workflowFile": "lint.yml",
                 "optional": ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
@@ -172,6 +180,69 @@ jobs:
               {
                 "workflowFile": "THERE_ARE_NO_FILES_AS_THIS.yml",
                 "optional": true
+              }
+            ]
+  test_outputs:
+    runs-on: ubuntu-slim
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./
+        id: wait
+        with:
+          retry-method: 'equal_intervals'
+          warmup-delay: 'PT1S'
+          minimum-interval: 'PT3S'
+          skip-same-workflow: 'false'
+          wait-list: |
+            [
+              {
+                "workflowFile": "e2e-subject.yml",
+                "jobName": "delayed",
+                "optional": false
+              }
+            ]
+      - name: It outputs parameters
+        env:
+          WAIT_PARAM: ${{ fromJson(steps.wait.outputs.parameters).options.minimumInterval }}
+          WAIT_DUMP: ${{ steps.wait.outputs.dump }}
+        run: |
+          [[ "$WAIT_PARAM" == 'Temporal.Duration<PT3S>' ]]
+          ls -alh "$WAIT_DUMP"
+      - name: Upload dumps as an artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}'
+          path: '${{ steps.wait.outputs.dump }}'
+  grace_period:
+    runs-on: ubuntu-slim
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./
+        with:
+          retry-method: 'equal_intervals'
+          warmup-delay: 'PT1S'
+          minimum-interval: 'PT5S'
+          attempt-limits: 60
+          wait-list: |
+            [
+              {
+                "workflowFile": "e2e-subject.yml",
+                "optional": false,
+                "jobName": "echo"
+              },
+              {
+                "workflowFile": "e2e-subject.yml",
+                "optional": false,
+                "jobName": "slowstarter-success",
+                "startupGracePeriod": "PT60S"
               }
             ]
   skip-list:
@@ -191,15 +262,15 @@ jobs:
           skip-list: |
             [
               {
-                "workflowFile": "itself.yml"
+                "workflowFile": "e2e-observer.yml"
               },
               {
                 "workflowFile": "ci.yml"
               },
               {
-                "workflowFile": "test-deadlock-hazard.yml"
+                "workflowFile": "e2e-deadlock-hazard.yml"
               },
               {
-                "workflowFile": "GH-820-graceperiod.yml"
+                "workflowFile": "GH-761-matrix.yml"
               }
             ]
