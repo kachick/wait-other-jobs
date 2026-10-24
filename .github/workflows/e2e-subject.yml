@@ -24,12 +24,14 @@ concurrency:
 
 jobs:
   echo:
+    name: echo
     runs-on: ubuntu-slim
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 5
     steps:
       - run: echo 'subject - echo'
   delayed:
+    name: delayed
     runs-on: ubuntu-slim
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 5
@@ -37,12 +39,14 @@ jobs:
       - run: sleep 8
       - run: echo 'subject - delayed completed'
   intermediate:
+    name: intermediate
     runs-on: ubuntu-slim
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 5
     steps:
       - run: sleep 10
   slowstarter-success:
+    name: slowstarter-success
     runs-on: ubuntu-slim
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 5

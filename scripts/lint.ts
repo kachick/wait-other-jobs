@@ -6,6 +6,7 @@ const commands: [string, string[]][] = [
   ['oxlint', ['-c', '.oxlintrc.json', '--deny-warnings']],
   ['typos', ['.', '.github', '.vscode']],
   ['betterleaks', ['git', '.', '-c', '.betterleaks.toml']],
+  ['zizmor', ['--pedantic', '.']],
 ];
 
 function runCommand(command: string, args: string[]): Promise<void> {

@@ -18,6 +18,7 @@ concurrency:
 
 jobs:
   dprint:
+    name: dprint
     timeout-minutes: 15
     runs-on: ubuntu-slim
     steps:
@@ -27,18 +28,3 @@ jobs:
       - uses: dprint/check@7dc032d8874778fc024f6f9b4a7e6d896782c330 # v2.5
         with:
           dprint-version: '0.60.1' # selfup { "extract": "\\d[^']+", "replacer": ["dprint", "--version"], "nth": 2 }
-  typos:
-    timeout-minutes: 15
-    runs-on: ubuntu-slim
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      # Intentionally point to the latest version, not the version bound by nix.
-      # Because getting commit ref from version string requires network access.
-      - uses: crate-ci/typos@v1.51.1 # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["typos", "--version"], "nth": 2}
-        with:
-          files: |-
-            .
-            .github
-            .vscode

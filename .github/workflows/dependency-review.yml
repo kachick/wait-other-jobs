@@ -9,8 +9,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   dependency-review:
+    name: Dependency review
     timeout-minutes: 15
     runs-on: ubuntu-slim
     steps:
