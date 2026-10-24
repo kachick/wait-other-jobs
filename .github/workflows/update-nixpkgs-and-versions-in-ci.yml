@@ -14,7 +14,8 @@ permissions:
 
 jobs:
   bump:
-    uses: kachick/workflows/.github/workflows/reusable-bump-flake-lock.yml@main
+    name: Bump
+    uses: kachick/workflows/.github/workflows/reusable-bump-flake-lock.yml@main # zizmor: ignore[unpinned-uses]
     with:
       app-id: ${{ vars.SAMU_APP_ID }}
     secrets:

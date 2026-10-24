@@ -31,6 +31,7 @@ concurrency:
 
 jobs:
   default_logic:
+    name: default_logic
     runs-on: ubuntu-26.04
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 10
@@ -39,7 +40,7 @@ jobs:
         with:
           persist-credentials: false
       # Do NOT specify options except non omittable skip-list to make sure zero config may work
-      - uses: ./
+      - uses: $/
         with:
           skip-list: |
             [
@@ -51,6 +52,7 @@ jobs:
               }
             ]
   validation_example_basic_errors_allow_failure:
+    name: validation_example_basic_errors_allow_failure
     runs-on: ubuntu-slim
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 5
@@ -58,7 +60,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./
+      - uses: $/
         env:
           ACTIONS_STEP_DEBUG: true
         # Should allow failures in this job
@@ -68,6 +70,7 @@ jobs:
           minimum-interval: '15' # Should be 'PT15S'
           attempt-limits: '0'
   validation_example_combination_errors_allow_failure:
+    name: validation_example_combination_errors_allow_failure
     runs-on: ubuntu-slim
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 5
@@ -75,7 +78,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./
+      - uses: $/
         env:
           ACTIONS_STEP_DEBUG: true
         # Should allow failures in this job
@@ -94,6 +97,7 @@ jobs:
               }
             ]
   exponential_backoff_allow_failure:
+    name: exponential_backoff_allow_failure
     runs-on: ubuntu-slim
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 5
@@ -101,7 +105,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./
+      - uses: $/
         env:
           ACTIONS_STEP_DEBUG: true
         # With the algorithm, this job takes long minutes to wait completed other jobs
@@ -123,6 +127,7 @@ jobs:
               }
             ]
   equal_intervals:
+    name: equal_intervals
     runs-on: ubuntu-26.04
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 10
@@ -130,7 +135,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./
+      - uses: $/
         env:
           ACTIONS_STEP_DEBUG: true
         with:
@@ -148,6 +153,7 @@ jobs:
               }
             ]
   wait-list:
+    name: wait-list
     runs-on: ubuntu-slim
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 5
@@ -155,7 +161,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./
+      - uses: $/
         with:
           retry-method: 'equal_intervals'
           warmup-delay: 'PT0S' # Merged from GH-994
@@ -183,6 +189,7 @@ jobs:
               }
             ]
   test_outputs:
+    name: test_outputs
     runs-on: ubuntu-slim
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 5
@@ -190,7 +197,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./
+      - uses: $/
         id: wait
         with:
           retry-method: 'equal_intervals'
@@ -218,6 +225,7 @@ jobs:
           name: 'outputs-${{ github.job }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}'
           path: '${{ steps.wait.outputs.dump }}'
   grace_period:
+    name: grace_period
     runs-on: ubuntu-slim
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 10
@@ -225,7 +233,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./
+      - uses: $/
         with:
           retry-method: 'equal_intervals'
           warmup-delay: 'PT1S'
@@ -246,6 +254,7 @@ jobs:
               }
             ]
   skip-list:
+    name: skip-list
     runs-on: ubuntu-slim
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
     timeout-minutes: 5
@@ -253,7 +262,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./
+      - uses: $/
         with:
           retry-method: 'equal_intervals'
           minimum-interval: 'PT5S'
