@@ -34,7 +34,7 @@
     "esbuild": "0.28.2",
     "jsonc-parser": "3.3.1",
     "temporal-polyfill": "1.0.6",
-    "zod": "4.6.5"
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "@tsconfig/bases": "^1.0.28",
