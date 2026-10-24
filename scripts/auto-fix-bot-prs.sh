@@ -5,14 +5,11 @@ OWNER=$(gh repo view --json owner --jq .owner.login)
 echo "Checking open bot PRs for repository owner: ${OWNER}..."
 
 # Find open bot PRs created within the same repository (excluding forks)
-# Note: 'gh pr list --json author' returns 'app/renovate' or 'app/dependabot' for GitHub Apps
+# Note: 'gh pr list --json author' prepends 'app/' to GitHub App logins
 PRS=$(gh pr list --state open --json number,headRefName,headRepositoryOwner,author --jq '
   .[] | select(
     (.headRepositoryOwner.login == "'"${OWNER}"'") and
-    (
-      (.author.login == "renovate[bot]") or (.author.login == "app/renovate") or
-      (.author.login == "dependabot[bot]") or (.author.login == "app/dependabot")
-    )
+    ((.author.login == "app/renovate") or (.author.login == "app/dependabot"))
   ) | [.number, .headRefName, .author.login] | @tsv
 ')
 
