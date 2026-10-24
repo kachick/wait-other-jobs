@@ -16,6 +16,10 @@ on:
 # However PRs will have read permissions because this project is on a public repository
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   echo:
     runs-on: ubuntu-slim

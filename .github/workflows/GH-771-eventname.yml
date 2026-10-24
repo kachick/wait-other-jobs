@@ -15,6 +15,10 @@ on:
 # However PRs will have read permissions because this project is on a public repository
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   echo:
     runs-on: ubuntu-slim
@@ -26,7 +30,7 @@ jobs:
           echo 'See https://github.com/kachick/wait-other-jobs/issues/771 for the detail'
   wait:
     runs-on: ubuntu-slim
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - run: |
           echo 'Triggered by ${{ github.event_name }} event'
@@ -38,7 +42,7 @@ jobs:
         with:
           retry-method: 'equal_intervals'
           minimum-interval: 'PT5S'
-          attempt-limits: 30
+          attempt-limits: 60
           skip-same-workflow: 'false'
           wait-list: |
             [
@@ -50,7 +54,7 @@ jobs:
             ]
   backward-compatible-with-v3:
     runs-on: ubuntu-slim
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - run: |
           echo 'Triggered by ${{ github.event_name }} event'
@@ -62,7 +66,7 @@ jobs:
         with:
           retry-method: 'equal_intervals'
           minimum-interval: 'PT5S'
-          attempt-limits: 30
+          attempt-limits: 60
           skip-same-workflow: 'false'
           wait-list: |
             [
