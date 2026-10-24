@@ -1,6 +1,5 @@
 import { join, relative } from 'node:path';
 import { styleText } from 'node:util';
-import * as core from '@actions/core';
 import type { CheckRun, CheckSuite, WorkflowRun } from '@octokit/graphql-schema';
 import { Temporal } from 'temporal-polyfill';
 import type { Check, FilterCondition, RuntimeOptions, Trigger, WaitList } from './schema.ts';
@@ -12,7 +11,7 @@ interface Meta {
 }
 
 // https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
-const severities = Object.freeze({
+export const severities = Object.freeze({
   error: Object.freeze({ color: 'red', emoji: '❌', level: 3 }),
   warning: Object.freeze({ color: 'yellow', emoji: '🤔', level: 4 }),
   notice: Object.freeze({ color: 'green', emoji: '✅', level: 5 }),
@@ -29,14 +28,6 @@ export function colorize(severity: Severity, message: string): string {
   }
 
   return message;
-}
-
-function getEmoji(severity: Severity): string {
-  return severities[severity].emoji;
-}
-
-function compareLevel(a: Summary, b: Summary): number {
-  return severities[a.severity].level - severities[b.severity].level;
 }
 
 export function readableDuration(duration: Temporal.Duration): string {
@@ -69,8 +60,16 @@ export interface Summary {
   checkRunUrl: CheckRun['detailsUrl'];
   runStatus: CheckRun['status'];
   runConclusion: CheckRun['conclusion']; // null if status is in progress
+}
 
-  format: () => string;
+export function formatSummary(summary: Summary): string {
+  const nullStr = '(null)';
+
+  return `${summary.workflowBasename}(${
+    colorize(summary.severity, summary.jobName)
+  }): [eventName: ${summary.eventName}][runStatus: ${summary.runStatus}][runConclusion: ${
+    summary.runConclusion ?? nullStr
+  }][runURL: ${summary.checkRunUrl}]`;
 }
 
 function summarize(check: Check, trigger: Trigger): Summary {
@@ -99,16 +98,6 @@ function summarize(check: Check, trigger: Trigger): Summary {
     checkRunUrl: run.detailsUrl,
     runStatus: run.status,
     runConclusion: run.conclusion,
-
-    format: function() {
-      const nullStr = '(null)';
-
-      return `${this.workflowBasename}(${
-        colorize(this.severity, this.jobName)
-      }): [eventName: ${this.eventName}][runStatus: ${this.runStatus}][runConclusion: ${
-        this.runConclusion ?? nullStr
-      }][runURL: ${this.checkRunUrl}]`;
-    },
   };
 }
 
@@ -131,10 +120,14 @@ export type PollingReport = {
   summaries: readonly Summary[];
 };
 
-function matchPath(condition: FilterCondition, summary: Summary): boolean {
-  const { workflowFile, jobMatchMode, ...restCondition } = condition;
+function matchesCondition(condition: FilterCondition, summary: Summary): boolean {
+  const { workflowFile, jobMatchMode, eventNames, ...restCondition } = condition;
 
   if (workflowFile !== summary.workflowBasename) {
+    return false;
+  }
+
+  if (eventNames.size > 0 && !eventNames.has(summary.eventName)) {
     return false;
   }
 
@@ -170,10 +163,7 @@ function seekWaitList(
   const seeker = waitList.map((condition) => ({ ...condition, found: false }));
   const filtered = summaries.filter((summary) =>
     seeker.some((target) => {
-      const isMatchPath = matchPath(target, summary);
-      const targetEvents = target.eventNames;
-      const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary.eventName);
-      if (isMatchPath && isMatchEvent) {
+      if (matchesCondition(target, summary)) {
         target.found = true;
         return true;
       } else {
@@ -289,73 +279,10 @@ export function generateReport(
   });
 
   if (skipList.length > 0) {
-    const filtered = eventFiltered.filter((summary) =>
-      !skipList.some((target) => {
-        const isMatchPath = matchPath(target, summary);
-        const targetEvents = target.eventNames;
-        const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary.eventName);
-        return isMatchPath && isMatchEvent;
-      })
-    );
+    const filtered = eventFiltered.filter((summary) => !skipList.some((target) => matchesCondition(target, summary)));
 
     return { ...judge(filtered), summaries: filtered };
   }
 
   return { ...judge(eventFiltered), summaries: eventFiltered };
-}
-
-export function writeJobSummary(lastPolling: PollingReport, options: RuntimeOptions) {
-  core.summary.addHeading('wait-other-jobs', 1);
-
-  core.summary.addHeading('Conclusion', 2);
-
-  if (lastPolling.ok) {
-    core.summary.addRaw(`${getEmoji('notice')} All jobs passed`, true);
-  } else {
-    core.summary.addRaw(`${getEmoji('error')} Failed`, true);
-
-    if (options.isEarlyExitEnabled) {
-      core.summary.addHeading('Note', 3);
-      core.summary.addRaw(
-        `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
-        true,
-      );
-    }
-  }
-
-  core.summary.addHeading('Details', 2);
-
-  const headers = [
-    { data: 'Severity', header: true },
-    { data: 'Workflow', header: true },
-    { data: 'Job', header: true },
-    { data: 'Event', header: true },
-    { data: 'Status', header: true },
-    { data: 'Conclusion', header: true },
-    { data: 'Log', header: true },
-  ];
-
-  core.summary.addTable([
-    headers,
-    ...(lastPolling.summaries.toSorted(compareLevel).map((
-      { severity, workflowPermalink, workflowBasename, jobName, eventName, runStatus, runConclusion, checkRunUrl },
-    ) => [{
-      data: getEmoji(severity),
-    }, {
-      // e.g. AFAIK, we can't access and control github provided dependabot workflow except the run logs. The event type is `dynamic`.
-      data: eventName === 'dynamic' ? workflowBasename : `<a href="${workflowPermalink}">${workflowBasename}</a>`,
-    }, {
-      data: jobName,
-    }, {
-      data: eventName,
-    }, {
-      data: runStatus,
-    }, {
-      data: runConclusion ?? '',
-    }, {
-      data: `<a href="${checkRunUrl}">Link</a>`, // Can't use []() style and there is no special option. See https://github.com/actions/toolkit/issues/1544
-    }])),
-  ]);
-
-  core.summary.write();
 }
