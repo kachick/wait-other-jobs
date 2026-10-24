@@ -4,9 +4,6 @@ permissions:
   contents: read
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/automerge.yml'
   schedule:
     # 18 is not strict; it comes from: `gh api repos/:owner/:repo --jq '.id % 60'`
     - cron: '18 */6 * * *'
