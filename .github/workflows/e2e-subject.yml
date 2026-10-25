@@ -5,13 +5,13 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/e2e-subject.yml'
-      - '.github/workflows/e2e-observer.yml'
+      - '.github/workflows/e2e-deadlock-hazard.yml'
       - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
       - '.github/workflows/e2e-subject.yml'
-      - '.github/workflows/e2e-observer.yml'
+      - '.github/workflows/e2e-deadlock-hazard.yml'
       - 'action.yml'
       - 'dist/**'
   workflow_dispatch:
@@ -30,26 +30,3 @@ jobs:
     timeout-minutes: 5
     steps:
       - run: echo 'subject - echo'
-  delayed:
-    name: delayed
-    runs-on: ubuntu-slim
-    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
-    timeout-minutes: 5
-    steps:
-      - run: sleep 8
-      - run: echo 'subject - delayed completed'
-  intermediate:
-    name: intermediate
-    runs-on: ubuntu-slim
-    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
-    timeout-minutes: 5
-    steps:
-      - run: sleep 10
-  slowstarter-success:
-    name: slowstarter-success
-    runs-on: ubuntu-slim
-    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
-    timeout-minutes: 5
-    needs: [intermediate]
-    steps:
-      - run: echo 'subject - slow starter completed'
