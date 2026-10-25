@@ -5,12 +5,14 @@ on:
     paths:
       - '.github/workflows/e2e-deadlock-hazard.yml'
       - '.github/workflows/e2e-observer.yml'
+      - '.github/workflows/e2e-subject.yml'
       - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
       - '.github/workflows/e2e-deadlock-hazard.yml'
       - '.github/workflows/e2e-observer.yml'
+      - '.github/workflows/e2e-subject.yml'
       - 'action.yml'
       - 'dist/**'
 
@@ -41,5 +43,27 @@ jobs:
               {
                 "workflowFile": "e2e-observer.yml",
                 "jobName": "skip-list"
+              }
+            ]
+  subject_waiter:
+    name: subject_waiter
+    runs-on: ubuntu-slim
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Wait for e2e-subject.yml's echo job
+        uses: $/
+        with:
+          retry-method: 'equal_intervals'
+          minimum-interval: 'PT5S'
+          attempt-limits: 60
+          wait-list: |
+            [
+              {
+                "workflowFile": "e2e-subject.yml",
+                "jobName": "echo"
               }
             ]

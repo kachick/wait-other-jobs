@@ -3,13 +3,13 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/e2e-subject.yml'
+      - '.github/workflows/e2e-deadlock-hazard.yml'
       - '.github/workflows/e2e-observer.yml'
       - 'action.yml'
       - 'dist/**'
   pull_request:
     paths:
-      - '.github/workflows/e2e-subject.yml'
+      - '.github/workflows/e2e-deadlock-hazard.yml'
       - '.github/workflows/e2e-observer.yml'
       - 'action.yml'
       - 'dist/**'
@@ -30,6 +30,40 @@ concurrency:
 # Do not enable `ACTIONS_STEP_DEBUG: true` for all steps, I also want to check actual logging
 
 jobs:
+  echo:
+    name: echo
+    runs-on: ubuntu-slim
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
+    timeout-minutes: 5
+    steps:
+      - run: echo 'observer - echo'
+
+  delayed:
+    name: delayed
+    runs-on: ubuntu-slim
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
+    timeout-minutes: 5
+    steps:
+      - run: sleep 8
+      - run: echo 'observer - delayed completed'
+
+  intermediate:
+    name: intermediate
+    runs-on: ubuntu-slim
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
+    timeout-minutes: 5
+    steps:
+      - run: sleep 10
+
+  slowstarter-success:
+    name: slowstarter-success
+    runs-on: ubuntu-slim
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.type != 'Bot' }}
+    timeout-minutes: 5
+    needs: [intermediate]
+    steps:
+      - run: echo 'observer - slow starter completed'
+
   default_logic:
     name: default_logic
     runs-on: ubuntu-26.04
@@ -49,6 +83,9 @@ jobs:
               },
               {
                 "workflowFile": "GH-761-matrix.yml"
+              },
+              {
+                "workflowFile": "e2e-subject.yml"
               }
             ]
   validation_example_basic_errors_allow_failure:
@@ -170,11 +207,6 @@ jobs:
           wait-list: |
             [
               {
-                "workflowFile": "e2e-subject.yml",
-                "jobName": "echo",
-                "eventNames": [ "${{ github.event_name }}" ]
-              },
-              {
                 "workflowFile": "lint.yml",
                 "optional": ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
               },
@@ -207,7 +239,7 @@ jobs:
           wait-list: |
             [
               {
-                "workflowFile": "e2e-subject.yml",
+                "workflowFile": "e2e-observer.yml",
                 "jobName": "delayed",
                 "optional": false
               }
@@ -242,12 +274,12 @@ jobs:
           wait-list: |
             [
               {
-                "workflowFile": "e2e-subject.yml",
+                "workflowFile": "e2e-observer.yml",
                 "optional": false,
                 "jobName": "echo"
               },
               {
-                "workflowFile": "e2e-subject.yml",
+                "workflowFile": "e2e-observer.yml",
                 "optional": false,
                 "jobName": "slowstarter-success",
                 "startupGracePeriod": "PT60S"
