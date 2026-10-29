@@ -1,35 +1,14 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "dependencyDashboard": true,
-  "labels": [
-    "dependencies",
-    "renovate"
-  ],
-  "enabledManagers": [
-    "custom.regex",
-    "npm"
-  ],
   "extends": [
-    "schedule:weekdays",
-    "github>kachick/renovate-config-dprint#1.4.0"
+    "github>kachick/renovate-config//presets/default.jsonc",
+    "github>kachick/renovate-config//presets/npm.jsonc"
   ],
-  "vulnerabilityAlerts": {
-    "enabled": true
-  },
-  "rangeStrategy": "bump",
-  "ignoreDeps": ["node", "pnpm"],
-  "minimumReleaseAge": "3 days",
+  "ignoreDeps": [
+    "node",
+    "pnpm"
+  ],
   "packageRules": [
-    {
-      "matchDatasources": [
-        "npm"
-      ],
-      "matchPackageNames": [
-        "@types/**"
-      ],
-      "matchUpdateTypes": ["major"],
-      "enabled": false
-    },
     {
       "matchDatasources": [
         "npm"
@@ -37,7 +16,10 @@
       "matchPackageNames": [
         "undici"
       ],
-      "matchUpdateTypes": ["major", "minor"],
+      "matchUpdateTypes": [
+        "major",
+        "minor"
+      ],
       "enabled": false
     },
     // Temporarily pause zod updates until the root cause is clear and resolved:
