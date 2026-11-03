@@ -49280,12 +49280,6 @@ function colorize(severity, message) {
   }
   return message;
 }
-function getEmoji(severity) {
-  return severities[severity].emoji;
-}
-function compareLevel(a, b) {
-  return severities[a.severity].level - severities[b.severity].level;
-}
 function readableDuration(duration3) {
   const { hours, minutes, seconds } = duration3.round({ largestUnit: "hours" });
   const eachUnit = [`${seconds} seconds`];
@@ -49296,6 +49290,10 @@ function readableDuration(duration3) {
     eachUnit.unshift(`${hours} hours`);
   }
   return `about ${eachUnit.join(" ")}`;
+}
+function formatSummary(summary2) {
+  const nullStr = "(null)";
+  return `${summary2.workflowBasename}(${colorize(summary2.severity, summary2.jobName)}): [eventName: ${summary2.eventName}][runStatus: ${summary2.runStatus}][runConclusion: ${summary2.runConclusion ?? nullStr}][runURL: ${summary2.checkRunUrl}]`;
 }
 function summarize(check2, trigger) {
   const { checkRun: run2, checkSuite: suite, workflow, workflowRun } = check2;
@@ -49317,11 +49315,7 @@ function summarize(check2, trigger) {
     jobName: run2.name,
     checkRunUrl: run2.detailsUrl,
     runStatus: run2.status,
-    runConclusion: run2.conclusion,
-    format: function() {
-      const nullStr = "(null)";
-      return `${this.workflowBasename}(${colorize(this.severity, this.jobName)}): [eventName: ${this.eventName}][runStatus: ${this.runStatus}][runConclusion: ${this.runConclusion ?? nullStr}][runURL: ${this.checkRunUrl}]`;
-    }
+    runConclusion: run2.conclusion
   };
 }
 function getSummaries(checks, trigger) {
@@ -49329,9 +49323,12 @@ function getSummaries(checks, trigger) {
     (a, b) => join2(a.workflowBasename, a.jobName).localeCompare(join2(b.workflowBasename, b.jobName))
   );
 }
-function matchPath(condition, summary2) {
-  const { workflowFile, jobMatchMode, ...restCondition } = condition;
+function matchesCondition(condition, summary2) {
+  const { workflowFile, jobMatchMode, eventNames: eventNames2, ...restCondition } = condition;
   if (workflowFile !== summary2.workflowBasename) {
+    return false;
+  }
+  if (eventNames2.size > 0 && !eventNames2.has(summary2.eventName)) {
     return false;
   }
   if (jobMatchMode === "all") {
@@ -49358,10 +49355,7 @@ function seekWaitList(summaries, waitList, elapsed) {
   const seeker = waitList.map((condition) => ({ ...condition, found: false }));
   const filtered = summaries.filter(
     (summary2) => seeker.some((target) => {
-      const isMatchPath = matchPath(target, summary2);
-      const targetEvents = target.eventNames;
-      const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary2.eventName);
-      if (isMatchPath && isMatchEvent) {
+      if (matchesCondition(target, summary2)) {
         target.found = true;
         return true;
       } else {
@@ -49455,17 +49449,18 @@ function generateReport(summaries, trigger, elapsed, { waitList, skipList, event
     return eventNames2.has(summary2.eventName);
   });
   if (skipList.length > 0) {
-    const filtered = eventFiltered.filter(
-      (summary2) => !skipList.some((target) => {
-        const isMatchPath = matchPath(target, summary2);
-        const targetEvents = target.eventNames;
-        const isMatchEvent = targetEvents.size === 0 || targetEvents.has(summary2.eventName);
-        return isMatchPath && isMatchEvent;
-      })
-    );
+    const filtered = eventFiltered.filter((summary2) => !skipList.some((target) => matchesCondition(target, summary2)));
     return { ...judge(filtered), summaries: filtered };
   }
   return { ...judge(eventFiltered), summaries: eventFiltered };
+}
+
+// src/job-summary.ts
+function getEmoji(severity) {
+  return severities[severity].emoji;
+}
+function compareLevel(a, b) {
+  return severities[a.severity].level - severities[b.severity].level;
 }
 function writeJobSummary(lastPolling, options) {
   summary.addHeading("wait-other-jobs", 1);
@@ -49477,7 +49472,7 @@ function writeJobSummary(lastPolling, options) {
     if (options.isEarlyExitEnabled) {
       summary.addHeading("Note", 3);
       summary.addRaw(
-        `This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.`,
+        "This job was run with the early-exit mode enabled, so some targets might be shown in an incomplete state.",
         true
       );
     }
@@ -49643,7 +49638,7 @@ async function run() {
       dumper.results[attempts] = { elapsed, checks, pollingReport };
     }
     for (const pollingSummary of pollingReport.summaries) {
-      info(pollingSummary.format());
+      info(formatSummary(pollingSummary));
     }
     const { ok, done, logs } = pollingReport;
     for (const { severity, message, resource } of logs) {

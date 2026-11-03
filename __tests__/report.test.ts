@@ -1,7 +1,14 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { Temporal } from 'temporal-polyfill';
-import { generateReport, getSummaries, type PollingReport, readableDuration, type Summary } from '../src/report.ts';
+import {
+  formatSummary,
+  generateReport,
+  getSummaries,
+  type PollingReport,
+  readableDuration,
+  type Summary,
+} from '../src/report.ts';
 import { RuntimeOptions } from '../src/schema.ts';
 import { omit } from '../src/util.ts';
 import { jsonEqual } from './assert.ts';
@@ -41,10 +48,20 @@ const exampleSummary = Object.freeze(
     runStatus: 'IN_PROGRESS',
     runConclusion: 'FAILURE',
     severity: 'error',
-
-    format: () => '',
   } as const satisfies Summary,
 );
+
+describe('formatSummary', () => {
+  it('formats a summary into a single-line string', () => {
+    const formatted = formatSummary(exampleSummary);
+    assert.match(formatted, /\.github\/workflows\/example\.yml/);
+    assert.match(formatted, /An example job/);
+    assert.match(formatted, /pull_request/);
+    assert.match(formatted, /IN_PROGRESS/);
+    assert.match(formatted, /FAILURE/);
+    assert.match(formatted, /https:\/\/example\.com/);
+  });
+});
 
 const exampleEventNames = Object.freeze(new Set(['push', 'pull_request']));
 
