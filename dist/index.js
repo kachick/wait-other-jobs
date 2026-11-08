@@ -20455,7 +20455,7 @@ function endGroup() {
   issue("endgroup");
 }
 
-// node_modules/.pnpm/temporal-polyfill@1.0.7/node_modules/temporal-polyfill/chunks/root.js
+// node_modules/.pnpm/temporal-polyfill@1.0.8/node_modules/temporal-polyfill/chunks/root.js
 var NativeTemporal = globalThis.Temporal;
 
 // node_modules/.pnpm/temporal-utils@1.0.4/node_modules/temporal-utils/dist/errorMessages.js
@@ -20513,7 +20513,7 @@ function requireObjectLike(arg) {
   return arg;
 }
 
-// node_modules/.pnpm/temporal-polyfill@1.0.7/node_modules/temporal-polyfill/chunks/internal.js
+// node_modules/.pnpm/temporal-polyfill@1.0.8/node_modules/temporal-polyfill/chunks/internal.js
 var invalidEntity2 = invalidEntity;
 var missingField = (fieldName) => `Missing ${fieldName}`;
 var invalidBag = "Invalid bag";
@@ -20545,12 +20545,13 @@ function clampEntity(entityName, num, min, max, overflow, choices) {
   const clamped = constrainToRange2(num, min, max);
   return overflow && num !== clamped && throwRangeError(((entityName2, val, min2, max2, choices2) => choices2 ? numberOutOfRange(entityName2, choices2[val], choices2[min2], choices2[max2]) : numberOutOfRange(entityName2, val, min2, max2))(entityName, num, min, max, choices)), clamped;
 }
-function memoize(generator, MapClass = Map) {
+function memoize(generator, MapClass = Map, maxSize = 1e4) {
   const map2 = new MapClass();
   return (key, ...otherArgs) => {
     if (map2.has(key)) {
       return map2.get(key);
     }
+    map2.size >= maxSize && map2.clear();
     const val = generator(key, ...otherArgs);
     return map2.set(key, val), val;
   };
@@ -22141,7 +22142,7 @@ var timeZonePeriodDaysByName = {
   "Hebron": 6,
   "DeNoronha": 6
 };
-var minPossibleTransitionSec = -388152e4;
+var minPossibleTransitionSec = -4e9;
 function refineTimeDisplayTuple(options, maxSmallestUnit = 4) {
   const subsecDigits = coerceFractionalSecondDigits(options);
   const roundingMode = coerceRoundingMode(options, 4);
@@ -22302,7 +22303,7 @@ function refineTimeZoneId(rawId) {
 function resolveTimeZoneId(rawId) {
   return resolveTimeZoneRecord(rawId).id;
 }
-function resolveTimeZoneRecord(rawId) {
+var resolveTimeZoneRecord = /* @__PURE__ */ memoize((rawId) => {
   const upperRawId = rawId.toUpperCase();
   const offsetRecord = ((upperRawId2) => {
     const offsetNano = parseOffsetNanoMaybe(upperRawId2, 1);
@@ -22322,7 +22323,7 @@ function resolveTimeZoneRecord(rawId) {
   }
   const normId = "UTC" === upperRawId ? "UTC" : ((rawId2) => (badCharactersRegExp.test(rawId2) && throwRangeError(invalidTimeZone(rawId2)), icuRegExp.test(rawId2) && throwRangeError("Forbidden ICU TimeZone"), rawId2.toLowerCase().split("/").map((part, partI) => (part.length <= 3 || /\d/.test(part)) && !/etc|yap/.test(part) ? part.toUpperCase() : part.replace(/baja|dumont|[a-z]+/g, (a, i) => a.length <= 2 && !partI || "in" === a || "chat" === a ? a.toUpperCase() : a.length > 2 || !i ? capitalize(a).replace(/island|noronha|murdo|rivadavia|urville/, capitalize) : a)).join("/")))(rawId);
   return queryNamedTimeZoneRecord(normId);
-}
+});
 var queryNamedTimeZoneRecord = /* @__PURE__ */ memoize((normId) => {
   if ("UTC" === normId) {
     return {
@@ -22331,8 +22332,18 @@ var queryNamedTimeZoneRecord = /* @__PURE__ */ memoize((normId) => {
       m: normId
     };
   }
-  const upperNormId = normId.toUpperCase();
-  const format2 = queryTimeZoneIntlFormat(upperNormId);
+  const format2 = (upperNormId = normId.toUpperCase(), new RawDateTimeFormat("en-u-hc-h23", {
+    calendar: "iso8601",
+    timeZone: upperNormId,
+    era: "short",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric"
+  }));
+  var upperNormId;
   return {
     kind: "named",
     id: normId,
@@ -22340,17 +22351,6 @@ var queryNamedTimeZoneRecord = /* @__PURE__ */ memoize((normId) => {
     m: format2.resolvedOptions().timeZone
   };
 });
-var queryTimeZoneIntlFormat = /* @__PURE__ */ memoize((upperNormId) => new RawDateTimeFormat("en-u-hc-h23", {
-  calendar: "iso8601",
-  timeZone: upperNormId,
-  era: "short",
-  year: "numeric",
-  month: "numeric",
-  day: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-  second: "numeric"
-}));
 function queryTimeZone(rawTimeZoneId) {
   const record2 = resolveTimeZoneRecord(rawTimeZoneId);
   return queryTimeZoneRecord(record2.id, record2);
@@ -22383,6 +22383,26 @@ var IntlTimeZone = class {
         const endOffsetSec = getSample(clampedEndEpochSec);
         return startOffsetSec === endOffsetSec ? startOffsetSec : pinch(getSplit(clampedStartEpochSec, clampedEndEpochSec), startOffsetSec, endOffsetSec, epochSec);
       }
+      function searchTransition(searchEpochSec, direction, searchLimit, epochSec = searchEpochSec) {
+        let [startEpochSec, endEpochSec] = computePeriod(searchEpochSec, periodSec);
+        const inc = periodSec * direction;
+        const inBounds = () => direction < 0 ? endEpochSec > searchLimit : startEpochSec < searchLimit;
+        for (; inBounds(); ) {
+          const clampedStartEpochSec = clampIntlSampleEpochSec(startEpochSec);
+          const clampedEndEpochSec = clampIntlSampleEpochSec(endEpochSec);
+          const startOffsetSec = getSample(clampedStartEpochSec);
+          const endOffsetSec = getSample(clampedEndEpochSec);
+          if (startOffsetSec !== endOffsetSec) {
+            const split = getSplit(clampedStartEpochSec, clampedEndEpochSec);
+            pinch(split, startOffsetSec, endOffsetSec);
+            const transitionEpochSec = split[0];
+            if ((compareNumbers(transitionEpochSec, epochSec) || 1) === direction) {
+              return transitionEpochSec;
+            }
+          }
+          startEpochSec += inc, endEpochSec += inc;
+        }
+      }
       function pinch(split, startOffsetSec, endOffsetSec, forEpochSec) {
         let offsetSec;
         let splitDurSec;
@@ -22405,38 +22425,15 @@ var IntlTimeZone = class {
           return narrowOffsetSec0 === getOffsetSec(wideUtcEpochSec1) ? [zonedEpochSec - narrowOffsetSec0] : wideOffsetSec0 > wideOffsetSec1 ? [wideUtcEpochSec0, wideUtcEpochSec1] : [];
         },
         ze: getOffsetSec,
-        C: function getTransition(epochSec, direction) {
-          if (direction > 0 && epochSec >= 864e10) {
-            return;
-          }
-          if (direction < 0) {
-            if (epochSec <= minPossibleTransitionSec) {
-              return;
-            }
-            const lookaheadEpochSec = getCurrentEpochSec() + 94867200;
-            if (epochSec > lookaheadEpochSec) {
-              return getTransition(lookaheadEpochSec, -1);
-            }
-          }
-          const searchEpochSec = direction > 0 ? Math.max(epochSec, minPossibleTransitionSec) - 1 : epochSec;
-          let [startEpochSec, endEpochSec] = computePeriod(searchEpochSec, periodSec);
-          const inc = periodSec * direction;
-          const searchLimit = direction > 0 ? Math.max(epochSec, getCurrentEpochSec()) + 94867200 : minPossibleTransitionSec;
-          const inBounds = () => direction < 0 ? endEpochSec > searchLimit : startEpochSec < searchLimit;
-          for (; inBounds(); ) {
-            const clampedStartEpochSec = clampIntlSampleEpochSec(startEpochSec);
-            const clampedEndEpochSec = clampIntlSampleEpochSec(endEpochSec);
-            const startOffsetSec = getSample(clampedStartEpochSec);
-            const endOffsetSec = getSample(clampedEndEpochSec);
-            if (startOffsetSec !== endOffsetSec) {
-              const split = getSplit(clampedStartEpochSec, clampedEndEpochSec);
-              pinch(split, startOffsetSec, endOffsetSec);
-              const transitionEpochSec = split[0];
-              if ((compareNumbers(transitionEpochSec, epochSec) || 1) === direction) {
-                return transitionEpochSec;
+        C(epochSec, direction) {
+          if (!(direction > 0 && epochSec >= 864e10)) {
+            if (direction < 0) {
+              if (epochSec <= minPossibleTransitionSec) {
+                return;
               }
+              return epochSec > 4e9 ? searchTransition(epochSec, -1, epochSec - 94867200) ?? searchTransition(4e9, -1, minPossibleTransitionSec) : searchTransition(epochSec, -1, minPossibleTransitionSec);
             }
-            startEpochSec += inc, endEpochSec += inc;
+            return searchTransition(Math.max(epochSec, minPossibleTransitionSec) - 1, 1, Math.max(epochSec, Math.floor(Date.now() / 1e3)) + 94867200, epochSec);
           }
         }
       };
@@ -22471,9 +22468,6 @@ var IntlTimeZone = class {
     }
   }
 };
-function getCurrentEpochSec() {
-  return Math.floor(Date.now() / 1e3);
-}
 function createSplitTuple(startEpochSec, endEpochSec) {
   return [startEpochSec, endEpochSec];
 }
@@ -23016,7 +23010,7 @@ function getCurrentTimeZoneId() {
   return new RawDateTimeFormat().resolvedOptions().timeZone || "UTC";
 }
 
-// node_modules/.pnpm/temporal-polyfill@1.0.7/node_modules/temporal-polyfill/chunks/apiHelpers.js
+// node_modules/.pnpm/temporal-polyfill@1.0.8/node_modules/temporal-polyfill/chunks/apiHelpers.js
 var PlainYearMonthBranding = "PlainYearMonth";
 var PlainMonthDayBranding = "PlainMonthDay";
 var PlainDateBranding = "PlainDate";
@@ -23204,7 +23198,7 @@ function withZonedDateTimeFields(slots, modFields, options) {
   return createZonedDateTimeFromMergedFields(slots, mergedFields, calendarFields, year, monthCodeParts, overflow, offsetDisambig, epochDisambig);
 }
 
-// node_modules/.pnpm/temporal-polyfill@1.0.7/node_modules/temporal-polyfill/chunks/classApi-basic.js
+// node_modules/.pnpm/temporal-polyfill@1.0.8/node_modules/temporal-polyfill/chunks/classApi-basic.js
 function resolveBasicCalendarId(rawCalendarId) {
   const lowerRawCalendarId = requireString(rawCalendarId).toLowerCase();
   return lowerRawCalendarId === isoCalendarId ? isoCalendarImpl : lowerRawCalendarId === gregoryCalendarId ? gregoryCalendarImpl : void throwRangeError(exoticCalendarRequired(rawCalendarId, "temporal-polyfill/full"));
@@ -24122,7 +24116,7 @@ var Temporal = /* @__PURE__ */ Object.defineProperties({}, {
   })
 });
 
-// node_modules/.pnpm/temporal-polyfill@1.0.7/node_modules/temporal-polyfill/index.js
+// node_modules/.pnpm/temporal-polyfill@1.0.8/node_modules/temporal-polyfill/index.js
 var Temporal2 = NativeTemporal || Temporal;
 var toTemporalInstant2 = NativeTemporal ? Date.prototype.toTemporalInstant : toTemporalInstant;
 
