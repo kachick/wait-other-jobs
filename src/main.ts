@@ -5,13 +5,14 @@ import { endGroup, info, setFailed, setOutput, startGroup } from '@actions/core'
 import { Temporal } from 'temporal-polyfill';
 import { fetchChecks } from './github-api.ts';
 import { parseInput } from './input.ts';
+import { writeJobSummary } from './job-summary.ts';
 import {
   colorize,
+  formatSummary,
   generateReport,
   getSummaries,
   type PollingReport,
   readableDuration,
-  writeJobSummary,
 } from './report.ts';
 import type { Check, RuntimeOptions, Trigger } from './schema.ts';
 import { jsonReplacerForPrettyPrint } from './util.ts';
@@ -102,7 +103,7 @@ async function run(): Promise<void> {
     }
 
     for (const pollingSummary of pollingReport.summaries) {
-      info(pollingSummary.format());
+      info(formatSummary(pollingSummary));
     }
 
     const { ok, done, logs } = pollingReport;
