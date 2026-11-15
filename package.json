@@ -37,7 +37,7 @@
     "zod": "4.6.6"
   },
   "devDependencies": {
-    "@tsconfig/bases": "^1.0.28",
+    "@tsconfig/bases": "^1.0.30",
     "@types/node": "^24.19.2"
   },
   "engines": {
