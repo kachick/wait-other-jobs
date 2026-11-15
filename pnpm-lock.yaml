@@ -40,8 +40,8 @@ importers:
         version: 4.6.6
     devDependencies:
       '@tsconfig/bases':
-        specifier: ^1.0.28
-        version: 1.0.28
+        specifier: ^1.0.30
+        version: 1.0.30
       '@types/node':
         specifier: ^24.19.2
         version: 24.19.2
@@ -279,8 +279,8 @@ packages:
   '@octokit/types@18.0.0':
     resolution: {integrity: sha512-l6bAF43PNxkJp6g+W4PjoUSSkxHomXw2nOum5CTftJz1NlV3vu93NImgOYtLf6CbBUb5j+fiuzW0PPQ5JTSvZA==}
 
-  '@tsconfig/bases@1.0.28':
-    resolution: {integrity: sha512-l326opM2+2gDiv3fYIzy12IeUJkHwNbt9pI+Ww2Byk4D1AfJt+CJmbiIxXtWaxY06514pAO5YXBneufph9WKFQ==}
+  '@tsconfig/bases@1.0.30':
+    resolution: {integrity: sha512-YsQOdAPkOhFnKVYMmM2MhBqIdUnQ/mKoS0rln32j0SmPg/tF+fFBdzqVR5yEJHhbQJ0A2ux6m6tFCaucAGmMFQ==}
 
   '@types/node@24.19.2':
     resolution: {integrity: sha512-93d49wCWJkCyN87MxLpNN6KXPCwFw7bVUg79mGUV1OS40JGWwVCr8n61DXCSqz7CV6/VfPkb7xec7uP2M+QHWQ==}
@@ -520,7 +520,7 @@ snapshots:
     dependencies:
       '@octokit/openapi-types': 29.0.1
 
-  '@tsconfig/bases@1.0.28': {}
+  '@tsconfig/bases@1.0.30': {}
 
   '@types/node@24.19.2':
     dependencies:
